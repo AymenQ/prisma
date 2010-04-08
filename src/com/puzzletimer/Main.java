@@ -188,7 +188,18 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemRubiksCube);		
-		
+
+		// menuItemRubiksRevenge
+		final JMenuItem menuItemRubiksRevenge = new JMenuItem("Rubik's Revenge");
+		menuItemRubiksRevenge.setMnemonic(KeyEvent.VK_R);
+		menuItemRubiksRevenge.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new RubiksRevenge());
+			}
+		});
+		menuPuzzle.add(menuItemRubiksRevenge);		
+
 		// menuItemPyraminx
 		final JMenuItem menuItemPyraminx = new JMenuItem("Pyraminx");
 		menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
