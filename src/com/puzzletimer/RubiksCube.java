@@ -8,20 +8,35 @@ import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
 import com.puzzletimer.scrambles.Move;
 import com.puzzletimer.scrambles.RubiksCubeMove;
+import com.puzzletimer.scrambles.RubiksCubeRandomScrambler;
 import com.puzzletimer.scrambles.Scramble;
+import com.puzzletimer.scrambles.Scrambler;
 
-class Twist {
-	public Plane plane;
-	public double angle;
+public class RubiksCube implements Puzzle {
+	private Scrambler scrambler;
 	
-	public Twist(Plane plane, double angle) {
-		this.plane = plane;
-		this.angle = angle;
+	public RubiksCube() {
+		scrambler = new RubiksCubeRandomScrambler(20); 
 	}
-}
-
-public class RubiksCube {
-	public static Mesh getMesh(Scramble s)
+	
+	@Override
+	public Scrambler getScrambler()
+	{
+		return scrambler; 
+	}
+		
+	private class Twist {
+		public Plane plane;
+		public double angle;
+		
+		public Twist(Plane plane, double angle) {
+			this.plane = plane;
+			this.angle = angle;
+		}
+	}
+	
+	@Override
+	public Mesh getMesh(Scramble s)
 	{
 		Plane planeL = new Plane(new Vector3(-0.166, 0, 0), new Vector3(-1, 0, 0));
 		Plane planeR = new Plane(new Vector3( 0.166, 0, 0), new Vector3( 1, 0, 0));

@@ -18,4 +18,8 @@ public class Timer {
 	public void stop() {
 		end = new Date();
 	}
+	
+	public boolean isRunning() {
+		return this.start != null && this.end == null;
+	}
 }

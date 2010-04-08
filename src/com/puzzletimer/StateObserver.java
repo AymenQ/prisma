@@ -11,7 +11,7 @@ public abstract class StateObserver {
 	public void onSolutionEnd(Solution solution) {
 	}
 	
-	public void updateScramble(Scramble scramble) {
+	public void updateScramble(Puzzle puzzle, Scramble scramble) {
 	}
 
 	public void updateSolutions(ArrayList<Solution> solutions) {

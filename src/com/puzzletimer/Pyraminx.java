@@ -11,7 +11,7 @@ import com.puzzletimer.scrambles.Scramble;
 import com.puzzletimer.scrambles.Move;
 import com.puzzletimer.scrambles.Scrambler;
 
-public class Pyraminx {
+public class Pyraminx implements Puzzle {
 	private Scrambler scrambler;
 	
 	public Pyraminx()
@@ -19,6 +19,7 @@ public class Pyraminx {
 		scrambler = new PyraminxRandomScrambler(20); 
 	}
 	
+	@Override
 	public Scrambler getScrambler()
 	{
 		return scrambler; 
@@ -34,7 +35,8 @@ public class Pyraminx {
 		}
 	}
 
-	public static Mesh getMesh(Scramble s)
+	@Override
+	public Mesh getMesh(Scramble s)
 	{
 		Mesh mesh = Mesh.tetrahedron()
 			.shortenFaces(0.1);

@@ -32,7 +32,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
-import com.puzzletimer.scrambles.RubiksCubeRandomScrambler;
 import com.puzzletimer.scrambles.Scramble;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
@@ -48,7 +47,7 @@ public class Main extends JFrame {
 	private JLabel labelTime;
 	
 	public Main() {
-		state = new State(new RubiksCubeRandomScrambler(25));
+		state = new State(new RubiksCube());
 		
 		createComponents();
 
@@ -106,6 +105,7 @@ public class Main extends JFrame {
         	public void onSolutionEnd(Solution solution) {
                 repeater.cancel();
                 labelTime.setText(formatTime(solution.getTimer().getDiff()));
+        		timerController.reset();                
         	}
         });
         
@@ -134,7 +134,7 @@ public class Main extends JFrame {
 		labelScramble.setFont(new Font("Arial", Font.PLAIN, 18));
 		state.addStateObserver(new StateObserver() {
 			@Override
-			public void updateScramble(Scramble scramble) {
+			public void updateScramble(Puzzle puzzle, Scramble scramble) {
 				labelScramble.setText(scramble.toString());
 			}			
 		});
@@ -184,6 +184,7 @@ public class Main extends JFrame {
 		menuItemRubiksCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new RubiksCube());
 			}
 		});
 		menuPuzzle.add(menuItemRubiksCube);		
@@ -194,6 +195,7 @@ public class Main extends JFrame {
 		menuItemPyraminx.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new Pyraminx());
 			}
 		});
 		menuPuzzle.add(menuItemPyraminx);		
@@ -511,8 +513,8 @@ public class Main extends JFrame {
 		
 		state.addStateObserver(new StateObserver() {
 			@Override
-			public void updateScramble(Scramble scramble) {
-				panel3D.mesh = RubiksCube.getMesh(scramble);
+			public void updateScramble(Puzzle puzzle, Scramble scramble) {
+				panel3D.mesh = puzzle.getMesh(scramble);
 				panel3D.repaint();
 			}
 		});

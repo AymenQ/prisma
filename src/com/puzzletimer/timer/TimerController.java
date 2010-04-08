@@ -14,6 +14,13 @@ public class TimerController {
 		listeners = new EventListenerList();
 	}
 
+	public void reset() {
+		readyToStart = true;
+		running = false;
+		leftPressed = false;
+		rightPressed = false;
+	}
+	
 	public void pressLeftButton() {
 		pressButton(true);
 	}
