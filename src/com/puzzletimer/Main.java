@@ -172,6 +172,31 @@ public class Main extends JFrame {
 			}
 		});
 		menuFile.add(menuItemExit);		
+
+		// menuPuzzle
+		final JMenu menuPuzzle = new JMenu("Puzzle");
+		menuPuzzle.setMnemonic(KeyEvent.VK_P);
+		menuBar.add(menuPuzzle);
+		
+		// menuItemRubiksCube
+		final JMenuItem menuItemRubiksCube = new JMenuItem("Rubik's Cube");
+		menuItemRubiksCube.setMnemonic(KeyEvent.VK_R);
+		menuItemRubiksCube.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		menuPuzzle.add(menuItemRubiksCube);		
+		
+		// menuItemPyraminx
+		final JMenuItem menuItemPyraminx = new JMenuItem("Pyraminx");
+		menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
+		menuItemPyraminx.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		menuPuzzle.add(menuItemPyraminx);		
 		
 		//menuHelp
 		final JMenu menuHelp = new JMenu("Help");
