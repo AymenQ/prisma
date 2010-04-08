@@ -178,6 +178,17 @@ public class Main extends JFrame {
 		menuPuzzle.setMnemonic(KeyEvent.VK_P);
 		menuBar.add(menuPuzzle);
 		
+		// menuItemRubiksPocketCube
+		final JMenuItem menuItemRubiksPocketCube = new JMenuItem("Rubik's Pocket Cube");
+		menuItemRubiksPocketCube.setMnemonic(KeyEvent.VK_P);
+		menuItemRubiksPocketCube.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new RubiksPocketCube());
+			}
+		});
+		menuPuzzle.add(menuItemRubiksPocketCube);		
+
 		// menuItemRubiksCube
 		final JMenuItem menuItemRubiksCube = new JMenuItem("Rubik's Cube");
 		menuItemRubiksCube.setMnemonic(KeyEvent.VK_R);
