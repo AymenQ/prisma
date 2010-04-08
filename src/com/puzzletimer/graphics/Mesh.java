@@ -200,4 +200,24 @@ public class Mesh {
 
 		return new Mesh(vertices, faces);
 	}
+	
+	public static Mesh tetrahedron() {
+        double a = 1.5;
+        double h = Math.sqrt(3d) / 2d * a;
+        double h1 = 2d * Math.sqrt(2d) / 3d * h;
+        
+        ArrayList<Vector3> vertices = new ArrayList<Vector3>();
+        vertices.add(new Vector3(     0d,     -h1 / 4d, 2d * h / 3d));
+        vertices.add(new Vector3(-a / 2d,     -h1 / 4d,     -h / 3d));
+        vertices.add(new Vector3( a / 2d,     -h1 / 4d,     -h / 3d));
+        vertices.add(new Vector3(     0d, 3d * h1 / 4d,          0d));
+
+        ArrayList<Face> faces = new ArrayList<Face>();
+        faces.add(new Face(toArrayList(new int[] { 0, 1, 2 }), new HSLColor(235, 100,  30))); // blue
+        faces.add(new Face(toArrayList(new int[] { 0, 3, 1 }), new HSLColor(120,  65,  40))); // green
+        faces.add(new Face(toArrayList(new int[] { 0, 2, 3 }), new HSLColor( 55, 100,  50))); // yellow
+        faces.add(new Face(toArrayList(new int[] { 1, 3, 2 }), new HSLColor(  0,  85,  45))); // red
+
+        return new Mesh(vertices, faces);
+	}	
 }
