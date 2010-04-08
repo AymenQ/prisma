@@ -2,27 +2,29 @@ package com.puzzletimer.scrambles;
 import java.util.ArrayList;
 import java.util.Random;
 
-
-public class RandomScrambler implements Scrambler {
+public class RubiksCubeRandomScrambler implements Scrambler {
 	private int scrambleLength;
 	private Random random;
 	
-	public RandomScrambler(int scrambleLength) {
+	public RubiksCubeRandomScrambler(int scrambleLength) {
 		this.scrambleLength = scrambleLength;
 		this.random = new Random();
 	}
 	
 	public Scramble getNextScramble() {
-		ArrayList<Integer> scramble = new ArrayList<Integer>();
-		int[] moves = {
+		ArrayList<Move> scramble = new ArrayList<Move>();
+		Move[] moves = {
 			// X axis
-			Move.R, Move.R2, Move.R3, Move.L, Move.L2, Move.L3,
+			RubiksCubeMove.R, RubiksCubeMove.R2, RubiksCubeMove.R3,
+			RubiksCubeMove.L, RubiksCubeMove.L2, RubiksCubeMove.L3,
 			
 			// Y axis
-			Move.U, Move.U2, Move.U3, Move.D, Move.D2, Move.D3,
+			RubiksCubeMove.U, RubiksCubeMove.U2, RubiksCubeMove.U3,
+			RubiksCubeMove.D, RubiksCubeMove.D2, RubiksCubeMove.D3,
 			
 			// Z axis
-			Move.F, Move.F2, Move.F3, Move.B, Move.B2, Move.B3,
+			RubiksCubeMove.F, RubiksCubeMove.F2, RubiksCubeMove.F3,
+			RubiksCubeMove.B, RubiksCubeMove.B2, RubiksCubeMove.B3,
 		};
 		
         int last = -1;

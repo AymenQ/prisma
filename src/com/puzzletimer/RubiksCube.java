@@ -7,6 +7,7 @@ import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
 import com.puzzletimer.scrambles.Move;
+import com.puzzletimer.scrambles.RubiksCubeMove;
 import com.puzzletimer.scrambles.Scramble;
 
 class Twist {
@@ -40,27 +41,27 @@ public class RubiksCube {
 			.softenFaces(0.015)
 			.softenFaces(0.005);
 		
-		HashMap<Integer, Twist> twists = new HashMap<Integer, Twist>();
-		twists.put(Move.L,  new Twist(planeL,  Math.PI / 2));
-		twists.put(Move.L2, new Twist(planeL,  Math.PI));
-		twists.put(Move.L3, new Twist(planeL, -Math.PI / 2));		
-		twists.put(Move.R,  new Twist(planeR,  Math.PI / 2));
-		twists.put(Move.R2, new Twist(planeR,  Math.PI));
-		twists.put(Move.R3, new Twist(planeR, -Math.PI / 2));		
-		twists.put(Move.D,  new Twist(planeD,  Math.PI / 2));
-		twists.put(Move.D2, new Twist(planeD,  Math.PI));
-		twists.put(Move.D3, new Twist(planeD, -Math.PI / 2));		
-		twists.put(Move.U,  new Twist(planeU,  Math.PI / 2));
-		twists.put(Move.U2, new Twist(planeU,  Math.PI));
-		twists.put(Move.U3, new Twist(planeU, -Math.PI / 2));		
-		twists.put(Move.F,  new Twist(planeF,  Math.PI / 2));
-		twists.put(Move.F2, new Twist(planeF,  Math.PI));
-		twists.put(Move.F3, new Twist(planeF, -Math.PI / 2));		
-		twists.put(Move.B,  new Twist(planeB,  Math.PI / 2));
-		twists.put(Move.B2, new Twist(planeB,  Math.PI));
-		twists.put(Move.B3, new Twist(planeB, -Math.PI / 2));		
+		HashMap<Move, Twist> twists = new HashMap<Move, Twist>();
+		twists.put(RubiksCubeMove.L,  new Twist(planeL,  Math.PI / 2));
+		twists.put(RubiksCubeMove.L2, new Twist(planeL,  Math.PI));
+		twists.put(RubiksCubeMove.L3, new Twist(planeL, -Math.PI / 2));		
+		twists.put(RubiksCubeMove.R,  new Twist(planeR,  Math.PI / 2));
+		twists.put(RubiksCubeMove.R2, new Twist(planeR,  Math.PI));
+		twists.put(RubiksCubeMove.R3, new Twist(planeR, -Math.PI / 2));		
+		twists.put(RubiksCubeMove.D,  new Twist(planeD,  Math.PI / 2));
+		twists.put(RubiksCubeMove.D2, new Twist(planeD,  Math.PI));
+		twists.put(RubiksCubeMove.D3, new Twist(planeD, -Math.PI / 2));		
+		twists.put(RubiksCubeMove.U,  new Twist(planeU,  Math.PI / 2));
+		twists.put(RubiksCubeMove.U2, new Twist(planeU,  Math.PI));
+		twists.put(RubiksCubeMove.U3, new Twist(planeU, -Math.PI / 2));		
+		twists.put(RubiksCubeMove.F,  new Twist(planeF,  Math.PI / 2));
+		twists.put(RubiksCubeMove.F2, new Twist(planeF,  Math.PI));
+		twists.put(RubiksCubeMove.F3, new Twist(planeF, -Math.PI / 2));		
+		twists.put(RubiksCubeMove.B,  new Twist(planeB,  Math.PI / 2));
+		twists.put(RubiksCubeMove.B2, new Twist(planeB,  Math.PI));
+		twists.put(RubiksCubeMove.B3, new Twist(planeB, -Math.PI / 2));		
 		
-		for (Integer move : s.moves) {
+		for (Move move : s.moves) {
 			Twist t = twists.get(move);
 			cube = cube.transformHalfspace(
 				Matrix33.rotation(t.plane.n, t.angle),

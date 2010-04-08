@@ -32,7 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
-import com.puzzletimer.scrambles.RandomScrambler;
+import com.puzzletimer.scrambles.RubiksCubeRandomScrambler;
 import com.puzzletimer.scrambles.Scramble;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
@@ -48,7 +48,7 @@ public class Main extends JFrame {
 	private JLabel labelTime;
 	
 	public Main() {
-		state = new State(new RandomScrambler(25));
+		state = new State(new RubiksCubeRandomScrambler(25));
 		
 		createComponents();
 
