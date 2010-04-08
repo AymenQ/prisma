@@ -17,8 +17,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -35,6 +33,7 @@ import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.scrambles.RandomScrambler;
+import com.puzzletimer.scrambles.Scramble;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.StandardDeviation;
@@ -56,29 +55,14 @@ public class Main extends JFrame {
 		// timerController
         final TimerController timerController = new TimerController();
         timerController.addEventListener(new TimerControllerListener() {
-            private java.util.Timer repeater;
-            
         	@Override
             public void timerStarted(TimerControllerEvent event) {
-        		state.getCurrentSolution().getTimer().start();
-        		
-                repeater = new java.util.Timer();
-                repeater.schedule(new java.util.TimerTask() {
-                    @Override
-        			public void run() {
-                    	labelTime.setText(formatTime(state.getCurrentSolution().getTimer().getDiff()));
-                    }
-                }, 0, 5);
+        		state.startCurrentSolution();
             }
         	
         	@Override
             public void timerStopped(TimerControllerEvent event) {
-        		state.getCurrentSolution().getTimer().stop();
-                repeater.cancel();
-
-                labelTime.setText(formatTime(state.getCurrentSolution().getTimer().getDiff()));
-                
-                state.saveCurrentSolution();
+        		state.stopCurrentSolution();
             }
         });
 
@@ -106,7 +90,26 @@ public class Main extends JFrame {
             }
         });
         
-        state.notifyObservers();
+        state.addStateObserver(new StateObserver() {
+            private java.util.Timer repeater;
+            
+        	public void onSolutionBegin(final Solution solution) {
+                repeater = new java.util.Timer();
+                repeater.schedule(new java.util.TimerTask() {
+                    @Override
+        			public void run() {
+                    	labelTime.setText(formatTime(solution.getTimer().getDiff()));
+                    }
+                }, 0, 5);
+        	}
+        	
+        	public void onSolutionEnd(Solution solution) {
+                repeater.cancel();
+                labelTime.setText(formatTime(solution.getTimer().getDiff()));
+        	}
+        });
+        
+        state.notifyScrambleObservers();
 	}
 
 	private void createComponents() {
@@ -129,11 +132,11 @@ public class Main extends JFrame {
 		final JLabel labelScramble = new JLabel();
 		labelScramble.setAlignmentX(Component.CENTER_ALIGNMENT);
 		labelScramble.setFont(new Font("Arial", Font.PLAIN, 18));
-		state.addObserver(new Observer() {
+		state.addStateObserver(new StateObserver() {
 			@Override
-			public void update(Observable o, Object arg) {
-				labelScramble.setText(state.getCurrentSolution().getScramble().toString());
-			}
+			public void updateScramble(Scramble scramble) {
+				labelScramble.setText(scramble.toString());
+			}			
 		});
 		panelMain.add(labelScramble, "1, 1, 3, 1, C, C");
 
@@ -249,9 +252,9 @@ public class Main extends JFrame {
 		scrollPane.setBorder(BorderFactory.createTitledBorder("Times"));
 		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-		state.addObserver(new Observer() {
+		state.addStateObserver(new StateObserver() {
 			@Override
-			public void update(Observable o, Object arg) {
+			public void updateSolutions(ArrayList<Solution> solutions) {
 				JPanel panelTimes = new JPanel();
 				panelTimes.setLayout(new GridBagLayout());
 
@@ -259,7 +262,6 @@ public class Main extends JFrame {
 				c.ipady = 4;
 				c.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-				ArrayList<Solution> solutions = state.getSolutions();
 				for (int i = solutions.size() - 1; i >= Math.max(0, solutions.size() - 100); i--) {
 					JLabel labelIndex = new JLabel(Integer.toString(i + 1) + ".");
 					labelIndex.setFont(new Font("Tahoma", Font.BOLD, 13));
@@ -412,21 +414,21 @@ public class Main extends JFrame {
 		labelBestTimeLast10Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		panelStatistics.add(labelBestTimeLast10Value, "3, 21, L, C");
 
-		state.addObserver(new Observer() {
+		state.addStateObserver(new StateObserver() {
 			@Override
-			public void update(Observable o, Object arg) {
-				if (state.getSolutions().size() >= 1) {
-					labelAverageValue.setText(formatTime(new Average().getValue(state.getSolutions())));
-					labelStandardDeviationValue.setText(formatTime(new StandardDeviation().getValue(state.getSolutions())));
-					labelBestTimeValue.setText(formatTime(new Best().getValue(state.getSolutions())));
+			public void updateSolutions(ArrayList<Solution> solutions) {
+				if (solutions.size() >= 1) {
+					labelAverageValue.setText(formatTime(new Average().getValue(solutions)));
+					labelStandardDeviationValue.setText(formatTime(new StandardDeviation().getValue(solutions)));
+					labelBestTimeValue.setText(formatTime(new Best().getValue(solutions)));
 				} else {
 					labelAverageValue.setText("XX:XX.XX");
 					labelStandardDeviationValue.setText("XX:XX.XX");
 					labelBestTimeValue.setText("XX:XX.XX");
 				}
 				
-				if (state.getSolutions().size() >= 3) {
-					ArrayList<Solution> last3Solutions = new ArrayList<Solution>(state.getSolutions().subList(state.getSolutions().size() - 3, state.getSolutions().size()));
+				if (solutions.size() >= 3) {
+					ArrayList<Solution> last3Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 3, solutions.size()));
 					labelAverageLast3Value.setText(formatTime(new Average().getValue(last3Solutions)));
 					labelStandardDeviationLast3Value.setText(formatTime(new StandardDeviation().getValue(last3Solutions)));
 					labelBestTimeLast3Value.setText(formatTime(new Best().getValue(last3Solutions)));
@@ -436,15 +438,15 @@ public class Main extends JFrame {
 					labelBestTimeLast3Value.setText("XX:XX.XX");
 				}
 				
-				if (state.getSolutions().size() >= 5) {
-					ArrayList<Solution> last5Solutions = new ArrayList<Solution>(state.getSolutions().subList(state.getSolutions().size() - 5, state.getSolutions().size()));
+				if (solutions.size() >= 5) {
+					ArrayList<Solution> last5Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 5, solutions.size()));
 					labelTrimmedAverageLast5Value.setText((formatTime(new TrimmedAverage().getValue(last5Solutions))));
 				} else {
 					labelTrimmedAverageLast5Value.setText("XX:XX.XX");
 				}
 				
-				if (state.getSolutions().size() >= 10) {
-					ArrayList<Solution> last10Solutions = new ArrayList<Solution>(state.getSolutions().subList(state.getSolutions().size() - 10, state.getSolutions().size()));
+				if (solutions.size() >= 10) {
+					ArrayList<Solution> last10Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 10, solutions.size()));
 					labelAverageLast10Value.setText(formatTime(new Average().getValue(last10Solutions)));
 					labelStandardDeviationLast10Value.setText(formatTime(new StandardDeviation().getValue(last10Solutions)));
 					labelBestTimeLast10Value.setText(formatTime(new Best().getValue(last10Solutions)));
@@ -454,8 +456,8 @@ public class Main extends JFrame {
 					labelBestTimeLast10Value.setText("XX:XX.XX");
 				}
 				
-				if (state.getSolutions().size() >= 12) {
-					ArrayList<Solution> last12Solutions = new ArrayList<Solution>(state.getSolutions().subList(state.getSolutions().size() - 12, state.getSolutions().size()));
+				if (solutions.size() >= 12) {
+					ArrayList<Solution> last12Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 12, solutions.size()));
 					labelTrimmedAverageLast12Value.setText((formatTime(new TrimmedAverage().getValue(last12Solutions))));
 				} else {
 					labelTrimmedAverageLast12Value.setText("XX:XX.XX");
@@ -480,13 +482,12 @@ public class Main extends JFrame {
 		panel3D.setMinimumSize(new Dimension(200, 180));
 		panel3D.setPreferredSize(new Dimension(200, 180));
 		panel3D.setFocusable(false);
-		panel3D.mesh = RubiksCube.getMesh(state.getCurrentSolution().getScramble());
 		panelScramble.add(panel3D, "0, 0");
 		
-		state.addObserver(new Observer() {
+		state.addStateObserver(new StateObserver() {
 			@Override
-			public void update(Observable o, Object arg) {
-				panel3D.mesh = RubiksCube.getMesh(state.getCurrentSolution().getScramble());
+			public void updateScramble(Scramble scramble) {
+				panel3D.mesh = RubiksCube.getMesh(scramble);
 				panel3D.repaint();
 			}
 		});
