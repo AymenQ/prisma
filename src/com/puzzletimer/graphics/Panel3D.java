@@ -115,17 +115,17 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
 			public int compare(Face f1, Face f2) {
 				double centroidZ1 = 0d;
 				for (int i : f1.vertexIndices) {
-					centroidZ1 += pVertices.get(i).z;
+					centroidZ1 += mesh.vertices.get(i).z;
 				}
 				centroidZ1 /= f1.vertexIndices.size();
 
 				double centroidZ2 = 0d;
 				for (int i : f2.vertexIndices) {
-					centroidZ2 += pVertices.get(i).z;
+					centroidZ2 += mesh.vertices.get(i).z;
 				}
 				centroidZ2 /= f2.vertexIndices.size();
 
-				return centroidZ1 < centroidZ2 ? -1 : 1;
+				return centroidZ1 > centroidZ2 ? -1 : 1;
 			}
         });
         
