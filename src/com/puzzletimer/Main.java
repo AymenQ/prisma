@@ -211,6 +211,17 @@ public class Main extends JFrame {
 		});
 		menuPuzzle.add(menuItemRubiksRevenge);		
 
+		// menuItemSquare1
+		final JMenuItem menuItemSquare1 = new JMenuItem("Square-1");
+		menuItemSquare1.setMnemonic(KeyEvent.VK_S);
+		menuItemSquare1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new Square1());
+			}
+		});
+		menuPuzzle.add(menuItemSquare1);		
+
 		// menuItemPyraminx
 		final JMenuItem menuItemPyraminx = new JMenuItem("Pyraminx");
 		menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
