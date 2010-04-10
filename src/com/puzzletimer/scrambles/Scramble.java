@@ -15,8 +15,11 @@ public class Scramble {
 		for (int i = 0; i < moves.size() - 1; i++) {
 			sb.append(moves.get(i) + "  ");
 		}
-		sb.append(moves.get(moves.size() - 1));
-
+		
+		if (moves.size() > 0) {
+			sb.append(moves.get(moves.size() - 1));
+		}
+		
 		return sb.toString();
 	}
 }
