@@ -233,6 +233,17 @@ public class Main extends JFrame {
 		});
 		menuPuzzle.add(menuItemPyraminx);		
 		
+		// menuItemMegaminx
+		final JMenuItem menuItemMegaminx = new JMenuItem("Megaminx");
+		menuItemMegaminx.setMnemonic(KeyEvent.VK_M);
+		menuItemMegaminx.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new Megaminx());
+			}
+		});
+		menuPuzzle.add(menuItemMegaminx);
+		
 		//menuHelp
 		final JMenu menuHelp = new JMenu("Help");
 		menuHelp.setMnemonic(KeyEvent.VK_H);

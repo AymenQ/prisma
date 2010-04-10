@@ -219,5 +219,114 @@ public class Mesh {
         faces.add(new Face(toArrayList(new int[] { 1, 3, 2 }), new HSLColor(  0,  85,  45))); // red
 
         return new Mesh(vertices, faces);
-	}	
+	}
+	
+	public static Mesh dodecahedron() {
+        double a = 0.85d * 1d / Math.sqrt(3d);
+        double b = 0.85d * Math.sqrt((3d - Math.sqrt(5d)) / 6d);
+        double c = 0.85d * Math.sqrt((3d + Math.sqrt(5d)) / 6d);
+
+        ArrayList<Vector3> vertices = new ArrayList<Vector3>();
+
+        // 1
+        vertices.add(new Vector3( a,  a,  a)); // 0
+        vertices.add(new Vector3( b,  c,  0)); // 8
+        vertices.add(new Vector3(-b,  c,  0)); // 9
+        vertices.add(new Vector3(-a,  a,  a)); // 4
+        vertices.add(new Vector3( 0,  b,  c)); // 16
+
+        // 2
+        vertices.add(new Vector3( a,  a,  a)); // 0
+        vertices.add(new Vector3( 0,  b,  c)); // 16
+        vertices.add(new Vector3( 0, -b,  c)); // 17
+        vertices.add(new Vector3( a, -a,  a)); // 2
+        vertices.add(new Vector3( c,  0,  b)); // 12
+
+        // 3
+        vertices.add(new Vector3( c,  0,  b)); // 12
+        vertices.add(new Vector3( a, -a,  a)); // 2
+        vertices.add(new Vector3( b, -c,  0)); // 10
+        vertices.add(new Vector3( a, -a, -a)); // 3
+        vertices.add(new Vector3( c,  0, -b)); // 13
+
+        // 4
+        vertices.add(new Vector3(-b,  c,  0)); // 9
+        vertices.add(new Vector3(-a,  a, -a)); // 5
+        vertices.add(new Vector3(-c,  0, -b)); // 15
+        vertices.add(new Vector3(-c,  0,  b)); // 14
+        vertices.add(new Vector3(-a,  a,  a)); // 4
+
+        // 5
+        vertices.add(new Vector3( a, -a, -a)); // 3
+        vertices.add(new Vector3( 0, -b, -c)); // 19
+        vertices.add(new Vector3( 0,  b, -c)); // 18
+        vertices.add(new Vector3( a,  a, -a)); // 1
+        vertices.add(new Vector3( c,  0, -b)); // 13
+
+        // 6
+        vertices.add(new Vector3(-a, -a, -a)); // 7
+        vertices.add(new Vector3(-b, -c,  0)); // 11
+        vertices.add(new Vector3(-a, -a,  a)); // 6
+        vertices.add(new Vector3(-c,  0,  b)); // 14
+        vertices.add(new Vector3(-c,  0, -b)); // 15
+
+        // 7
+        vertices.add(new Vector3( a,  a,  a)); // 0
+        vertices.add(new Vector3( c,  0,  b)); // 12
+        vertices.add(new Vector3( c,  0, -b)); // 13
+        vertices.add(new Vector3( a,  a, -a)); // 1
+        vertices.add(new Vector3( b,  c,  0)); // 8
+
+        // 8
+        vertices.add(new Vector3( b,  c,  0)); // 8
+        vertices.add(new Vector3( a,  a, -a)); // 1
+        vertices.add(new Vector3( 0,  b, -c)); // 18
+        vertices.add(new Vector3(-a,  a, -a)); // 5
+        vertices.add(new Vector3(-b,  c,  0)); // 9
+
+        // 9
+        vertices.add(new Vector3( 0,  b,  c)); // 16
+        vertices.add(new Vector3(-a,  a,  a)); // 4
+        vertices.add(new Vector3(-c,  0,  b)); // 14
+        vertices.add(new Vector3(-a, -a,  a)); // 6
+        vertices.add(new Vector3( 0, -b,  c)); // 17
+
+        // 10
+        vertices.add(new Vector3(-a, -a,  a)); // 6
+        vertices.add(new Vector3(-b, -c,  0)); // 11
+        vertices.add(new Vector3( b, -c,  0)); // 10
+        vertices.add(new Vector3( a, -a,  a)); // 2
+        vertices.add(new Vector3( 0, -b,  c)); // 17
+
+        // 11
+        vertices.add(new Vector3(-a, -a, -a)); // 7
+        vertices.add(new Vector3(-c,  0, -b)); // 15
+        vertices.add(new Vector3(-a,  a, -a)); // 5
+        vertices.add(new Vector3( 0,  b, -c)); // 18
+        vertices.add(new Vector3( 0, -b, -c)); // 19
+        
+        // 12
+        vertices.add(new Vector3(-a, -a, -a)); // 7
+        vertices.add(new Vector3( 0, -b, -c)); // 19
+        vertices.add(new Vector3( a, -a, -a)); // 3
+        vertices.add(new Vector3( b, -c,  0)); // 10
+        vertices.add(new Vector3(-b, -c,  0)); // 11
+
+        ArrayList<Face> faces = new ArrayList<Face>();
+        faces.add(new Face(toArrayList(new int[] {  0,  1,  2,  3,  4 }), new HSLColor(  0, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] {  5,  6,  7,  8,  9 }), new HSLColor( 30, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 10, 11, 12, 13, 14 }), new HSLColor( 60, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 15, 16, 17, 18, 19 }), new HSLColor( 90, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 20, 21, 22, 23, 24 }), new HSLColor(120, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 25, 26, 27, 28, 29 }), new HSLColor(150, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 30, 31, 32, 33, 34 }), new HSLColor(180, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 35, 36, 37, 38, 39 }), new HSLColor(210, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 40, 41, 42, 43, 44 }), new HSLColor(240, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 45, 46, 47, 48, 49 }), new HSLColor(270, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 50, 51, 52, 53, 54 }), new HSLColor(300, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] { 55, 56, 57, 58, 59 }), new HSLColor(330, 90, 50)));
+
+        return new Mesh(vertices, faces);
+	}
+	
 }
