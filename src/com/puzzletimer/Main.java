@@ -240,6 +240,17 @@ public class Main extends JFrame {
 		});
 		menuPuzzle.add(menuItemRubiksRevenge);		
 
+		// menuItemProfessorsCube
+		final JMenuItem menuItemProfessorsCube = new JMenuItem("Professor's Cube");
+		menuItemProfessorsCube.setMnemonic(KeyEvent.VK_P);
+		menuItemProfessorsCube.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new ProfessorsCube());
+			}
+		});
+		menuPuzzle.add(menuItemProfessorsCube);		
+
 		// menuItemSquare1
 		final JMenuItem menuItemSquare1 = new JMenuItem("Square-1");
 		menuItemSquare1.setMnemonic(KeyEvent.VK_S);
