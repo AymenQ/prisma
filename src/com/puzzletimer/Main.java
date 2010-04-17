@@ -28,6 +28,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -208,8 +209,9 @@ public class Main extends JFrame {
 		menuBar.add(menuPuzzle);
 		
 		// menuItemRubiksPocketCube
-		final JMenuItem menuItemRubiksPocketCube = new JMenuItem("Rubik's Pocket Cube");
-		menuItemRubiksPocketCube.setMnemonic(KeyEvent.VK_P);
+		final JMenuItem menuItemRubiksPocketCube = new JMenuItem("2x2x2 Cube");
+		menuItemRubiksPocketCube.setMnemonic(KeyEvent.VK_2);
+		menuItemRubiksPocketCube.setAccelerator(KeyStroke.getKeyStroke('2', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemRubiksPocketCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -221,6 +223,7 @@ public class Main extends JFrame {
 		// menuItemRubiksCube
 		final JMenuItem menuItemRubiksCube = new JMenuItem("Rubik's Cube");
 		menuItemRubiksCube.setMnemonic(KeyEvent.VK_R);
+		menuItemRubiksCube.setAccelerator(KeyStroke.getKeyStroke('3', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemRubiksCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -230,8 +233,9 @@ public class Main extends JFrame {
 		menuPuzzle.add(menuItemRubiksCube);		
 
 		// menuItemRubiksRevenge
-		final JMenuItem menuItemRubiksRevenge = new JMenuItem("Rubik's Revenge");
-		menuItemRubiksRevenge.setMnemonic(KeyEvent.VK_R);
+		final JMenuItem menuItemRubiksRevenge = new JMenuItem("4x4x4 Cube");
+		menuItemRubiksRevenge.setMnemonic(KeyEvent.VK_4);
+		menuItemRubiksRevenge.setAccelerator(KeyStroke.getKeyStroke('4', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemRubiksRevenge.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -241,8 +245,9 @@ public class Main extends JFrame {
 		menuPuzzle.add(menuItemRubiksRevenge);		
 
 		// menuItemProfessorsCube
-		final JMenuItem menuItemProfessorsCube = new JMenuItem("Professor's Cube");
-		menuItemProfessorsCube.setMnemonic(KeyEvent.VK_P);
+		final JMenuItem menuItemProfessorsCube = new JMenuItem("5x5x5 Cube");
+		menuItemProfessorsCube.setMnemonic(KeyEvent.VK_5);
+		menuItemProfessorsCube.setAccelerator(KeyStroke.getKeyStroke('5', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemProfessorsCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -251,31 +256,10 @@ public class Main extends JFrame {
 		});
 		menuPuzzle.add(menuItemProfessorsCube);		
 
-		// menuItemSquare1
-		final JMenuItem menuItemSquare1 = new JMenuItem("Square-1");
-		menuItemSquare1.setMnemonic(KeyEvent.VK_S);
-		menuItemSquare1.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				state.setPuzzle(new Square1());
-			}
-		});
-		menuPuzzle.add(menuItemSquare1);		
-
-		// menuItemPyraminx
-		final JMenuItem menuItemPyraminx = new JMenuItem("Pyraminx");
-		menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
-		menuItemPyraminx.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				state.setPuzzle(new Pyraminx());
-			}
-		});
-		menuPuzzle.add(menuItemPyraminx);		
-		
 		// menuItemMegaminx
 		final JMenuItem menuItemMegaminx = new JMenuItem("Megaminx");
 		menuItemMegaminx.setMnemonic(KeyEvent.VK_M);
+		menuItemMegaminx.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));		
 		menuItemMegaminx.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -284,6 +268,30 @@ public class Main extends JFrame {
 		});
 		menuPuzzle.add(menuItemMegaminx);
 		
+		// menuItemPyraminx
+		final JMenuItem menuItemPyraminx = new JMenuItem("Pyraminx");
+		menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
+		menuItemPyraminx.setAccelerator(KeyStroke.getKeyStroke('P', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+		menuItemPyraminx.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new Pyraminx());
+			}
+		});
+		menuPuzzle.add(menuItemPyraminx);		
+		
+		// menuItemSquare1
+		final JMenuItem menuItemSquare1 = new JMenuItem("Square-1");
+		menuItemSquare1.setMnemonic(KeyEvent.VK_S);
+		menuItemSquare1.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));		
+		menuItemSquare1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				state.setPuzzle(new Square1());
+			}
+		});
+		menuPuzzle.add(menuItemSquare1);		
+
 		// menuOptions
 		final JMenu menuOptions = new JMenu("Options");
 		menuOptions.setMnemonic(KeyEvent.VK_O);
@@ -291,12 +299,13 @@ public class Main extends JFrame {
 		
 		// menuTimerTrigger
 		final JMenu menuTimerTrigger = new JMenu("Timer trigger");
-		menuTimerTrigger.setMnemonic(KeyEvent.VK_A);
+		menuTimerTrigger.setMnemonic(KeyEvent.VK_T);
 		menuOptions.add(menuTimerTrigger);
 
 		// menuItemCtrlKeys
 		final JMenuItem menuItemCtrlKeys = new JMenuItem("Ctrl keys");
 		menuItemCtrlKeys.setMnemonic(KeyEvent.VK_C);
+		menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));		
 		menuItemCtrlKeys.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -307,7 +316,8 @@ public class Main extends JFrame {
 
 		// menuItemSpaceKey
 		final JMenuItem menuItemSpaceKey = new JMenuItem("Space key");
-		menuItemSpaceKey.setMnemonic(KeyEvent.VK_C);
+		menuItemSpaceKey.setMnemonic(KeyEvent.VK_S);
+		menuItemSpaceKey.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemSpaceKey.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
