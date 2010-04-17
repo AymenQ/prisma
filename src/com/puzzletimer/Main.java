@@ -2,9 +2,9 @@ package com.puzzletimer;
 
 import info.clearthought.layout.TableLayout;
 
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
+import com.puzzletimer.scrambles.Move;
 import com.puzzletimer.scrambles.Scramble;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
@@ -124,33 +125,41 @@ public class Main extends JFrame {
         // panelMain
 		JPanel panelMain = new JPanel(new TableLayout(new double[][] {
 			{ 3, 0.3, 0.4, 0.3, 3 },
-			{ 20, TableLayout.PREFERRED, TableLayout.FILL, TableLayout.PREFERRED, TableLayout.FILL, TableLayout.PREFERRED, 3 },
+			{ 20, 0.5, TableLayout.PREFERRED, 0.5, TableLayout.PREFERRED, 3 },
 		}));
 		add(panelMain);
 
-		// labelScramble
-		final JLabel labelScramble = new JLabel();
-		labelScramble.setAlignmentX(Component.CENTER_ALIGNMENT);
-		labelScramble.setFont(new Font("Arial", Font.PLAIN, 18));
+		// panelScramble
+		final JPanel panelScramble = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 3));
+		panelScramble.setPreferredSize(new Dimension(10000, 150));
 		state.addStateObserver(new StateObserver() {
 			@Override
 			public void updateScramble(Puzzle puzzle, Scramble scramble) {
-				labelScramble.setText(scramble.toString());
+				panelScramble.removeAll();
+				
+				for (Move m : scramble.moves) {
+					JLabel label = new JLabel(m.toString());
+					label.setFont(new Font("Arial", Font.PLAIN, 18));
+					panelScramble.add(label);
+				}
+				
+				panelScramble.revalidate();
+				panelScramble.repaint();
 			}			
 		});
-		panelMain.add(labelScramble, "1, 1, 3, 1, C, C");
-
+		panelMain.add(panelScramble, "1, 1, 3, 1");
+		
 		// timer panel
-		panelMain.add(createTimerPanel(), "1, 3, 3, 3");
+		panelMain.add(createTimerPanel(), "1, 2, 3, 2");
 		
 		// times panel
-		panelMain.add(createTimesPanel(), "1, 5");
+		panelMain.add(createTimesPanel(), "1, 4");
 
 		// statistics panel
-		panelMain.add(createStatisticsPanel(), "2, 5");
+		panelMain.add(createStatisticsPanel(), "2, 4");
 
 		// scramble panel
-		panelMain.add(createScramblePanel(), "3, 5");
+		panelMain.add(createScramblePanel(), "3, 4");
 	}
 
 	private JMenuBar createMenuBar() {
