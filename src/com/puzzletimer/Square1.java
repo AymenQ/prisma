@@ -16,7 +16,7 @@ public class Square1 implements Puzzle {
 	private Scrambler scrambler;
 	
 	public Square1() {
-		scrambler = new Square1RandomScrambler(0); 
+		scrambler = new Square1RandomScrambler(20); 
 	}
 	
 	@Override
