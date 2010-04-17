@@ -46,10 +46,12 @@ import com.puzzletimer.timer.TimerControllerListener;
 public class Main extends JFrame {
     private State state;
 	private JLabel labelTime;
-	
+	private int timerTriggerKey;
+
 	public Main() {
 		state = new State(new RubiksCube());
-		
+		timerTriggerKey = KeyEvent.VK_CONTROL;
+		    
 		createComponents();
 
 		// timerController
@@ -69,24 +71,42 @@ public class Main extends JFrame {
         addKeyListener(new KeyAdapter() {
         	@Override
 			public void keyPressed(KeyEvent event) {
-        		if (event.getKeyCode() == KeyEvent.VK_CONTROL) {
-        			if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) {
-        				timerController.pressLeftButton();
-        			} else {
-        				timerController.pressRightButton();
+        		if (event.getKeyCode() == timerTriggerKey) {
+        			switch (event.getKeyLocation()) {
+	    				case KeyEvent.KEY_LOCATION_LEFT:
+	    					timerController.pressLeftButton();
+	    					break;
+
+	    				case KeyEvent.KEY_LOCATION_RIGHT:
+	    					timerController.pressRightButton();
+	    					break;
+
+	    				default:
+	    					timerController.pressLeftButton();
+    						timerController.pressRightButton();
+    						break;
         			}
                 }        		
         	}
         	
             @Override
 			public void keyReleased(KeyEvent event) {
-            	if (event.getKeyCode() == KeyEvent.VK_CONTROL) {
-            		if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) {
-            			timerController.releaseLeftButton();	
-            		} else {
-            			timerController.releaseRightButton();
-            		}
-                }       	
+            	if (event.getKeyCode() == timerTriggerKey) {
+        			switch (event.getKeyLocation()) {
+	    				case KeyEvent.KEY_LOCATION_LEFT:
+	    					timerController.releaseLeftButton();
+	    					break;
+	
+	    				case KeyEvent.KEY_LOCATION_RIGHT:
+	    					timerController.releaseRightButton();
+	    					break;
+	
+	    				default:
+	    					timerController.releaseLeftButton();
+							timerController.releaseRightButton();
+							break;
+	    			}
+                }
             }
         });
         
@@ -253,6 +273,38 @@ public class Main extends JFrame {
 		});
 		menuPuzzle.add(menuItemMegaminx);
 		
+		// menuOptions
+		final JMenu menuOptions = new JMenu("Options");
+		menuOptions.setMnemonic(KeyEvent.VK_O);
+		menuBar.add(menuOptions);
+		
+		// menuTimerTrigger
+		final JMenu menuTimerTrigger = new JMenu("Timer trigger");
+		menuTimerTrigger.setMnemonic(KeyEvent.VK_A);
+		menuOptions.add(menuTimerTrigger);
+
+		// menuItemCtrlKeys
+		final JMenuItem menuItemCtrlKeys = new JMenuItem("Ctrl keys");
+		menuItemCtrlKeys.setMnemonic(KeyEvent.VK_C);
+		menuItemCtrlKeys.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				timerTriggerKey = KeyEvent.VK_CONTROL;
+			}
+		});
+		menuTimerTrigger.add(menuItemCtrlKeys);
+
+		// menuItemSpaceKey
+		final JMenuItem menuItemSpaceKey = new JMenuItem("Space key");
+		menuItemSpaceKey.setMnemonic(KeyEvent.VK_C);
+		menuItemSpaceKey.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				timerTriggerKey = KeyEvent.VK_SPACE;
+			}
+		});
+		menuTimerTrigger.add(menuItemSpaceKey);
+
 		//menuHelp
 		final JMenu menuHelp = new JMenu("Help");
 		menuHelp.setMnemonic(KeyEvent.VK_H);
@@ -301,24 +353,42 @@ public class Main extends JFrame {
         addKeyListener(new KeyAdapter() {
         	@Override
 			public void keyPressed(KeyEvent event) {
-        		if (event.getKeyCode() == KeyEvent.VK_CONTROL) {
-        			if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) {
-        				labelLeftHand.setIcon(iconLeftPressed);
-        			} else {
-        				labelRightHand.setIcon(iconRightPressed);
+        		if (event.getKeyCode() == timerTriggerKey) {
+        			switch (event.getKeyLocation()) {
+	    				case KeyEvent.KEY_LOCATION_LEFT:
+	    					labelLeftHand.setIcon(iconLeftPressed);
+	    					break;
+
+	    				case KeyEvent.KEY_LOCATION_RIGHT:
+	    					labelRightHand.setIcon(iconRightPressed);
+	    					break;
+
+	    				default:
+	    					labelLeftHand.setIcon(iconLeftPressed);
+	    					labelRightHand.setIcon(iconRightPressed);
+    						break;
         			}
                 }        		
         	}
         	
             @Override
 			public void keyReleased(KeyEvent event) {
-            	if (event.getKeyCode() == KeyEvent.VK_CONTROL) {
-            		if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_LEFT) {
-            			labelLeftHand.setIcon(iconLeft);
-            		} else {
-            			labelRightHand.setIcon(iconRight);
-            		}
-            	}
+               	if (event.getKeyCode() == timerTriggerKey) {
+        			switch (event.getKeyLocation()) {
+	    				case KeyEvent.KEY_LOCATION_LEFT:
+	    					labelLeftHand.setIcon(iconLeft);
+	    					break;
+	
+	    				case KeyEvent.KEY_LOCATION_RIGHT:
+	    					labelRightHand.setIcon(iconRight);
+	    					break;
+	
+	    				default:
+	    					labelRightHand.setIcon(iconRight);
+    						labelLeftHand.setIcon(iconLeft);	    				
+							break;
+	    			}
+                }
             }
         });
 
