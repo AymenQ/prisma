@@ -19,6 +19,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,6 +28,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -207,9 +209,10 @@ public class Main extends JFrame {
 		final JMenu menuPuzzle = new JMenu("Puzzle");
 		menuPuzzle.setMnemonic(KeyEvent.VK_P);
 		menuBar.add(menuPuzzle);
+		ButtonGroup puzzleGroup = new ButtonGroup();
 		
 		// menuItemRubiksPocketCube
-		final JMenuItem menuItemRubiksPocketCube = new JMenuItem("2x2x2 Cube");
+		final JRadioButtonMenuItem menuItemRubiksPocketCube = new JRadioButtonMenuItem("2x2x2 Cube");
 		menuItemRubiksPocketCube.setMnemonic(KeyEvent.VK_2);
 		menuItemRubiksPocketCube.setAccelerator(KeyStroke.getKeyStroke('2', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemRubiksPocketCube.addActionListener(new ActionListener() {
@@ -219,11 +222,13 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemRubiksPocketCube);		
-
+		puzzleGroup.add(menuItemRubiksPocketCube);
+		
 		// menuItemRubiksCube
-		final JMenuItem menuItemRubiksCube = new JMenuItem("Rubik's Cube");
+		final JRadioButtonMenuItem menuItemRubiksCube = new JRadioButtonMenuItem("Rubik's Cube");
 		menuItemRubiksCube.setMnemonic(KeyEvent.VK_R);
 		menuItemRubiksCube.setAccelerator(KeyStroke.getKeyStroke('3', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+		menuItemRubiksCube.setSelected(true);
 		menuItemRubiksCube.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -231,9 +236,10 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemRubiksCube);		
-
+		puzzleGroup.add(menuItemRubiksCube);
+		
 		// menuItemRubiksRevenge
-		final JMenuItem menuItemRubiksRevenge = new JMenuItem("4x4x4 Cube");
+		final JRadioButtonMenuItem menuItemRubiksRevenge = new JRadioButtonMenuItem("4x4x4 Cube");
 		menuItemRubiksRevenge.setMnemonic(KeyEvent.VK_4);
 		menuItemRubiksRevenge.setAccelerator(KeyStroke.getKeyStroke('4', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemRubiksRevenge.addActionListener(new ActionListener() {
@@ -243,9 +249,10 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemRubiksRevenge);		
-
+		puzzleGroup.add(menuItemRubiksRevenge);
+		
 		// menuItemProfessorsCube
-		final JMenuItem menuItemProfessorsCube = new JMenuItem("5x5x5 Cube");
+		final JRadioButtonMenuItem menuItemProfessorsCube = new JRadioButtonMenuItem("5x5x5 Cube");
 		menuItemProfessorsCube.setMnemonic(KeyEvent.VK_5);
 		menuItemProfessorsCube.setAccelerator(KeyStroke.getKeyStroke('5', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemProfessorsCube.addActionListener(new ActionListener() {
@@ -255,9 +262,10 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemProfessorsCube);		
-
+		puzzleGroup.add(menuItemProfessorsCube);
+		
 		// menuItemMegaminx
-		final JMenuItem menuItemMegaminx = new JMenuItem("Megaminx");
+		final JRadioButtonMenuItem menuItemMegaminx = new JRadioButtonMenuItem("Megaminx");
 		menuItemMegaminx.setMnemonic(KeyEvent.VK_M);
 		menuItemMegaminx.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));		
 		menuItemMegaminx.addActionListener(new ActionListener() {
@@ -267,9 +275,10 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemMegaminx);
+		puzzleGroup.add(menuItemMegaminx);
 		
 		// menuItemPyraminx
-		final JMenuItem menuItemPyraminx = new JMenuItem("Pyraminx");
+		final JRadioButtonMenuItem menuItemPyraminx = new JRadioButtonMenuItem("Pyraminx");
 		menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
 		menuItemPyraminx.setAccelerator(KeyStroke.getKeyStroke('P', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemPyraminx.addActionListener(new ActionListener() {
@@ -279,9 +288,10 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemPyraminx);		
+		puzzleGroup.add(menuItemPyraminx);
 		
 		// menuItemSquare1
-		final JMenuItem menuItemSquare1 = new JMenuItem("Square-1");
+		final JRadioButtonMenuItem menuItemSquare1 = new JRadioButtonMenuItem("Square-1");
 		menuItemSquare1.setMnemonic(KeyEvent.VK_S);
 		menuItemSquare1.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));		
 		menuItemSquare1.addActionListener(new ActionListener() {
@@ -291,7 +301,8 @@ public class Main extends JFrame {
 			}
 		});
 		menuPuzzle.add(menuItemSquare1);		
-
+		puzzleGroup.add(menuItemSquare1);
+		
 		// menuOptions
 		final JMenu menuOptions = new JMenu("Options");
 		menuOptions.setMnemonic(KeyEvent.VK_O);
@@ -301,11 +312,13 @@ public class Main extends JFrame {
 		final JMenu menuTimerTrigger = new JMenu("Timer trigger");
 		menuTimerTrigger.setMnemonic(KeyEvent.VK_T);
 		menuOptions.add(menuTimerTrigger);
-
+		ButtonGroup timerTriggerGroup = new ButtonGroup();
+		
 		// menuItemCtrlKeys
-		final JMenuItem menuItemCtrlKeys = new JMenuItem("Ctrl keys");
+		final JRadioButtonMenuItem menuItemCtrlKeys = new JRadioButtonMenuItem("Ctrl keys");
 		menuItemCtrlKeys.setMnemonic(KeyEvent.VK_C);
-		menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));		
+		menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+		menuItemCtrlKeys.setSelected(true);		
 		menuItemCtrlKeys.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -313,9 +326,10 @@ public class Main extends JFrame {
 			}
 		});
 		menuTimerTrigger.add(menuItemCtrlKeys);
-
+		timerTriggerGroup.add(menuItemCtrlKeys);
+		
 		// menuItemSpaceKey
-		final JMenuItem menuItemSpaceKey = new JMenuItem("Space key");
+		final JRadioButtonMenuItem menuItemSpaceKey = new JRadioButtonMenuItem("Space key");
 		menuItemSpaceKey.setMnemonic(KeyEvent.VK_S);
 		menuItemSpaceKey.setAccelerator(KeyStroke.getKeyStroke('S', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		menuItemSpaceKey.addActionListener(new ActionListener() {
@@ -325,7 +339,8 @@ public class Main extends JFrame {
 			}
 		});
 		menuTimerTrigger.add(menuItemSpaceKey);
-
+		timerTriggerGroup.add(menuItemSpaceKey);
+		
 		//menuHelp
 		final JMenu menuHelp = new JMenu("Help");
 		menuHelp.setMnemonic(KeyEvent.VK_H);
