@@ -3,6 +3,7 @@ package com.puzzletimer;
 import java.util.HashMap;
 
 import com.puzzletimer.geometry.Plane;
+import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.scrambles.MegaminxMove;
@@ -38,7 +39,22 @@ public class Megaminx implements Puzzle {
 	@Override
 	public Mesh getMesh(Scramble s)
 	{
-		Mesh mesh = Mesh.dodecahedron()
+		HSLColor[] colors = {
+			new HSLColor(200,  90,  50), // light blue
+			new HSLColor( 20, 100,  50), // orange
+			new HSLColor(  0,  85,  45), // red
+			new HSLColor( 30, 100,  30), // brown
+			new HSLColor(120, 100,  30), // green
+			new HSLColor(330,  90,  70), // pink
+			new HSLColor(275,  90,  50), // purple
+			new HSLColor(  0,   0, 100), // white
+			new HSLColor(130, 100,  50), // light green
+			new HSLColor( 55, 100,  50), // yellow
+			new HSLColor(180,  90,  50), // cyan
+			new HSLColor(235, 100,  30), // blue
+		};
+		
+		Mesh mesh = Mesh.dodecahedron(colors)
 			.shortenFaces(0.025);
 		
 		Plane[] planes = new Plane[mesh.faces.size()];

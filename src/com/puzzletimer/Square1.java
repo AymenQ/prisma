@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.puzzletimer.geometry.Plane;
+import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
@@ -28,6 +29,17 @@ public class Square1 implements Puzzle {
 	@Override
 	public Mesh getMesh(Scramble s)
 	{
+		HSLColor[] colors = {
+			new HSLColor( 55, 100,  50), // L - yellow
+			new HSLColor(  0,  85,  45), // B - red			
+			new HSLColor(120,  65,  40), // D - green
+			new HSLColor(235, 100,  30), // R - blue
+			new HSLColor( 25, 100,  50), // F - orange			
+			new HSLColor(  0,   0, 100), // U - white
+		};
+
+		Mesh cube = Mesh.cube(colors);
+		
 		Plane planeD = new Plane(
 			new Vector3(0, -0.166, 0),
 			new Vector3(0, -1, 0));
@@ -53,7 +65,7 @@ public class Square1 implements Puzzle {
 			Matrix33.rotationY(Math.PI / 12).mul(new Vector3(0, 0, 1)));
 
 
-		Mesh cube = Mesh.cube()
+		Mesh mesh = cube
 			.cut(planeD, 0.01)
 			.cut(planeU, 0.01)
 			.cut(planeR, 0.01)
@@ -64,11 +76,11 @@ public class Square1 implements Puzzle {
 			.softenFaces(0.015)
 			.softenFaces(0.005);
 
-		Mesh topLayer = cube.clip(planeU);
-		Mesh bottomLayer = cube.clip(planeD);
+		Mesh topLayer = mesh.clip(planeU);
+		Mesh bottomLayer = mesh.clip(planeD);
 
 		
-		Mesh bandagedCube = Mesh.cube()
+		Mesh bandagedMesh = cube
 			.cut(planeD, 0.01)
 			.cut(planeU, 0.01)
 			.cut(planeR, 0.01)
@@ -76,7 +88,7 @@ public class Square1 implements Puzzle {
 			.softenFaces(0.015)
 			.softenFaces(0.005);
 
-		Mesh middleLayer = bandagedCube
+		Mesh middleLayer = bandagedMesh
 	    	.clip(new Plane(planeU.p, planeU.n.neg()))
 	    	.clip(new Plane(planeD.p, planeD.n.neg()));
 		

@@ -179,7 +179,7 @@ public class Mesh {
 		return ys;
 	}
 	
-	public static Mesh cube() {
+	public static Mesh cube(HSLColor[] colors) {
 		ArrayList<Vector3> vertices = new ArrayList<Vector3>();
 		vertices.add(new Vector3(-0.5, -0.5, -0.5));
 		vertices.add(new Vector3(-0.5, -0.5,  0.5));
@@ -191,17 +191,17 @@ public class Mesh {
 		vertices.add(new Vector3( 0.5,  0.5,  0.5));
 
 		ArrayList<Face> faces = new ArrayList<Face>();
-		faces.add(new Face(toArrayList(new int[] { 0, 1, 3, 2 }), new HSLColor( 25, 100,  50))); // L - orange
-		faces.add(new Face(toArrayList(new int[] { 1, 5, 7, 3 }), new HSLColor(235, 100,  30))); // B - blue
-		faces.add(new Face(toArrayList(new int[] { 0, 4, 5, 1 }), new HSLColor( 55, 100,  50))); // D - yellow
-		faces.add(new Face(toArrayList(new int[] { 4, 6, 7, 5 }), new HSLColor(  0,  85,  45))); // R - red
-		faces.add(new Face(toArrayList(new int[] { 0, 2, 6, 4 }), new HSLColor(120,  65,  40))); // F - green
-		faces.add(new Face(toArrayList(new int[] { 2, 3, 7, 6 }), new HSLColor(  0,   0, 100))); // U - white
+		faces.add(new Face(toArrayList(new int[] { 0, 1, 3, 2 }), colors[0])); // L
+		faces.add(new Face(toArrayList(new int[] { 1, 5, 7, 3 }), colors[1])); // B
+		faces.add(new Face(toArrayList(new int[] { 0, 4, 5, 1 }), colors[2])); // D
+		faces.add(new Face(toArrayList(new int[] { 4, 6, 7, 5 }), colors[3])); // R
+		faces.add(new Face(toArrayList(new int[] { 0, 2, 6, 4 }), colors[4])); // F
+		faces.add(new Face(toArrayList(new int[] { 2, 3, 7, 6 }), colors[5])); // U
 
 		return new Mesh(vertices, faces);
 	}
 	
-	public static Mesh tetrahedron() {
+	public static Mesh tetrahedron(HSLColor[] colors) {
         double a = 1.5;
         double h = Math.sqrt(3d) / 2d * a;
         double h1 = 2d * Math.sqrt(2d) / 3d * h;
@@ -213,15 +213,15 @@ public class Mesh {
         vertices.add(new Vector3(     0d, 3d * h1 / 4d,          0d));
 
         ArrayList<Face> faces = new ArrayList<Face>();
-        faces.add(new Face(toArrayList(new int[] { 0, 1, 2 }), new HSLColor(235, 100,  30))); // blue
-        faces.add(new Face(toArrayList(new int[] { 0, 3, 1 }), new HSLColor(120,  65,  40))); // green
-        faces.add(new Face(toArrayList(new int[] { 0, 2, 3 }), new HSLColor( 55, 100,  50))); // yellow
-        faces.add(new Face(toArrayList(new int[] { 1, 3, 2 }), new HSLColor(  0,  85,  45))); // red
+        faces.add(new Face(toArrayList(new int[] { 0, 1, 2 }), colors[0]));
+        faces.add(new Face(toArrayList(new int[] { 0, 3, 1 }), colors[1]));
+        faces.add(new Face(toArrayList(new int[] { 0, 2, 3 }), colors[2]));
+        faces.add(new Face(toArrayList(new int[] { 1, 3, 2 }), colors[3]));
 
         return new Mesh(vertices, faces);
 	}
 	
-	public static Mesh dodecahedron() {
+	public static Mesh dodecahedron(HSLColor[] colors) {
         double a = 0.85d * 1d / Math.sqrt(3d);
         double b = 0.85d * Math.sqrt((3d - Math.sqrt(5d)) / 6d);
         double c = 0.85d * Math.sqrt((3d + Math.sqrt(5d)) / 6d);
@@ -313,20 +313,19 @@ public class Mesh {
         vertices.add(new Vector3(-b, -c,  0)); // 11
 
         ArrayList<Face> faces = new ArrayList<Face>();
-        faces.add(new Face(toArrayList(new int[] {  0,  1,  2,  3,  4 }), new HSLColor(  0, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] {  5,  6,  7,  8,  9 }), new HSLColor( 30, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 10, 11, 12, 13, 14 }), new HSLColor( 60, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 15, 16, 17, 18, 19 }), new HSLColor( 90, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 20, 21, 22, 23, 24 }), new HSLColor(120, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 25, 26, 27, 28, 29 }), new HSLColor(150, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 30, 31, 32, 33, 34 }), new HSLColor(180, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 35, 36, 37, 38, 39 }), new HSLColor(210, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 40, 41, 42, 43, 44 }), new HSLColor(240, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 45, 46, 47, 48, 49 }), new HSLColor(270, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 50, 51, 52, 53, 54 }), new HSLColor(300, 90, 50)));
-        faces.add(new Face(toArrayList(new int[] { 55, 56, 57, 58, 59 }), new HSLColor(330, 90, 50)));
+        faces.add(new Face(toArrayList(new int[] {  0,  1,  2,  3,  4 }), colors[ 0]));
+        faces.add(new Face(toArrayList(new int[] {  5,  6,  7,  8,  9 }), colors[ 1]));
+        faces.add(new Face(toArrayList(new int[] { 10, 11, 12, 13, 14 }), colors[ 2]));
+        faces.add(new Face(toArrayList(new int[] { 15, 16, 17, 18, 19 }), colors[ 3]));
+        faces.add(new Face(toArrayList(new int[] { 20, 21, 22, 23, 24 }), colors[ 4]));
+        faces.add(new Face(toArrayList(new int[] { 25, 26, 27, 28, 29 }), colors[ 5]));
+        faces.add(new Face(toArrayList(new int[] { 30, 31, 32, 33, 34 }), colors[ 6]));
+        faces.add(new Face(toArrayList(new int[] { 35, 36, 37, 38, 39 }), colors[ 7]));
+        faces.add(new Face(toArrayList(new int[] { 40, 41, 42, 43, 44 }), colors[ 8]));
+        faces.add(new Face(toArrayList(new int[] { 45, 46, 47, 48, 49 }), colors[ 9]));
+        faces.add(new Face(toArrayList(new int[] { 50, 51, 52, 53, 54 }), colors[10]));
+        faces.add(new Face(toArrayList(new int[] { 55, 56, 57, 58, 59 }), colors[11]));
 
         return new Mesh(vertices, faces);
 	}
-	
 }

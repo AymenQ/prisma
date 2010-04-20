@@ -3,12 +3,13 @@ package com.puzzletimer;
 import java.util.HashMap;
 
 import com.puzzletimer.geometry.Plane;
+import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
+import com.puzzletimer.scrambles.Move;
 import com.puzzletimer.scrambles.PyraminxMove;
 import com.puzzletimer.scrambles.PyraminxRandomScrambler;
 import com.puzzletimer.scrambles.Scramble;
-import com.puzzletimer.scrambles.Move;
 import com.puzzletimer.scrambles.Scrambler;
 
 public class Pyraminx implements Puzzle {
@@ -38,8 +39,14 @@ public class Pyraminx implements Puzzle {
 	@Override
 	public Mesh getMesh(Scramble s)
 	{
-		Mesh mesh = Mesh.tetrahedron()
-			.shortenFaces(0.1);
+		HSLColor[] colors = {
+			new HSLColor(235, 100,  30), // blue
+			new HSLColor(120, 100,  30), // green
+			new HSLColor( 55, 100,  50), // yellow
+			new HSLColor(  0,  85,  45), // red
+		};
+		
+		Mesh mesh = Mesh.tetrahedron(colors);
 		
         double h1 = Math.sqrt(8d) / 3d * (Math.sqrt(3d) / 2d * 1.5d);
 
@@ -52,30 +59,31 @@ public class Pyraminx implements Puzzle {
         Plane planeU = new Plane(plane1.p.sub(plane1.n.mul(h1 / 3d)), plane1.n.neg());
 
 		Plane plane2 = Plane.fromVectors(
-				mesh.vertices.get(mesh.faces.get(1).vertexIndices.get(0)),
-				mesh.vertices.get(mesh.faces.get(1).vertexIndices.get(1)),
-				mesh.vertices.get(mesh.faces.get(1).vertexIndices.get(2)));
+			mesh.vertices.get(mesh.faces.get(1).vertexIndices.get(0)),
+			mesh.vertices.get(mesh.faces.get(1).vertexIndices.get(1)),
+			mesh.vertices.get(mesh.faces.get(1).vertexIndices.get(2)));
         
         Plane planer = new Plane(plane2.p.sub(plane2.n.mul(2d * h1 / 3d)), plane2.n.neg());
         Plane planeR = new Plane(plane2.p.sub(plane2.n.mul(h1 / 3d)), plane2.n.neg());
 
 		Plane plane3 = Plane.fromVectors(
-				mesh.vertices.get(mesh.faces.get(2).vertexIndices.get(0)),
-				mesh.vertices.get(mesh.faces.get(2).vertexIndices.get(1)),
-				mesh.vertices.get(mesh.faces.get(2).vertexIndices.get(2)));
+			mesh.vertices.get(mesh.faces.get(2).vertexIndices.get(0)),
+			mesh.vertices.get(mesh.faces.get(2).vertexIndices.get(1)),
+			mesh.vertices.get(mesh.faces.get(2).vertexIndices.get(2)));
         
         Plane planel = new Plane(plane3.p.sub(plane3.n.mul(2d * h1 / 3d)), plane3.n.neg());
         Plane planeL = new Plane(plane3.p.sub(plane3.n.mul(h1 / 3d)), plane3.n.neg());
 
 		Plane plane4 = Plane.fromVectors(
-				mesh.vertices.get(mesh.faces.get(3).vertexIndices.get(0)),
-				mesh.vertices.get(mesh.faces.get(3).vertexIndices.get(1)),
-				mesh.vertices.get(mesh.faces.get(3).vertexIndices.get(2)));
+			mesh.vertices.get(mesh.faces.get(3).vertexIndices.get(0)),
+			mesh.vertices.get(mesh.faces.get(3).vertexIndices.get(1)),
+			mesh.vertices.get(mesh.faces.get(3).vertexIndices.get(2)));
         
         Plane planeb = new Plane(plane4.p.sub(plane4.n.mul(2d * h1 / 3d)), plane4.n.neg());
         Plane planeB = new Plane(plane4.p.sub(plane4.n.mul(h1 / 3d)), plane4.n.neg());
 
         mesh = mesh
+            .shortenFaces(0.08)        
             .cut(planeu, 0.05)
         	.cut(planeU, 0.05)            
             .cut(planer, 0.05)

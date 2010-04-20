@@ -3,6 +3,7 @@ package com.puzzletimer;
 import java.util.HashMap;
 
 import com.puzzletimer.geometry.Plane;
+import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
@@ -38,20 +39,31 @@ public class ProfessorsCube implements Puzzle {
 	@Override
 	public Mesh getMesh(Scramble s)
 	{
-		Plane planeL  = new Plane(new Vector3(-0.3, 0, 0), new Vector3(-1, 0, 0));
-		Plane planeLw = new Plane(new Vector3( -0.1, 0, 0), new Vector3(-1, 0, 0));		
-		Plane planeR  = new Plane(new Vector3( 0.3, 0, 0), new Vector3( 1, 0, 0));
-		Plane planeRw = new Plane(new Vector3(  0.1, 0, 0), new Vector3( 1, 0, 0));		
-		Plane planeD  = new Plane(new Vector3(0, -0.3, 0), new Vector3(0, -1, 0));
-		Plane planeDw = new Plane(new Vector3(0,  -0.1, 0), new Vector3(0, -1, 0));
-		Plane planeU  = new Plane(new Vector3(0,  0.3, 0), new Vector3(0,  1, 0));
-		Plane planeUw = new Plane(new Vector3(0,   0.1, 0), new Vector3(0,  1, 0));
-		Plane planeF  = new Plane(new Vector3(0, 0, -0.3), new Vector3(0, 0, -1));
-		Plane planeFw = new Plane(new Vector3(0, 0,  -0.1), new Vector3(0, 0, -1));
-		Plane planeB  = new Plane(new Vector3(0, 0,  0.3), new Vector3(0, 0,  1));
-		Plane planeBw = new Plane(new Vector3(0, 0,   0.1), new Vector3(0, 0,  1));
+		HSLColor[] colors = {
+			new HSLColor( 20, 100,  50), // L - orange
+			new HSLColor(235, 100,  30), // B - blue
+			new HSLColor( 55, 100,  50), // D - yellow
+			new HSLColor(  0,  85,  45), // R - red
+			new HSLColor(120, 100,  30), // F - green
+			new HSLColor(  0,   0, 100), // U - white
+		};
+
+		Mesh mesh = Mesh.cube(colors);
 		
-		Mesh cube = Mesh.cube()
+		Plane planeL  = new Plane(new Vector3(-0.3, 0, 0), new Vector3(-1, 0, 0));
+		Plane planeLw = new Plane(new Vector3(-0.1, 0, 0), new Vector3(-1, 0, 0));		
+		Plane planeR  = new Plane(new Vector3( 0.3, 0, 0), new Vector3( 1, 0, 0));
+		Plane planeRw = new Plane(new Vector3( 0.1, 0, 0), new Vector3( 1, 0, 0));		
+		Plane planeD  = new Plane(new Vector3(0, -0.3, 0), new Vector3(0, -1, 0));
+		Plane planeDw = new Plane(new Vector3(0, -0.1, 0), new Vector3(0, -1, 0));
+		Plane planeU  = new Plane(new Vector3(0,  0.3, 0), new Vector3(0,  1, 0));
+		Plane planeUw = new Plane(new Vector3(0,  0.1, 0), new Vector3(0,  1, 0));
+		Plane planeF  = new Plane(new Vector3(0, 0, -0.3), new Vector3(0, 0, -1));
+		Plane planeFw = new Plane(new Vector3(0, 0, -0.1), new Vector3(0, 0, -1));
+		Plane planeB  = new Plane(new Vector3(0, 0,  0.3), new Vector3(0, 0,  1));
+		Plane planeBw = new Plane(new Vector3(0, 0,  0.1), new Vector3(0, 0,  1));
+		
+		mesh = mesh
 			.cut(planeL,  0)
 			.cut(planeR,  0)
 			.cut(planeLw, 0)
@@ -65,7 +77,7 @@ public class ProfessorsCube implements Puzzle {
 			.cut(planeFw, 0)			
 			.cut(planeBw, 0)
 			.shortenFaces(0.02)
-			.softenFaces(0.0125)
+			.softenFaces(0.015)
 			.softenFaces(0.005);
 		
 		HashMap<Move, Twist> twists = new HashMap<Move, Twist>();
@@ -108,12 +120,12 @@ public class ProfessorsCube implements Puzzle {
 		
 		for (Move move : s.moves) {
 			Twist t = twists.get(move);
-			cube = cube.transformHalfspace(
+			mesh = mesh.transformHalfspace(
 				Matrix33.rotation(t.plane.n, t.angle),
 				t.plane);
 		}
 		
-		return cube 
+		return mesh 
 			.transform(Matrix33.rotationY(-Math.PI / 6))
 			.transform(Matrix33.rotationX(Math.PI / 7));
 	}
