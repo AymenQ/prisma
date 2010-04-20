@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import com.puzzletimer.Solution;
 
 public class StandardDeviation implements StatisticalMeasure {
-	@Override
-	public long getValue(ArrayList<Solution> solutions) {
+    @Override
+    public long getValue(ArrayList<Solution> solutions) {
         long average = new Average().getValue(solutions);
 
         long sum = 0;
@@ -16,5 +16,5 @@ public class StandardDeviation implements StatisticalMeasure {
         }
 
         return (long) Math.sqrt(sum / solutions.size());
-	}
+    }
 }

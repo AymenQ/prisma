@@ -6,5 +6,5 @@ import java.util.EventObject;
 public class TimerControllerEvent extends EventObject {
     public TimerControllerEvent(Object source) {
         super(source);
-	}
+    }
 }

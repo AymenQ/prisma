@@ -3,17 +3,17 @@ package com.puzzletimer.graphics;
 import java.awt.Color;
 
 public class HSLColor {
-	public int hue;
-	public int saturation;
-	public int luminance;
-	
-	public HSLColor(int hue, int saturation, int luminance) {
-		this.hue = hue;
-		this.saturation = saturation;
-		this.luminance = luminance;
-	}
+    public int hue;
+    public int saturation;
+    public int luminance;
+    
+    public HSLColor(int hue, int saturation, int luminance) {
+        this.hue = hue;
+        this.saturation = saturation;
+        this.luminance = luminance;
+    }
 
-	public Color toColor() {
+    public Color toColor() {
         float h = hue / 360f;
         float s = saturation / 100f;
         float l = luminance / 100f;
@@ -64,5 +64,5 @@ public class HSLColor {
             b = p;
 
         return new Color(r, g, b);
-	}
+    }
 }
