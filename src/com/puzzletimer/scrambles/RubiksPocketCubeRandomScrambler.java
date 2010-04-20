@@ -5,12 +5,12 @@ import java.util.Random;
 public class RubiksPocketCubeRandomScrambler implements Scrambler {
     private int scrambleLength;
     private Random random;
-    
+
     public RubiksPocketCubeRandomScrambler(int scrambleLength) {
         this.scrambleLength = scrambleLength;
         this.random = new Random();
     }
-    
+
     public Scramble getNextScramble() {
         ArrayList<Move> scramble = new ArrayList<Move>();
         Move[] moves = {
@@ -18,18 +18,18 @@ public class RubiksPocketCubeRandomScrambler implements Scrambler {
             RubiksPocketCubeMove.R,
             RubiksPocketCubeMove.R2,
             RubiksPocketCubeMove.R3,
-            
+
             // Y axis
             RubiksPocketCubeMove.U,
             RubiksPocketCubeMove.U2,
             RubiksPocketCubeMove.U3,
-            
+
             // Z axis
             RubiksPocketCubeMove.F,
             RubiksPocketCubeMove.F2,
             RubiksPocketCubeMove.F3,
         };
-        
+
         int last = -1;
         for (int i = 0; i < scrambleLength; i++)
         {
@@ -41,7 +41,7 @@ public class RubiksPocketCubeRandomScrambler implements Scrambler {
 
             scramble.add(moves[3 * axis + random.nextInt(3)]);
         }
-        
+
         return new Scramble(scramble);
     }
 }

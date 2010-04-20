@@ -15,31 +15,31 @@ import com.puzzletimer.scrambles.Square1RandomScrambler;
 
 public class Square1 implements Puzzle {
     private Scrambler scrambler;
-    
+
     public Square1() {
-        scrambler = new Square1RandomScrambler(20); 
+        scrambler = new Square1RandomScrambler(20);
     }
-    
+
     @Override
     public Scrambler getScrambler()
     {
-        return scrambler; 
+        return scrambler;
     }
-        
+
     @Override
     public Mesh getMesh(Scramble s)
     {
         HSLColor[] colors = {
             new HSLColor( 55, 100,  50), // L - yellow
-            new HSLColor(  0,  85,  45), // B - red         
+            new HSLColor(  0,  85,  45), // B - red
             new HSLColor(120,  65,  40), // D - green
             new HSLColor(235, 100,  30), // R - blue
-            new HSLColor( 25, 100,  50), // F - orange          
+            new HSLColor( 25, 100,  50), // F - orange
             new HSLColor(  0,   0, 100), // U - white
         };
 
         Mesh cube = Mesh.cube(colors);
-        
+
         Plane planeD = new Plane(
             new Vector3(0, -0.166, 0),
             new Vector3(0, -1, 0));
@@ -47,7 +47,7 @@ public class Square1 implements Puzzle {
         Plane planeU = new Plane(
             new Vector3(0,  0.166, 0),
             new Vector3(0,  1, 0));
-        
+
         Plane planeR = new Plane(
             new Vector3(0, 0, 0),
             Matrix33.rotationY(-Math.PI / 12).mul(new Vector3(1, 0, 0)));
@@ -79,7 +79,7 @@ public class Square1 implements Puzzle {
         Mesh topLayer = mesh.clip(planeU);
         Mesh bottomLayer = mesh.clip(planeD);
 
-        
+
         Mesh bandagedMesh = cube
             .cut(planeD, 0.01)
             .cut(planeU, 0.01)
@@ -91,7 +91,7 @@ public class Square1 implements Puzzle {
         Mesh middleLayer = bandagedMesh
             .clip(new Plane(planeU.p, planeU.n.neg()))
             .clip(new Plane(planeD.p, planeD.n.neg()));
-        
+
 
         cube = topLayer.union(middleLayer).union(bottomLayer);
 
@@ -101,7 +101,7 @@ public class Square1 implements Puzzle {
         for (Move m : s.moves) {
             Matcher matcher = p.matcher(m.toString());
             matcher.find();
-            
+
             int top = Integer.parseInt(matcher.group(1));
             cube = cube.transformHalfspace(
                 Matrix33.rotation(planeU.n, top * Math.PI / 6),
@@ -116,8 +116,8 @@ public class Square1 implements Puzzle {
                     Matrix33.rotation(planeR.n, Math.PI),
                     planeR);
         }
-        
-        return cube 
+
+        return cube
             .transform(Matrix33.rotationY(-Math.PI / 6))
             .transform(Matrix33.rotationX(Math.PI / 7));
     }

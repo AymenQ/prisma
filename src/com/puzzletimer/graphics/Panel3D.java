@@ -26,10 +26,10 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
     public Vector3 viewerPosition;
     public Vector3 cameraPosition;
     public Vector3 cameraRotation;
-    
+
     private int lastX;
     private int lastY;
-    
+
     public Panel3D()
     {
         mesh = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
@@ -37,10 +37,10 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
         viewerPosition = new Vector3(0d, 0d, -325d);
         cameraPosition = new Vector3(0d, 0d, -3d);
         cameraRotation = new Vector3(0d, 0d, 0d);
-        
+
         lastX = 0;
         lastY = 0;
-        
+
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
@@ -52,7 +52,7 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
                Matrix33.rotationZ(-cameraRotation.z).mul(
                v.sub(cameraPosition))));
     }
-    
+
     private Vector3 perspectiveProjection(Vector3 v) {
         return new Vector3(
             (getWidth() / 2d) + (-v.x - viewerPosition.x) * (viewerPosition.z / v.z),
@@ -63,7 +63,7 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
     private Vector3 triangleNormal(Vector3 v1, Vector3 v2, Vector3 v3) {
         return v2.sub(v1).cross(v3.sub(v1)).normalized();
     }
-    
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -77,7 +77,7 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
         for (Vector3 v : mesh.vertices) {
             pVertices.add(perspectiveProjection(toCameraCoordinates(v)));
         }
-        
+
         // separate front from back facing polygons
         ArrayList<Face> frontFaces = new ArrayList<Face>();
         ArrayList<Face> backFaces = new ArrayList<Face>();
@@ -86,7 +86,7 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
                 pVertices.get(f.vertexIndices.get(0)),
                 pVertices.get(f.vertexIndices.get(1)),
                 pVertices.get(f.vertexIndices.get(2)));
-            
+
             if (n.z >= 0d) {
                 frontFaces.add(f);
             } else {
@@ -103,12 +103,12 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
                         (int) pVertices.get(i).x,
                         (int) pVertices.get(i).y);
             }
-            
+
             g2.fillPolygon(p);
         }
-        
+
         // draw frontfacing polygons
-        
+
         // painter's algorithm
         Collections.sort(frontFaces, new Comparator<Face>() {
             @Override
@@ -128,7 +128,7 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
                 return centroidZ1 > centroidZ2 ? -1 : 1;
             }
         });
-        
+
         for (Face f : frontFaces) {
             Polygon p = new Polygon();
             for (int i : f.vertexIndices) {
@@ -151,7 +151,7 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
                 (int) ((0.8 + 0.2 * light) * (int) f.color.luminance));
             g2.setColor(fillColor.toColor());
             g2.fillPolygon(p);
-            
+
             // draw outline
             HSLColor outlineColor = new HSLColor(
                 fillColor.hue,

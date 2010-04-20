@@ -6,7 +6,7 @@ import com.puzzletimer.timer.Timer;
 public class Solution {
     private Scramble scramble;
     private Timer timer;
-    
+
     public Solution(Scramble scramble, Timer timer) {
         this.scramble = scramble;
         this.timer = timer;

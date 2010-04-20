@@ -9,7 +9,7 @@ public class Matrix33 {
 
     public Matrix33 mul(Matrix33 m) {
         double[][] vals = new double[3][3];
-        
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 vals[i][j] = 0d;
@@ -18,7 +18,7 @@ public class Matrix33 {
                 }
             }
         }
-        
+
         return new Matrix33(vals);
     }
 
@@ -60,7 +60,7 @@ public class Matrix33 {
         double x = v.x;
         double y = v.y;
         double z = v.z;
-        
+
         return new Matrix33(new double[][] {
             new double[] { 1d + (1d - c) * (x * x - 1d),    -z * s + (1d - c) * x * y,     y * s + (1d - c) * x * z },
             new double[] {     z * s + (1d - c) * x * y, 1d + (1d - c) * (y * y - 1d),    -x * s + (1d - c) * y * z },

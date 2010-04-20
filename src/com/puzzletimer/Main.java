@@ -54,7 +54,7 @@ public class Main extends JFrame {
     public Main() {
         state = new State(new RubiksCube());
         timerTriggerKey = KeyEvent.VK_CONTROL;
-            
+
         createComponents();
 
         // timerController
@@ -64,7 +64,7 @@ public class Main extends JFrame {
             public void timerStarted(TimerControllerEvent event) {
                 state.startCurrentSolution();
             }
-            
+
             @Override
             public void timerStopped(TimerControllerEvent event) {
                 state.stopCurrentSolution();
@@ -89,9 +89,9 @@ public class Main extends JFrame {
                             timerController.pressRightButton();
                             break;
                     }
-                }               
+                }
             }
-            
+
             @Override
             public void keyReleased(KeyEvent event) {
                 if (event.getKeyCode() == timerTriggerKey) {
@@ -99,11 +99,11 @@ public class Main extends JFrame {
                         case KeyEvent.KEY_LOCATION_LEFT:
                             timerController.releaseLeftButton();
                             break;
-    
+
                         case KeyEvent.KEY_LOCATION_RIGHT:
                             timerController.releaseRightButton();
                             break;
-    
+
                         default:
                             timerController.releaseLeftButton();
                             timerController.releaseRightButton();
@@ -112,10 +112,10 @@ public class Main extends JFrame {
                 }
             }
         });
-        
+
         state.addStateObserver(new StateObserver() {
             private java.util.Timer repeater;
-            
+
             public void onSolutionBegin(final Solution solution) {
                 repeater = new java.util.Timer();
                 repeater.schedule(new java.util.TimerTask() {
@@ -125,14 +125,14 @@ public class Main extends JFrame {
                     }
                 }, 0, 5);
             }
-            
+
             public void onSolutionEnd(Solution solution) {
                 repeater.cancel();
                 labelTime.setText(formatTime(solution.getTimer().getDiff()));
-                timerController.reset();                
+                timerController.reset();
             }
         });
-        
+
         state.notifyScrambleObservers();
     }
 
@@ -141,7 +141,7 @@ public class Main extends JFrame {
         setMinimumSize(new Dimension(800, 600));
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puzzletimer/resources/icon.png")));
         setTitle("Puzzle Timer");
-        
+
         // menu
         setJMenuBar(createMenuBar());
 
@@ -159,22 +159,22 @@ public class Main extends JFrame {
             @Override
             public void updateScramble(Puzzle puzzle, Scramble scramble) {
                 panelScramble.removeAll();
-                
+
                 for (Move m : scramble.moves) {
                     JLabel label = new JLabel(m.toString());
                     label.setFont(new Font("Arial", Font.PLAIN, 18));
                     panelScramble.add(label);
                 }
-                
+
                 panelScramble.revalidate();
                 panelScramble.repaint();
-            }           
+            }
         });
         panelMain.add(panelScramble, "1, 1, 3, 1");
-        
+
         // timer panel
         panelMain.add(createTimerPanel(), "1, 2, 3, 2");
-        
+
         // times panel
         panelMain.add(createTimesPanel(), "1, 4");
 
@@ -188,12 +188,12 @@ public class Main extends JFrame {
     private JMenuBar createMenuBar() {
         // menuBar
         JMenuBar menuBar = new JMenuBar();
-        
+
         // menuFile
         final JMenu menuFile = new JMenu("File");
         menuFile.setMnemonic(KeyEvent.VK_F);
         menuBar.add(menuFile);
-        
+
         // menuItemExit
         final JMenuItem menuItemExit = new JMenuItem("Exit");
         menuItemExit.setMnemonic(KeyEvent.VK_X);
@@ -203,14 +203,14 @@ public class Main extends JFrame {
                 System.exit(0);
             }
         });
-        menuFile.add(menuItemExit);     
+        menuFile.add(menuItemExit);
 
         // menuPuzzle
         final JMenu menuPuzzle = new JMenu("Puzzle");
         menuPuzzle.setMnemonic(KeyEvent.VK_P);
         menuBar.add(menuPuzzle);
         ButtonGroup puzzleGroup = new ButtonGroup();
-        
+
         // menuItemRubiksPocketCube
         final JRadioButtonMenuItem menuItemRubiksPocketCube = new JRadioButtonMenuItem("2x2x2 Cube");
         menuItemRubiksPocketCube.setMnemonic(KeyEvent.VK_2);
@@ -221,9 +221,9 @@ public class Main extends JFrame {
                 state.setPuzzle(new RubiksPocketCube());
             }
         });
-        menuPuzzle.add(menuItemRubiksPocketCube);       
+        menuPuzzle.add(menuItemRubiksPocketCube);
         puzzleGroup.add(menuItemRubiksPocketCube);
-        
+
         // menuItemRubiksCube
         final JRadioButtonMenuItem menuItemRubiksCube = new JRadioButtonMenuItem("Rubik's Cube");
         menuItemRubiksCube.setMnemonic(KeyEvent.VK_R);
@@ -235,9 +235,9 @@ public class Main extends JFrame {
                 state.setPuzzle(new RubiksCube());
             }
         });
-        menuPuzzle.add(menuItemRubiksCube);     
+        menuPuzzle.add(menuItemRubiksCube);
         puzzleGroup.add(menuItemRubiksCube);
-        
+
         // menuItemRubiksRevenge
         final JRadioButtonMenuItem menuItemRubiksRevenge = new JRadioButtonMenuItem("4x4x4 Cube");
         menuItemRubiksRevenge.setMnemonic(KeyEvent.VK_4);
@@ -248,9 +248,9 @@ public class Main extends JFrame {
                 state.setPuzzle(new RubiksRevenge());
             }
         });
-        menuPuzzle.add(menuItemRubiksRevenge);      
+        menuPuzzle.add(menuItemRubiksRevenge);
         puzzleGroup.add(menuItemRubiksRevenge);
-        
+
         // menuItemProfessorsCube
         final JRadioButtonMenuItem menuItemProfessorsCube = new JRadioButtonMenuItem("5x5x5 Cube");
         menuItemProfessorsCube.setMnemonic(KeyEvent.VK_5);
@@ -261,13 +261,13 @@ public class Main extends JFrame {
                 state.setPuzzle(new ProfessorsCube());
             }
         });
-        menuPuzzle.add(menuItemProfessorsCube);     
+        menuPuzzle.add(menuItemProfessorsCube);
         puzzleGroup.add(menuItemProfessorsCube);
-        
+
         // menuItemMegaminx
         final JRadioButtonMenuItem menuItemMegaminx = new JRadioButtonMenuItem("Megaminx");
         menuItemMegaminx.setMnemonic(KeyEvent.VK_M);
-        menuItemMegaminx.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));      
+        menuItemMegaminx.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         menuItemMegaminx.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -276,7 +276,7 @@ public class Main extends JFrame {
         });
         menuPuzzle.add(menuItemMegaminx);
         puzzleGroup.add(menuItemMegaminx);
-        
+
         // menuItemPyraminx
         final JRadioButtonMenuItem menuItemPyraminx = new JRadioButtonMenuItem("Pyraminx");
         menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
@@ -287,38 +287,38 @@ public class Main extends JFrame {
                 state.setPuzzle(new Pyraminx());
             }
         });
-        menuPuzzle.add(menuItemPyraminx);       
+        menuPuzzle.add(menuItemPyraminx);
         puzzleGroup.add(menuItemPyraminx);
-        
+
         // menuItemSquare1
         final JRadioButtonMenuItem menuItemSquare1 = new JRadioButtonMenuItem("Square-1");
         menuItemSquare1.setMnemonic(KeyEvent.VK_S);
-        menuItemSquare1.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));       
+        menuItemSquare1.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         menuItemSquare1.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 state.setPuzzle(new Square1());
             }
         });
-        menuPuzzle.add(menuItemSquare1);        
+        menuPuzzle.add(menuItemSquare1);
         puzzleGroup.add(menuItemSquare1);
-        
+
         // menuOptions
         final JMenu menuOptions = new JMenu("Options");
         menuOptions.setMnemonic(KeyEvent.VK_O);
         menuBar.add(menuOptions);
-        
+
         // menuTimerTrigger
         final JMenu menuTimerTrigger = new JMenu("Timer trigger");
         menuTimerTrigger.setMnemonic(KeyEvent.VK_T);
         menuOptions.add(menuTimerTrigger);
         ButtonGroup timerTriggerGroup = new ButtonGroup();
-        
+
         // menuItemCtrlKeys
         final JRadioButtonMenuItem menuItemCtrlKeys = new JRadioButtonMenuItem("Ctrl keys");
         menuItemCtrlKeys.setMnemonic(KeyEvent.VK_C);
         menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemCtrlKeys.setSelected(true);     
+        menuItemCtrlKeys.setSelected(true);
         menuItemCtrlKeys.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -327,7 +327,7 @@ public class Main extends JFrame {
         });
         menuTimerTrigger.add(menuItemCtrlKeys);
         timerTriggerGroup.add(menuItemCtrlKeys);
-        
+
         // menuItemSpaceKey
         final JRadioButtonMenuItem menuItemSpaceKey = new JRadioButtonMenuItem("Space key");
         menuItemSpaceKey.setMnemonic(KeyEvent.VK_S);
@@ -340,12 +340,12 @@ public class Main extends JFrame {
         });
         menuTimerTrigger.add(menuItemSpaceKey);
         timerTriggerGroup.add(menuItemSpaceKey);
-        
+
         //menuHelp
         final JMenu menuHelp = new JMenu("Help");
         menuHelp.setMnemonic(KeyEvent.VK_H);
         menuBar.add(menuHelp);
-        
+
         // menuItemAbout
         final JMenuItem menuItemAbout = new JMenuItem("About...");
         final JFrame frame = this;
@@ -357,22 +357,22 @@ public class Main extends JFrame {
             }
         });
         menuHelp.add(menuItemAbout);
-        
+
         return menuBar;
     }
-    
+
     private JPanel createTimerPanel() {
         final ImageIcon iconLeft = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/left.png"));
         final ImageIcon iconRight = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/right.png"));
         final ImageIcon iconLeftPressed = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/leftPressed.png"));
         final ImageIcon iconRightPressed = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/rightPressed.png"));
-        
+
         // panelTime
         JPanel panelTimer = new JPanel(new TableLayout(new double[][] {
             { 0.35, TableLayout.PREFERRED, 0.15, TableLayout.PREFERRED, 0.15, TableLayout.PREFERRED, 0.35 },
             { TableLayout.FILL },
         }));
-        
+
         // labelLeftHand
         final JLabel labelLeftHand = new JLabel(iconLeft);
         panelTimer.add(labelLeftHand, "1, 0");
@@ -404,9 +404,9 @@ public class Main extends JFrame {
                             labelRightHand.setIcon(iconRightPressed);
                             break;
                     }
-                }               
+                }
             }
-            
+
             @Override
             public void keyReleased(KeyEvent event) {
                 if (event.getKeyCode() == timerTriggerKey) {
@@ -414,14 +414,14 @@ public class Main extends JFrame {
                         case KeyEvent.KEY_LOCATION_LEFT:
                             labelLeftHand.setIcon(iconLeft);
                             break;
-    
+
                         case KeyEvent.KEY_LOCATION_RIGHT:
                             labelRightHand.setIcon(iconRight);
                             break;
-    
+
                         default:
                             labelRightHand.setIcon(iconRight);
-                            labelLeftHand.setIcon(iconLeft);                        
+                            labelLeftHand.setIcon(iconLeft);
                             break;
                     }
                 }
@@ -430,7 +430,7 @@ public class Main extends JFrame {
 
         return panelTimer;
     }
-    
+
     private JScrollPane createTimesPanel() {
         final JScrollPane scrollPane = new JScrollPane();
         scrollPane.setPreferredSize(new Dimension(200, 200));
@@ -454,7 +454,7 @@ public class Main extends JFrame {
                     c.gridx = 0;
                     c.insets = new Insets(0, 0, 0, 8);
                     panelTimes.add(labelIndex, c);
-            
+
                     JLabel labelTime = new JLabel(formatTime(solutions.get(i).getTimer().getDiff()));
                     labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                     c.gridx = 2;
@@ -463,7 +463,7 @@ public class Main extends JFrame {
 
                     final int index = i;
                     JLabel labelX = new JLabel();
-                    labelX.setIcon(new ImageIcon(getClass().getResource("/com/puzzletimer/resources/x.png")));                  
+                    labelX.setIcon(new ImageIcon(getClass().getResource("/com/puzzletimer/resources/x.png")));
                     labelX.setCursor(new Cursor(Cursor.HAND_CURSOR));
                     labelX.addMouseListener(new MouseAdapter() {
                         @Override
@@ -479,7 +479,7 @@ public class Main extends JFrame {
                 scrollPane.setViewportView(panelTimes);
             }
         });
-        
+
         return scrollPane;
     }
 
@@ -492,7 +492,7 @@ public class Main extends JFrame {
             { f, p, 1, p, 1, p, 6, p, 1, p, 1, p, 1, p, 6, p, 1, p, 1, p, 1, p, f },
         }));
         panelStatistics.setBorder(BorderFactory.createTitledBorder("Statistics"));
-        
+
         // labelAverage
         JLabel labelAverage = new JLabel("Average:");
         labelAverage.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -506,16 +506,16 @@ public class Main extends JFrame {
         JLabel labelStandardDeviation = new JLabel("Standard Deviation:");
         labelStandardDeviation.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelStandardDeviation, "1, 3, R, C");
-        
+
         // labelStandardDeviationValue
         final JLabel labelStandardDeviationValue = new JLabel("XX:XX.XX");
         panelStatistics.add(labelStandardDeviationValue, "3, 3, L, C");
-        
+
         // labelBestTime
         JLabel labelBestTime = new JLabel("Best Time:");
         labelBestTime.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelBestTime, "1, 5, R, C");
-        
+
         // labelBestTimeValue
         final JLabel labelBestTimeValue = new JLabel("XX:XX.XX");
         panelStatistics.add(labelBestTimeValue, "3, 5, L, C");
@@ -524,72 +524,72 @@ public class Main extends JFrame {
         JLabel labelAverageLast3 = new JLabel("Average (Last 3):");
         labelAverageLast3.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelAverageLast3, "1, 7, R, C");
-        
+
         // labelAverageLast3Value
         final JLabel labelAverageLast3Value = new JLabel("XX:XX.XX");
         labelAverageLast3Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelAverageLast3Value, "3, 7, L, C");
-        
+
         // labelTrimmedAverageLast5
         JLabel labelTrimmedAverageLast5 = new JLabel("Trimmed Average (Last 5):");
         labelTrimmedAverageLast5.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelTrimmedAverageLast5, "1, 9, R, C");
-        
+
         // labelTrimmedAverageLast5Value
         final JLabel labelTrimmedAverageLast5Value = new JLabel("XX:XX.XX");
         labelTrimmedAverageLast5Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelTrimmedAverageLast5Value, "3, 9, L, C");
-        
+
         // labelStandardDeviationLast3
         JLabel labelStandardDeviationLast3 = new JLabel("Standard Deviation (Last 3):");
         labelStandardDeviationLast3.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelStandardDeviationLast3, "1, 11, R, C");
-        
+
         // labelStandardDeviationLast3Value
         final JLabel labelStandardDeviationLast3Value = new JLabel("XX:XX.XX");
         labelStandardDeviationLast3Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelStandardDeviationLast3Value, "3, 11, L, C");
-        
+
         // labelBestTimeLast3
         JLabel labelBestTimeLast3 = new JLabel("Best Time (Last 3):");
         labelBestTimeLast3.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelBestTimeLast3, "1, 13, R, C");
-                
+
         // labelBestTimeLast3Value
         final JLabel labelBestTimeLast3Value = new JLabel("XX:XX.XX");
         labelBestTimeLast3Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelBestTimeLast3Value, "3, 13, L, C");
-        
+
         // labelAverageLast10
         JLabel labelAverageLast10 = new JLabel("Average (Last 10):");
         labelAverageLast10.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelAverageLast10, "1, 15, R, C");
-        
+
         // labelAverageLast10Value
         final JLabel labelAverageLast10Value = new JLabel("XX:XX.XX");
         labelAverageLast10Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelAverageLast10Value, "3, 15, L, C");
-        
+
         // labelTrimmedAverageLast12
         JLabel labelTrimmedAverageLast12 = new JLabel("Trimmed Average (Last 12):");
         labelTrimmedAverageLast12.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelTrimmedAverageLast12, "1, 17, R, C");
-        
+
         // labelTrimmedAverageLast12Value
         final JLabel labelTrimmedAverageLast12Value = new JLabel("XX:XX.XX");
         labelTrimmedAverageLast12Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelTrimmedAverageLast12Value, "3, 17, L, C");
-        
+
         // labelStandardDeviationLast10
         JLabel labelStandardDeviationLast10 = new JLabel("Standard Deviation (Last 10):");
         labelStandardDeviationLast10.setFont(new Font("Tahoma", Font.BOLD, 11));
         panelStatistics.add(labelStandardDeviationLast10, "1, 19, R, C");
-        
+
         // labelStandardDeviationLast10Value
         final JLabel labelStandardDeviationLast10Value = new JLabel("XX:XX.XX");
         labelStandardDeviationLast10Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelStandardDeviationLast10Value, "3, 19, L, C");
-        
+
         // labelBestTimeLast10
         JLabel labelBestTimeLast10 = new JLabel("Best Time (Last 10):");
         labelBestTimeLast10.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -612,7 +612,7 @@ public class Main extends JFrame {
                     labelStandardDeviationValue.setText("XX:XX.XX");
                     labelBestTimeValue.setText("XX:XX.XX");
                 }
-                
+
                 if (solutions.size() >= 3) {
                     ArrayList<Solution> last3Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 3, solutions.size()));
                     labelAverageLast3Value.setText(formatTime(new Average().getValue(last3Solutions)));
@@ -623,14 +623,14 @@ public class Main extends JFrame {
                     labelStandardDeviationLast3Value.setText("XX:XX.XX");
                     labelBestTimeLast3Value.setText("XX:XX.XX");
                 }
-                
+
                 if (solutions.size() >= 5) {
                     ArrayList<Solution> last5Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 5, solutions.size()));
                     labelTrimmedAverageLast5Value.setText((formatTime(new TrimmedAverage().getValue(last5Solutions))));
                 } else {
                     labelTrimmedAverageLast5Value.setText("XX:XX.XX");
                 }
-                
+
                 if (solutions.size() >= 10) {
                     ArrayList<Solution> last10Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 10, solutions.size()));
                     labelAverageLast10Value.setText(formatTime(new Average().getValue(last10Solutions)));
@@ -641,7 +641,7 @@ public class Main extends JFrame {
                     labelStandardDeviationLast10Value.setText("XX:XX.XX");
                     labelBestTimeLast10Value.setText("XX:XX.XX");
                 }
-                
+
                 if (solutions.size() >= 12) {
                     ArrayList<Solution> last12Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 12, solutions.size()));
                     labelTrimmedAverageLast12Value.setText((formatTime(new TrimmedAverage().getValue(last12Solutions))));
@@ -653,7 +653,7 @@ public class Main extends JFrame {
 
         return panelStatistics;
     }
-    
+
     private JPanel createScramblePanel() {
         // panelScramble
         JPanel panelScramble = new JPanel();
@@ -669,7 +669,7 @@ public class Main extends JFrame {
         panel3D.setPreferredSize(new Dimension(200, 180));
         panel3D.setFocusable(false);
         panelScramble.add(panel3D, "0, 0");
-        
+
         state.addStateObserver(new StateObserver() {
             @Override
             public void updateScramble(Puzzle puzzle, Scramble scramble) {
@@ -680,7 +680,7 @@ public class Main extends JFrame {
 
         return panelScramble;
     }
-    
+
     private String formatTime(long time) {
         long minutes = time / 60000;
         long seconds = (time % 60000) / 1000;

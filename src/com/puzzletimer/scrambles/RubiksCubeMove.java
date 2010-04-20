@@ -10,13 +10,13 @@ public enum RubiksCubeMove implements Move {
     L("L"), L2("L2"), L3("L'"),
     U("U"), U2("U2"), U3("U'"),
     D("D"), D2("D2"), D3("D'");
-    
+
     private String description;
-    
+
     private RubiksCubeMove(String description) {
         this.description = description;
     }
-    
+
     @Override
     public String toString() {
         return description;

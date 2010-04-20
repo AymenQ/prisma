@@ -14,22 +14,22 @@ import com.puzzletimer.scrambles.Scrambler;
 
 public class Megaminx implements Puzzle {
     private Scrambler scrambler;
-    
+
     public Megaminx()
     {
-        scrambler = new MegaminxRandomScrambler(); 
+        scrambler = new MegaminxRandomScrambler();
     }
-    
+
     @Override
     public Scrambler getScrambler()
     {
-        return scrambler; 
+        return scrambler;
     }
-    
+
     private static class Twist {
         public Plane plane;
         public double angle;
-        
+
         public Twist(Plane plane, double angle) {
             this.plane = plane;
             this.angle = angle;
@@ -53,10 +53,10 @@ public class Megaminx implements Puzzle {
             new HSLColor(180,  90,  50), // cyan
             new HSLColor(235, 100,  30), // blue
         };
-        
+
         Mesh mesh = Mesh.dodecahedron(colors)
             .shortenFaces(0.025);
-        
+
         Plane[] planes = new Plane[mesh.faces.size()];
         for (int i = 0; i < mesh.faces.size(); i++) {
             Plane p = Plane.fromVectors(
@@ -65,7 +65,7 @@ public class Megaminx implements Puzzle {
                     mesh.vertices.get(mesh.faces.get(i).vertexIndices.get(2)));
             planes[i] = new Plane(p.p.sub(p.n.mul(0.25)), p.n);
         }
-        
+
         for (Plane plane : planes) {
             mesh = mesh.cut(plane, 0.03);
         }

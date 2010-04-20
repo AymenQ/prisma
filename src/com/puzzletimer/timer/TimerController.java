@@ -20,7 +20,7 @@ public class TimerController {
         leftPressed = false;
         rightPressed = false;
     }
-    
+
     public void pressLeftButton() {
         pressButton(true);
     }

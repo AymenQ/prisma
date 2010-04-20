@@ -32,7 +32,7 @@ public class State {
             observer.updateSolutions(this.solutions);
         }
     }
-    
+
     public void setPuzzle(Puzzle puzzle) {
         if (this.currentSolution.getTimer().isRunning()) {
             this.currentSolution.getTimer().stop();
@@ -40,23 +40,23 @@ public class State {
                 observer.onSolutionEnd(this.currentSolution);
             }
         }
-        
+
         this.puzzle = puzzle;
 
         this.solutions = new ArrayList<Solution>();
         notifySolutionsObservers();
-        
+
         this.currentSolution = new Solution(this.puzzle.getScrambler().getNextScramble(), new Timer());
         notifyScrambleObservers();
     }
-    
+
     public void startCurrentSolution() {
         this.currentSolution.getTimer().start();
         for (StateObserver observer : this.observers) {
             observer.onSolutionBegin(this.currentSolution);
         }
     }
-    
+
     public void stopCurrentSolution() {
         this.currentSolution.getTimer().stop();
         for (StateObserver observer : this.observers) {

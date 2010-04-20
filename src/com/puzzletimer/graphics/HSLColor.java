@@ -6,7 +6,7 @@ public class HSLColor {
     public int hue;
     public int saturation;
     public int luminance;
-    
+
     public HSLColor(int hue, int saturation, int luminance) {
         this.hue = hue;
         this.saturation = saturation;

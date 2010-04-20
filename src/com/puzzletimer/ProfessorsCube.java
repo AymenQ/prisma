@@ -15,27 +15,27 @@ import com.puzzletimer.scrambles.Scrambler;
 
 public class ProfessorsCube implements Puzzle {
     private Scrambler scrambler;
-    
+
     public ProfessorsCube() {
-        scrambler = new ProfessorsCubeRandomScrambler(60); 
+        scrambler = new ProfessorsCubeRandomScrambler(60);
     }
-    
+
     @Override
     public Scrambler getScrambler()
     {
-        return scrambler; 
+        return scrambler;
     }
-        
+
     private class Twist {
         public Plane plane;
         public double angle;
-        
+
         public Twist(Plane plane, double angle) {
             this.plane = plane;
             this.angle = angle;
         }
     }
-    
+
     @Override
     public Mesh getMesh(Scramble s)
     {
@@ -49,11 +49,11 @@ public class ProfessorsCube implements Puzzle {
         };
 
         Mesh mesh = Mesh.cube(colors);
-        
+
         Plane planeL  = new Plane(new Vector3(-0.3, 0, 0), new Vector3(-1, 0, 0));
-        Plane planeLw = new Plane(new Vector3(-0.1, 0, 0), new Vector3(-1, 0, 0));      
+        Plane planeLw = new Plane(new Vector3(-0.1, 0, 0), new Vector3(-1, 0, 0));
         Plane planeR  = new Plane(new Vector3( 0.3, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeRw = new Plane(new Vector3( 0.1, 0, 0), new Vector3( 1, 0, 0));      
+        Plane planeRw = new Plane(new Vector3( 0.1, 0, 0), new Vector3( 1, 0, 0));
         Plane planeD  = new Plane(new Vector3(0, -0.3, 0), new Vector3(0, -1, 0));
         Plane planeDw = new Plane(new Vector3(0, -0.1, 0), new Vector3(0, -1, 0));
         Plane planeU  = new Plane(new Vector3(0,  0.3, 0), new Vector3(0,  1, 0));
@@ -62,7 +62,7 @@ public class ProfessorsCube implements Puzzle {
         Plane planeFw = new Plane(new Vector3(0, 0, -0.1), new Vector3(0, 0, -1));
         Plane planeB  = new Plane(new Vector3(0, 0,  0.3), new Vector3(0, 0,  1));
         Plane planeBw = new Plane(new Vector3(0, 0,  0.1), new Vector3(0, 0,  1));
-        
+
         mesh = mesh
             .cut(planeL,  0)
             .cut(planeR,  0)
@@ -70,16 +70,16 @@ public class ProfessorsCube implements Puzzle {
             .cut(planeRw, 0)
             .cut(planeD,  0)
             .cut(planeU,  0)
-            .cut(planeDw, 0)            
+            .cut(planeDw, 0)
             .cut(planeUw, 0)
             .cut(planeF,  0)
             .cut(planeB,  0)
-            .cut(planeFw, 0)            
+            .cut(planeFw, 0)
             .cut(planeBw, 0)
             .shortenFaces(0.02)
             .softenFaces(0.015)
             .softenFaces(0.005);
-        
+
         HashMap<Move, Twist> twists = new HashMap<Move, Twist>();
         twists.put(RubiksRevengeMove.L,   new Twist(planeL,   Math.PI / 2));
         twists.put(RubiksRevengeMove.Lw,  new Twist(planeLw,  Math.PI / 2));
@@ -117,15 +117,15 @@ public class ProfessorsCube implements Puzzle {
         twists.put(RubiksRevengeMove.Bw2, new Twist(planeBw,  Math.PI));
         twists.put(RubiksRevengeMove.B3,  new Twist(planeB,  -Math.PI / 2));
         twists.put(RubiksRevengeMove.Bw3, new Twist(planeBw, -Math.PI / 2));
-        
+
         for (Move move : s.moves) {
             Twist t = twists.get(move);
             mesh = mesh.transformHalfspace(
                 Matrix33.rotation(t.plane.n, t.angle),
                 t.plane);
         }
-        
-        return mesh 
+
+        return mesh
             .transform(Matrix33.rotationY(-Math.PI / 6))
             .transform(Matrix33.rotationX(Math.PI / 7));
     }

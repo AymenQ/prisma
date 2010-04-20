@@ -10,11 +10,11 @@ public class TrimmedAverage implements StatisticalMeasure {
         if (solutions.size() < 3) {
             return 0;
         }
-        
+
         long average = new Average().getValue(solutions);
         long best = new Best().getValue(solutions);
         long worst = new Worst().getValue(solutions);
-        
+
         return (average * solutions.size() - best - worst) / (solutions.size() - 2);
     }
 }
