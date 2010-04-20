@@ -353,7 +353,7 @@ public class Main extends JFrame {
 		menuItemAbout.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(frame, "Puzzle Timer 0.0\r\n2010\r\nWalter Souza <walterprs@gmail.com>", "About", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Puzzle Timer 0.1\r\n2010\r\nhttp://www.puzzletimer.com\r\nWalter Souza <walterprs@gmail.com>", "About", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		menuHelp.add(menuItemAbout);
