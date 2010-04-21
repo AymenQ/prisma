@@ -1,6 +1,10 @@
 package com.puzzletimer;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
+
+import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
@@ -15,9 +19,29 @@ import com.puzzletimer.scrambles.Scrambler;
 public class Pyraminx implements Puzzle {
     private Scrambler scrambler;
 
-    public Pyraminx()
-    {
+    public Pyraminx() {
         scrambler = new PyraminxRandomScrambler(20);
+    }
+
+    @Override
+    public String getName() {
+        return "Pyraminx";
+    }
+
+    @Override
+    public int getMnemonic() {
+        return KeyEvent.VK_P;
+    }
+
+    @Override
+    public KeyStroke getAccelerator() {
+        return KeyStroke.getKeyStroke('P', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+
+    @Override
+    public boolean isDefaultPuzzle()
+    {
+        return false;
     }
 
     @Override

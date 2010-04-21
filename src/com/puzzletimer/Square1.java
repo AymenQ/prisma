@@ -1,7 +1,11 @@
 package com.puzzletimer;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
@@ -18,6 +22,27 @@ public class Square1 implements Puzzle {
 
     public Square1() {
         scrambler = new Square1RandomScrambler(20);
+    }
+
+    @Override
+    public String getName() {
+        return "Square-1";
+    }
+
+    @Override
+    public int getMnemonic() {
+        return KeyEvent.VK_S;
+    }
+
+    @Override
+    public KeyStroke getAccelerator() {
+        return KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+
+    @Override
+    public boolean isDefaultPuzzle()
+    {
+        return false;
     }
 
     @Override

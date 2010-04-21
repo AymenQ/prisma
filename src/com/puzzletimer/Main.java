@@ -116,6 +116,7 @@ public class Main extends JFrame {
         state.addStateObserver(new StateObserver() {
             private java.util.Timer repeater;
 
+            @Override
             public void onSolutionBegin(final Solution solution) {
                 repeater = new java.util.Timer();
                 repeater.schedule(new java.util.TimerTask() {
@@ -126,6 +127,7 @@ public class Main extends JFrame {
                 }, 0, 5);
             }
 
+            @Override
             public void onSolutionEnd(Solution solution) {
                 repeater.cancel();
                 labelTime.setText(formatTime(solution.getTimer().getDiff()));
@@ -211,97 +213,31 @@ public class Main extends JFrame {
         menuBar.add(menuPuzzle);
         ButtonGroup puzzleGroup = new ButtonGroup();
 
-        // menuItemRubiksPocketCube
-        final JRadioButtonMenuItem menuItemRubiksPocketCube = new JRadioButtonMenuItem("2x2x2 Cube");
-        menuItemRubiksPocketCube.setMnemonic(KeyEvent.VK_2);
-        menuItemRubiksPocketCube.setAccelerator(KeyStroke.getKeyStroke('2', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemRubiksPocketCube.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state.setPuzzle(new RubiksPocketCube());
-            }
-        });
-        menuPuzzle.add(menuItemRubiksPocketCube);
-        puzzleGroup.add(menuItemRubiksPocketCube);
+        // menuPuzzle items
+        Puzzle[] puzzles = {
+            new RubiksPocketCube(),
+            new RubiksCube(),
+            new RubiksRevenge(),
+            new ProfessorsCube(),
+            new Megaminx(),
+            new Pyraminx(),
+            new Square1(),
+        };
 
-        // menuItemRubiksCube
-        final JRadioButtonMenuItem menuItemRubiksCube = new JRadioButtonMenuItem("Rubik's Cube");
-        menuItemRubiksCube.setMnemonic(KeyEvent.VK_R);
-        menuItemRubiksCube.setAccelerator(KeyStroke.getKeyStroke('3', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemRubiksCube.setSelected(true);
-        menuItemRubiksCube.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state.setPuzzle(new RubiksCube());
-            }
-        });
-        menuPuzzle.add(menuItemRubiksCube);
-        puzzleGroup.add(menuItemRubiksCube);
-
-        // menuItemRubiksRevenge
-        final JRadioButtonMenuItem menuItemRubiksRevenge = new JRadioButtonMenuItem("4x4x4 Cube");
-        menuItemRubiksRevenge.setMnemonic(KeyEvent.VK_4);
-        menuItemRubiksRevenge.setAccelerator(KeyStroke.getKeyStroke('4', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemRubiksRevenge.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state.setPuzzle(new RubiksRevenge());
-            }
-        });
-        menuPuzzle.add(menuItemRubiksRevenge);
-        puzzleGroup.add(menuItemRubiksRevenge);
-
-        // menuItemProfessorsCube
-        final JRadioButtonMenuItem menuItemProfessorsCube = new JRadioButtonMenuItem("5x5x5 Cube");
-        menuItemProfessorsCube.setMnemonic(KeyEvent.VK_5);
-        menuItemProfessorsCube.setAccelerator(KeyStroke.getKeyStroke('5', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemProfessorsCube.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state.setPuzzle(new ProfessorsCube());
-            }
-        });
-        menuPuzzle.add(menuItemProfessorsCube);
-        puzzleGroup.add(menuItemProfessorsCube);
-
-        // menuItemMegaminx
-        final JRadioButtonMenuItem menuItemMegaminx = new JRadioButtonMenuItem("Megaminx");
-        menuItemMegaminx.setMnemonic(KeyEvent.VK_M);
-        menuItemMegaminx.setAccelerator(KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemMegaminx.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state.setPuzzle(new Megaminx());
-            }
-        });
-        menuPuzzle.add(menuItemMegaminx);
-        puzzleGroup.add(menuItemMegaminx);
-
-        // menuItemPyraminx
-        final JRadioButtonMenuItem menuItemPyraminx = new JRadioButtonMenuItem("Pyraminx");
-        menuItemPyraminx.setMnemonic(KeyEvent.VK_P);
-        menuItemPyraminx.setAccelerator(KeyStroke.getKeyStroke('P', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemPyraminx.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state.setPuzzle(new Pyraminx());
-            }
-        });
-        menuPuzzle.add(menuItemPyraminx);
-        puzzleGroup.add(menuItemPyraminx);
-
-        // menuItemSquare1
-        final JRadioButtonMenuItem menuItemSquare1 = new JRadioButtonMenuItem("Square-1");
-        menuItemSquare1.setMnemonic(KeyEvent.VK_S);
-        menuItemSquare1.setAccelerator(KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-        menuItemSquare1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                state.setPuzzle(new Square1());
-            }
-        });
-        menuPuzzle.add(menuItemSquare1);
-        puzzleGroup.add(menuItemSquare1);
+        for (final Puzzle puzzle : puzzles) {
+            final JRadioButtonMenuItem menuItemPuzzle = new JRadioButtonMenuItem(puzzle.getName());
+            menuItemPuzzle.setMnemonic(puzzle.getMnemonic());
+            menuItemPuzzle.setAccelerator(puzzle.getAccelerator());
+            menuItemPuzzle.setSelected(puzzle.isDefaultPuzzle());
+            menuItemPuzzle.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    state.setPuzzle(puzzle);
+                }
+            });
+            menuPuzzle.add(menuItemPuzzle);
+            puzzleGroup.add(menuItemPuzzle);
+        }
 
         // menuOptions
         final JMenu menuOptions = new JMenu("Options");

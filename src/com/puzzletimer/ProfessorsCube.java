@@ -1,6 +1,10 @@
 package com.puzzletimer;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
+
+import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
@@ -18,6 +22,27 @@ public class ProfessorsCube implements Puzzle {
 
     public ProfessorsCube() {
         scrambler = new ProfessorsCubeRandomScrambler(60);
+    }
+
+    @Override
+    public String getName() {
+        return "5x5x5 Cube";
+    }
+
+    @Override
+    public int getMnemonic() {
+        return KeyEvent.VK_5;
+    }
+
+    @Override
+    public KeyStroke getAccelerator() {
+        return KeyStroke.getKeyStroke('5', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+
+    @Override
+    public boolean isDefaultPuzzle()
+    {
+        return false;
     }
 
     @Override

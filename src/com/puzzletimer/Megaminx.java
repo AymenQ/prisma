@@ -1,6 +1,10 @@
 package com.puzzletimer;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
+
+import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
@@ -15,9 +19,29 @@ import com.puzzletimer.scrambles.Scrambler;
 public class Megaminx implements Puzzle {
     private Scrambler scrambler;
 
-    public Megaminx()
-    {
+    public Megaminx() {
         scrambler = new MegaminxRandomScrambler();
+    }
+
+    @Override
+    public String getName() {
+        return "Megaminx";
+    }
+
+    @Override
+    public int getMnemonic() {
+        return KeyEvent.VK_M;
+    }
+
+    @Override
+    public KeyStroke getAccelerator() {
+        return KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+
+    @Override
+    public boolean isDefaultPuzzle()
+    {
+        return false;
     }
 
     @Override

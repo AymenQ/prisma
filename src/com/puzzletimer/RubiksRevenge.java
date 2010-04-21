@@ -1,6 +1,10 @@
 package com.puzzletimer;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
+
+import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
@@ -18,6 +22,27 @@ public class RubiksRevenge implements Puzzle {
 
     public RubiksRevenge() {
         scrambler = new RubiksRevengeRandomScrambler(40);
+    }
+
+    @Override
+    public String getName() {
+        return "4x4x4 Cube";
+    }
+
+    @Override
+    public int getMnemonic() {
+        return KeyEvent.VK_4;
+    }
+
+    @Override
+    public KeyStroke getAccelerator() {
+        return KeyStroke.getKeyStroke('4', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+
+    @Override
+    public boolean isDefaultPuzzle()
+    {
+        return false;
     }
 
     @Override

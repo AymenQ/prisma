@@ -1,6 +1,10 @@
 package com.puzzletimer;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
+
+import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
@@ -21,6 +25,27 @@ public class RubiksPocketCube implements Puzzle {
     }
 
     @Override
+    public String getName() {
+        return "2x2x2 Cube";
+    }
+
+    @Override
+    public int getMnemonic() {
+        return KeyEvent.VK_2;
+    }
+
+    @Override
+    public KeyStroke getAccelerator() {
+        return KeyStroke.getKeyStroke('2', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+
+    @Override
+    public boolean isDefaultPuzzle()
+    {
+        return false;
+    }
+
+   @Override
     public Scrambler getScrambler()
     {
         return scrambler;
