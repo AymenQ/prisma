@@ -1,9 +1,6 @@
 package com.puzzletimer.scrambles;
 
-public enum ProfessorsCubeMove implements Move {
-    x("x"), x2("x2"), x3("x'"),
-    y("y"), y2("y2"), y3("y'"),
-    z("z"), z2("z2"), z3("z'"),
+public enum CubeMove implements Move {
     F("F"), Fw("Fw"), F2("F2"), Fw2("Fw2"), F3("F'"), Fw3("Fw'"),
     R("R"), Rw("Rw"), R2("R2"), Rw2("Rw2"), R3("R'"), Rw3("Rw'"),
     B("B"), Bw("Bw"), B2("B2"), Bw2("Bw2"), B3("B'"), Bw3("Bw'"),
@@ -13,7 +10,7 @@ public enum ProfessorsCubeMove implements Move {
 
     private String description;
 
-    private ProfessorsCubeMove(String description) {
+    private CubeMove(String description) {
         this.description = description;
     }
 

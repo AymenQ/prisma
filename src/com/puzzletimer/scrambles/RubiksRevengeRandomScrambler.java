@@ -17,22 +17,22 @@ public class RubiksRevengeRandomScrambler implements Scrambler {
         ArrayList<Move> scramble = new ArrayList<Move>();
         Move[] moves = {
             // X axis
-            RubiksRevengeMove.R,  RubiksRevengeMove.R2,  RubiksRevengeMove.R3,
-            RubiksRevengeMove.Rw, RubiksRevengeMove.Rw2, RubiksRevengeMove.Rw3,
-            RubiksRevengeMove.L,  RubiksRevengeMove.L2,  RubiksRevengeMove.L3,
-            RubiksRevengeMove.Lw, RubiksRevengeMove.Lw2, RubiksRevengeMove.Lw3,
+            CubeMove.R,  CubeMove.R2,  CubeMove.R3,
+            CubeMove.Rw, CubeMove.Rw2, CubeMove.Rw3,
+            CubeMove.L,  CubeMove.L2,  CubeMove.L3,
+            CubeMove.Lw, CubeMove.Lw2, CubeMove.Lw3,
 
             // Y axis
-            RubiksRevengeMove.U,  RubiksRevengeMove.U2,  RubiksRevengeMove.U3,
-            RubiksRevengeMove.Uw, RubiksRevengeMove.Uw2, RubiksRevengeMove.Uw3,
-            RubiksRevengeMove.D,  RubiksRevengeMove.D2,  RubiksRevengeMove.D3,
-            RubiksRevengeMove.Dw, RubiksRevengeMove.Dw2, RubiksRevengeMove.Dw3,
+            CubeMove.U,  CubeMove.U2,  CubeMove.U3,
+            CubeMove.Uw, CubeMove.Uw2, CubeMove.Uw3,
+            CubeMove.D,  CubeMove.D2,  CubeMove.D3,
+            CubeMove.Dw, CubeMove.Dw2, CubeMove.Dw3,
 
             // Z axis
-            RubiksRevengeMove.F,  RubiksRevengeMove.F2,  RubiksRevengeMove.F3,
-            RubiksRevengeMove.Fw, RubiksRevengeMove.Fw2, RubiksRevengeMove.Fw3,
-            RubiksRevengeMove.B,  RubiksRevengeMove.B2,  RubiksRevengeMove.B3,
-            RubiksRevengeMove.Bw, RubiksRevengeMove.Bw2, RubiksRevengeMove.Bw3,
+            CubeMove.F,  CubeMove.F2,  CubeMove.F3,
+            CubeMove.Fw, CubeMove.Fw2, CubeMove.Fw3,
+            CubeMove.B,  CubeMove.B2,  CubeMove.B3,
+            CubeMove.Bw, CubeMove.Bw2, CubeMove.Bw3,
         };
 
         int last = -1;

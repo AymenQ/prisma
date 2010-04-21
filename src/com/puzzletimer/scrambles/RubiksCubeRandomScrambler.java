@@ -15,16 +15,16 @@ public class RubiksCubeRandomScrambler implements Scrambler {
         ArrayList<Move> scramble = new ArrayList<Move>();
         Move[] moves = {
             // X axis
-            RubiksCubeMove.R, RubiksCubeMove.R2, RubiksCubeMove.R3,
-            RubiksCubeMove.L, RubiksCubeMove.L2, RubiksCubeMove.L3,
+            CubeMove.R, CubeMove.R2, CubeMove.R3,
+            CubeMove.L, CubeMove.L2, CubeMove.L3,
 
             // Y axis
-            RubiksCubeMove.U, RubiksCubeMove.U2, RubiksCubeMove.U3,
-            RubiksCubeMove.D, RubiksCubeMove.D2, RubiksCubeMove.D3,
+            CubeMove.U, CubeMove.U2, CubeMove.U3,
+            CubeMove.D, CubeMove.D2, CubeMove.D3,
 
             // Z axis
-            RubiksCubeMove.F, RubiksCubeMove.F2, RubiksCubeMove.F3,
-            RubiksCubeMove.B, RubiksCubeMove.B2, RubiksCubeMove.B3,
+            CubeMove.F, CubeMove.F2, CubeMove.F3,
+            CubeMove.B, CubeMove.B2, CubeMove.B3,
         };
 
         int last = -1;

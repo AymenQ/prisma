@@ -15,19 +15,19 @@ public class RubiksPocketCubeRandomScrambler implements Scrambler {
         ArrayList<Move> scramble = new ArrayList<Move>();
         Move[] moves = {
             // X axis
-            RubiksPocketCubeMove.R,
-            RubiksPocketCubeMove.R2,
-            RubiksPocketCubeMove.R3,
+            CubeMove.R,
+            CubeMove.R2,
+            CubeMove.R3,
 
             // Y axis
-            RubiksPocketCubeMove.U,
-            RubiksPocketCubeMove.U2,
-            RubiksPocketCubeMove.U3,
+            CubeMove.U,
+            CubeMove.U2,
+            CubeMove.U3,
 
             // Z axis
-            RubiksPocketCubeMove.F,
-            RubiksPocketCubeMove.F2,
-            RubiksPocketCubeMove.F3,
+            CubeMove.F,
+            CubeMove.F2,
+            CubeMove.F3,
         };
 
         int last = -1;
