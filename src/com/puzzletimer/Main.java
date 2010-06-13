@@ -12,7 +12,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -41,101 +40,44 @@ import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.TrimmedAverage;
-import com.puzzletimer.timer.TimerController;
-import com.puzzletimer.timer.TimerControllerEvent;
-import com.puzzletimer.timer.TimerControllerListener;
+import com.puzzletimer.timer.KeyboardTimer;
+import com.puzzletimer.timer.StackmatTimer;
+import com.puzzletimer.timer.Timer;
+import com.puzzletimer.timer.TimerListener;
+import com.puzzletimer.timer.Timing;
 
 @SuppressWarnings("serial")
-public class Main extends JFrame {
-    private State state;
+public class Main extends JFrame implements TimerListener {
+    private ImageIcon iconLeft;
+    private ImageIcon iconRight;
+    private ImageIcon iconLeftPressed;
+    private ImageIcon iconRightPressed;
+
+    private JLabel labelLeftHand;
     private JLabel labelTime;
-    private int timerTriggerKey;
+    private JLabel labelRightHand;
+
+    private boolean timerStopped;
+    private Timer timer;
+    private State state;
 
     public Main() {
-        state = new State(new RubiksCube());
-        timerTriggerKey = KeyEvent.VK_CONTROL;
+        this.iconLeft = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/left.png"));
+        this.iconRight = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/right.png"));
+        this.iconLeftPressed = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/leftPressed.png"));
+        this.iconRightPressed = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/rightPressed.png"));
+
+        this.timerStopped = false;
+
+        this.timer = new KeyboardTimer(this, KeyEvent.VK_CONTROL);
+        this.timer.addEventListener(this);
+        this.timer.start();
+
+        this.state = new State(new RubiksCube());
 
         createComponents();
 
-        // timerController
-        final TimerController timerController = new TimerController();
-        timerController.addEventListener(new TimerControllerListener() {
-            @Override
-            public void timerStarted(TimerControllerEvent event) {
-                state.startCurrentSolution();
-            }
-
-            @Override
-            public void timerStopped(TimerControllerEvent event) {
-                state.stopCurrentSolution();
-            }
-        });
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode() == timerTriggerKey) {
-                    switch (event.getKeyLocation()) {
-                        case KeyEvent.KEY_LOCATION_LEFT:
-                            timerController.pressLeftButton();
-                            break;
-
-                        case KeyEvent.KEY_LOCATION_RIGHT:
-                            timerController.pressRightButton();
-                            break;
-
-                        default:
-                            timerController.pressLeftButton();
-                            timerController.pressRightButton();
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent event) {
-                if (event.getKeyCode() == timerTriggerKey) {
-                    switch (event.getKeyLocation()) {
-                        case KeyEvent.KEY_LOCATION_LEFT:
-                            timerController.releaseLeftButton();
-                            break;
-
-                        case KeyEvent.KEY_LOCATION_RIGHT:
-                            timerController.releaseRightButton();
-                            break;
-
-                        default:
-                            timerController.releaseLeftButton();
-                            timerController.releaseRightButton();
-                            break;
-                    }
-                }
-            }
-        });
-
-        state.addStateObserver(new StateObserver() {
-            private java.util.Timer repeater;
-
-            @Override
-            public void onSolutionBegin(final Solution solution) {
-                repeater = new java.util.Timer();
-                repeater.schedule(new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                        labelTime.setText(formatTime(solution.getTimer().getDiff()));
-                    }
-                }, 0, 5);
-            }
-
-            @Override
-            public void onSolutionEnd(Solution solution) {
-                repeater.cancel();
-                labelTime.setText(formatTime(solution.getTimer().getDiff()));
-                timerController.reset();
-            }
-        });
-
-        state.notifyScrambleObservers();
+        this.state.notifyScrambleObservers();
     }
 
     private void createComponents() {
@@ -157,7 +99,7 @@ public class Main extends JFrame {
         // panelScramble
         final JPanel panelScramble = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 3));
         panelScramble.setPreferredSize(new Dimension(10000, 150));
-        state.addStateObserver(new StateObserver() {
+        this.state.addStateObserver(new StateObserver() {
             @Override
             public void updateScramble(Puzzle puzzle, Scramble scramble) {
                 panelScramble.removeAll();
@@ -232,7 +174,7 @@ public class Main extends JFrame {
             menuItemPuzzle.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    state.setPuzzle(puzzle);
+                    Main.this.state.setPuzzle(puzzle);
                 }
             });
             menuPuzzle.add(menuItemPuzzle);
@@ -258,7 +200,14 @@ public class Main extends JFrame {
         menuItemCtrlKeys.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timerTriggerKey = KeyEvent.VK_CONTROL;
+                Main.this.timer.removeEventListener(Main.this);
+                Main.this.timer.stop();
+
+                Main.this.timerStopped = false;
+
+                Main.this.timer = new KeyboardTimer(Main.this, KeyEvent.VK_CONTROL);
+                Main.this.timer.addEventListener(Main.this);
+                Main.this.timer.start();
             }
         });
         menuTimerTrigger.add(menuItemCtrlKeys);
@@ -271,11 +220,38 @@ public class Main extends JFrame {
         menuItemSpaceKey.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                timerTriggerKey = KeyEvent.VK_SPACE;
+                Main.this.timer.removeEventListener(Main.this);
+                Main.this.timer.stop();
+
+                Main.this.timerStopped = false;
+
+                Main.this.timer = new KeyboardTimer(Main.this, KeyEvent.VK_SPACE);
+                Main.this.timer.addEventListener(Main.this);
+                Main.this.timer.start();
             }
         });
         menuTimerTrigger.add(menuItemSpaceKey);
         timerTriggerGroup.add(menuItemSpaceKey);
+
+        // menuItemStackmatTimer
+        final JRadioButtonMenuItem menuItemStackmatTimer = new JRadioButtonMenuItem("Stackmat timer");
+        menuItemStackmatTimer.setMnemonic(KeyEvent.VK_T);
+        menuItemStackmatTimer.setAccelerator(KeyStroke.getKeyStroke('T', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+        menuItemStackmatTimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.this.timer.removeEventListener(Main.this);
+                Main.this.timer.stop();
+
+                Main.this.timerStopped = true;
+
+                Main.this.timer = new StackmatTimer();
+                Main.this.timer.addEventListener(Main.this);
+                Main.this.timer.start();
+            }
+        });
+        menuTimerTrigger.add(menuItemStackmatTimer);
+        timerTriggerGroup.add(menuItemStackmatTimer);
 
         //menuHelp
         final JMenu menuHelp = new JMenu("Help");
@@ -298,11 +274,6 @@ public class Main extends JFrame {
     }
 
     private JPanel createTimerPanel() {
-        final ImageIcon iconLeft = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/left.png"));
-        final ImageIcon iconRight = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/right.png"));
-        final ImageIcon iconLeftPressed = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/leftPressed.png"));
-        final ImageIcon iconRightPressed = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/rightPressed.png"));
-
         // panelTime
         JPanel panelTimer = new JPanel(new TableLayout(new double[][] {
             { 0.35, TableLayout.PREFERRED, 0.15, TableLayout.PREFERRED, 0.15, TableLayout.PREFERRED, 0.35 },
@@ -310,59 +281,17 @@ public class Main extends JFrame {
         }));
 
         // labelLeftHand
-        final JLabel labelLeftHand = new JLabel(iconLeft);
-        panelTimer.add(labelLeftHand, "1, 0");
+        this.labelLeftHand = new JLabel(this.iconLeft);
+        panelTimer.add(this.labelLeftHand, "1, 0");
 
         // labelTime
-        labelTime = new JLabel("00:00.00");
-        labelTime.setFont(new Font("Arial", Font.BOLD, 108));
-        panelTimer.add(labelTime, "3, 0");
+        this.labelTime = new JLabel("00:00.00");
+        this.labelTime.setFont(new Font("Arial", Font.BOLD, 108));
+        panelTimer.add(this.labelTime, "3, 0");
 
         // labelRightHand
-        final JLabel labelRightHand = new JLabel(iconRight);
-        panelTimer.add(labelRightHand, "5, 0");
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent event) {
-                if (event.getKeyCode() == timerTriggerKey) {
-                    switch (event.getKeyLocation()) {
-                        case KeyEvent.KEY_LOCATION_LEFT:
-                            labelLeftHand.setIcon(iconLeftPressed);
-                            break;
-
-                        case KeyEvent.KEY_LOCATION_RIGHT:
-                            labelRightHand.setIcon(iconRightPressed);
-                            break;
-
-                        default:
-                            labelLeftHand.setIcon(iconLeftPressed);
-                            labelRightHand.setIcon(iconRightPressed);
-                            break;
-                    }
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent event) {
-                if (event.getKeyCode() == timerTriggerKey) {
-                    switch (event.getKeyLocation()) {
-                        case KeyEvent.KEY_LOCATION_LEFT:
-                            labelLeftHand.setIcon(iconLeft);
-                            break;
-
-                        case KeyEvent.KEY_LOCATION_RIGHT:
-                            labelRightHand.setIcon(iconRight);
-                            break;
-
-                        default:
-                            labelRightHand.setIcon(iconRight);
-                            labelLeftHand.setIcon(iconLeft);
-                            break;
-                    }
-                }
-            }
-        });
+        this.labelRightHand = new JLabel(this.iconRight);
+        panelTimer.add(this.labelRightHand, "5, 0");
 
         return panelTimer;
     }
@@ -374,7 +303,7 @@ public class Main extends JFrame {
         scrollPane.setBorder(BorderFactory.createTitledBorder("Times"));
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
-        state.addStateObserver(new StateObserver() {
+        this.state.addStateObserver(new StateObserver() {
             @Override
             public void updateSolutions(ArrayList<Solution> solutions) {
                 JPanel panelTimes = new JPanel();
@@ -391,7 +320,7 @@ public class Main extends JFrame {
                     c.insets = new Insets(0, 0, 0, 8);
                     panelTimes.add(labelIndex, c);
 
-                    JLabel labelTime = new JLabel(formatTime(solutions.get(i).getTimer().getDiff()));
+                    JLabel labelTime = new JLabel(formatTime(solutions.get(i).getTiming().getElapsedTime()));
                     labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                     c.gridx = 2;
                     c.insets = new Insets(0, 0, 0, 16);
@@ -404,7 +333,7 @@ public class Main extends JFrame {
                     labelX.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            state.removeSolution(index);
+                            Main.this.state.removeSolution(index);
                         }
                     });
                     c.gridx = 3;
@@ -536,7 +465,7 @@ public class Main extends JFrame {
         labelBestTimeLast10Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
         panelStatistics.add(labelBestTimeLast10Value, "3, 21, L, C");
 
-        state.addStateObserver(new StateObserver() {
+        this.state.addStateObserver(new StateObserver() {
             @Override
             public void updateSolutions(ArrayList<Solution> solutions) {
                 if (solutions.size() >= 1) {
@@ -606,7 +535,7 @@ public class Main extends JFrame {
         panel3D.setFocusable(false);
         panelScramble.add(panel3D, "0, 0");
 
-        state.addStateObserver(new StateObserver() {
+        this.state.addStateObserver(new StateObserver() {
             @Override
             public void updateScramble(Puzzle puzzle, Scramble scramble) {
                 panel3D.mesh = puzzle.getMesh(scramble);
@@ -638,5 +567,48 @@ public class Main extends JFrame {
                 frame.setVisible(true);
             }
         });
+    }
+
+    @Override
+    public void leftHandPressed() {
+        this.labelLeftHand.setIcon(this.iconLeftPressed);
+    }
+
+    @Override
+    public void leftHandReleased() {
+        this.labelLeftHand.setIcon(this.iconLeft);
+    }
+
+    @Override
+    public void rightHandPressed() {
+        this.labelRightHand.setIcon(this.iconRightPressed);
+    }
+
+    @Override
+    public void rightHandReleased() {
+        this.labelRightHand.setIcon(this.iconRight);
+    }
+
+    @Override
+    public void timerReady() {
+        this.timerStopped = false;
+    }
+
+    @Override
+    public void timerRunning(Timing timing) {
+        if (!this.timerStopped) {
+            this.labelTime.setText(formatTime(timing.getElapsedTime()));
+        }
+    }
+
+    @Override
+    public void timerStopped(Timing timing) {
+        this.labelTime.setText(formatTime(timing.getElapsedTime()));
+
+        if (!this.timerStopped) {
+            this.state.addSolution(timing);
+        }
+
+        this.timerStopped = true;
     }
 }

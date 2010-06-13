@@ -11,7 +11,7 @@ public class StandardDeviation implements StatisticalMeasure {
 
         long sum = 0;
         for (Solution solution : solutions) {
-            long deviation = solution.getTimer().getDiff() - average;
+            long deviation = solution.getTiming().getElapsedTime() - average;
             sum += deviation * deviation;
         }
 

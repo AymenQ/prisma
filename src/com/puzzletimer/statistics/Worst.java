@@ -9,8 +9,8 @@ public class Worst implements StatisticalMeasure {
     public long getValue(ArrayList<Solution> solutions) {
         long worst = 0;
         for (Solution solution : solutions) {
-            if (solution.getTimer().getDiff() > worst) {
-                worst = solution.getTimer().getDiff();
+            if (solution.getTiming().getElapsedTime() > worst) {
+                worst = solution.getTiming().getElapsedTime();
             }
         }
 

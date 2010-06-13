@@ -9,7 +9,7 @@ public class Average implements StatisticalMeasure {
     public long getValue(ArrayList<Solution> solutions) {
         long sum = 0;
         for (Solution solution : solutions) {
-            sum += solution.getTimer().getDiff();
+            sum += solution.getTiming().getElapsedTime();
         }
 
         return sum / solutions.size();

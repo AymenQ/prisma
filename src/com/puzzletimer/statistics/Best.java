@@ -9,8 +9,8 @@ public class Best implements StatisticalMeasure {
     public long getValue(ArrayList<Solution> solutions) {
         long best = Long.MAX_VALUE;
         for (Solution solution : solutions) {
-            if (solution.getTimer().getDiff() < best) {
-                best = solution.getTimer().getDiff();
+            if (solution.getTiming().getElapsedTime() < best) {
+                best = solution.getTiming().getElapsedTime();
             }
         }
 

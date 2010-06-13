@@ -1,30 +1,22 @@
 package com.puzzletimer;
 
 import com.puzzletimer.scrambles.Scramble;
-import com.puzzletimer.timer.Timer;
+import com.puzzletimer.timer.Timing;
 
 public class Solution {
     private Scramble scramble;
-    private Timer timer;
+    private Timing timing;
 
-    public Solution(Scramble scramble, Timer timer) {
+    public Solution(Scramble scramble, Timing timing) {
         this.scramble = scramble;
-        this.timer = timer;
+        this.timing = timing;
     }
 
     public Scramble getScramble() {
-        return scramble;
+        return this.scramble;
     }
 
-    public void setScramble(Scramble scramble) {
-        this.scramble = scramble;
-    }
-
-    public Timer getTimer() {
-        return timer;
-    }
-
-    public void setTimer(Timer timer) {
-        this.timer = timer;
+    public Timing getTiming() {
+        return this.timing;
     }
 }
