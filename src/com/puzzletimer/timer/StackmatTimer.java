@@ -5,6 +5,7 @@ package com.puzzletimer.timer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TimerTask;
 import java.util.Map.Entry;
 
 import javax.sound.sampled.AudioFormat;
@@ -204,12 +205,28 @@ class StackmatTimerReader implements Runnable {
 public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private StackmatTimerReader stackmatTimerReader;
     private ArrayList<TimerListener> listeners;
+    private Date lastUpdate;
+    private java.util.Timer repeater;
 
     public StackmatTimer() {
         this.stackmatTimerReader = new StackmatTimerReader();
         this.listeners = new ArrayList<TimerListener>();
+        this.lastUpdate = null;
 
         this.stackmatTimerReader.addEventListener(this);
+
+        this.repeater = new java.util.Timer();
+        this.repeater.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (StackmatTimer.this.lastUpdate != null) {
+                    Timing timing = new Timing(StackmatTimer.this.lastUpdate, new Date());
+                    for (TimerListener listener : StackmatTimer.this.listeners) {
+                        listener.timerRunning(timing);
+                    }
+                }
+            }
+        }, 0, 5);
     }
 
     @Override
@@ -243,6 +260,13 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         Date start = new Date(end.getTime() - time);
         Timing timing = new Timing(start, end);
 
+        // last update
+        if (data[0] == ' ') {
+            this.lastUpdate = start;
+        } else if (data[0] == 'A' || data[0] == 'I' || data[0] == 'S') {
+            this.lastUpdate = null;
+        }
+
         // timer ready
         if (data[0] == 'A' || data[0] == 'I') {
             for (TimerListener listener : StackmatTimer.this.listeners) {
@@ -275,6 +299,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     public void stop() {
         this.stackmatTimerReader.removeEventListener(this);
         this.stackmatTimerReader.stop();
+        this.repeater.cancel();
     }
 
     @Override
