@@ -205,13 +205,13 @@ class StackmatTimerReader implements Runnable {
 public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private StackmatTimerReader stackmatTimerReader;
     private ArrayList<TimerListener> listeners;
-    private Date lastUpdate;
+    private Date timingStart;
     private java.util.Timer repeater;
 
     public StackmatTimer() {
         this.stackmatTimerReader = new StackmatTimerReader();
         this.listeners = new ArrayList<TimerListener>();
-        this.lastUpdate = null;
+        this.timingStart = null;
 
         this.stackmatTimerReader.addEventListener(this);
 
@@ -219,8 +219,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.repeater.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (StackmatTimer.this.lastUpdate != null) {
-                    Timing timing = new Timing(StackmatTimer.this.lastUpdate, new Date());
+                if (StackmatTimer.this.timingStart != null) {
+                    Timing timing = new Timing(StackmatTimer.this.timingStart, new Date());
                     for (TimerListener listener : StackmatTimer.this.listeners) {
                         listener.timerRunning(timing);
                     }
@@ -260,11 +260,11 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         Date start = new Date(end.getTime() - time);
         Timing timing = new Timing(start, end);
 
-        // last update
+        // timing start
         if (data[0] == ' ') {
-            this.lastUpdate = start;
+            this.timingStart = start;
         } else if (data[0] == 'A' || data[0] == 'I' || data[0] == 'S') {
-            this.lastUpdate = null;
+            this.timingStart = null;
         }
 
         // timer ready
