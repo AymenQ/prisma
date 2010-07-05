@@ -1,7 +1,11 @@
+// reference: http://hackvalue.de/hv_atmel_stackmat
+
 package com.puzzletimer.timer;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -15,6 +19,7 @@ interface StackmatTimerReaderListener {
 
 class StackmatTimerReader implements Runnable {
     private int sampleRate = 8000;
+    private double period = this.sampleRate / 1200d;
     private TargetDataLine targetDataLine;
     private ArrayList<StackmatTimerReaderListener> listeners;
     private boolean running;
@@ -24,91 +29,54 @@ class StackmatTimerReader implements Runnable {
         this.running = false;
     }
 
-    private byte getSample() {
-        byte[] buffer = new byte[1];
-        this.targetDataLine.read(buffer, 0, buffer.length);
-        return buffer[0];
-    }
-
-    private byte findBitThreshold(byte[] samples) {
-        double lastSpaceClusterMean = Byte.MIN_VALUE;
-        double lastMarkClusterMean = Byte.MAX_VALUE;
-
-        for (;;) {
-            double spaceClusterMean = 0d;
-            int spaceClusterSize = 0;
-            double markClusterMean = 0d;
-            int markClusterSize = 0;
-
-            for (byte sample : samples) {
-                if (Math.abs(sample - lastSpaceClusterMean) < Math.abs(sample - lastMarkClusterMean)) {
-                    spaceClusterMean += sample;
-                    spaceClusterSize++;
-                } else {
-                    markClusterMean += sample;
-                    markClusterSize++;
-                }
-            }
-
-            spaceClusterMean /= spaceClusterSize;
-            markClusterMean /= markClusterSize;
-
-            if (Math.abs(lastSpaceClusterMean - spaceClusterMean) <= 1d && Math.abs(lastMarkClusterMean - markClusterMean) <= 1d) {
-                break;
-            }
-
-            lastSpaceClusterMean = spaceClusterMean;
-            lastMarkClusterMean = markClusterMean;
-        }
-
-        return (byte) ((lastSpaceClusterMean + lastMarkClusterMean) / 2d);
-    }
-
-    private byte[] readPacket(byte bitThreshold) {
-        double period = 1d / (this.sampleRate / 1200d); // (sampleRate / baudRate) ** -1
-        double t = 0d;
-
-        // alignment
-        t = 0.5d;
-        while (t > period) {
-            getSample();
-            t -= period;
-        }
-
+    private byte[] readPacket(byte[] samples, int offset, byte bitThreshold) {
         byte[] data = new byte[9];
         for (int i = 0; i < 9; i++) {
             // start bit
-            t += 1d;
-            while (t > period) {
-                getSample();
-                t -= period;
+            if (samples[offset + (int) (10 * i * this.period)] <= bitThreshold) {
+                return new byte[9]; // invalid data
             }
 
             // data bits
-            byte b = 0;
+            data[i] = 0x00;
             for (int j = 0; j < 8; j++) {
-                if (getSample() > bitThreshold) {
-                    b |= 0x01 << j;
-                }
-                t -= period;
-
-                t += 1d;
-                while (t > period) {
-                    getSample();
-                    t -= period;
+                if (samples[offset + (int) ((10 * i + j + 1) * this.period)] > bitThreshold) {
+                    data[i] |= 0x01 << j;
                 }
             }
-            data[i] = (byte) ~b;
 
             // stop bit
-            t += 1d;
-            while (t > period) {
-                getSample();
-                t -= period;
+            if (samples[offset + (int) ((10 * i + 9) * this.period)] > bitThreshold) {
+                return new byte[9]; // invalid data
             }
         }
 
         return data;
+    }
+
+    private boolean isValidPacket(byte[] data) {
+        int sum = 0;
+        for (int i = 1; i < 6; i++) {
+            sum += data[i] - '0';
+        }
+
+        return " ACILRS".contains(String.valueOf((char) data[0])) &&
+               Character.isDigit(data[1]) &&
+               Character.isDigit(data[2]) &&
+               Character.isDigit(data[3]) &&
+               Character.isDigit(data[4]) &&
+               Character.isDigit(data[5]) &&
+               data[6] == sum + 64 &&
+               data[7] == '\n' &&
+               data[8] == '\r';
+    }
+
+    private byte[] inverted(byte[] data) {
+        byte[] invertedData = new byte[data.length];
+        for (int i = 0; i < invertedData.length; i++) {
+            invertedData[i] = (byte) ~data[i];
+        }
+        return invertedData;
     }
 
     @Override
@@ -132,21 +100,89 @@ class StackmatTimerReader implements Runnable {
 
         this.targetDataLine.start();
 
-        byte[] calibrationSamples = new byte[this.sampleRate / 4];
-        this.targetDataLine.read(calibrationSamples, 0, calibrationSamples.length);
-
-        byte bitThreshold = findBitThreshold(calibrationSamples);
+        byte[] buffer = new byte[this.sampleRate / 4];
+        int offset = buffer.length;
 
         while (this.running) {
-            // skip space samples
-            while (getSample() <= bitThreshold) {
+            // update buffer in a queue fashion
+            for (int i = offset; i < buffer.length; i++) {
+                buffer[i - offset] = buffer[i];
+            }
+            this.targetDataLine.read(buffer, buffer.length - offset, offset);
+
+            boolean isPacketStart = false;
+            boolean isSignalInverted = false;
+
+            // find packet start
+            loop: for (offset = 0; offset + 0.119171 * this.sampleRate < buffer.length; offset++) {
+                for (int threshold = 0; threshold < 256; threshold++) {
+                    byte[] data = readPacket(buffer, offset, (byte) (threshold - 127));
+                    if (isValidPacket(data)) {
+                        isPacketStart = true;
+                        break loop;
+                    }
+
+                    // try inverting the signal
+                    if (isValidPacket(inverted(data))) {
+                        isPacketStart = true;
+                        isSignalInverted = true;
+                        break loop;
+                    }
+                }
             }
 
-            byte[] data = readPacket(bitThreshold);
+            if (!isPacketStart) {
+                continue;
+            }
 
+            // create packet histogram
+            HashMap<Long, Integer> packetHistogram = new HashMap<Long, Integer>();
+            for (int i = 0; i < this.period; i++) {
+                for (int threshold = 0; threshold < 256; threshold++) {
+                    byte data[] = readPacket(buffer, offset + i, (byte) (threshold - 127));
+                    if (isSignalInverted) {
+                        data = inverted(data);
+                    }
+
+                    if (isValidPacket(data)) {
+                        // encode packet
+                        long packet = 0L;
+                        for (int j = 0; j < 6; j++) {
+                            packet |= (long) data[j] << 8 * j;
+                        }
+
+                        if (packetHistogram.containsKey(packet)) {
+                            packetHistogram.put(packet, packetHistogram.get(packet) + 1);
+                        } else {
+                            packetHistogram.put(packet, 1);
+                        }
+                    }
+                }
+            }
+
+            // select packet with highest frequency
+            long packet = 0L;
+            int highestFrequency = 0;
+            for (Entry<Long, Integer> entry : packetHistogram.entrySet()) {
+                if (entry.getValue() > highestFrequency) {
+                    packet = entry.getKey();
+                    highestFrequency = entry.getValue();
+                }
+            }
+
+            // decode packet
+            byte[] data = new byte[9];
+            for (int i = 0; i < 6; i++) {
+                data[i] = (byte) (packet >> 8 * i);
+            }
+
+            // notify listeners
             for (StackmatTimerReaderListener listener : this.listeners) {
                 listener.dataReceived(data);
             }
+
+            // skip read packet
+            offset += 0.119171 * this.sampleRate;
         }
 
         this.targetDataLine.close();
@@ -176,22 +212,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.stackmatTimerReader.addEventListener(this);
     }
 
-    private boolean isValidChecksum(byte[] data) {
-        int sum = 0;
-        for (int i = 1; i < 6; i++) {
-            sum += data[i] - '0';
-        }
-
-        return sum + 64 == data[6];
-    }
-
     @Override
     public void dataReceived(byte[] data) {
-        // checksum
-        if (!isValidChecksum(data)) {
-            return;
-        }
-
         // hands status
         for (TimerListener listener : this.listeners) {
             if (data[0] == 'A' || data[0] == 'C' || data[0] == 'L') {
