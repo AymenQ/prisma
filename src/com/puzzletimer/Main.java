@@ -17,6 +17,13 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Line;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
+import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.DataLine.Info;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -61,6 +68,9 @@ public class Main extends JFrame implements TimerListener {
     private Timer timer;
     private State state;
 
+    private AudioFormat audioFormat;
+    private Mixer.Info mixerInfo;
+
     public Main() {
         this.iconLeft = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/left.png"));
         this.iconRight = new ImageIcon(getClass().getResource("/com/puzzletimer/resources/right.png"));
@@ -74,6 +84,9 @@ public class Main extends JFrame implements TimerListener {
         this.timer.start();
 
         this.state = new State(new RubiksCube());
+
+        this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
+        this.mixerInfo = null;
 
         createComponents();
 
@@ -245,13 +258,77 @@ public class Main extends JFrame implements TimerListener {
 
                 Main.this.timerStopped = true;
 
-                Main.this.timer = new StackmatTimer();
+                if (Main.this.mixerInfo == null) {
+                    return;
+                }
+
+                TargetDataLine targetDataLine;
+                try {
+                    targetDataLine = AudioSystem.getTargetDataLine(Main.this.audioFormat, Main.this.mixerInfo);
+                    targetDataLine.open(Main.this.audioFormat);
+                } catch (LineUnavailableException ex) {
+                    // should display an error message and select the default timer
+                    throw new RuntimeException();
+                }
+
+                Main.this.timer = new StackmatTimer(targetDataLine);
                 Main.this.timer.addEventListener(Main.this);
                 Main.this.timer.start();
             }
         });
         menuTimerTrigger.add(menuItemStackmatTimer);
         timerTriggerGroup.add(menuItemStackmatTimer);
+
+        // menuStackmatTimerInputDevice
+        JMenu stackmatTimerInputDevice = new JMenu("Stackmat timer input device");
+        menuTimerTrigger.setMnemonic(KeyEvent.VK_S);
+        menuOptions.add(stackmatTimerInputDevice);
+        ButtonGroup stackmatTimerInputDeviceGroup = new ButtonGroup();
+
+        // menuItemNone
+        JRadioButtonMenuItem menuItemNone = new JRadioButtonMenuItem("None");
+        menuItemNone.setSelected(true);
+        menuItemNone.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                Main.this.mixerInfo = null;
+            }
+        });
+        stackmatTimerInputDevice.add(menuItemNone);
+        stackmatTimerInputDeviceGroup.add(menuItemNone);
+
+        // menuItemDevice
+        for (final Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
+            Line.Info[] targetLinesInfo =
+                AudioSystem.getTargetLineInfo(new Info(TargetDataLine.class, this.audioFormat));
+
+            boolean validMixer = false;
+            for (Line.Info lineInfo : targetLinesInfo) {
+                if (AudioSystem.getMixer(mixerInfo).isLineSupported(lineInfo)) {
+                    validMixer = true;
+                    break;
+                }
+            }
+
+            if (!validMixer) {
+                continue;
+            }
+
+            JRadioButtonMenuItem menuItemDevice = new JRadioButtonMenuItem(mixerInfo.getName());
+            menuItemDevice.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    Main.this.mixerInfo = mixerInfo;
+                }
+            });
+            stackmatTimerInputDevice.add(menuItemDevice);
+            stackmatTimerInputDeviceGroup.add(menuItemDevice);
+
+            if (Main.this.mixerInfo == null) {
+                Main.this.mixerInfo = mixerInfo;
+                menuItemDevice.setSelected(true);
+            }
+        }
 
         //menuHelp
         final JMenu menuHelp = new JMenu("Help");

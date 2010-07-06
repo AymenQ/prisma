@@ -8,24 +8,23 @@ import java.util.HashMap;
 import java.util.TimerTask;
 import java.util.Map.Entry;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
-import javax.sound.sampled.DataLine.Info;
 
 interface StackmatTimerReaderListener {
     void dataReceived(byte[] data);
 }
 
 class StackmatTimerReader implements Runnable {
-    private int sampleRate = 8000;
-    private double period = this.sampleRate / 1200d;
+    private double sampleRate;
+    private double period;
     private TargetDataLine targetDataLine;
     private ArrayList<StackmatTimerReaderListener> listeners;
     private boolean running;
 
-    StackmatTimerReader() {
+    StackmatTimerReader(TargetDataLine targetDataLine) {
+        this.sampleRate = targetDataLine.getFormat().getFrameRate();
+        this.period = this.sampleRate / 1200d;
+        this.targetDataLine = targetDataLine;
         this.listeners = new ArrayList<StackmatTimerReaderListener>();
         this.running = false;
     }
@@ -84,24 +83,9 @@ class StackmatTimerReader implements Runnable {
     public void run() {
         this.running = true;
 
-        final AudioFormat format = new AudioFormat(
-            this.sampleRate, // sample
-            8, // size in bits
-            1, // channels
-            true, // signed
-            false // big endian
-        );
-
-        try {
-            this.targetDataLine = (TargetDataLine) AudioSystem.getLine(new Info(TargetDataLine.class, format));
-            this.targetDataLine.open(format);
-        } catch (LineUnavailableException e) {
-            throw new RuntimeException();
-        }
-
         this.targetDataLine.start();
 
-        byte[] buffer = new byte[this.sampleRate / 4];
+        byte[] buffer = new byte[(int) (this.sampleRate / 4)];
         int offset = buffer.length;
 
         while (this.running) {
@@ -208,8 +192,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private Date timingStart;
     private java.util.Timer repeater;
 
-    public StackmatTimer() {
-        this.stackmatTimerReader = new StackmatTimerReader();
+    public StackmatTimer(TargetDataLine targetDataLine) {
+        this.stackmatTimerReader = new StackmatTimerReader(targetDataLine);
         this.listeners = new ArrayList<TimerListener>();
         this.timingStart = null;
 
