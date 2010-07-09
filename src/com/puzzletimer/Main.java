@@ -48,8 +48,9 @@ import com.puzzletimer.models.Timing;
 import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
+import com.puzzletimer.statistics.Mean;
 import com.puzzletimer.statistics.StandardDeviation;
-import com.puzzletimer.statistics.TrimmedAverage;
+import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.timer.KeyboardTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.timer.Timer;
@@ -444,163 +445,49 @@ public class Main extends JFrame implements TimerListener {
         }));
         panelStatistics.setBorder(BorderFactory.createTitledBorder("Statistics"));
 
-        // labelAverage
-        JLabel labelAverage = new JLabel("Average:");
-        labelAverage.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelAverage, "1, 1, R, C");
+        StatisticalMeasure[] statistics = {
+            new Mean(1, Integer.MAX_VALUE),
+            new StandardDeviation(1, Integer.MAX_VALUE),
+            new Best(1, Integer.MAX_VALUE),
+            new Mean(3, 3),
+            new Average(5, 5),
+            new StandardDeviation(3, 3),
+            new Best(3, 3),
+            new Mean(10, 10),
+            new Average(12, 12),
+            new StandardDeviation(10, 10),
+            new Best(10, 10),
+        };
 
-        // labelAverageValue
-        final JLabel labelAverageValue = new JLabel("XX:XX.XX");
-        panelStatistics.add(labelAverageValue, "3, 1, L, C");
+        int y = 1;
+        for (final StatisticalMeasure measure : statistics) {
+            JLabel labelMeasure = new JLabel(measure.getDescription() + ":");
+            labelMeasure.setFont(new Font("Tahoma", Font.BOLD, 11));
+            panelStatistics.add(labelMeasure, "1, " + y + ", R, C");
 
-        // labelStandardDeviation
-        JLabel labelStandardDeviation = new JLabel("Standard Deviation:");
-        labelStandardDeviation.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelStandardDeviation, "1, 3, R, C");
+            final JLabel labelValue = new JLabel("XX:XX.XX");
+            panelStatistics.add(labelValue, "3, " + y + ", L, C");
 
-        // labelStandardDeviationValue
-        final JLabel labelStandardDeviationValue = new JLabel("XX:XX.XX");
-        panelStatistics.add(labelStandardDeviationValue, "3, 3, L, C");
+            this.state.addStateObserver(new StateObserver() {
+                @Override
+                public void updateSolutions(ArrayList<Solution> solutions) {
+                    if (solutions.size() >= measure.getMinimumWindowSize()) {
+                        int size = Math.min(solutions.size(), measure.getMaximumWindowSize());
 
-        // labelBestTime
-        JLabel labelBestTime = new JLabel("Best Time:");
-        labelBestTime.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelBestTime, "1, 5, R, C");
+                        Solution[] window = new Solution[size];
+                        for (int i = 0; i < size; i++) {
+                            window[i] = solutions.get(solutions.size() - size + i);
+                        }
 
-        // labelBestTimeValue
-        final JLabel labelBestTimeValue = new JLabel("XX:XX.XX");
-        panelStatistics.add(labelBestTimeValue, "3, 5, L, C");
-
-        // labelAverageLast3
-        JLabel labelAverageLast3 = new JLabel("Average (Last 3):");
-        labelAverageLast3.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelAverageLast3, "1, 7, R, C");
-
-        // labelAverageLast3Value
-        final JLabel labelAverageLast3Value = new JLabel("XX:XX.XX");
-        labelAverageLast3Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelAverageLast3Value, "3, 7, L, C");
-
-        // labelTrimmedAverageLast5
-        JLabel labelTrimmedAverageLast5 = new JLabel("Trimmed Average (Last 5):");
-        labelTrimmedAverageLast5.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelTrimmedAverageLast5, "1, 9, R, C");
-
-        // labelTrimmedAverageLast5Value
-        final JLabel labelTrimmedAverageLast5Value = new JLabel("XX:XX.XX");
-        labelTrimmedAverageLast5Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelTrimmedAverageLast5Value, "3, 9, L, C");
-
-        // labelStandardDeviationLast3
-        JLabel labelStandardDeviationLast3 = new JLabel("Standard Deviation (Last 3):");
-        labelStandardDeviationLast3.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelStandardDeviationLast3, "1, 11, R, C");
-
-        // labelStandardDeviationLast3Value
-        final JLabel labelStandardDeviationLast3Value = new JLabel("XX:XX.XX");
-        labelStandardDeviationLast3Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelStandardDeviationLast3Value, "3, 11, L, C");
-
-        // labelBestTimeLast3
-        JLabel labelBestTimeLast3 = new JLabel("Best Time (Last 3):");
-        labelBestTimeLast3.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelBestTimeLast3, "1, 13, R, C");
-
-        // labelBestTimeLast3Value
-        final JLabel labelBestTimeLast3Value = new JLabel("XX:XX.XX");
-        labelBestTimeLast3Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelBestTimeLast3Value, "3, 13, L, C");
-
-        // labelAverageLast10
-        JLabel labelAverageLast10 = new JLabel("Average (Last 10):");
-        labelAverageLast10.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelAverageLast10, "1, 15, R, C");
-
-        // labelAverageLast10Value
-        final JLabel labelAverageLast10Value = new JLabel("XX:XX.XX");
-        labelAverageLast10Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelAverageLast10Value, "3, 15, L, C");
-
-        // labelTrimmedAverageLast12
-        JLabel labelTrimmedAverageLast12 = new JLabel("Trimmed Average (Last 12):");
-        labelTrimmedAverageLast12.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelTrimmedAverageLast12, "1, 17, R, C");
-
-        // labelTrimmedAverageLast12Value
-        final JLabel labelTrimmedAverageLast12Value = new JLabel("XX:XX.XX");
-        labelTrimmedAverageLast12Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelTrimmedAverageLast12Value, "3, 17, L, C");
-
-        // labelStandardDeviationLast10
-        JLabel labelStandardDeviationLast10 = new JLabel("Standard Deviation (Last 10):");
-        labelStandardDeviationLast10.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelStandardDeviationLast10, "1, 19, R, C");
-
-        // labelStandardDeviationLast10Value
-        final JLabel labelStandardDeviationLast10Value = new JLabel("XX:XX.XX");
-        labelStandardDeviationLast10Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelStandardDeviationLast10Value, "3, 19, L, C");
-
-        // labelBestTimeLast10
-        JLabel labelBestTimeLast10 = new JLabel("Best Time (Last 10):");
-        labelBestTimeLast10.setFont(new Font("Tahoma", Font.BOLD, 11));
-        panelStatistics.add(labelBestTimeLast10, "1, 21, R, C");
-
-        // labelBestTimeLast10Value
-        final JLabel labelBestTimeLast10Value = new JLabel("XX:XX.XX");
-        labelBestTimeLast10Value.setFont(new Font("Tahoma", Font.PLAIN, 11));
-        panelStatistics.add(labelBestTimeLast10Value, "3, 21, L, C");
-
-        this.state.addStateObserver(new StateObserver() {
-            @Override
-            public void updateSolutions(ArrayList<Solution> solutions) {
-                if (solutions.size() >= 1) {
-                    labelAverageValue.setText(formatTime(new Average().getValue(solutions)));
-                    labelStandardDeviationValue.setText(formatTime(new StandardDeviation().getValue(solutions)));
-                    labelBestTimeValue.setText(formatTime(new Best().getValue(solutions)));
-                } else {
-                    labelAverageValue.setText("XX:XX.XX");
-                    labelStandardDeviationValue.setText("XX:XX.XX");
-                    labelBestTimeValue.setText("XX:XX.XX");
+                        labelValue.setText(formatTime(measure.calculate(window)));
+                    } else {
+                        labelValue.setText("XX:XX.XX");
+                    }
                 }
+            });
 
-                if (solutions.size() >= 3) {
-                    ArrayList<Solution> last3Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 3, solutions.size()));
-                    labelAverageLast3Value.setText(formatTime(new Average().getValue(last3Solutions)));
-                    labelStandardDeviationLast3Value.setText(formatTime(new StandardDeviation().getValue(last3Solutions)));
-                    labelBestTimeLast3Value.setText(formatTime(new Best().getValue(last3Solutions)));
-                } else {
-                    labelAverageLast3Value.setText("XX:XX.XX");
-                    labelStandardDeviationLast3Value.setText("XX:XX.XX");
-                    labelBestTimeLast3Value.setText("XX:XX.XX");
-                }
-
-                if (solutions.size() >= 5) {
-                    ArrayList<Solution> last5Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 5, solutions.size()));
-                    labelTrimmedAverageLast5Value.setText((formatTime(new TrimmedAverage().getValue(last5Solutions))));
-                } else {
-                    labelTrimmedAverageLast5Value.setText("XX:XX.XX");
-                }
-
-                if (solutions.size() >= 10) {
-                    ArrayList<Solution> last10Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 10, solutions.size()));
-                    labelAverageLast10Value.setText(formatTime(new Average().getValue(last10Solutions)));
-                    labelStandardDeviationLast10Value.setText(formatTime(new StandardDeviation().getValue(last10Solutions)));
-                    labelBestTimeLast10Value.setText(formatTime(new Best().getValue(last10Solutions)));
-                } else {
-                    labelAverageLast10Value.setText("XX:XX.XX");
-                    labelStandardDeviationLast10Value.setText("XX:XX.XX");
-                    labelBestTimeLast10Value.setText("XX:XX.XX");
-                }
-
-                if (solutions.size() >= 12) {
-                    ArrayList<Solution> last12Solutions = new ArrayList<Solution>(solutions.subList(solutions.size() - 12, solutions.size()));
-                    labelTrimmedAverageLast12Value.setText((formatTime(new TrimmedAverage().getValue(last12Solutions))));
-                } else {
-                    labelTrimmedAverageLast12Value.setText("XX:XX.XX");
-                }
-            }
-        });
+            y += 2;
+        }
 
         return panelStatistics;
     }
