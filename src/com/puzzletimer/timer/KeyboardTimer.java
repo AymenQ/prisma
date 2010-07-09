@@ -8,6 +8,8 @@ import java.util.EventListener;
 
 import javax.swing.JFrame;
 
+import com.puzzletimer.models.Timing;
+
 interface TimerStateListener extends EventListener {
     void timerStarted();
     void timerStopped();

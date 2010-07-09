@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -41,8 +42,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
-import com.puzzletimer.scrambles.Move;
-import com.puzzletimer.scrambles.Scramble;
+import com.puzzletimer.models.Scramble;
+import com.puzzletimer.models.Solution;
+import com.puzzletimer.models.Timing;
+import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.StandardDeviation;
@@ -51,7 +54,6 @@ import com.puzzletimer.timer.KeyboardTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.timer.Timer;
 import com.puzzletimer.timer.TimerListener;
-import com.puzzletimer.timer.Timing;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame implements TimerListener {
@@ -83,7 +85,7 @@ public class Main extends JFrame implements TimerListener {
         this.timer.addEventListener(this);
         this.timer.start();
 
-        this.state = new State(new RubiksCube());
+        this.state = new State(new Category(UUID.randomUUID(), "RUBIKS-CUBE-RANDOM", "Rubik's Cube", '3', '3', true));
 
         this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
         this.mixerInfo = null;
@@ -117,8 +119,8 @@ public class Main extends JFrame implements TimerListener {
             public void updateScramble(Puzzle puzzle, Scramble scramble) {
                 panelScramble.removeAll();
 
-                for (Move m : scramble.moves) {
-                    JLabel label = new JLabel(m.toString());
+                for (String move : scramble.getSequence()) {
+                    JLabel label = new JLabel(move);
                     label.setFont(new Font("Arial", Font.PLAIN, 18));
                     panelScramble.add(label);
                 }
@@ -162,36 +164,43 @@ public class Main extends JFrame implements TimerListener {
         });
         menuFile.add(menuItemExit);
 
-        // menuPuzzle
-        final JMenu menuPuzzle = new JMenu("Puzzle");
-        menuPuzzle.setMnemonic(KeyEvent.VK_P);
-        menuBar.add(menuPuzzle);
-        ButtonGroup puzzleGroup = new ButtonGroup();
+        // menuCategory
+        final JMenu menuCategory = new JMenu("Category");
+        menuCategory.setMnemonic(KeyEvent.VK_C);
+        menuBar.add(menuCategory);
+        ButtonGroup categoryGroup = new ButtonGroup();
 
-        // menuPuzzle items
-        Puzzle[] puzzles = {
-            new RubiksPocketCube(),
-            new RubiksCube(),
-            new RubiksRevenge(),
-            new ProfessorsCube(),
-            new Megaminx(),
-            new Pyraminx(),
-            new Square1(),
+        // menuCategory items
+        Category[] categories = {
+            new Category(null, "2x2x2-CUBE-RANDOM", "2x2x2 cube", '2', '2', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube", 'R', '3', true),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube one-handed", 'O', 'O', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube blindfolded", 'B', 'B', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube with feet", 'F', 'F', false),
+            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 cube", '4', '4', false),
+            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 blindfolded", 'B', '\0', false),
+            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 cube", '5', '5', false),
+            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 blindfolded", 'B', '\0', false),
+            new Category(null, "MEGAMINX-RANDOM", "Megaminx", 'M', 'M', false),
+            new Category(null, "PYRAMINX-RANDOM", "Pyraminx", 'P', 'P', false),
+            new Category(null, "SQUARE-1-RANDOM", "Square-1", 'S', '1', false),
         };
 
-        for (final Puzzle puzzle : puzzles) {
-            final JRadioButtonMenuItem menuItemPuzzle = new JRadioButtonMenuItem(puzzle.getName());
-            menuItemPuzzle.setMnemonic(puzzle.getMnemonic());
-            menuItemPuzzle.setAccelerator(puzzle.getAccelerator());
-            menuItemPuzzle.setSelected(puzzle.isDefaultPuzzle());
-            menuItemPuzzle.addActionListener(new ActionListener() {
+        for (final Category category : categories) {
+            final JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.getDescription());
+            menuItemCategory.setMnemonic(category.getMnemonic());
+            if (category.getAccelerator() != '\0') {
+                menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(category.getAccelerator(), Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            }
+            menuItemCategory.setSelected(category.isDefault());
+            menuItemCategory.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Main.this.state.setPuzzle(puzzle);
+                    Main.this.state.setCategory(category);
                 }
             });
-            menuPuzzle.add(menuItemPuzzle);
-            puzzleGroup.add(menuItemPuzzle);
+            menuCategory.add(menuItemCategory);
+            categoryGroup.add(menuItemCategory);
         }
 
         // menuOptions
@@ -615,7 +624,7 @@ public class Main extends JFrame implements TimerListener {
         this.state.addStateObserver(new StateObserver() {
             @Override
             public void updateScramble(Puzzle puzzle, Scramble scramble) {
-                panel3D.mesh = puzzle.getMesh(scramble);
+                panel3D.mesh = puzzle.getScrambledPuzzleMesh(scramble);
                 panel3D.repaint();
             }
         });

@@ -1,53 +1,22 @@
-package com.puzzletimer;
+package com.puzzletimer.puzzles;
 
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
-
-import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
-import com.puzzletimer.scrambles.Move;
-import com.puzzletimer.scrambles.PyraminxMove;
-import com.puzzletimer.scrambles.PyraminxRandomScrambler;
-import com.puzzletimer.scrambles.Scramble;
-import com.puzzletimer.scrambles.Scrambler;
+import com.puzzletimer.models.Scramble;
 
 public class Pyraminx implements Puzzle {
-    private Scrambler scrambler;
-
-    public Pyraminx() {
-        scrambler = new PyraminxRandomScrambler(20);
+    @Override
+    public String getPuzzleId() {
+        return "PYRAMINX";
     }
 
     @Override
-    public String getName() {
+    public String getDescription() {
         return "Pyraminx";
-    }
-
-    @Override
-    public int getMnemonic() {
-        return KeyEvent.VK_P;
-    }
-
-    @Override
-    public KeyStroke getAccelerator() {
-        return KeyStroke.getKeyStroke('P', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-    }
-
-    @Override
-    public boolean isDefaultPuzzle()
-    {
-        return false;
-    }
-
-    @Override
-    public Scrambler getScrambler()
-    {
-        return scrambler;
     }
 
     private static class Twist {
@@ -61,8 +30,7 @@ public class Pyraminx implements Puzzle {
     }
 
     @Override
-    public Mesh getMesh(Scramble s)
-    {
+    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
         HSLColor[] colors = {
             new HSLColor(235, 100,  30), // blue
             new HSLColor(120, 100,  30), // green
@@ -119,25 +87,25 @@ public class Pyraminx implements Puzzle {
             .softenFaces(0.02)
             .softenFaces(0.01);
 
-        HashMap<Move, Twist> twists = new HashMap<Move, Twist>();
-        twists.put(PyraminxMove.U,  new Twist(planeU,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.U2, new Twist(planeU, -2 * Math.PI / 3));
-        twists.put(PyraminxMove.u,  new Twist(planeu,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.u2, new Twist(planeu, -2 * Math.PI / 3));
-        twists.put(PyraminxMove.L,  new Twist(planeL,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.L2, new Twist(planeL, -2 * Math.PI / 3));
-        twists.put(PyraminxMove.l,  new Twist(planel,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.l2, new Twist(planel, -2 * Math.PI / 3));
-        twists.put(PyraminxMove.R,  new Twist(planeR,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.R2, new Twist(planeR, -2 * Math.PI / 3));
-        twists.put(PyraminxMove.r,  new Twist(planer,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.r2, new Twist(planer, -2 * Math.PI / 3));
-        twists.put(PyraminxMove.B,  new Twist(planeB,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.B2, new Twist(planeB, -2 * Math.PI / 3));
-        twists.put(PyraminxMove.b,  new Twist(planeb,  2 * Math.PI / 3));
-        twists.put(PyraminxMove.b2, new Twist(planeb, -2 * Math.PI / 3));
+        HashMap<String, Twist> twists = new HashMap<String, Twist>();
+        twists.put("U",  new Twist(planeU,  2 * Math.PI / 3));
+        twists.put("U2", new Twist(planeU, -2 * Math.PI / 3));
+        twists.put("u",  new Twist(planeu,  2 * Math.PI / 3));
+        twists.put("u2", new Twist(planeu, -2 * Math.PI / 3));
+        twists.put("L",  new Twist(planeL,  2 * Math.PI / 3));
+        twists.put("L2", new Twist(planeL, -2 * Math.PI / 3));
+        twists.put("l",  new Twist(planel,  2 * Math.PI / 3));
+        twists.put("l2", new Twist(planel, -2 * Math.PI / 3));
+        twists.put("R",  new Twist(planeR,  2 * Math.PI / 3));
+        twists.put("R2", new Twist(planeR, -2 * Math.PI / 3));
+        twists.put("r",  new Twist(planer,  2 * Math.PI / 3));
+        twists.put("r2", new Twist(planer, -2 * Math.PI / 3));
+        twists.put("B",  new Twist(planeB,  2 * Math.PI / 3));
+        twists.put("B2", new Twist(planeB, -2 * Math.PI / 3));
+        twists.put("b",  new Twist(planeb,  2 * Math.PI / 3));
+        twists.put("b2", new Twist(planeb, -2 * Math.PI / 3));
 
-        for (Move move : s.moves) {
+        for (String move : scramble.getSequence()) {
             Twist t = twists.get(move);
             mesh = mesh.transformHalfspace(
                 Matrix33.rotation(t.plane.n, t.angle),

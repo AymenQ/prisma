@@ -1,59 +1,28 @@
-package com.puzzletimer;
+package com.puzzletimer.puzzles;
 
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
-import com.puzzletimer.scrambles.Move;
-import com.puzzletimer.scrambles.Scramble;
-import com.puzzletimer.scrambles.Scrambler;
-import com.puzzletimer.scrambles.Square1RandomScrambler;
+import com.puzzletimer.models.Scramble;
 
 public class Square1 implements Puzzle {
-    private Scrambler scrambler;
-
-    public Square1() {
-        scrambler = new Square1RandomScrambler(20);
+    @Override
+    public String getPuzzleId() {
+        return "SQUARE-1";
     }
 
     @Override
-    public String getName() {
+    public String getDescription() {
         return "Square-1";
     }
 
     @Override
-    public int getMnemonic() {
-        return KeyEvent.VK_S;
-    }
-
-    @Override
-    public KeyStroke getAccelerator() {
-        return KeyStroke.getKeyStroke('1', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-    }
-
-    @Override
-    public boolean isDefaultPuzzle()
-    {
-        return false;
-    }
-
-    @Override
-    public Scrambler getScrambler()
-    {
-        return scrambler;
-    }
-
-    @Override
-    public Mesh getMesh(Scramble s)
-    {
+    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
         HSLColor[] colors = {
             new HSLColor( 55, 100,  50), // L - yellow
             new HSLColor(  0,  85,  45), // B - red
@@ -121,9 +90,8 @@ public class Square1 implements Puzzle {
         cube = topLayer.union(middleLayer).union(bottomLayer);
 
 
-        // i can't believe i am doing this...
         Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
-        for (Move m : s.moves) {
+        for (String m : scramble.getSequence()) {
             Matcher matcher = p.matcher(m.toString());
             matcher.find();
 

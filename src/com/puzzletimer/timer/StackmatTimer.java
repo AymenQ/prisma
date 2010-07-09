@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import javax.sound.sampled.TargetDataLine;
 
+import com.puzzletimer.models.Timing;
+
 interface StackmatTimerReaderListener {
     void dataReceived(byte[] data);
 }

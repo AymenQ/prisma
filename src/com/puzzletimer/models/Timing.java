@@ -1,4 +1,4 @@
-package com.puzzletimer.timer;
+package com.puzzletimer.models;
 
 import java.util.Date;
 

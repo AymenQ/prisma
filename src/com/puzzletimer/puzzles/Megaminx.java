@@ -1,53 +1,22 @@
-package com.puzzletimer;
+package com.puzzletimer.puzzles;
 
-import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
-
-import javax.swing.KeyStroke;
 
 import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
-import com.puzzletimer.scrambles.MegaminxMove;
-import com.puzzletimer.scrambles.MegaminxRandomScrambler;
-import com.puzzletimer.scrambles.Move;
-import com.puzzletimer.scrambles.Scramble;
-import com.puzzletimer.scrambles.Scrambler;
+import com.puzzletimer.models.Scramble;
 
 public class Megaminx implements Puzzle {
-    private Scrambler scrambler;
-
-    public Megaminx() {
-        scrambler = new MegaminxRandomScrambler();
+    @Override
+    public String getPuzzleId() {
+        return "MEGAMINX";
     }
 
     @Override
-    public String getName() {
+    public String getDescription() {
         return "Megaminx";
-    }
-
-    @Override
-    public int getMnemonic() {
-        return KeyEvent.VK_M;
-    }
-
-    @Override
-    public KeyStroke getAccelerator() {
-        return KeyStroke.getKeyStroke('M', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
-    }
-
-    @Override
-    public boolean isDefaultPuzzle()
-    {
-        return false;
-    }
-
-    @Override
-    public Scrambler getScrambler()
-    {
-        return scrambler;
     }
 
     private static class Twist {
@@ -61,8 +30,7 @@ public class Megaminx implements Puzzle {
     }
 
     @Override
-    public Mesh getMesh(Scramble s)
-    {
+    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
         HSLColor[] colors = {
             new HSLColor(200,  90,  50), // light blue
             new HSLColor( 20, 100,  50), // orange
@@ -102,15 +70,15 @@ public class Megaminx implements Puzzle {
         Plane planeD = new Plane(planes[7].p, planes[7].n.neg());
         Plane planeU = planes[7];
 
-        HashMap<Move, Twist> twists = new HashMap<Move, Twist>();
-        twists.put(MegaminxMove.R2, new Twist(planeR,  4 * Math.PI / 5));
-        twists.put(MegaminxMove.R7, new Twist(planeR, -4 * Math.PI / 5));
-        twists.put(MegaminxMove.D2, new Twist(planeD,  4 * Math.PI / 5));
-        twists.put(MegaminxMove.D7, new Twist(planeD, -4 * Math.PI / 5));
-        twists.put(MegaminxMove.U,  new Twist(planeU,  2 * Math.PI / 5));
-        twists.put(MegaminxMove.U6, new Twist(planeU, -2 * Math.PI / 5));
+        HashMap<String, Twist> twists = new HashMap<String, Twist>();
+        twists.put("R++", new Twist(planeR,  4 * Math.PI / 5));
+        twists.put("R--", new Twist(planeR, -4 * Math.PI / 5));
+        twists.put("D++", new Twist(planeD,  4 * Math.PI / 5));
+        twists.put("D--", new Twist(planeD, -4 * Math.PI / 5));
+        twists.put("U",   new Twist(planeU,  2 * Math.PI / 5));
+        twists.put("U'",  new Twist(planeU, -2 * Math.PI / 5));
 
-        for (Move move : s.moves) {
+        for (String move : scramble.getSequence()) {
             Twist t = twists.get(move);
             mesh = mesh.transformHalfspace(
                 Matrix33.rotation(t.plane.n, t.angle),

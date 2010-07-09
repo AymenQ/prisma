@@ -1,13 +1,31 @@
-package com.puzzletimer.scrambles;
+package com.puzzletimer.scramblers;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.UUID;
+
+import com.puzzletimer.models.Scramble;
 
 public class Square1RandomScrambler implements Scrambler {
     private int scrambleLength;
 
     public Square1RandomScrambler(int scrambleLength) {
         this.scrambleLength = scrambleLength;
+    }
+
+    @Override
+    public String getScramblerId() {
+        return "SQUARE-1-RANDOM";
+    }
+
+    @Override
+    public String getPuzzleId() {
+        return "SQUARE-1";
+    }
+
+    @Override
+    public String getDescription() {
+        return "Random scrambler";
     }
 
     private boolean[] rotateClockwise(boolean[] xs, int n) {
@@ -26,8 +44,8 @@ public class Square1RandomScrambler implements Scrambler {
 
         Random r = new Random();
 
-        ArrayList<Move> moves = new ArrayList<Move>();
-        for (int i = 0; i < scrambleLength; i++) {
+        String[] sequence = new String[this.scrambleLength];
+        for (int i = 0; i < this.scrambleLength; i++) {
             ArrayList<Integer> choices;
             int k;
 
@@ -74,9 +92,9 @@ public class Square1RandomScrambler implements Scrambler {
             top = newTop;
             bottom = newBottom;
 
-            moves.add(new Square1Move(x <= 6 ? x : x - 12, y <= 6 ? y : y - 12));
+            sequence[i] = "(" + (x <= 6 ? x : x - 12) + "," + (y <= 6 ? y : y - 12) + ")";
         }
 
-        return new Scramble(moves);
+        return new Scramble(UUID.randomUUID(), null, sequence);
     }
 }

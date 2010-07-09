@@ -2,7 +2,7 @@ package com.puzzletimer.statistics;
 
 import java.util.ArrayList;
 
-import com.puzzletimer.Solution;
+import com.puzzletimer.models.Solution;
 
 public class Best implements StatisticalMeasure {
     @Override
