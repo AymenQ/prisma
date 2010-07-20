@@ -1,15 +1,15 @@
 package com.puzzletimer.scramblers;
+
 import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.solvers.RubiksPocketCubeSolver;
 
 public class RubiksPocketCubeRandomScrambler implements Scrambler {
-    private int scrambleLength;
     private Random random;
 
-    public RubiksPocketCubeRandomScrambler(int scrambleLength) {
-        this.scrambleLength = scrambleLength;
+    public RubiksPocketCubeRandomScrambler() {
         this.random = new Random();
     }
 
@@ -30,30 +30,8 @@ public class RubiksPocketCubeRandomScrambler implements Scrambler {
 
     @Override
     public Scramble getNextScramble() {
-        String[] sequence = new String[this.scrambleLength];
-        String[] moves = {
-            // X axis
-            "R", "R2", "R'",
-
-            // Y axis
-            "U", "U2", "U'",
-
-            // Z axis
-            "F", "F2", "F'",
-        };
-
-        int last = -1;
-        for (int i = 0; i < this.scrambleLength; i++)
-        {
-            int axis = last;
-            do {
-                axis = this.random.nextInt(3);
-            } while (axis == last);
-            last = axis;
-
-            sequence[i] = moves[3 * axis + this.random.nextInt(3)];
-        }
-
-        return new Scramble(UUID.randomUUID(), null, sequence);
+        int permutation = this.random.nextInt(RubiksPocketCubeSolver.N_PERMUTATIONS);
+        int orientation = this.random.nextInt(RubiksPocketCubeSolver.N_ORIENTATIONS);
+        return new Scramble(UUID.randomUUID(), null, RubiksPocketCubeSolver.generate(permutation, orientation));
     }
 }
