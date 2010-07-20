@@ -1,6 +1,7 @@
 package com.puzzletimer.solvers;
 
 public class IndexMapping {
+    // permutation
     public static int permutationToIndex(byte[] permutation) {
         int index = 0;
         for (int i = 0; i < permutation.length - 1; i++) {
@@ -31,7 +32,69 @@ public class IndexMapping {
         return permutation;
     }
 
+    // even permutation
+    public static int evenPermutationToIndex(byte[] permutation) {
+        int index = 0;
+        for (int i = 0; i < permutation.length - 2; i++) {
+            index *= permutation.length - i;
+            for (int j = i + 1; j < permutation.length; j++) {
+                if (permutation[i] > permutation[j]) {
+                    index++;
+                }
+            }
+        }
+
+        return index;
+    }
+
+    public static byte[] indexToEvenPermutation(int index, int length) {
+        int sum = 0;
+        byte[] permutation = new byte[length];
+
+        permutation[length - 1] = 1;
+        permutation[length - 2] = 0;
+        for (int i = length - 3; i >= 0; i--) {
+            permutation[i] = (byte) (index % (length - i));
+            sum += permutation[i];
+            index /= length - i;
+            for (int j = i + 1; j < length; j++) {
+                if (permutation[j] >= permutation[i]) {
+                    permutation[j]++;
+                }
+            }
+        }
+
+        if (sum % 2 != 0) {
+            byte temp = permutation[permutation.length - 1];
+            permutation[permutation.length - 1] = permutation[permutation.length - 2];
+            permutation[permutation.length - 2] = temp;
+        }
+
+        return permutation;
+    }
+
+    // orientation
     public static int orientationToIndex(byte[] orientation, int nValues) {
+        int index = 0;
+        for (int i = 0; i < orientation.length; i++) {
+            index = nValues * index + orientation[i];
+        }
+
+        return index;
+    }
+
+    public static byte[] indexToOrientation(int index, int nValues, int length) {
+        byte[] orientation = new byte[length];
+        for (int i = length - 1; i >= 0; i--) {
+            orientation[i] = (byte) (index % nValues);
+            index /= nValues;
+        }
+
+        return orientation;
+    }
+
+    // zero sum orientation
+    public static int zeroSumOrientationToIndex(byte[] orientation, int nValues) {
         int index = 0;
         for (int i = 0; i < orientation.length - 1; i++) {
             index = nValues * index + orientation[i];
@@ -40,7 +103,7 @@ public class IndexMapping {
         return index;
     }
 
-    public static byte[] indexToOrientation(int index, int nValues, int length) {
+    public static byte[] indexToZeroSumOrientation(int index, int nValues, int length) {
         byte[] orientation = new byte[length];
         orientation[length - 1] = 0;
         for (int i = length - 2; i >= 0; i--) {

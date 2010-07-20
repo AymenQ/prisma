@@ -89,21 +89,21 @@ public class Pyraminx implements Puzzle {
 
         HashMap<String, Twist> twists = new HashMap<String, Twist>();
         twists.put("U",  new Twist(planeU,  2 * Math.PI / 3));
-        twists.put("U2", new Twist(planeU, -2 * Math.PI / 3));
+        twists.put("U'", new Twist(planeU, -2 * Math.PI / 3));
         twists.put("u",  new Twist(planeu,  2 * Math.PI / 3));
-        twists.put("u2", new Twist(planeu, -2 * Math.PI / 3));
+        twists.put("u'", new Twist(planeu, -2 * Math.PI / 3));
         twists.put("L",  new Twist(planeL,  2 * Math.PI / 3));
-        twists.put("L2", new Twist(planeL, -2 * Math.PI / 3));
+        twists.put("L'", new Twist(planeL, -2 * Math.PI / 3));
         twists.put("l",  new Twist(planel,  2 * Math.PI / 3));
-        twists.put("l2", new Twist(planel, -2 * Math.PI / 3));
+        twists.put("l'", new Twist(planel, -2 * Math.PI / 3));
         twists.put("R",  new Twist(planeR,  2 * Math.PI / 3));
-        twists.put("R2", new Twist(planeR, -2 * Math.PI / 3));
+        twists.put("R'", new Twist(planeR, -2 * Math.PI / 3));
         twists.put("r",  new Twist(planer,  2 * Math.PI / 3));
-        twists.put("r2", new Twist(planer, -2 * Math.PI / 3));
+        twists.put("r'", new Twist(planer, -2 * Math.PI / 3));
         twists.put("B",  new Twist(planeB,  2 * Math.PI / 3));
-        twists.put("B2", new Twist(planeB, -2 * Math.PI / 3));
+        twists.put("B'", new Twist(planeB, -2 * Math.PI / 3));
         twists.put("b",  new Twist(planeb,  2 * Math.PI / 3));
-        twists.put("b2", new Twist(planeb, -2 * Math.PI / 3));
+        twists.put("b'", new Twist(planeb, -2 * Math.PI / 3));
 
         for (String move : scramble.getSequence()) {
             Twist t = twists.get(move);

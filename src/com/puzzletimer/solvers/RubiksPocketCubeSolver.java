@@ -68,9 +68,9 @@ public class RubiksPocketCubeSolver {
 
         orientationMove = new int[N_ORIENTATIONS][N_MOVES];
         for (int i = 0; i < N_ORIENTATIONS; i++) {
-            Cube cube = new Cube(new byte[8], IndexMapping.indexToOrientation(i, 3, 8));
+            Cube cube = new Cube(new byte[8], IndexMapping.indexToZeroSumOrientation(i, 3, 8));
             for (int j = 0; j < N_MOVES; j++) {
-                orientationMove[i][j] = IndexMapping.orientationToIndex(cube.multiply(moves[j]).orientation, 3);
+                orientationMove[i][j] = IndexMapping.zeroSumOrientationToIndex(cube.multiply(moves[j]).orientation, 3);
             }
         }
 
