@@ -3,13 +3,13 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.solvers.IndexMapping;
+import com.puzzletimer.solvers.RubiksCubeSolver;
 
 public class RubiksCubeRandomScrambler implements Scrambler {
-    private int scrambleLength;
     private Random random;
 
-    public RubiksCubeRandomScrambler(int scrambleLength) {
-        this.scrambleLength = scrambleLength;
+    public RubiksCubeRandomScrambler() {
         this.random = new Random();
     }
 
@@ -28,32 +28,43 @@ public class RubiksCubeRandomScrambler implements Scrambler {
         return "Random scrambler";
     }
 
-    @Override
-    public Scramble getNextScramble() {
-        String[] sequence = new String[this.scrambleLength];
-        String[] moves = {
-            // X axis
-            "R", "R2", "R'", "L", "L2", "L'",
-
-            // Y axis
-            "U", "U2", "U'", "D", "D2", "D'",
-
-            // Z axis
-            "F", "F2", "F'", "B", "B2", "B'",
-        };
-
-        int last = -1;
-        for (int i = 0; i < this.scrambleLength; i++)
-        {
-            int axis = last;
-            do {
-                axis = this.random.nextInt(3);
-            } while (axis == last);
-            last = axis;
-
-            sequence[i] = moves[6 * axis + this.random.nextInt(6)];
+    private int permutationSign(byte[] permutation) {
+        int nInversions = 0;
+        for (int i = 0; i < permutation.length; i++) {
+            for (int j = i + 1; j < permutation.length; j++) {
+                if (permutation[i] > permutation[j]) {
+                    nInversions++;
+                }
+            }
         }
 
-        return new Scramble(UUID.randomUUID(), null, sequence);
+        return nInversions % 2 == 0 ? 1 : -1;
+    }
+
+    @Override
+    public Scramble getNextScramble() {
+        byte[] cornersPermutation = IndexMapping.indexToPermutation(
+            this.random.nextInt(RubiksCubeSolver.N_CORNERS_PERMUTATIONS), 8);
+        byte[] cornersOrientation = IndexMapping.indexToZeroSumOrientation(
+            this.random.nextInt(RubiksCubeSolver.N_CORNERS_ORIENTATIONS), 3, 8);
+        byte[] edgesPermutation = IndexMapping.indexToPermutation(
+            this.random.nextInt(RubiksCubeSolver.N_EDGES_PERMUTATIONS), 12);
+        byte[] edgesOrientation = IndexMapping.indexToZeroSumOrientation(
+            this.random.nextInt(RubiksCubeSolver.N_EDGES_ORIENTATIONS), 2, 12);
+
+        // fix permutations parity
+        if (permutationSign(cornersPermutation) != permutationSign(edgesPermutation)) {
+            byte temp = cornersPermutation[0];
+            cornersPermutation[0] = cornersPermutation[1];
+            cornersPermutation[1] = temp;
+        }
+
+        RubiksCubeSolver.State state = new RubiksCubeSolver.State(
+            cornersPermutation,
+            cornersOrientation,
+            edgesPermutation,
+            edgesOrientation);
+
+        return new Scramble(UUID.randomUUID(), null, RubiksCubeSolver.generate(state));
     }
 }

@@ -116,4 +116,42 @@ public class IndexMapping {
 
         return orientation;
     }
+
+    // combinations
+    private static int nChooseK(int n, int k) {
+        int value = 1;
+
+        for (int i = 0; i < k; i++) {
+            value *= n - i;
+        }
+
+        for (int i = 0; i < k; i++) {
+            value /= k - i;
+        }
+
+        return value;
+    }
+
+    public static int combinationToIndex(boolean[] combination, int k) {
+        int index = 0;
+        for (int i = combination.length - 1; i >= 0 && k > 0; i--) {
+            if (combination[i]) {
+                index += nChooseK(i, k--);
+            }
+        }
+
+        return index;
+    }
+
+    public static boolean[] indexToCombination(int index, int k, int length) {
+        boolean[] combination = new boolean[length];
+        for (int i = length - 1; i >= 0 && k >= 0; i--) {
+            if (index >= nChooseK(i, k)) {
+                combination[i] = true;
+                index -= nChooseK(i, k--);
+            }
+        }
+
+        return combination;
+    }
 }
