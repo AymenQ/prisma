@@ -277,8 +277,12 @@ public class Main extends JFrame implements TimerListener {
                     targetDataLine = AudioSystem.getTargetDataLine(Main.this.audioFormat, Main.this.mixerInfo);
                     targetDataLine.open(Main.this.audioFormat);
                 } catch (LineUnavailableException ex) {
-                    // should display an error message and select the default timer
-                    throw new RuntimeException();
+                    // select the default timer
+                    menuItemCtrlKeys.setSelected(true);
+                    Main.this.timer = new KeyboardTimer(Main.this, KeyEvent.VK_CONTROL);
+                    Main.this.timer.addEventListener(Main.this);
+                    Main.this.timer.start();
+                    return;
                 }
 
                 Main.this.timer = new StackmatTimer(targetDataLine);
