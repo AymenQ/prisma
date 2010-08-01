@@ -185,9 +185,16 @@ public class Main extends JFrame implements TimerListener {
             new Category(null, "MEGAMINX-RANDOM", "Megaminx", 'M', 'M', false),
             new Category(null, "PYRAMINX-RANDOM", "Pyraminx", 'P', 'P', false),
             new Category(null, "SQUARE-1-RANDOM", "Square-1", 'S', '1', false),
+            null, // separator
+            new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Rubik's cube - easy cross", 'E', '\0', false),
         };
 
         for (final Category category : categories) {
+            if (category == null) {
+                menuCategory.addSeparator();
+                continue;
+            }
+
             final JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.getDescription());
             menuItemCategory.setMnemonic(category.getMnemonic());
             if (category.getAccelerator() != '\0') {

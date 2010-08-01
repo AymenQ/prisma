@@ -1,5 +1,6 @@
 package com.puzzletimer.solvers;
 
+
 public class RubiksCubeCrossSolver {
     private static class State {
         public boolean[] combination;
@@ -77,10 +78,10 @@ public class RubiksCubeCrossSolver {
     }
 
     // constants
-    private static final int N_MOVES = 18;
-    private static final int N_COMBINATIONS = 495;
-    private static final int N_PERMUTATIONS = 24;
-    private static final int N_ORIENTATIONS = 16;
+    public static final int N_MOVES = 18;
+    public static final int N_COMBINATIONS = 495;
+    public static final int N_PERMUTATIONS = 24;
+    public static final int N_ORIENTATIONS = 16;
 
     // moves
     private static Move[] moves;
