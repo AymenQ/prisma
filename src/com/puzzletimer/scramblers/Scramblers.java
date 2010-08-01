@@ -7,6 +7,7 @@ public class Scramblers {
 
     static {
         Scrambler[] scramblerList = {
+            new EmptyScrambler(),
             new RubiksPocketCubeRandomScrambler(),
             new RubiksCubeRandomScrambler("RUBIKS-CUBE-RANDOM", "Random scrambler", false, false, false, false),
             new RubiksCubeRandomScrambler("RUBIKS-CUBE-RANDOM-EDGES", "Random edges scrambler", true, true, false, false),

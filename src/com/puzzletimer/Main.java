@@ -185,6 +185,9 @@ public class Main extends JFrame implements TimerListener {
             new Category(null, "MEGAMINX-RANDOM", "Megaminx", 'M', 'M', false),
             new Category(null, "PYRAMINX-RANDOM", "Pyraminx", 'P', 'P', false),
             new Category(null, "SQUARE-1-RANDOM", "Square-1", 'S', '1', false),
+            new Category(null, "EMPTY", "Rubik's clock", 'C', '\0', false),
+            new Category(null, "EMPTY", "Rubik's magic", 'M', '\0', false),
+            new Category(null, "EMPTY", "Master magic", 'M', '\0', false),
             null, // separator
             new Category(null, "RUBIKS-CUBE-RANDOM-EDGES", "Rubik's cube - random edges", 'E', '\0', false),
             new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-PERMUTATION", "Rubik's cube - random edges permutation", 'P', '\0', false),

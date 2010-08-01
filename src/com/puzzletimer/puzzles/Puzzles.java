@@ -7,6 +7,7 @@ public class Puzzles {
 
     static {
         puzzles = new HashMap<String, Puzzle>();
+        puzzles.put("EMPTY", new Empty());
         puzzles.put("2x2x2-CUBE", new RubiksPocketCube());
         puzzles.put("RUBIKS-CUBE", new RubiksCube());
         puzzles.put("4x4x4-CUBE", new RubiksRevenge());
