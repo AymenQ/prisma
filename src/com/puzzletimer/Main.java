@@ -186,7 +186,14 @@ public class Main extends JFrame implements TimerListener {
             new Category(null, "PYRAMINX-RANDOM", "Pyraminx", 'P', 'P', false),
             new Category(null, "SQUARE-1-RANDOM", "Square-1", 'S', '1', false),
             null, // separator
+            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES", "Rubik's cube - random edges", 'E', '\0', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-PERMUTATION", "Rubik's cube - random edges permutation", 'P', '\0', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-ORIENTATION", "Rubik's cube - random edges orientation", 'O', '\0', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS", "Rubik's cube - random corners", 'C', '\0', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-PERMUTATION", "Rubik's cube - random corners permutation", 'P', '\0', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-ORIENTATION", "Rubik's cube - random corners orientation", 'O', '\0', false),
             new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Rubik's cube - easy cross", 'E', '\0', false),
+            new Category(null, "RUBIKS-CUBE-HARD-CROSS", "Rubik's cube - hard cross", 'H', '\0', false),
         };
 
         for (final Category category : categories) {

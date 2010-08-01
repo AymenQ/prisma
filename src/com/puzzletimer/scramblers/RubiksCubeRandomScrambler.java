@@ -7,15 +7,30 @@ import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeSolver;
 
 public class RubiksCubeRandomScrambler implements Scrambler {
+    private String scramblerId;
+    private String scramblerDescription;
+    private boolean solvedCornersPermutation;
+    private boolean solvedCornersOrientation;
+    private boolean solvedEdgesPermutation;
+    private boolean solvedEdgesOrientation;
     private Random random;
 
-    public RubiksCubeRandomScrambler() {
+    public RubiksCubeRandomScrambler(
+        String scramblerId, String scramblerDescription,
+        boolean solvedCornersPermutation, boolean solvedCornersOrientation,
+        boolean solvedEdgesPermutation, boolean solvedEdgesOrientation) {
+        this.scramblerId = scramblerId;
+        this.scramblerDescription = scramblerDescription;
+        this.solvedCornersPermutation = solvedCornersPermutation;
+        this.solvedCornersOrientation = solvedCornersOrientation;
+        this.solvedEdgesPermutation = solvedEdgesPermutation;
+        this.solvedEdgesOrientation = solvedEdgesOrientation;
         this.random = new Random();
     }
 
     @Override
     public String getScramblerId() {
-        return "RUBIKS-CUBE-RANDOM";
+        return this.scramblerId;
     }
 
     @Override
@@ -25,7 +40,7 @@ public class RubiksCubeRandomScrambler implements Scrambler {
 
     @Override
     public String getDescription() {
-        return "Random scrambler";
+        return this.scramblerDescription;
     }
 
     private int permutationSign(byte[] permutation) {
@@ -44,19 +59,25 @@ public class RubiksCubeRandomScrambler implements Scrambler {
     @Override
     public Scramble getNextScramble() {
         byte[] cornersPermutation = IndexMapping.indexToPermutation(
-            this.random.nextInt(RubiksCubeSolver.N_CORNERS_PERMUTATIONS), 8);
+            this.solvedCornersPermutation ? 0 : this.random.nextInt(RubiksCubeSolver.N_CORNERS_PERMUTATIONS), 8);
         byte[] cornersOrientation = IndexMapping.indexToZeroSumOrientation(
-            this.random.nextInt(RubiksCubeSolver.N_CORNERS_ORIENTATIONS), 3, 8);
+            this.solvedCornersOrientation ? 0 : this.random.nextInt(RubiksCubeSolver.N_CORNERS_ORIENTATIONS), 3, 8);
         byte[] edgesPermutation = IndexMapping.indexToPermutation(
-            this.random.nextInt(RubiksCubeSolver.N_EDGES_PERMUTATIONS), 12);
+            this.solvedEdgesPermutation ? 0 : this.random.nextInt(RubiksCubeSolver.N_EDGES_PERMUTATIONS), 12);
         byte[] edgesOrientation = IndexMapping.indexToZeroSumOrientation(
-            this.random.nextInt(RubiksCubeSolver.N_EDGES_ORIENTATIONS), 2, 12);
+            this.solvedEdgesOrientation ? 0 : this.random.nextInt(RubiksCubeSolver.N_EDGES_ORIENTATIONS), 2, 12);
 
         // fix permutations parity
         if (permutationSign(cornersPermutation) != permutationSign(edgesPermutation)) {
-            byte temp = cornersPermutation[0];
-            cornersPermutation[0] = cornersPermutation[1];
-            cornersPermutation[1] = temp;
+            if (this.solvedCornersPermutation) {
+                byte temp = edgesPermutation[0];
+                edgesPermutation[0] = edgesPermutation[1];
+                edgesPermutation[1] = temp;
+            } else {
+                byte temp = cornersPermutation[0];
+                cornersPermutation[0] = cornersPermutation[1];
+                cornersPermutation[1] = temp;
+            }
         }
 
         RubiksCubeSolver.State state = new RubiksCubeSolver.State(
