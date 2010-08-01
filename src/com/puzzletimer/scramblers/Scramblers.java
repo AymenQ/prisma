@@ -16,6 +16,8 @@ public class Scramblers {
             new RubiksCubeRandomScrambler("RUBIKS-CUBE-RANDOM-CORNERS", "Random corners scrambler", false, false, true, true),
             new RubiksCubeRandomScrambler("RUBIKS-CUBE-RANDOM-CORNERS-PERMUTATION", "Random corners permutation scrambler", false, true, true, true),
             new RubiksCubeRandomScrambler("RUBIKS-CUBE-RANDOM-CORNERS-ORIENTATION", "Random corners orientation scrambler", true, false, true, true),
+            new RubiksCubeLastLayerScrambler("RUBIKS-CUBE-RANDOM-LAST-LAYER", "Random last layer", false),
+            new RubiksCubeLastLayerScrambler("RUBIKS-CUBE-RANDOM-LAST-LAYER-PERMUTATION", "Random last layer permutation", true),
             new RubiksCubeControlledCrossDistanceScrambler("RUBIKS-CUBE-EASY-CROSS", "Easy cross scrambler", 0, 3),
             new RubiksCubeControlledCrossDistanceScrambler("RUBIKS-CUBE-HARD-CROSS", "Hard cross scrambler", 6, 8),
             new RubiksRevengeRandomScrambler(40),

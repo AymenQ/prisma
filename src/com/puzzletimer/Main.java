@@ -195,6 +195,8 @@ public class Main extends JFrame implements TimerListener {
             new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS", "Rubik's cube - random corners", 'C', '\0', false),
             new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-PERMUTATION", "Rubik's cube - random corners permutation", 'P', '\0', false),
             new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-ORIENTATION", "Rubik's cube - random corners orientation", 'O', '\0', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER", "Rubik's cube - random last layer", 'P', '\0', false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER-PERMUTATION", "Rubik's cube - random last layer permutation", 'O', '\0', false),
             new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Rubik's cube - easy cross", 'E', '\0', false),
             new Category(null, "RUBIKS-CUBE-HARD-CROSS", "Rubik's cube - hard cross", 'H', '\0', false),
         };
