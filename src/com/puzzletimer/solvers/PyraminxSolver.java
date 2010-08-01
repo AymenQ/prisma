@@ -1,43 +1,42 @@
 package com.puzzletimer.solvers;
 
-
-class Pyraminx {
-    public byte[] verticesOrientation;
-    public byte[] edgesPermutation;
-    public byte[] edgesOrientation;
-
-    public Pyraminx(byte[] verticesOrientation, byte[] edgesPermutation, byte[] edgesOrientation) {
-        this.verticesOrientation = verticesOrientation;
-        this.edgesPermutation = edgesPermutation;
-        this.edgesOrientation = edgesOrientation;
-    }
-
-    public Pyraminx multiply(Pyraminx move) {
-        byte[] resultVerticesOrientation = new byte[4];
-        byte[] resultEdgesPermutation = new byte[6];
-        byte[] resultEdgesOrientation = new byte[6];
-
-        for (int i = 0; i < 4; i++) {
-            resultVerticesOrientation[i] = (byte) ((this.verticesOrientation[i] + move.verticesOrientation[i]) % 3);
-        }
-
-        for (int i = 0; i < 6; i++) {
-            resultEdgesPermutation[i] = this.edgesPermutation[move.edgesPermutation[i]];
-            resultEdgesOrientation[i] = (byte) ((this.edgesOrientation[move.edgesPermutation[i]] + move.edgesOrientation[i]) % 2);
-        }
-
-        return new Pyraminx(resultVerticesOrientation, resultEdgesPermutation, resultEdgesOrientation);
-    }
-}
-
 public class PyraminxSolver {
+    public static class State {
+        public byte[] verticesOrientation;
+        public byte[] edgesPermutation;
+        public byte[] edgesOrientation;
+
+        public State(byte[] verticesOrientation, byte[] edgesPermutation, byte[] edgesOrientation) {
+            this.verticesOrientation = verticesOrientation;
+            this.edgesPermutation = edgesPermutation;
+            this.edgesOrientation = edgesOrientation;
+        }
+
+        public State multiply(State move) {
+            byte[] resultVerticesOrientation = new byte[4];
+            byte[] resultEdgesPermutation = new byte[6];
+            byte[] resultEdgesOrientation = new byte[6];
+
+            for (int i = 0; i < 4; i++) {
+                resultVerticesOrientation[i] = (byte) ((this.verticesOrientation[i] + move.verticesOrientation[i]) % 3);
+            }
+
+            for (int i = 0; i < 6; i++) {
+                resultEdgesPermutation[i] = this.edgesPermutation[move.edgesPermutation[i]];
+                resultEdgesOrientation[i] = (byte) ((this.edgesOrientation[move.edgesPermutation[i]] + move.edgesOrientation[i]) % 2);
+            }
+
+            return new State(resultVerticesOrientation, resultEdgesPermutation, resultEdgesOrientation);
+        }
+    }
+
     public static final int N_TIPS_ORIERNTATIONS = 81;
     public static final int N_VERTICES_ORIERNTATIONS = 81;
     public static final int N_EDGES_PERMUTATIONS = 360;
     public static final int N_EDGES_ORIENTATIONS = 32;
     public static final int N_MOVES = 8;
 
-    private static Pyraminx[] moves;
+    private static State[] moves;
 
     private static int[][] verticesOrientationMove;
     private static int[][] edgesPermutationMove;
@@ -48,12 +47,12 @@ public class PyraminxSolver {
     private static byte[] edgesOrientationDistance;
 
     static {
-        Pyraminx moveU = new Pyraminx(new byte[] { 1, 0, 0, 0 }, new byte[] { 2, 0, 1, 3, 4, 5 }, new byte[] { 0, 0, 0, 0, 0, 0 });
-        Pyraminx moveL = new Pyraminx(new byte[] { 0, 1, 0, 0 }, new byte[] { 0, 1, 5, 3, 2, 4 }, new byte[] { 0, 0, 1, 0, 0, 1 });
-        Pyraminx moveR = new Pyraminx(new byte[] { 0, 0, 1, 0 }, new byte[] { 0, 4, 2, 1, 3, 5 }, new byte[] { 0, 1, 0, 0, 1, 0 });
-        Pyraminx moveB = new Pyraminx(new byte[] { 0, 0, 0, 1 }, new byte[] { 3, 1, 2, 5, 4, 0 }, new byte[] { 1, 0, 0, 1, 0, 0 });
+        State moveU = new State(new byte[] { 1, 0, 0, 0 }, new byte[] { 2, 0, 1, 3, 4, 5 }, new byte[] { 0, 0, 0, 0, 0, 0 });
+        State moveL = new State(new byte[] { 0, 1, 0, 0 }, new byte[] { 0, 1, 5, 3, 2, 4 }, new byte[] { 0, 0, 1, 0, 0, 1 });
+        State moveR = new State(new byte[] { 0, 0, 1, 0 }, new byte[] { 0, 4, 2, 1, 3, 5 }, new byte[] { 0, 1, 0, 0, 1, 0 });
+        State moveB = new State(new byte[] { 0, 0, 0, 1 }, new byte[] { 3, 1, 2, 5, 4, 0 }, new byte[] { 1, 0, 0, 1, 0, 0 });
 
-        moves = new Pyraminx[] {
+        moves = new State[] {
             moveU,
             moveU.multiply(moveU),
             moveL,
@@ -67,25 +66,25 @@ public class PyraminxSolver {
         // move tables
         verticesOrientationMove = new int[N_VERTICES_ORIERNTATIONS][N_MOVES];
         for (int i = 0; i < N_VERTICES_ORIERNTATIONS; i++) {
-            Pyraminx pyraminx = new Pyraminx(IndexMapping.indexToOrientation(i, 3, 4), new byte[6], new byte[6]);
+            State state = new State(IndexMapping.indexToOrientation(i, 3, 4), new byte[6], new byte[6]);
             for (int j = 0; j < N_MOVES; j++) {
-                verticesOrientationMove[i][j] = IndexMapping.orientationToIndex(pyraminx.multiply(moves[j]).verticesOrientation, 3);
+                verticesOrientationMove[i][j] = IndexMapping.orientationToIndex(state.multiply(moves[j]).verticesOrientation, 3);
             }
         }
 
         edgesPermutationMove = new int[N_EDGES_PERMUTATIONS][N_MOVES];
         for (int i = 0; i < N_EDGES_PERMUTATIONS; i++) {
-            Pyraminx pyraminx = new Pyraminx(new byte[4], IndexMapping.indexToEvenPermutation(i, 6), new byte[6]);
+            State state = new State(new byte[4], IndexMapping.indexToEvenPermutation(i, 6), new byte[6]);
             for (int j = 0; j < N_MOVES; j++) {
-                edgesPermutationMove[i][j] = IndexMapping.evenPermutationToIndex(pyraminx.multiply(moves[j]).edgesPermutation);
+                edgesPermutationMove[i][j] = IndexMapping.evenPermutationToIndex(state.multiply(moves[j]).edgesPermutation);
             }
         }
 
         edgesOrientationMove = new int[N_EDGES_ORIENTATIONS][N_MOVES];
         for (int i = 0; i < N_EDGES_ORIENTATIONS; i++) {
-            Pyraminx pyraminx = new Pyraminx(new byte[4], new byte[6], IndexMapping.indexToZeroSumOrientation(i, 2, 6));
+            State state = new State(new byte[4], new byte[6], IndexMapping.indexToZeroSumOrientation(i, 2, 6));
             for (int j = 0; j < N_MOVES; j++) {
-                edgesOrientationMove[i][j] = IndexMapping.zeroSumOrientationToIndex(pyraminx.multiply(moves[j]).edgesOrientation, 2);
+                edgesOrientationMove[i][j] = IndexMapping.zeroSumOrientationToIndex(state.multiply(moves[j]).edgesOrientation, 2);
             }
         }
 

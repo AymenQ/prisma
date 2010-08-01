@@ -1,33 +1,33 @@
 package com.puzzletimer.solvers;
 
-class Cube {
-    public byte[] permutation;
-    public byte[] orientation;
+public class RubiksPocketCubeSolver {
+    public static class State {
+        public byte[] permutation;
+        public byte[] orientation;
 
-    public Cube(byte[] permutation, byte[] orientation) {
-        this.orientation = orientation;
-        this.permutation = permutation;
-    }
-
-    public Cube multiply(Cube move) {
-        byte[] resultPermutation = new byte[8];
-        byte[] resultOrientation = new byte[8];
-
-        for (int i = 0; i < 8; i++) {
-            resultPermutation[i] = this.permutation[move.permutation[i]];
-            resultOrientation[i] = (byte) ((this.orientation[move.permutation[i]] + move.orientation[i]) % 3);
+        public State(byte[] permutation, byte[] orientation) {
+            this.orientation = orientation;
+            this.permutation = permutation;
         }
 
-        return new Cube(resultPermutation, resultOrientation);
-    }
-}
+        public State multiply(State move) {
+            byte[] resultPermutation = new byte[8];
+            byte[] resultOrientation = new byte[8];
 
-public class RubiksPocketCubeSolver {
+            for (int i = 0; i < 8; i++) {
+                resultPermutation[i] = this.permutation[move.permutation[i]];
+                resultOrientation[i] = (byte) ((this.orientation[move.permutation[i]] + move.orientation[i]) % 3);
+            }
+
+            return new State(resultPermutation, resultOrientation);
+        }
+    }
+
     public static final int N_PERMUTATIONS = 40320;
     public static final int N_ORIENTATIONS = 2187;
     public static final int N_MOVES = 18;
 
-    private static Cube[] moves;
+    private static State[] moves;
 
     private static int[][] permutationMove;
     private static int[][] orientationMove;
@@ -36,41 +36,41 @@ public class RubiksPocketCubeSolver {
     private static byte[] orientationDistance;
 
     static {
-        moves = new Cube[] {
-            new Cube(new byte[] { 3, 0, 1, 2, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 2, 3, 0, 1, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 1, 2, 3, 0, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 0, 1, 2, 3, 5, 6, 7, 4 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 0, 1, 2, 3, 6, 7, 4, 5 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 0, 1, 2, 3, 7, 4, 5, 6 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 4, 1, 2, 0, 7, 5, 6, 3 }, new byte[] { 2, 0, 0, 1, 1, 0, 0, 2 }),
-            new Cube(new byte[] { 7, 1, 2, 4, 3, 5, 6, 0 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 3, 1, 2, 7, 0, 5, 6, 4 }, new byte[] { 2, 0, 0, 1, 1, 0, 0, 2 }),
-            new Cube(new byte[] { 0, 2, 6, 3, 4, 1, 5, 7 }, new byte[] { 0, 1, 2, 0, 0, 2, 1, 0 }),
-            new Cube(new byte[] { 0, 6, 5, 3, 4, 2, 1, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 0, 5, 1, 3, 4, 6, 2, 7 }, new byte[] { 0, 1, 2, 0, 0, 2, 1, 0 }),
-            new Cube(new byte[] { 0, 1, 3, 7, 4, 5, 2, 6 }, new byte[] { 0, 0, 1, 2, 0, 0, 2, 1 }),
-            new Cube(new byte[] { 0, 1, 7, 6, 4, 5, 3, 2 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 0, 1, 6, 2, 4, 5, 7, 3 }, new byte[] { 0, 0, 1, 2, 0, 0, 2, 1 }),
-            new Cube(new byte[] { 1, 5, 2, 3, 0, 4, 6, 7 }, new byte[] { 1, 2, 0, 0, 2, 1, 0, 0 }),
-            new Cube(new byte[] { 5, 4, 2, 3, 1, 0, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new Cube(new byte[] { 4, 0, 2, 3, 5, 1, 6, 7 }, new byte[] { 1, 2, 0, 0, 2, 1, 0, 0 }),
+        moves = new State[] {
+            new State(new byte[] { 3, 0, 1, 2, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 2, 3, 0, 1, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 1, 2, 3, 0, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 0, 1, 2, 3, 5, 6, 7, 4 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 0, 1, 2, 3, 6, 7, 4, 5 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 0, 1, 2, 3, 7, 4, 5, 6 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 4, 1, 2, 0, 7, 5, 6, 3 }, new byte[] { 2, 0, 0, 1, 1, 0, 0, 2 }),
+            new State(new byte[] { 7, 1, 2, 4, 3, 5, 6, 0 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 3, 1, 2, 7, 0, 5, 6, 4 }, new byte[] { 2, 0, 0, 1, 1, 0, 0, 2 }),
+            new State(new byte[] { 0, 2, 6, 3, 4, 1, 5, 7 }, new byte[] { 0, 1, 2, 0, 0, 2, 1, 0 }),
+            new State(new byte[] { 0, 6, 5, 3, 4, 2, 1, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 0, 5, 1, 3, 4, 6, 2, 7 }, new byte[] { 0, 1, 2, 0, 0, 2, 1, 0 }),
+            new State(new byte[] { 0, 1, 3, 7, 4, 5, 2, 6 }, new byte[] { 0, 0, 1, 2, 0, 0, 2, 1 }),
+            new State(new byte[] { 0, 1, 7, 6, 4, 5, 3, 2 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 0, 1, 6, 2, 4, 5, 7, 3 }, new byte[] { 0, 0, 1, 2, 0, 0, 2, 1 }),
+            new State(new byte[] { 1, 5, 2, 3, 0, 4, 6, 7 }, new byte[] { 1, 2, 0, 0, 2, 1, 0, 0 }),
+            new State(new byte[] { 5, 4, 2, 3, 1, 0, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
+            new State(new byte[] { 4, 0, 2, 3, 5, 1, 6, 7 }, new byte[] { 1, 2, 0, 0, 2, 1, 0, 0 }),
         };
 
         // move tables
         permutationMove = new int[N_PERMUTATIONS][N_MOVES];
         for (int i = 0; i < N_PERMUTATIONS; i++) {
-            Cube cube = new Cube(IndexMapping.indexToPermutation(i, 8), new byte[8]);
+            State state = new State(IndexMapping.indexToPermutation(i, 8), new byte[8]);
             for (int j = 0; j < N_MOVES; j++) {
-                permutationMove[i][j] = IndexMapping.permutationToIndex(cube.multiply(moves[j]).permutation);
+                permutationMove[i][j] = IndexMapping.permutationToIndex(state.multiply(moves[j]).permutation);
             }
         }
 
         orientationMove = new int[N_ORIENTATIONS][N_MOVES];
         for (int i = 0; i < N_ORIENTATIONS; i++) {
-            Cube cube = new Cube(new byte[8], IndexMapping.indexToZeroSumOrientation(i, 3, 8));
+            State state = new State(new byte[8], IndexMapping.indexToZeroSumOrientation(i, 3, 8));
             for (int j = 0; j < N_MOVES; j++) {
-                orientationMove[i][j] = IndexMapping.zeroSumOrientationToIndex(cube.multiply(moves[j]).orientation, 3);
+                orientationMove[i][j] = IndexMapping.zeroSumOrientationToIndex(state.multiply(moves[j]).orientation, 3);
             }
         }
 
