@@ -1,8 +1,6 @@
 package com.puzzletimer.scramblers;
 import java.util.Random;
-import java.util.UUID;
 
-import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeCrossSolver;
@@ -49,7 +47,7 @@ public class RubiksCubeControlledCrossDistanceScrambler implements Scrambler {
     }
 
     @Override
-    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
+    public String[] getNextScrambleSequence() {
         // random corners
         byte[] cornersPermutation = IndexMapping.indexToPermutation(
             this.random.nextInt(RubiksCubeSolver.N_CORNERS_PERMUTATIONS), 8);
@@ -116,6 +114,6 @@ public class RubiksCubeControlledCrossDistanceScrambler implements Scrambler {
             edgesPermutation,
             edgesOrientation);
 
-        return new Scramble(scrambleId, categoryId, RubiksCubeSolver.generate(state));
+        return RubiksCubeSolver.generate(state);
     }
 }

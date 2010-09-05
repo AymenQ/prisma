@@ -1,8 +1,6 @@
 package com.puzzletimer.scramblers;
 import java.util.Random;
-import java.util.UUID;
 
-import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
 
 
@@ -21,7 +19,7 @@ public class MegaminxRandomScrambler implements Scrambler {
     }
 
     @Override
-    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
+    public String[] getNextScrambleSequence() {
         String[] sequence = new String[77];
 
         for (int i = 0; i < 7; i++) {
@@ -35,6 +33,6 @@ public class MegaminxRandomScrambler implements Scrambler {
             sequence[11 * i + 10] = this.random.nextInt(2) == 0 ? "U" : "U'";
         }
 
-        return new Scramble(scrambleId, categoryId, sequence);
+        return sequence;
     }
 }

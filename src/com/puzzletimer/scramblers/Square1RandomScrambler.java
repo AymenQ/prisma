@@ -2,9 +2,7 @@ package com.puzzletimer.scramblers;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.UUID;
 
-import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
 
 public class Square1RandomScrambler implements Scrambler {
@@ -30,7 +28,7 @@ public class Square1RandomScrambler implements Scrambler {
     }
 
     @Override
-    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
+    public String[] getNextScrambleSequence() {
         boolean t = true, f = false;
         boolean[] top = new boolean[] { t, t, f, t, t, f, t, t, f, t, t, f };
         boolean[] bottom = new boolean[] { t, f, t, t, f, t, t, f, t, t, f, t };
@@ -88,6 +86,6 @@ public class Square1RandomScrambler implements Scrambler {
             sequence[i] = "(" + (x <= 6 ? x : x - 12) + "," + (y <= 6 ? y : y - 12) + ")";
         }
 
-        return new Scramble(scrambleId, categoryId, sequence);
+        return sequence;
     }
 }

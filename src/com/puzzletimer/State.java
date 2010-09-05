@@ -26,7 +26,7 @@ public class State {
         this.category = category;
         this.scrambler = ScramblerBuilder.getScrambler(this.category.getScramblerId());
         this.puzzle = PuzzleBuilder.getPuzzle(this.scrambler.getScramblerInfo().getPuzzleId());
-        this.scramble = this.scrambler.getNextScramble(UUID.randomUUID(), category.getCategoryId());
+        this.scramble = new Scramble(UUID.randomUUID(), category.getCategoryId(), this.scrambler.getNextScrambleSequence());
     }
 
     public void addStateObserver(StateObserver observer) {
@@ -53,7 +53,7 @@ public class State {
         this.solutions = new ArrayList<Solution>();
         notifySolutionsObservers();
 
-        this.scramble = this.scrambler.getNextScramble(UUID.randomUUID(), category.getCategoryId());
+        this.scramble = new Scramble(UUID.randomUUID(), category.getCategoryId(), this.scrambler.getNextScrambleSequence());
         notifyScrambleObservers();
     }
 
@@ -61,7 +61,7 @@ public class State {
         this.solutions.add(new Solution(UUID.randomUUID(), this.category.getCategoryId(), timing, ""));
         notifySolutionsObservers();
 
-        this.scramble = this.scrambler.getNextScramble(UUID.randomUUID(), this.category.getCategoryId());
+        this.scramble = new Scramble(UUID.randomUUID(), this.category.getCategoryId(), this.scrambler.getNextScrambleSequence());
         notifyScrambleObservers();
     }
 
