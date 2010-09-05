@@ -1,6 +1,6 @@
-package com.puzzletimer.geometry;
+package com.puzzletimer.graphics.geometry;
 
-import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.graphics.algebra.Vector3;
 
 public class Plane {
     public Vector3 p;

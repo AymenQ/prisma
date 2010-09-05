@@ -1,4 +1,4 @@
-package com.puzzletimer.linearalgebra;
+package com.puzzletimer.graphics.algebra;
 
 public class Matrix33 {
     public double[][] values;

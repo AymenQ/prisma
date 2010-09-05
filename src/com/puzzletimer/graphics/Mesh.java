@@ -2,11 +2,11 @@ package com.puzzletimer.graphics;
 
 import java.util.ArrayList;
 
-import com.puzzletimer.geometry.Intersection;
-import com.puzzletimer.geometry.LineSegment;
-import com.puzzletimer.geometry.Plane;
-import com.puzzletimer.linearalgebra.Matrix33;
-import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.graphics.algebra.Matrix33;
+import com.puzzletimer.graphics.algebra.Vector3;
+import com.puzzletimer.graphics.geometry.Intersection;
+import com.puzzletimer.graphics.geometry.LineSegment;
+import com.puzzletimer.graphics.geometry.Plane;
 
 public class Mesh {
     public ArrayList<Vector3> vertices;

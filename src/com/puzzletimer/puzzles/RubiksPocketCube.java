@@ -2,11 +2,11 @@ package com.puzzletimer.puzzles;
 
 import java.util.HashMap;
 
-import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
-import com.puzzletimer.linearalgebra.Matrix33;
-import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.graphics.algebra.Matrix33;
+import com.puzzletimer.graphics.algebra.Vector3;
+import com.puzzletimer.graphics.geometry.Plane;
 import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 

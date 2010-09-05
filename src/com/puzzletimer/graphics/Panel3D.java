@@ -16,8 +16,8 @@ import java.util.Comparator;
 
 import javax.swing.JPanel;
 
-import com.puzzletimer.linearalgebra.Matrix33;
-import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.graphics.algebra.Matrix33;
+import com.puzzletimer.graphics.algebra.Vector3;
 
 @SuppressWarnings("serial")
 public class Panel3D extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {

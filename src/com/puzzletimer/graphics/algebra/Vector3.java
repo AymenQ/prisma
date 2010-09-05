@@ -1,4 +1,4 @@
-package com.puzzletimer.linearalgebra;
+package com.puzzletimer.graphics.algebra;
 
 public class Vector3 {
     public double x;
