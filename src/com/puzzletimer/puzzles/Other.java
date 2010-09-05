@@ -5,17 +5,13 @@ import java.util.ArrayList;
 import com.puzzletimer.graphics.Face;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 
-public class Empty implements Puzzle {
+public class Other implements Puzzle {
     @Override
-    public String getPuzzleId() {
-        return "EMPTY";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Empty";
+    public PuzzleInfo getPuzzleInfo() {
+        return new PuzzleInfo("OTHER", "Other");
     }
 
     @Override

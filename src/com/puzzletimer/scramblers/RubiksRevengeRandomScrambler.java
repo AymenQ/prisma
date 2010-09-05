@@ -4,33 +4,26 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.models.ScramblerInfo;
 
 public class RubiksRevengeRandomScrambler implements Scrambler {
+    private ScramblerInfo scramblerInfo;
     private int scrambleLength;
     private Random random;
 
-    public RubiksRevengeRandomScrambler(int scrambleLength) {
+    public RubiksRevengeRandomScrambler(ScramblerInfo scramblerInfo, int scrambleLength) {
+        this.scramblerInfo = scramblerInfo;
         this.scrambleLength = scrambleLength;
         this.random = new Random();
     }
 
     @Override
-    public String getScramblerId() {
-        return "4x4x4-CUBE-RANDOM";
+    public ScramblerInfo getScramblerInfo() {
+        return this.scramblerInfo;
     }
 
     @Override
-    public String getPuzzleId() {
-        return "4x4x4-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Random scrambler";
-    }
-
-    @Override
-    public Scramble getNextScramble() {
+    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
         String[] sequence = new String[this.scrambleLength];
         String[] moves = {
             // X axis
@@ -58,6 +51,6 @@ public class RubiksRevengeRandomScrambler implements Scrambler {
             sequence[i] = moves[12 * axis + this.random.nextInt(12)];
         }
 
-        return new Scramble(UUID.randomUUID(), null, sequence);
+        return new Scramble(scrambleId, categoryId, sequence);
     }
 }

@@ -7,17 +7,13 @@ import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 
 public class RubiksPocketCube implements Puzzle {
     @Override
-    public String getPuzzleId() {
-        return "2x2x2-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return "2x2x2 cube";
+    public PuzzleInfo getPuzzleInfo() {
+        return new PuzzleInfo("2x2x2-CUBE", "2x2x2 cube");
     }
 
     private class Twist {

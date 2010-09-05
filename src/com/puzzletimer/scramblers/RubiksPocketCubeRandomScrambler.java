@@ -4,34 +4,27 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.solvers.RubiksPocketCubeSolver;
 
 public class RubiksPocketCubeRandomScrambler implements Scrambler {
+    private ScramblerInfo scramblerInfo;
     private Random random;
 
-    public RubiksPocketCubeRandomScrambler() {
+    public RubiksPocketCubeRandomScrambler(ScramblerInfo scramblerInfo) {
+        this.scramblerInfo = scramblerInfo;
         this.random = new Random();
     }
 
     @Override
-    public String getScramblerId() {
-        return "2x2x2-CUBE-RANDOM";
+    public ScramblerInfo getScramblerInfo() {
+        return this.scramblerInfo;
     }
 
     @Override
-    public String getPuzzleId() {
-        return "2x2x2-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Random scrambler";
-    }
-
-    @Override
-    public Scramble getNextScramble() {
+    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
         int permutation = this.random.nextInt(RubiksPocketCubeSolver.N_PERMUTATIONS);
         int orientation = this.random.nextInt(RubiksPocketCubeSolver.N_ORIENTATIONS);
-        return new Scramble(UUID.randomUUID(), null, RubiksPocketCubeSolver.generate(permutation, orientation));
+        return new Scramble(scrambleId, categoryId, RubiksPocketCubeSolver.generate(permutation, orientation));
     }
 }

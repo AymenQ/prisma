@@ -3,12 +3,12 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeSolver;
 
 public class RubiksCubeRandomScrambler implements Scrambler {
-    private String scramblerId;
-    private String scramblerDescription;
+    private ScramblerInfo scramblerInfo;
     private boolean solvedCornersPermutation;
     private boolean solvedCornersOrientation;
     private boolean solvedEdgesPermutation;
@@ -16,11 +16,10 @@ public class RubiksCubeRandomScrambler implements Scrambler {
     private Random random;
 
     public RubiksCubeRandomScrambler(
-        String scramblerId, String scramblerDescription,
+        ScramblerInfo scramblerInfo,
         boolean solvedCornersPermutation, boolean solvedCornersOrientation,
         boolean solvedEdgesPermutation, boolean solvedEdgesOrientation) {
-        this.scramblerId = scramblerId;
-        this.scramblerDescription = scramblerDescription;
+        this.scramblerInfo = scramblerInfo;
         this.solvedCornersPermutation = solvedCornersPermutation;
         this.solvedCornersOrientation = solvedCornersOrientation;
         this.solvedEdgesPermutation = solvedEdgesPermutation;
@@ -29,18 +28,8 @@ public class RubiksCubeRandomScrambler implements Scrambler {
     }
 
     @Override
-    public String getScramblerId() {
-        return this.scramblerId;
-    }
-
-    @Override
-    public String getPuzzleId() {
-         return "RUBIKS-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return this.scramblerDescription;
+    public ScramblerInfo getScramblerInfo() {
+        return this.scramblerInfo;
     }
 
     private int permutationSign(byte[] permutation) {
@@ -57,7 +46,7 @@ public class RubiksCubeRandomScrambler implements Scrambler {
     }
 
     @Override
-    public Scramble getNextScramble() {
+    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
         byte[] cornersPermutation = IndexMapping.indexToPermutation(
             this.solvedCornersPermutation ? 0 : this.random.nextInt(RubiksCubeSolver.N_CORNERS_PERMUTATIONS), 8);
         byte[] cornersOrientation = IndexMapping.indexToZeroSumOrientation(
@@ -86,6 +75,6 @@ public class RubiksCubeRandomScrambler implements Scrambler {
             edgesPermutation,
             edgesOrientation);
 
-        return new Scramble(UUID.randomUUID(), null, RubiksCubeSolver.generate(state));
+        return new Scramble(scrambleId, categoryId, RubiksCubeSolver.generate(state));
     }
 }

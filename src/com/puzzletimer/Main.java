@@ -16,7 +16,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -42,6 +41,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
+import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
@@ -86,7 +86,7 @@ public class Main extends JFrame implements TimerListener {
         this.timer.addEventListener(this);
         this.timer.start();
 
-        this.state = new State(new Category(UUID.randomUUID(), "RUBIKS-CUBE-RANDOM", "Rubik's Cube", '3', '3', true));
+        this.state = new State(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's Cube", false));
 
         this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
         this.mixerInfo = null;
@@ -171,48 +171,74 @@ public class Main extends JFrame implements TimerListener {
         menuBar.add(menuCategory);
         ButtonGroup categoryGroup = new ButtonGroup();
 
-        // menuCategory items
+        // built-in categories
+        class BuiltInCategory {
+            public Category category;
+            public char mnemonic;
+            public char accelerator;
+            public boolean isDefault;
+
+            public BuiltInCategory(Category category, char mnemonic, char accelerator, boolean isDefault) {
+                this.category = category;
+                this.mnemonic = mnemonic;
+                this.accelerator = accelerator;
+                this.isDefault = isDefault;
+            }
+        }
+
+        BuiltInCategory[] builtInCategories = {
+            new BuiltInCategory(new Category(null, "2x2x2-CUBE-RANDOM", "2x2x2 cube", false), '2', '2', false),
+            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube", false), 'R', '3', true),
+            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube one-handed", false), 'O', '\0', false),
+            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube blindfolded", false), 'B', '\0', false),
+            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube with feet", false), 'F', '\0', false),
+            new BuiltInCategory(new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 cube", false), '4', '4', false),
+            new BuiltInCategory(new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 blindfolded", false), 'B', '\0', false),
+            new BuiltInCategory(new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 cube", false), '5', '5', false),
+            new BuiltInCategory(new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 blindfolded", false), 'B', '\0', false),
+            new BuiltInCategory(new Category(null, "MEGAMINX-RANDOM", "Megaminx", false), 'M', 'M', false),
+            new BuiltInCategory(new Category(null, "PYRAMINX-RANDOM", "Pyraminx", false), 'P', 'P', false),
+            new BuiltInCategory(new Category(null, "SQUARE-1-RANDOM", "Square-1", false), 'S', '1', false),
+            new BuiltInCategory(new Category(null, "EMPTY", "Rubik's clock", false), 'C', 'K', false),
+            new BuiltInCategory(new Category(null, "EMPTY", "Rubik's magic", false), 'M', 'G', false),
+            new BuiltInCategory(new Category(null, "EMPTY", "Master magic", false), 'M', 'A', false),
+        };
+
+        for (final BuiltInCategory builtInCategory : builtInCategories) {
+            JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(builtInCategory.category.getDescription());
+            menuItemCategory.setMnemonic(builtInCategory.mnemonic);
+            if (builtInCategory.accelerator != '\0') {
+                menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(builtInCategory.accelerator, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            }
+            menuItemCategory.setSelected(builtInCategory.isDefault);
+            menuItemCategory.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    Main.this.state.setCategory(builtInCategory.category);
+                }
+            });
+            menuCategory.add(menuItemCategory);
+            categoryGroup.add(menuItemCategory);
+        }
+
+        menuCategory.addSeparator();
+
+        // user defined categories
         Category[] categories = {
-            new Category(null, "2x2x2-CUBE-RANDOM", "2x2x2 cube", '2', '2', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube", 'R', '3', true),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube one-handed", 'O', 'O', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube blindfolded", 'B', 'B', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube with feet", 'F', 'F', false),
-            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 cube", '4', '4', false),
-            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 blindfolded", 'B', '\0', false),
-            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 cube", '5', '5', false),
-            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 blindfolded", 'B', '\0', false),
-            new Category(null, "MEGAMINX-RANDOM", "Megaminx", 'M', 'M', false),
-            new Category(null, "PYRAMINX-RANDOM", "Pyraminx", 'P', 'P', false),
-            new Category(null, "SQUARE-1-RANDOM", "Square-1", 'S', '1', false),
-            new Category(null, "EMPTY", "Rubik's clock", 'C', '\0', false),
-            new Category(null, "EMPTY", "Rubik's magic", 'M', '\0', false),
-            new Category(null, "EMPTY", "Master magic", 'M', '\0', false),
-            null, // separator
-            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES", "Rubik's cube - random edges", 'E', '\0', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-PERMUTATION", "Rubik's cube - random edges permutation", 'P', '\0', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-ORIENTATION", "Rubik's cube - random edges orientation", 'O', '\0', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS", "Rubik's cube - random corners", 'C', '\0', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-PERMUTATION", "Rubik's cube - random corners permutation", 'P', '\0', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-ORIENTATION", "Rubik's cube - random corners orientation", 'O', '\0', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER", "Rubik's cube - random last layer", 'P', '\0', false),
-            new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER-PERMUTATION", "Rubik's cube - random last layer permutation", 'O', '\0', false),
-            new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Rubik's cube - easy cross", 'E', '\0', false),
-            new Category(null, "RUBIKS-CUBE-HARD-CROSS", "Rubik's cube - hard cross", 'H', '\0', false),
+          new Category(null, "RUBIKS-CUBE-RANDOM-EDGES", "Rubik's cube - random edges", true),
+          new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-PERMUTATION", "Rubik's cube - random edges permutation", true),
+          new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-ORIENTATION", "Rubik's cube - random edges orientation", true),
+          new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS", "Rubik's cube - random corners", true),
+          new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-PERMUTATION", "Rubik's cube - random corners permutation", true),
+          new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-ORIENTATION", "Rubik's cube - random corners orientation", true),
+          new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER", "Rubik's cube - random last layer", true),
+          new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER-PERMUTATION", "Rubik's cube - random last layer permutation", true),
+          new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Rubik's cube - easy cross", true),
+          new Category(null, "RUBIKS-CUBE-HARD-CROSS", "Rubik's cube - hard cross", true),
         };
 
         for (final Category category : categories) {
-            if (category == null) {
-                menuCategory.addSeparator();
-                continue;
-            }
-
-            final JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.getDescription());
-            menuItemCategory.setMnemonic(category.getMnemonic());
-            if (category.getAccelerator() != '\0') {
-                menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(category.getAccelerator(), Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            }
-            menuItemCategory.setSelected(category.isDefault());
+            JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.getDescription());
             menuItemCategory.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {

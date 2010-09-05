@@ -7,17 +7,13 @@ import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 
 public class RubiksCube implements Puzzle {
     @Override
-    public String getPuzzleId() {
-        return "RUBIKS-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Rubik's cube";
+    public PuzzleInfo getPuzzleInfo() {
+        return new PuzzleInfo("RUBIKS-CUBE", "Rubik's cube");
     }
 
     private class Twist {

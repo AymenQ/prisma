@@ -3,25 +3,22 @@ package com.puzzletimer.scramblers;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.models.ScramblerInfo;
 
 public class EmptyScrambler implements Scrambler {
-    @Override
-    public String getScramblerId() {
-        return "EMPTY";
+    private ScramblerInfo scramblerInfo;
+
+    public EmptyScrambler(ScramblerInfo scramblerInfo) {
+        this.scramblerInfo = scramblerInfo;
     }
 
     @Override
-    public String getPuzzleId() {
-        return "EMPTY";
+    public ScramblerInfo getScramblerInfo() {
+        return this.scramblerInfo;
     }
 
     @Override
-    public String getDescription() {
-        return "Empty scrambler";
-    }
-
-    @Override
-    public Scramble getNextScramble() {
-        return new Scramble(UUID.randomUUID(), null, new String[] { });
+    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
+        return new Scramble(scrambleId, categoryId, new String[] { });
     }
 }

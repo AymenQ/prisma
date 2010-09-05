@@ -8,17 +8,13 @@ import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 
 public class Square1 implements Puzzle {
     @Override
-    public String getPuzzleId() {
-        return "SQUARE-1";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Square-1";
+    public PuzzleInfo getPuzzleInfo() {
+        return new PuzzleInfo("SQUARE-1", "Square-1");
     }
 
     @Override

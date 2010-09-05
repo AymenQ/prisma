@@ -3,13 +3,14 @@ package com.puzzletimer;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
 import com.puzzletimer.puzzles.Puzzle;
-import com.puzzletimer.puzzles.Puzzles;
+import com.puzzletimer.puzzles.PuzzleBuilder;
 import com.puzzletimer.scramblers.Scrambler;
-import com.puzzletimer.scramblers.Scramblers;
+import com.puzzletimer.scramblers.ScramblerBuilder;
 
 public class State {
     private ArrayList<StateObserver> observers;
@@ -23,9 +24,9 @@ public class State {
         this.observers = new ArrayList<StateObserver>();
         this.solutions = new ArrayList<Solution>();
         this.category = category;
-        this.scrambler = Scramblers.getScrambler(this.category.getScramblerId());
-        this.puzzle = Puzzles.getPuzzle(this.scrambler.getPuzzleId());
-        this.scramble = this.scrambler.getNextScramble();
+        this.scrambler = ScramblerBuilder.getScrambler(this.category.getScramblerId());
+        this.puzzle = PuzzleBuilder.getPuzzle(this.scrambler.getScramblerInfo().getPuzzleId());
+        this.scramble = this.scrambler.getNextScramble(UUID.randomUUID(), category.getCategoryId());
     }
 
     public void addStateObserver(StateObserver observer) {
@@ -46,13 +47,13 @@ public class State {
 
     public void setCategory(Category category) {
         this.category = category;
-        this.scrambler = Scramblers.getScrambler(this.category.getScramblerId());
-        this.puzzle = Puzzles.getPuzzle(this.scrambler.getPuzzleId());
+        this.scrambler = ScramblerBuilder.getScrambler(this.category.getScramblerId());
+        this.puzzle = PuzzleBuilder.getPuzzle(this.scrambler.getScramblerInfo().getPuzzleId());
 
         this.solutions = new ArrayList<Solution>();
         notifySolutionsObservers();
 
-        this.scramble = this.scrambler.getNextScramble();
+        this.scramble = this.scrambler.getNextScramble(UUID.randomUUID(), category.getCategoryId());
         notifyScrambleObservers();
     }
 
@@ -60,7 +61,7 @@ public class State {
         this.solutions.add(new Solution(UUID.randomUUID(), this.category.getCategoryId(), timing, ""));
         notifySolutionsObservers();
 
-        this.scramble = this.scrambler.getNextScramble();
+        this.scramble = this.scrambler.getNextScramble(UUID.randomUUID(), this.category.getCategoryId());
         notifyScrambleObservers();
     }
 

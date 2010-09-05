@@ -6,17 +6,13 @@ import com.puzzletimer.geometry.Plane;
 import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
+import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 
 public class Pyraminx implements Puzzle {
     @Override
-    public String getPuzzleId() {
-        return "PYRAMINX";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Pyraminx";
+    public PuzzleInfo getPuzzleInfo() {
+        return new PuzzleInfo("PYRAMINX", "Pyraminx");
     }
 
     private static class Twist {

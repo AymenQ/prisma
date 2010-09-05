@@ -7,16 +7,13 @@ import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 
 public class ProfessorsCube implements Puzzle {
-    public String getPuzzleId() {
-        return "5x5x5-CUBE";
-    }
-
     @Override
-    public String getDescription() {
-        return "5x5x5 cube";
+    public PuzzleInfo getPuzzleInfo() {
+        return new PuzzleInfo("5x5x5-CUBE", "5x5x5 cube");
     }
 
     private class Twist {

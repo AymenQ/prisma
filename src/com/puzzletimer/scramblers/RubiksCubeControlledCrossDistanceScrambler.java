@@ -3,38 +3,27 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeCrossSolver;
 import com.puzzletimer.solvers.RubiksCubeSolver;
 
 public class RubiksCubeControlledCrossDistanceScrambler implements Scrambler {
-    private String scramblerId;
-    private String scramblerDescription;
+    private ScramblerInfo scramblerInfo;
     private int minDistance;
     private int maxDistance;
     private Random random;
 
-    public RubiksCubeControlledCrossDistanceScrambler(String scramblerId, String scramblerDescription, int minDistance, int maxDistance) {
-        this.scramblerId = scramblerId;
-        this.scramblerDescription = scramblerDescription;
+    public RubiksCubeControlledCrossDistanceScrambler(ScramblerInfo scramblerInfo, int minDistance, int maxDistance) {
+        this.scramblerInfo = scramblerInfo;
         this.minDistance = minDistance;
         this.maxDistance = maxDistance;
         this.random = new Random();
     }
 
     @Override
-    public String getScramblerId() {
-        return this.scramblerId;
-    }
-
-    @Override
-    public String getPuzzleId() {
-         return "RUBIKS-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return this.scramblerDescription;
+    public ScramblerInfo getScramblerInfo() {
+        return this.scramblerInfo;
     }
 
     private int edgesOrientation(byte[] orientation) {
@@ -60,7 +49,7 @@ public class RubiksCubeControlledCrossDistanceScrambler implements Scrambler {
     }
 
     @Override
-    public Scramble getNextScramble() {
+    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
         // random corners
         byte[] cornersPermutation = IndexMapping.indexToPermutation(
             this.random.nextInt(RubiksCubeSolver.N_CORNERS_PERMUTATIONS), 8);
@@ -127,6 +116,6 @@ public class RubiksCubeControlledCrossDistanceScrambler implements Scrambler {
             edgesPermutation,
             edgesOrientation);
 
-        return new Scramble(UUID.randomUUID(), null, RubiksCubeSolver.generate(state));
+        return new Scramble(scrambleId, categoryId, RubiksCubeSolver.generate(state));
     }
 }

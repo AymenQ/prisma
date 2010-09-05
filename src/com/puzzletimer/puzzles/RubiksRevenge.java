@@ -7,17 +7,13 @@ import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.linearalgebra.Matrix33;
 import com.puzzletimer.linearalgebra.Vector3;
+import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.Scramble;
 
 public class RubiksRevenge implements Puzzle {
     @Override
-    public String getPuzzleId() {
-        return "4x4x4-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return "4x4x4 cube";
+    public PuzzleInfo getPuzzleInfo() {
+        return new PuzzleInfo("4x4x4-CUBE", "4x4x4 cube");
     }
 
     private class Twist {

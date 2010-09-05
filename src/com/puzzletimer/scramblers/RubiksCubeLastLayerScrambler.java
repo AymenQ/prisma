@@ -4,35 +4,24 @@ import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
+import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeSolver;
 
 public class RubiksCubeLastLayerScrambler implements Scrambler {
-    private String scramblerId;
-    private String scramblerDescription;
+    private ScramblerInfo scramblerInfo;
     private boolean solvedOrientation;
     private Random random;
 
-    public RubiksCubeLastLayerScrambler(String scramblerId, String scramblerDescription, boolean solvedOrientation) {
-        this.scramblerId = scramblerId;
-        this.scramblerDescription = scramblerDescription;
+    public RubiksCubeLastLayerScrambler(ScramblerInfo scramblerInfo, boolean solvedOrientation) {
+        this.scramblerInfo = scramblerInfo;
         this.solvedOrientation = solvedOrientation;
         this.random = new Random();
     }
 
     @Override
-    public String getScramblerId() {
-        return this.scramblerId;
-    }
-
-    @Override
-    public String getPuzzleId() {
-         return "RUBIKS-CUBE";
-    }
-
-    @Override
-    public String getDescription() {
-        return this.scramblerDescription;
+    public ScramblerInfo getScramblerInfo() {
+        return this.scramblerInfo;
     }
 
     private int permutationSign(byte[] permutation) {
@@ -49,7 +38,7 @@ public class RubiksCubeLastLayerScrambler implements Scrambler {
     }
 
     @Override
-    public Scramble getNextScramble() {
+    public Scramble getNextScramble(UUID scrambleId, UUID categoryId) {
         // id
         byte[] cornersPermutation = IndexMapping.indexToPermutation(0, 8);
         byte[] cornersOrientation = IndexMapping.indexToZeroSumOrientation(0, 3, 8);
@@ -86,6 +75,6 @@ public class RubiksCubeLastLayerScrambler implements Scrambler {
             edgesPermutation,
             edgesOrientation);
 
-        return new Scramble(UUID.randomUUID(), null, RubiksCubeSolver.generate(state));
+        return new Scramble(scrambleId, categoryId, RubiksCubeSolver.generate(state));
     }
 }
