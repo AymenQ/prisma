@@ -8,7 +8,6 @@ import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.algebra.Vector3;
 import com.puzzletimer.graphics.geometry.Plane;
 import com.puzzletimer.models.PuzzleInfo;
-import com.puzzletimer.models.Scramble;
 
 public class RubiksRevenge implements Puzzle {
     @Override
@@ -27,7 +26,7 @@ public class RubiksRevenge implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
+    public Mesh getScrambledPuzzleMesh(String[] sequence) {
         HSLColor[] colors = {
             new HSLColor( 20, 100,  50), // L - orange
             new HSLColor(235, 100,  30), // B - blue
@@ -104,7 +103,7 @@ public class RubiksRevenge implements Puzzle {
         twists.put("B'",  new Twist(planeB,  -Math.PI / 2));
         twists.put("Bw'", new Twist(planeBw, -Math.PI / 2));
 
-        for (String move : scramble.getSequence()) {
+        for (String move : sequence) {
             Twist t = twists.get(move);
             mesh = mesh.transformHalfspace(
                 Matrix33.rotation(t.plane.n, t.angle),

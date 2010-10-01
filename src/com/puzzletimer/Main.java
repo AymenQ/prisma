@@ -42,7 +42,6 @@ import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.models.Category;
-import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
 import com.puzzletimer.puzzles.Puzzle;
@@ -647,8 +646,7 @@ public class Main extends JFrame {
         this.scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
             public void scrambleChanged(String[] sequence) {
-                Scramble scramble = new Scramble(UUID.randomUUID(), Main.this.currentCategory.getCategoryId(), sequence);
-                panel3D.mesh = Main.this.currentPuzzle.getScrambledPuzzleMesh(scramble);
+                panel3D.mesh = Main.this.currentPuzzle.getScrambledPuzzleMesh(sequence);
                 panel3D.repaint();
             }
         });

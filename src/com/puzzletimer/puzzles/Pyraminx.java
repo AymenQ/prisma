@@ -7,7 +7,6 @@ import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.geometry.Plane;
 import com.puzzletimer.models.PuzzleInfo;
-import com.puzzletimer.models.Scramble;
 
 public class Pyraminx implements Puzzle {
     @Override
@@ -26,7 +25,7 @@ public class Pyraminx implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
+    public Mesh getScrambledPuzzleMesh(String[] sequence) {
         HSLColor[] colors = {
             new HSLColor(235, 100,  30), // blue
             new HSLColor(120, 100,  30), // green
@@ -101,7 +100,7 @@ public class Pyraminx implements Puzzle {
         twists.put("b",  new Twist(planeb,  2 * Math.PI / 3));
         twists.put("b'", new Twist(planeb, -2 * Math.PI / 3));
 
-        for (String move : scramble.getSequence()) {
+        for (String move : sequence) {
             Twist t = twists.get(move);
             mesh = mesh.transformHalfspace(
                 Matrix33.rotation(t.plane.n, t.angle),

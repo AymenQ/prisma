@@ -7,7 +7,6 @@ import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.geometry.Plane;
 import com.puzzletimer.models.PuzzleInfo;
-import com.puzzletimer.models.Scramble;
 
 public class Megaminx implements Puzzle {
     @Override
@@ -26,7 +25,7 @@ public class Megaminx implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
+    public Mesh getScrambledPuzzleMesh(String[] sequence) {
         HSLColor[] colors = {
             new HSLColor(200,  90,  50), // light blue
             new HSLColor( 20, 100,  50), // orange
@@ -74,7 +73,7 @@ public class Megaminx implements Puzzle {
         twists.put("U",   new Twist(planeU,  2 * Math.PI / 5));
         twists.put("U'",  new Twist(planeU, -2 * Math.PI / 5));
 
-        for (String move : scramble.getSequence()) {
+        for (String move : sequence) {
             Twist t = twists.get(move);
             mesh = mesh.transformHalfspace(
                 Matrix33.rotation(t.plane.n, t.angle),

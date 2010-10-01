@@ -6,7 +6,6 @@ import com.puzzletimer.graphics.Face;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Vector3;
 import com.puzzletimer.models.PuzzleInfo;
-import com.puzzletimer.models.Scramble;
 
 public class Other implements Puzzle {
     @Override
@@ -15,7 +14,7 @@ public class Other implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
+    public Mesh getScrambledPuzzleMesh(String[] sequence) {
         return new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
     }
 }

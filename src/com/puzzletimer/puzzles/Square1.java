@@ -9,7 +9,6 @@ import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.algebra.Vector3;
 import com.puzzletimer.graphics.geometry.Plane;
 import com.puzzletimer.models.PuzzleInfo;
-import com.puzzletimer.models.Scramble;
 
 public class Square1 implements Puzzle {
     @Override
@@ -18,7 +17,7 @@ public class Square1 implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(Scramble scramble) {
+    public Mesh getScrambledPuzzleMesh(String[] sequence) {
         HSLColor[] colors = {
             new HSLColor( 55, 100,  50), // L - yellow
             new HSLColor(  0,  85,  45), // B - red
@@ -87,7 +86,7 @@ public class Square1 implements Puzzle {
 
 
         Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
-        for (String m : scramble.getSequence()) {
+        for (String m : sequence) {
             Matcher matcher = p.matcher(m.toString());
             matcher.find();
 
