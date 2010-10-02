@@ -276,13 +276,7 @@ public class HistoryFrame extends JFrame {
                     window[j] = solutions[solutions.length - size + j].getSolution();
                 }
 
-                long value = measures[i].calculate(window);
-                labels[i].setText(
-                    String.format(
-                        "%02d:%02d.%02d",
-                        value / 60000,
-                        (value % 60000) / 1000,
-                        (value % 1000) / 10));
+                labels[i].setText(formatTime(measures[i].calculate(window)));
             } else {
                 labels[i].setText("XX:XX.XX");
             }
@@ -303,15 +297,10 @@ public class HistoryFrame extends JFrame {
         for (FullSolution completeSolution : solutions) {
             // start
             DateFormat dateFormat = new SimpleDateFormat();
-            String sStart = dateFormat.format(completeSolution.getSolution().getTiming().getStart());
+            String sStart = dateFormat.format(completeSolution.getSolution().timing.getStart());
 
             // time
-            long time = completeSolution.getSolution().getTiming().getElapsedTime();
-            String sTime = String.format(
-                "%02d:%02d.%02d",
-                time / 60000,
-                (time % 60000) / 1000,
-                (time % 1000) / 10);
+            String sTime = formatTime(completeSolution.getSolution().timing.getElapsedTime());
 
             // scramble
             StringBuilder stringBuilder = new StringBuilder();
@@ -323,11 +312,23 @@ public class HistoryFrame extends JFrame {
             tableModel.addRow(new Object[] {
                 sStart,
                 sTime,
-                completeSolution.getSolution().getPenalty(),
+                completeSolution.getSolution().penalty,
                 sScramble,
             });
         }
 
         this.table.setModel(tableModel);
+    }
+
+    private String formatTime(long time) {
+        if (time == Long.MAX_VALUE) {
+            return "DNF";
+        }
+
+        return String.format(
+            "%02d:%02d.%02d",
+            time / 60000,
+            (time % 60000) / 1000,
+            (time % 1000) / 10);
     }
 }

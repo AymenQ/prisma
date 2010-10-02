@@ -2,6 +2,7 @@ package com.puzzletimer;
 
 import info.clearthought.layout.TableLayout;
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -155,6 +156,11 @@ public class Main extends JFrame {
             @Override
             public void solutionRemoved(FullSolution solution) {
                 Main.this.sessionManager.removeSolution(solution);
+            }
+
+            @Override
+            public void solutionsUpdated(FullSolution[] solutions) {
+                Main.this.sessionManager.notifyListeners();
             }
         });
 
@@ -564,19 +570,64 @@ public class Main extends JFrame {
                 c.anchor = GridBagConstraints.BASELINE_TRAILING;
 
                 for (int i = solutions.length - 1; i >= Math.max(0, solutions.length - 500); i--) {
+                    final int index = i;
+
                     JLabel labelIndex = new JLabel(Integer.toString(i + 1) + ".");
                     labelIndex.setFont(new Font("Tahoma", Font.BOLD, 13));
                     c.gridx = 0;
                     c.insets = new Insets(0, 0, 0, 8);
                     panelTimes.add(labelIndex, c);
 
-                    JLabel labelTime = new JLabel(formatTime(solutions[i].getSolution().getTiming().getElapsedTime()));
+                    JLabel labelTime = new JLabel(formatTime(solutions[i].getSolution().timing.getElapsedTime()));
                     labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                     c.gridx = 2;
                     c.insets = new Insets(0, 0, 0, 16);
                     panelTimes.add(labelTime, c);
 
-                    final int index = i;
+                    final JLabel labelPlus2 = new JLabel("+2");
+                    labelPlus2.setFont(new Font("Tahoma", Font.PLAIN, 13));
+                    if (!solutions[index].getSolution().penalty.equals("+2")) {
+                        labelPlus2.setForeground(Color.LIGHT_GRAY);
+                    }
+                    labelPlus2.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    labelPlus2.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            if (!solutions[index].getSolution().penalty.equals("+2")) {
+                                solutions[index].getSolution().penalty = "+2";
+                                Main.this.solutionManager.updateSolution(solutions[index]);
+                            } else if (solutions[index].getSolution().penalty.equals("+2")) {
+                                solutions[index].getSolution().penalty = "";
+                                Main.this.solutionManager.updateSolution(solutions[index]);
+                            }
+                        }
+                    });
+                    c.gridx = 3;
+                    c.insets = new Insets(0, 0, 0, 8);
+                    panelTimes.add(labelPlus2, c);
+
+                    final JLabel labelDNF = new JLabel("DNF");
+                    labelDNF.setFont(new Font("Tahoma", Font.PLAIN, 13));
+                    if (!solutions[index].getSolution().penalty.equals("DNF")) {
+                        labelDNF.setForeground(Color.LIGHT_GRAY);
+                    }
+                    labelDNF.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    labelDNF.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            if (!solutions[index].getSolution().penalty.equals("DNF")) {
+                                solutions[index].getSolution().penalty = "DNF";
+                                Main.this.solutionManager.updateSolution(solutions[index]);
+                            } else if (solutions[index].getSolution().penalty.equals("DNF")) {
+                                solutions[index].getSolution().penalty = "";
+                                Main.this.solutionManager.updateSolution(solutions[index]);
+                            }
+                        }
+                    });
+                    c.gridx = 4;
+                    c.insets = new Insets(0, 0, 0, 16);
+                    panelTimes.add(labelDNF, c);
+
                     JLabel labelX = new JLabel();
                     labelX.setIcon(new ImageIcon(getClass().getResource("/com/puzzletimer/resources/x.png")));
                     labelX.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -586,7 +637,7 @@ public class Main extends JFrame {
                             Main.this.solutionManager.removeSolution(solutions[index]);
                         }
                     });
-                    c.gridx = 3;
+                    c.gridx = 5;
                     c.insets = new Insets(0, 0, 0, 0);
                     panelTimes.add(labelX, c);
                 }
@@ -686,10 +737,15 @@ public class Main extends JFrame {
     }
 
     private String formatTime(long time) {
-        long minutes = time / 60000;
-        long seconds = (time % 60000) / 1000;
-        long centiseconds = (time % 1000) / 10;
-        return String.format("%02d:%02d.%02d", minutes, seconds, centiseconds);
+        if (time == Long.MAX_VALUE) {
+            return "DNF";
+        }
+
+        return String.format(
+            "%02d:%02d.%02d",
+            time / 60000,
+            (time % 60000) / 1000,
+            (time % 1000) / 10);
     }
 
     public static void main(String[] args) {

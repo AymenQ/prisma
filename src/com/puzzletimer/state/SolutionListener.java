@@ -9,6 +9,9 @@ public class SolutionListener {
     public void solutionRemoved(FullSolution solution) {
     }
 
+    public void solutionUpdated(FullSolution solution) {
+    }
+
     public void solutionsUpdated(FullSolution[] solutions) {
     }
 }

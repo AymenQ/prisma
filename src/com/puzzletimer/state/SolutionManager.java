@@ -42,6 +42,14 @@ public class SolutionManager {
         notifyListeners();
     }
 
+    public void updateSolution(FullSolution solution) {
+        for (SolutionListener listener : this.listeners) {
+            listener.solutionUpdated(solution);
+        }
+
+        notifyListeners();
+    }
+
     public void notifyListeners() {
         FullSolution[] solutions = new FullSolution[this.solutions.size()];
         for (int i = 0; i < this.solutions.size(); i++) {

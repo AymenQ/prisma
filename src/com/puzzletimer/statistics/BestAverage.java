@@ -32,29 +32,18 @@ public class BestAverage implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
+        Average average = new Average(this.minimumWindowSize, this.minimumWindowSize);
+
         long bestAverage = Long.MAX_VALUE;
         for (int i = 0; i < solutions.length - this.minimumWindowSize + 1; i++) {
-            long worst = Long.MIN_VALUE;
-            long best = Long.MAX_VALUE;
-
-            long sum = 0L;
+            Solution[] window = new Solution[this.minimumWindowSize];
             for (int j = 0; j < this.minimumWindowSize; j++) {
-                long time = solutions[i + j].getTiming().getElapsedTime();
-
-                if (time > worst) {
-                    worst = time;
-                }
-
-                if (time < best) {
-                    best = time;
-                }
-
-                sum += time;
+                window[j] = solutions[i + j];
             }
 
-            long average = (sum - worst - best) / (this.minimumWindowSize - 2);
-            if (average < bestAverage) {
-                bestAverage = average;
+            long windowAverage = average.calculate(window);
+            if (windowAverage < bestAverage) {
+                bestAverage = windowAverage;
             }
         }
 

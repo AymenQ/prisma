@@ -32,12 +32,29 @@ public class Average implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
+        // if number of DNFs is greater than one, return DNF
+        int nDNFs = 0;
+        for (Solution solution : solutions) {
+            if (solution.penalty.equals("DNF")) {
+                nDNFs++;
+                if (nDNFs > 1) {
+                    return Long.MAX_VALUE;
+                }
+            }
+        }
+
+
         long worst = Long.MIN_VALUE;
         long best = Long.MAX_VALUE;
 
         long sum = 0L;
         for (Solution solution : solutions) {
-            long time = solution.getTiming().getElapsedTime();
+            long time = solution.timing.getElapsedTime();
+            if (solution.penalty.equals("+2")) {
+                time += 2000L;
+            } else if (solution.penalty.equals("DNF")) {
+                time = Long.MAX_VALUE;
+            }
 
             if (time > worst) {
                 worst = time;

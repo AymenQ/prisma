@@ -34,8 +34,15 @@ public class Worst implements StatisticalMeasure {
     public long calculate(Solution[] solutions) {
         long worst = 0L;
         for (Solution solution : solutions) {
-            if (solution.getTiming().getElapsedTime() > worst) {
-                worst = solution.getTiming().getElapsedTime();
+            long time = solution.timing.getElapsedTime();
+            if (solution.penalty.equals("+2")) {
+                time += 2000L;
+            } else if (solution.penalty.equals("DNF")) {
+                time = Long.MAX_VALUE;
+            }
+
+            if (time > worst) {
+                worst = time;
             }
         }
 

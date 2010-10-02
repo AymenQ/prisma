@@ -32,17 +32,48 @@ public class StandardDeviation implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
+        int nNonDNFSolutions = 0;
+        for (Solution solution : solutions) {
+            if (!solution.penalty.equals("DNF")) {
+                nNonDNFSolutions++;
+            }
+        }
+
+        if (nNonDNFSolutions == 0) {
+            return 0L;
+        }
+
         double mean = 0d;
         for (Solution solution : solutions) {
-            mean += solution.getTiming().getElapsedTime();
+            if (solution.penalty.equals("DNF")) {
+                continue;
+            }
+
+            long time = solution.timing.getElapsedTime();
+            if (solution.penalty.equals("+2")) {
+                time += 2000L;
+            }
+
+            mean += time;
         }
-        mean /= solutions.length;
+
+
+        mean /= nNonDNFSolutions;
 
         double variance = 0d;
         for (Solution solution : solutions) {
-            variance += Math.pow(solution.getTiming().getElapsedTime() - mean, 2d);
+            if (solution.penalty.equals("DNF")) {
+                continue;
+            }
+
+            long time = solution.timing.getElapsedTime();
+            if (solution.penalty.equals("+2")) {
+                time += 2000L;
+            }
+
+            variance += Math.pow(time - mean, 2d);
         }
-        variance /= solutions.length;
+        variance /= nNonDNFSolutions;
 
         return (long) Math.sqrt(variance);
     }

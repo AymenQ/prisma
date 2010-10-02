@@ -34,7 +34,16 @@ public class Mean implements StatisticalMeasure {
     public long calculate(Solution[] solutions) {
         long sum = 0L;
         for (Solution solution : solutions) {
-            sum += solution.getTiming().getElapsedTime();
+            if (solution.penalty.equals("DNF")) {
+                return Long.MAX_VALUE;
+            }
+
+            long time = solution.timing.getElapsedTime();
+            if (solution.penalty.equals("+2")) {
+                time += 2000L;
+            }
+
+            sum += time;
         }
 
         return sum / solutions.length;

@@ -34,8 +34,15 @@ public class Best implements StatisticalMeasure {
     public long calculate(Solution[] solutions) {
         long best = Long.MAX_VALUE;
         for (Solution solution : solutions) {
-            if (solution.getTiming().getElapsedTime() < best) {
-                best = solution.getTiming().getElapsedTime();
+            long time = solution.timing.getElapsedTime();
+            if (solution.penalty.equals("+2")) {
+                time += 2000L;
+            } else if (solution.penalty.equals("DNF")) {
+                time = Long.MAX_VALUE;
+            }
+
+            if (time < best) {
+                best = time;
             }
         }
 
