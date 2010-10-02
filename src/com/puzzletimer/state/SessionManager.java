@@ -2,34 +2,34 @@ package com.puzzletimer.state;
 
 import java.util.ArrayList;
 
-import com.puzzletimer.models.Solution;
+import com.puzzletimer.models.FullSolution;
 
 public class SessionManager {
     private ArrayList<SessionListener> listeners;
-    private ArrayList<Solution> solutions;
+    private ArrayList<FullSolution> solutions;
 
     public SessionManager() {
         this.listeners = new ArrayList<SessionListener>();
-        this.solutions = new ArrayList<Solution>();
+        this.solutions = new ArrayList<FullSolution>();
     }
 
-    public void addSolution(Solution solution) {
+    public void addSolution(FullSolution solution) {
         this.solutions.add(solution);
         notifyListeners();
     }
 
-    public void removeSolution(Solution solution) {
+    public void removeSolution(FullSolution solution) {
         this.solutions.remove(solution);
         notifyListeners();
     }
 
     public void clearSession() {
-        this.solutions = new ArrayList<Solution>();
+        this.solutions = new ArrayList<FullSolution>();
         notifyListeners();
     }
 
     public void notifyListeners() {
-        Solution[] solutions = new Solution[this.solutions.size()];
+        FullSolution[] solutions = new FullSolution[this.solutions.size()];
         for (int i = 0; i < this.solutions.size(); i++) {
             solutions[i] = this.solutions.get(i);
         }

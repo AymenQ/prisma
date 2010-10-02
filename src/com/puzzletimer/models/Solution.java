@@ -4,14 +4,14 @@ import java.util.UUID;
 
 public class Solution {
     private UUID solutionId;
-    private UUID categoryId;
+    private UUID scrambleId;
     private Timing timing;
     private String penalty;
 
-    public Solution(UUID solutionId, UUID categoryId, Timing timing, String penalty) {
+    public Solution(UUID solutionId, UUID scrambleId, Timing timing, String penalty) {
         super();
         this.solutionId = solutionId;
-        this.categoryId = categoryId;
+        this.scrambleId = scrambleId;
         this.timing = timing;
         this.penalty = penalty;
     }
@@ -20,8 +20,8 @@ public class Solution {
         return this.solutionId;
     }
 
-    public UUID getCategoryId() {
-        return this.categoryId;
+    public UUID getScrambleId() {
+        return this.scrambleId;
     }
 
     public Timing getTiming() {

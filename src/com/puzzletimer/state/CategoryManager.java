@@ -13,6 +13,10 @@ public class CategoryManager {
         this.currentCategory = category;
     }
 
+    public Category getCurrentCategory() {
+        return this.currentCategory;
+    }
+
     public void setCategory(Category category) {
         this.currentCategory = category;
         notifyListeners();

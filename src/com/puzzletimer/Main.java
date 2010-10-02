@@ -42,6 +42,8 @@ import javax.swing.UIManager;
 
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.models.Category;
+import com.puzzletimer.models.FullSolution;
+import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
 import com.puzzletimer.puzzles.Puzzle;
@@ -68,6 +70,8 @@ import com.puzzletimer.timer.TimerListener;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
+    private HistoryFrame historyFrame;
+
     private TimerManager timerManager;
     private CategoryManager categoryManager;
     private ScrambleManager scrambleManager;
@@ -77,31 +81,19 @@ public class Main extends JFrame {
     private AudioFormat audioFormat;
     private Mixer.Info mixerInfo;
 
-    private Category currentCategory;
-    private Puzzle currentPuzzle;
     private boolean timerStopped;
 
     public Main() {
-        this.currentCategory = new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's Cube", false);
-        Scrambler scrambler = ScramblerBuilder.getScrambler(this.currentCategory.getScramblerId());
-        this.currentPuzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
+        Category defaultCategory = new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's Cube", false);
 
         // timer manager
         this.timerManager = new TimerManager(new KeyboardTimer(this, KeyEvent.VK_CONTROL));
 
         // categoryManager
-        this.categoryManager = new CategoryManager(this.currentCategory);
-        this.categoryManager.addCategoryListener(new CategoryListener() {
-            @Override
-            public void categoryChanged(Category category) {
-                Main.this.currentCategory = category;
-                Scrambler scrambler = ScramblerBuilder.getScrambler(Main.this.currentCategory.getScramblerId());
-                Main.this.currentPuzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
-            }
-        });
+        this.categoryManager = new CategoryManager(defaultCategory);
 
         // scramble manager
-        this.scrambleManager = new ScrambleManager(ScramblerBuilder.getScrambler(this.currentCategory.getScramblerId()));
+        this.scrambleManager = new ScrambleManager(ScramblerBuilder.getScrambler(defaultCategory.getScramblerId()));
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoryChanged(Category category) {
@@ -112,6 +104,12 @@ public class Main extends JFrame {
 
         // solution manager
         this.solutionManager = new SolutionManager();
+        this.categoryManager.addCategoryListener(new CategoryListener() {
+            @Override
+            public void categoryChanged(Category category) {
+                Main.this.solutionManager.loadSolutions(new FullSolution[0]);
+            }
+        });
         this.timerManager.addTimerListener(new TimerListener() {
             @Override
             public void timerReady() {
@@ -121,8 +119,18 @@ public class Main extends JFrame {
             @Override
             public void timerStopped(Timing timing) {
                 if (!Main.this.timerStopped) {
-                    Main.this.solutionManager.addSolution(
-                        new Solution(UUID.randomUUID(), Main.this.currentCategory.getCategoryId(), timing, ""));
+                    Scramble scramble =
+                        new Scramble(
+                            UUID.randomUUID(),
+                            Main.this.categoryManager.getCurrentCategory().getCategoryId(),
+                            Main.this.scrambleManager.getCurrentSequence());
+                    Solution solution =
+                        new Solution(
+                            UUID.randomUUID(),
+                            scramble.getScrambleId(),
+                            timing,
+                            "");
+                    Main.this.solutionManager.addSolution(new FullSolution(solution, scramble));
                     Main.this.scrambleManager.changeScramble();
                 }
 
@@ -140,12 +148,12 @@ public class Main extends JFrame {
         });
         this.solutionManager.addSolutionListener(new SolutionListener() {
             @Override
-            public void solutionAdded(Solution solution) {
+            public void solutionAdded(FullSolution solution) {
                 Main.this.sessionManager.addSolution(solution);
             }
 
             @Override
-            public void solutionRemoved(Solution solution) {
+            public void solutionRemoved(FullSolution solution) {
                 Main.this.sessionManager.removeSolution(solution);
             }
         });
@@ -207,6 +215,9 @@ public class Main extends JFrame {
 
         // scramble panel
         panelMain.add(createScramblePanel(), "3, 4");
+
+        // history frame
+        this.historyFrame = new HistoryFrame(this.categoryManager, this.solutionManager);
     }
 
     private JMenuBar createMenuBar() {
@@ -228,6 +239,23 @@ public class Main extends JFrame {
             }
         });
         menuFile.add(menuItemExit);
+
+        // menuView
+        JMenu menuView = new JMenu("View");
+        menuView.setMnemonic(KeyEvent.VK_V);
+        menuBar.add(menuView);
+
+        // menuItemHistory
+        JMenuItem menuItemHistory = new JMenuItem("History...");
+        menuItemHistory.setMnemonic(KeyEvent.VK_H);
+        menuItemHistory.setAccelerator(KeyStroke.getKeyStroke('H', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItemHistory.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.this.historyFrame.setVisible(true);
+            }
+        });
+        menuView.add(menuItemHistory);
 
         // menuCategory
         final JMenu menuCategory = new JMenu("Category");
@@ -527,7 +555,7 @@ public class Main extends JFrame {
 
         this.sessionManager.addSessionListener(new SessionListener() {
             @Override
-            public void solutionsUpdated(final Solution[] solutions) {
+            public void solutionsUpdated(final FullSolution[] solutions) {
                 JPanel panelTimes = new JPanel();
                 panelTimes.setLayout(new GridBagLayout());
 
@@ -542,7 +570,7 @@ public class Main extends JFrame {
                     c.insets = new Insets(0, 0, 0, 8);
                     panelTimes.add(labelIndex, c);
 
-                    JLabel labelTime = new JLabel(formatTime(solutions[i].getTiming().getElapsedTime()));
+                    JLabel labelTime = new JLabel(formatTime(solutions[i].getSolution().getTiming().getElapsedTime()));
                     labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                     c.gridx = 2;
                     c.insets = new Insets(0, 0, 0, 16);
@@ -605,13 +633,13 @@ public class Main extends JFrame {
 
             this.sessionManager.addSessionListener(new SessionListener() {
                 @Override
-                public void solutionsUpdated(Solution[] solutions) {
+                public void solutionsUpdated(FullSolution[] solutions) {
                     if (solutions.length >= measure.getMinimumWindowSize()) {
                         int size = Math.min(solutions.length, measure.getMaximumWindowSize());
 
                         Solution[] window = new Solution[size];
                         for (int i = 0; i < size; i++) {
-                            window[i] = solutions[solutions.length - size + i];
+                            window[i] = solutions[solutions.length - size + i].getSolution();
                         }
 
                         labelValue.setText(formatTime(measure.calculate(window)));
@@ -646,7 +674,10 @@ public class Main extends JFrame {
         this.scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
             public void scrambleChanged(String[] sequence) {
-                panel3D.mesh = Main.this.currentPuzzle.getScrambledPuzzleMesh(sequence);
+                Category currentCategory = Main.this.categoryManager.getCurrentCategory();
+                Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.getScramblerId());
+                Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
+                panel3D.mesh = puzzle.getScrambledPuzzleMesh(sequence);
                 panel3D.repaint();
             }
         });

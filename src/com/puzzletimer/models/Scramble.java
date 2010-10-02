@@ -13,7 +13,7 @@ public class Scramble {
         this.sequence = sequence;
     }
 
-    public UUID getScramblerId() {
+    public UUID getScrambleId() {
         return this.scrambleId;
     }
 

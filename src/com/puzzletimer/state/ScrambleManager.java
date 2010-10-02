@@ -15,6 +15,10 @@ public class ScrambleManager {
         this.currentSequence = scrambler.getNextScrambleSequence();
     }
 
+    public String[] getCurrentSequence() {
+        return this.currentSequence;
+    }
+
     public void setScrambler(Scrambler scrambler) {
         this.currentScrambler = scrambler;
         changeScramble();
