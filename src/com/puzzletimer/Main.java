@@ -206,7 +206,12 @@ public class Main extends JFrame {
         // frameMain
         setMinimumSize(new Dimension(800, 600));
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puzzletimer/resources/icon.png")));
-        setTitle("Puzzle Timer");
+        this.categoryManager.addCategoryListener(new CategoryListener() {
+            @Override
+            public void categoriesUpdated(Category[] categories, Category currentCategory) {
+                setTitle("Puzzle Timer - " + currentCategory.description);
+            }
+        });
 
         // menu
         setJMenuBar(createMenuBar());
