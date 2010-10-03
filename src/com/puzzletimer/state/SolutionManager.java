@@ -13,6 +13,10 @@ public class SolutionManager {
         this.solutions = new ArrayList<FullSolution>();
     }
 
+    public FullSolution[] getSolutions() {
+        return this.solutions.toArray(new FullSolution[this.solutions.size()]);
+    }
+
     public void loadSolutions(FullSolution[] solutions) {
         this.solutions = new ArrayList<FullSolution>();
         for (FullSolution solution : solutions) {

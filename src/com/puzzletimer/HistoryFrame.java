@@ -13,6 +13,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
@@ -54,7 +56,7 @@ public class HistoryFrame extends JFrame {
     private JTable table;
     private JButton buttonOk;
 
-    public HistoryFrame(final CategoryManager categoryManager, SolutionManager solutionManager) {
+    public HistoryFrame(final CategoryManager categoryManager, final SolutionManager solutionManager) {
         super();
 
         setMinimumSize(new Dimension(800, 600));
@@ -80,6 +82,28 @@ public class HistoryFrame extends JFrame {
             }
         });
         solutionManager.notifyListeners();
+
+        // table selection
+        this.table.getSelectionModel().addListSelectionListener(
+            new ListSelectionListener() {
+                @Override
+                public void valueChanged(ListSelectionEvent event) {
+                    FullSolution[] solutions = solutionManager.getSolutions();
+                    FullSolution[] selectedSolutions;
+
+                    int[] rows = HistoryFrame.this.table.getSelectedRows();
+                    if (rows.length <= 0) {
+                        selectedSolutions = solutions;
+                    } else {
+                        selectedSolutions = new FullSolution[rows.length];
+                        for (int i = 0; i < selectedSolutions.length; i++) {
+                            selectedSolutions[i] = solutions[rows[i]];
+                        }
+                    }
+
+                    updateStatistics(selectedSolutions);
+                }
+            });
 
         // close button
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
