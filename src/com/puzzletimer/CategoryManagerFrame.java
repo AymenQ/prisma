@@ -50,7 +50,7 @@ class CategoryEditorDialog extends JDialog {
             final CategoryEditorListener listener) {
         super(owner, modal);
 
-        setTitle("Category editor");
+        setTitle("Category Editor");
         setMinimumSize(new Dimension(480, 180));
         setPreferredSize(getMinimumSize());
 
@@ -181,7 +181,7 @@ public class CategoryManagerFrame extends JFrame {
     private JButton buttonOk;
 
     public CategoryManagerFrame(final CategoryManager categoryManager) {
-        setTitle("Category manager");
+        setTitle("Category Manager");
         setMinimumSize(new Dimension(640, 480));
         setPreferredSize(getMinimumSize());
 

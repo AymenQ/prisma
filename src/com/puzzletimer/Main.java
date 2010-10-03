@@ -305,6 +305,8 @@ public class Main extends JFrame {
 
                 // category manager
                 JMenuItem menuItemCategoryManager = new JMenuItem("Category manager...");
+                menuItemCategoryManager.setMnemonic(KeyEvent.VK_M);
+                menuItemCategoryManager.setAccelerator(KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
                 menuItemCategoryManager.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
