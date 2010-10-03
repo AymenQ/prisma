@@ -5,10 +5,11 @@ import java.util.HashMap;
 import com.puzzletimer.models.ScramblerInfo;
 
 public class ScramblerBuilder {
-    private static HashMap<String, Scrambler> scramblers;
+    private static Scrambler[] scramblers;
+    private static HashMap<String, Scrambler> scramblerMap;
 
     static {
-        Scrambler[] scramblerList = {
+        scramblers = new Scrambler[] {
             new EmptyScrambler(new ScramblerInfo("EMPTY", "OTHER", "Empty scrambler")),
             new RubiksPocketCubeRandomScrambler(new ScramblerInfo("2x2x2-CUBE-RANDOM", "2x2x2-CUBE", "Random scrambler")),
             new RubiksCubeRandomScrambler(new ScramblerInfo("RUBIKS-CUBE-RANDOM", "RUBIKS-CUBE", "Random scrambler"), false, false, false, false),
@@ -29,13 +30,17 @@ public class ScramblerBuilder {
             new Square1RandomScrambler(new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"), 20),
         };
 
-        scramblers = new HashMap<String, Scrambler>();
-        for (Scrambler scrambler : scramblerList) {
-            scramblers.put(scrambler.getScramblerInfo().getScramblerId(), scrambler);
+        scramblerMap = new HashMap<String, Scrambler>();
+        for (Scrambler scrambler : scramblers) {
+            scramblerMap.put(scrambler.getScramblerInfo().getScramblerId(), scrambler);
         }
     }
 
     public static Scrambler getScrambler(String scramblerId) {
-        return scramblers.get(scramblerId);
+        return scramblerMap.get(scramblerId);
+    }
+
+    public static Scrambler[] getScramblers() {
+        return scramblers;
     }
 }

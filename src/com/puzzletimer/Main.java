@@ -71,6 +71,7 @@ import com.puzzletimer.timer.TimerListener;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
+    private CategoryManagerFrame categoryManagerDialog;
     private HistoryFrame historyFrame;
 
     private TimerManager timerManager;
@@ -85,20 +86,47 @@ public class Main extends JFrame {
     private boolean timerStopped;
 
     public Main() {
-        Category defaultCategory = new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's Cube", false);
+        Category[] categories = {
+            new Category(null, "2x2x2-CUBE-RANDOM", "2x2x2 cube", false),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube", false),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube one-handed", false),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube blindfolded", false),
+            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube with feet", false),
+            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 cube", false),
+            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 blindfolded", false),
+            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 cube", false),
+            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 blindfolded", false),
+            new Category(null, "MEGAMINX-RANDOM", "Megaminx", false),
+            new Category(null, "PYRAMINX-RANDOM", "Pyraminx", false),
+            new Category(null, "SQUARE-1-RANDOM", "Square-1", false),
+            new Category(null, "EMPTY", "Rubik's clock", false),
+            new Category(null, "EMPTY", "Rubik's magic", false),
+            new Category(null, "EMPTY", "Master magic", false),
+            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES", "Rubik's cube - random edges", true),
+            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-PERMUTATION", "Rubik's cube - random edges permutation", true),
+            new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-ORIENTATION", "Rubik's cube - random edges orientation", true),
+            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS", "Rubik's cube - random corners", true),
+            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-PERMUTATION", "Rubik's cube - random corners permutation", true),
+            new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-ORIENTATION", "Rubik's cube - random corners orientation", true),
+            new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER", "Rubik's cube - random last layer", true),
+            new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER-PERMUTATION", "Rubik's cube - random last layer permutation", true),
+            new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Rubik's cube - easy cross", true),
+            new Category(null, "RUBIKS-CUBE-HARD-CROSS", "Rubik's cube - hard cross", true),
+        };
+        Category defaultCategory = categories[1];
 
         // timer manager
         this.timerManager = new TimerManager(new KeyboardTimer(this, KeyEvent.VK_CONTROL));
 
         // categoryManager
-        this.categoryManager = new CategoryManager(defaultCategory);
+        this.categoryManager = new CategoryManager(categories, defaultCategory);
 
         // scramble manager
-        this.scrambleManager = new ScrambleManager(ScramblerBuilder.getScrambler(defaultCategory.getScramblerId()));
+        this.scrambleManager = new ScrambleManager(ScramblerBuilder.getScrambler(defaultCategory.scramblerId));
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
-            public void categoryChanged(Category category) {
-                Scrambler scrambler = ScramblerBuilder.getScrambler(category.getScramblerId());
+            public void currentCategoryChanged(Category category) {
+                Scrambler scrambler = ScramblerBuilder.getScrambler(category.scramblerId);
                 Main.this.scrambleManager.setScrambler(scrambler);
             }
         });
@@ -107,7 +135,7 @@ public class Main extends JFrame {
         this.solutionManager = new SolutionManager();
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
-            public void categoryChanged(Category category) {
+            public void currentCategoryChanged(Category category) {
                 Main.this.solutionManager.loadSolutions(new FullSolution[0]);
             }
         });
@@ -143,7 +171,7 @@ public class Main extends JFrame {
         this.sessionManager = new SessionManager();
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
-            public void categoryChanged(Category category) {
+            public void currentCategoryChanged(Category category) {
                 Main.this.sessionManager.clearSession();
             }
         });
@@ -171,7 +199,7 @@ public class Main extends JFrame {
         createComponents();
 
         // update screen
-        this.categoryManager.notifyListeners();
+        this.categoryManager.setCurrentCategory(defaultCategory);
     }
 
     private void createComponents() {
@@ -222,6 +250,9 @@ public class Main extends JFrame {
         // scramble panel
         panelMain.add(createScramblePanel(), "3, 4");
 
+        // category manager
+        this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
+
         // history frame
         this.historyFrame = new HistoryFrame(this.categoryManager, this.solutionManager);
     }
@@ -267,85 +298,93 @@ public class Main extends JFrame {
         final JMenu menuCategory = new JMenu("Category");
         menuCategory.setMnemonic(KeyEvent.VK_C);
         menuBar.add(menuCategory);
-        ButtonGroup categoryGroup = new ButtonGroup();
+        this.categoryManager.addCategoryListener(new CategoryListener() {
+            @Override
+            public void categoriesUpdated(Category[] categories, Category currentCategory) {
+                menuCategory.removeAll();
 
-        // built-in categories
-        class BuiltInCategory {
-            public Category category;
-            public char mnemonic;
-            public char accelerator;
-            public boolean isDefault;
+                // category manager
+                JMenuItem menuItemCategoryManager = new JMenuItem("Category manager...");
+                menuItemCategoryManager.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent event) {
+                        Main.this.categoryManagerDialog.setVisible(true);
+                    }
+                });
+                menuCategory.add(menuItemCategoryManager);
 
-            public BuiltInCategory(Category category, char mnemonic, char accelerator, boolean isDefault) {
-                this.category = category;
-                this.mnemonic = mnemonic;
-                this.accelerator = accelerator;
-                this.isDefault = isDefault;
-            }
-        }
+                menuCategory.addSeparator();
 
-        BuiltInCategory[] builtInCategories = {
-            new BuiltInCategory(new Category(null, "2x2x2-CUBE-RANDOM", "2x2x2 cube", false), '2', '2', false),
-            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube", false), 'R', '3', true),
-            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube one-handed", false), 'O', '\0', false),
-            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube blindfolded", false), 'B', '\0', false),
-            new BuiltInCategory(new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube with feet", false), 'F', '\0', false),
-            new BuiltInCategory(new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 cube", false), '4', '4', false),
-            new BuiltInCategory(new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 blindfolded", false), 'B', '\0', false),
-            new BuiltInCategory(new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 cube", false), '5', '5', false),
-            new BuiltInCategory(new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 blindfolded", false), 'B', '\0', false),
-            new BuiltInCategory(new Category(null, "MEGAMINX-RANDOM", "Megaminx", false), 'M', 'M', false),
-            new BuiltInCategory(new Category(null, "PYRAMINX-RANDOM", "Pyraminx", false), 'P', 'P', false),
-            new BuiltInCategory(new Category(null, "SQUARE-1-RANDOM", "Square-1", false), 'S', '1', false),
-            new BuiltInCategory(new Category(null, "EMPTY", "Rubik's clock", false), 'C', 'K', false),
-            new BuiltInCategory(new Category(null, "EMPTY", "Rubik's magic", false), 'M', 'G', false),
-            new BuiltInCategory(new Category(null, "EMPTY", "Master magic", false), 'M', 'A', false),
-        };
+                ButtonGroup categoryGroup = new ButtonGroup();
 
-        for (final BuiltInCategory builtInCategory : builtInCategories) {
-            JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(builtInCategory.category.getDescription());
-            menuItemCategory.setMnemonic(builtInCategory.mnemonic);
-            if (builtInCategory.accelerator != '\0') {
-                menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(builtInCategory.accelerator, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            }
-            menuItemCategory.setSelected(builtInCategory.isDefault);
-            menuItemCategory.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Main.this.categoryManager.setCategory(builtInCategory.category);
+                // built-in categories
+                class BuiltInCategory {
+                    public Category category;
+                    public char mnemonic;
+                    public char accelerator;
+
+                    public BuiltInCategory(Category category, char mnemonic, char accelerator) {
+                        this.category = category;
+                        this.mnemonic = mnemonic;
+                        this.accelerator = accelerator;
+                    }
                 }
-            });
-            menuCategory.add(menuItemCategory);
-            categoryGroup.add(menuItemCategory);
-        }
 
-        menuCategory.addSeparator();
+                // TODO: find a better way to do this
+                BuiltInCategory[] builtInCategories = {
+                    new BuiltInCategory(categories[0], '2', '2'),
+                    new BuiltInCategory(categories[1], 'R', '3'),
+                    new BuiltInCategory(categories[2], 'O', '\0'),
+                    new BuiltInCategory(categories[3], 'B', '\0'),
+                    new BuiltInCategory(categories[4], 'F', '\0'),
+                    new BuiltInCategory(categories[5], '4', '4'),
+                    new BuiltInCategory(categories[6], 'B', '\0'),
+                    new BuiltInCategory(categories[7], '5', '5'),
+                    new BuiltInCategory(categories[8], 'B', '\0'),
+                    new BuiltInCategory(categories[9], 'M', 'M'),
+                    new BuiltInCategory(categories[10], 'P', 'P'),
+                    new BuiltInCategory(categories[11], 'S', '1'),
+                    new BuiltInCategory(categories[12], 'C', 'K'),
+                    new BuiltInCategory(categories[13], 'M', 'G'),
+                    new BuiltInCategory(categories[14], 'M', 'A'),
+                };
 
-        // user defined categories
-        Category[] categories = {
-          new Category(null, "RUBIKS-CUBE-RANDOM-EDGES", "Rubik's cube - random edges", true),
-          new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-PERMUTATION", "Rubik's cube - random edges permutation", true),
-          new Category(null, "RUBIKS-CUBE-RANDOM-EDGES-ORIENTATION", "Rubik's cube - random edges orientation", true),
-          new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS", "Rubik's cube - random corners", true),
-          new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-PERMUTATION", "Rubik's cube - random corners permutation", true),
-          new Category(null, "RUBIKS-CUBE-RANDOM-CORNERS-ORIENTATION", "Rubik's cube - random corners orientation", true),
-          new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER", "Rubik's cube - random last layer", true),
-          new Category(null, "RUBIKS-CUBE-RANDOM-LAST-LAYER-PERMUTATION", "Rubik's cube - random last layer permutation", true),
-          new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Rubik's cube - easy cross", true),
-          new Category(null, "RUBIKS-CUBE-HARD-CROSS", "Rubik's cube - hard cross", true),
-        };
-
-        for (final Category category : categories) {
-            JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.getDescription());
-            menuItemCategory.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Main.this.categoryManager.setCategory(category);
+                for (final BuiltInCategory builtInCategory : builtInCategories) {
+                    JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(builtInCategory.category.description);
+                    menuItemCategory.setMnemonic(builtInCategory.mnemonic);
+                    if (builtInCategory.accelerator != '\0') {
+                        menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(builtInCategory.accelerator, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+                    }
+                    menuItemCategory.setSelected(builtInCategory.category == currentCategory);
+                    menuItemCategory.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            Main.this.categoryManager.setCurrentCategory(builtInCategory.category);
+                        }
+                    });
+                    menuCategory.add(menuItemCategory);
+                    categoryGroup.add(menuItemCategory);
                 }
-            });
-            menuCategory.add(menuItemCategory);
-            categoryGroup.add(menuItemCategory);
-        }
+
+                menuCategory.addSeparator();
+
+                // user defined categories
+                for (final Category category : categories) {
+                    if (category.isUserDefined()) {
+                        JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.description);
+                        menuItemCategory.setSelected(category == currentCategory);
+                        menuItemCategory.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                Main.this.categoryManager.setCurrentCategory(category);
+                            }
+                        });
+                        menuCategory.add(menuItemCategory);
+                        categoryGroup.add(menuItemCategory);
+                    }
+                }
+            }
+        });
 
         // menuOptions
         final JMenu menuOptions = new JMenu("Options");
@@ -726,7 +765,7 @@ public class Main extends JFrame {
             @Override
             public void scrambleChanged(String[] sequence) {
                 Category currentCategory = Main.this.categoryManager.getCurrentCategory();
-                Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.getScramblerId());
+                Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.scramblerId);
                 Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
                 panel3D.mesh = puzzle.getScrambledPuzzleMesh(sequence);
                 panel3D.repaint();

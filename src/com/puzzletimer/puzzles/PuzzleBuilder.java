@@ -3,10 +3,11 @@ package com.puzzletimer.puzzles;
 import java.util.HashMap;
 
 public class PuzzleBuilder {
+    private static Puzzle[] puzzles;
     private static HashMap<String, Puzzle> puzzleMap;
 
     static {
-        Puzzle[] puzzles = {
+        puzzles = new Puzzle[] {
             new Other(),
             new RubiksPocketCube(),
             new RubiksCube(),
@@ -25,5 +26,9 @@ public class PuzzleBuilder {
 
     public static Puzzle getPuzzle(String puzzleId) {
         return puzzleMap.get(puzzleId);
+    }
+
+    public static Puzzle[] getPuzzles() {
+        return puzzles;
     }
 }

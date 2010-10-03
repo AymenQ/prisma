@@ -4,8 +4,8 @@ import java.util.UUID;
 
 public class Category {
     private UUID categoryId;
-    private String scramblerId;
-    private String description;
+    public String scramblerId;
+    public String description;
     private boolean isUserDefined;
 
     public Category(UUID categoryId, String scramblerId, String description, boolean isUserDefined) {
@@ -17,14 +17,6 @@ public class Category {
 
     public UUID getCategoryId() {
         return this.categoryId;
-    }
-
-    public String getScramblerId() {
-        return this.scramblerId;
-    }
-
-    public String getDescription() {
-        return this.description;
     }
 
     public boolean isUserDefined() {

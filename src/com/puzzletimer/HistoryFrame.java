@@ -65,8 +65,8 @@ public class HistoryFrame extends JFrame {
         // title
         categoryManager.addCategoryListener(new CategoryListener() {
             @Override
-            public void categoryChanged(Category category) {
-                setTitle("History - " + category.getDescription());
+            public void categoriesUpdated(Category[] categories, Category currentCategory) {
+                setTitle("History - " + currentCategory.description);
             }
         });
         categoryManager.notifyListeners();
