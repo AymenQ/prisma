@@ -37,6 +37,7 @@ import com.puzzletimer.statistics.Worst;
 
 @SuppressWarnings("serial")
 public class HistoryFrame extends JFrame {
+    private HistogramPanel histogramPanel;
     private JLabel labelMean;
     private JLabel labelStandardDeviation;
     private JLabel labelBest;
@@ -77,6 +78,7 @@ public class HistoryFrame extends JFrame {
         solutionManager.addSolutionListener(new SolutionListener() {
             @Override
             public void solutionsUpdated(FullSolution[] solutions) {
+                updateHistogram(solutions);
                 updateStatistics(solutions);
                 updateTable(solutions);
             }
@@ -126,9 +128,8 @@ public class HistoryFrame extends JFrame {
         add(new JLabel("Histogram"), "wrap");
 
         // histogram
-        JPanel histogram = new JPanel();
-        histogram.setBackground(Color.WHITE);
-        add(histogram, "growx, height 100, wrap");
+        this.histogramPanel = new HistogramPanel(new Solution[0], 17);
+        add(this.histogramPanel, "growx, height 100, wrap");
 
         // labelGraph
         add(new JLabel("Graph"), "wrap");
@@ -244,6 +245,15 @@ public class HistoryFrame extends JFrame {
         // buttonOk
         this.buttonOk = new JButton("OK");
         add(this.buttonOk, "width 100, right");
+    }
+
+    private void updateHistogram(FullSolution[] fullSolutions) {
+        Solution[] solutions = new Solution[fullSolutions.length];
+        for (int i = 0; i < solutions.length; i++) {
+            solutions[i] = fullSolutions[i].getSolution();
+        }
+
+        this.histogramPanel.setSolutions(solutions);
     }
 
     private void updateStatistics(FullSolution[] solutions) {
