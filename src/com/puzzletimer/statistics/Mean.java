@@ -1,6 +1,7 @@
 package com.puzzletimer.statistics;
 
 import com.puzzletimer.models.Solution;
+import com.puzzletimer.util.SolutionUtils;
 
 public class Mean implements StatisticalMeasure {
     private int minimumWindowSize;
@@ -32,15 +33,12 @@ public class Mean implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
-        long sum = 0L;
-        for (Solution solution : solutions) {
-            if (solution.penalty.equals("DNF")) {
-                return Long.MAX_VALUE;
-            }
+        long[] times = SolutionUtils.getRealTimes(solutions, false);
 
-            long time = solution.timing.getElapsedTime();
-            if (solution.penalty.equals("+2")) {
-                time += 2000L;
+        long sum = 0L;
+        for (long time : times) {
+            if (time == Long.MAX_VALUE) {
+                return Long.MAX_VALUE;
             }
 
             sum += time;

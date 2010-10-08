@@ -1,6 +1,7 @@
 package com.puzzletimer.statistics;
 
 import com.puzzletimer.models.Solution;
+import com.puzzletimer.util.SolutionUtils;
 
 public class StandardDeviation implements StatisticalMeasure {
     private int minimumWindowSize;
@@ -32,48 +33,23 @@ public class StandardDeviation implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
-        int nNonDNFSolutions = 0;
-        for (Solution solution : solutions) {
-            if (!solution.penalty.equals("DNF")) {
-                nNonDNFSolutions++;
-            }
-        }
+        long[] times = SolutionUtils.getRealTimes(solutions, true);
 
-        if (nNonDNFSolutions == 0) {
+        if (times.length == 0) {
             return 0L;
         }
 
         double mean = 0d;
-        for (Solution solution : solutions) {
-            if (solution.penalty.equals("DNF")) {
-                continue;
-            }
-
-            long time = solution.timing.getElapsedTime();
-            if (solution.penalty.equals("+2")) {
-                time += 2000L;
-            }
-
+        for (long time : times) {
             mean += time;
         }
-
-
-        mean /= nNonDNFSolutions;
+        mean /= times.length;
 
         double variance = 0d;
-        for (Solution solution : solutions) {
-            if (solution.penalty.equals("DNF")) {
-                continue;
-            }
-
-            long time = solution.timing.getElapsedTime();
-            if (solution.penalty.equals("+2")) {
-                time += 2000L;
-            }
-
+        for (long time : times) {
             variance += Math.pow(time - mean, 2d);
         }
-        variance /= nNonDNFSolutions;
+        variance /= times.length;
 
         return (long) Math.sqrt(variance);
     }

@@ -68,6 +68,7 @@ import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.timer.KeyboardTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.timer.TimerListener;
+import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
@@ -566,13 +567,13 @@ public class Main extends JFrame {
             @Override
             public void timerRunning(Timing timing) {
                 if (!Main.this.timerStopped) {
-                    labelTime.setText(formatTime(timing.getElapsedTime()));
+                    labelTime.setText(SolutionUtils.formatMinutes(timing.getElapsedTime()));
                 }
             }
 
             @Override
             public void timerStopped(Timing timing) {
-                labelTime.setText(formatTime(timing.getElapsedTime()));
+                labelTime.setText(SolutionUtils.formatMinutes(timing.getElapsedTime()));
             }
         });
         panelTimer.add(labelTime, "3, 0");
@@ -624,7 +625,7 @@ public class Main extends JFrame {
                     c.insets = new Insets(0, 0, 0, 8);
                     panelTimes.add(labelIndex, c);
 
-                    JLabel labelTime = new JLabel(formatTime(solutions[i].getSolution().timing.getElapsedTime()));
+                    JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].getSolution().timing.getElapsedTime()));
                     labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                     c.gridx = 2;
                     c.insets = new Insets(0, 0, 0, 16);
@@ -739,7 +740,7 @@ public class Main extends JFrame {
                             window[i] = solutions[solutions.length - size + i].getSolution();
                         }
 
-                        labelValue.setText(formatTime(measure.calculate(window)));
+                        labelValue.setText(SolutionUtils.formatMinutes(measure.calculate(window)));
                     } else {
                         labelValue.setText("XX:XX.XX");
                     }
@@ -780,18 +781,6 @@ public class Main extends JFrame {
         });
 
         return panelScramble;
-    }
-
-    private String formatTime(long time) {
-        if (time == Long.MAX_VALUE) {
-            return "DNF";
-        }
-
-        return String.format(
-            "%02d:%02d.%02d",
-            time / 60000,
-            (time % 60000) / 1000,
-            (time % 1000) / 10);
     }
 
     public static void main(String[] args) {

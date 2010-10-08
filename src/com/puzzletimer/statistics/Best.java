@@ -1,6 +1,7 @@
 package com.puzzletimer.statistics;
 
 import com.puzzletimer.models.Solution;
+import com.puzzletimer.util.SolutionUtils;
 
 public class Best implements StatisticalMeasure {
     private int minimumWindowSize;
@@ -32,15 +33,10 @@ public class Best implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
-        long best = Long.MAX_VALUE;
-        for (Solution solution : solutions) {
-            long time = solution.timing.getElapsedTime();
-            if (solution.penalty.equals("+2")) {
-                time += 2000L;
-            } else if (solution.penalty.equals("DNF")) {
-                time = Long.MAX_VALUE;
-            }
+        long[] times = SolutionUtils.getRealTimes(solutions, false);
 
+        long best = Long.MAX_VALUE;
+        for (long time : times) {
             if (time < best) {
                 best = time;
             }

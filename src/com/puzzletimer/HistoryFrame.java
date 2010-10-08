@@ -34,6 +34,7 @@ import com.puzzletimer.statistics.Mean;
 import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
+import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
 public class HistoryFrame extends JFrame {
@@ -310,7 +311,7 @@ public class HistoryFrame extends JFrame {
                     window[j] = solutions[solutions.length - size + j].getSolution();
                 }
 
-                labels[i].setText(formatTime(measures[i].calculate(window)));
+                labels[i].setText(SolutionUtils.formatMinutes(measures[i].calculate(window)));
             } else {
                 labels[i].setText("XX:XX.XX");
             }
@@ -334,7 +335,7 @@ public class HistoryFrame extends JFrame {
             String sStart = dateFormat.format(completeSolution.getSolution().timing.getStart());
 
             // time
-            String sTime = formatTime(completeSolution.getSolution().timing.getElapsedTime());
+            String sTime = SolutionUtils.formatMinutes(completeSolution.getSolution().timing.getElapsedTime());
 
             // scramble
             StringBuilder stringBuilder = new StringBuilder();
@@ -352,17 +353,5 @@ public class HistoryFrame extends JFrame {
         }
 
         this.table.setModel(tableModel);
-    }
-
-    private String formatTime(long time) {
-        if (time == Long.MAX_VALUE) {
-            return "DNF";
-        }
-
-        return String.format(
-            "%02d:%02d.%02d",
-            time / 60000,
-            (time % 60000) / 1000,
-            (time % 1000) / 10);
     }
 }
