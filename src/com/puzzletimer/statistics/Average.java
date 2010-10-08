@@ -33,7 +33,7 @@ public class Average implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
-        long[] times = SolutionUtils.getRealTimes(solutions, false);
+        long[] times = SolutionUtils.realTimes(solutions, false);
 
         // if number of DNFs is greater than one, return DNF
         int nDNFs = 0;

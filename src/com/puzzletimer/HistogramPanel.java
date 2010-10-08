@@ -27,7 +27,7 @@ public class HistogramPanel extends JPanel {
 
     public void setSolutions(Solution[] solutions) {
         // apply +2, filter DNF
-        long[] times = SolutionUtils.getRealTimes(solutions, true);
+        long[] times = SolutionUtils.realTimes(solutions, true);
 
         // define interval size
         if (times.length == 0) {

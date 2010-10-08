@@ -40,7 +40,7 @@ public class SolutionUtils {
         return solution.timing.getElapsedTime();
     }
 
-    public static long[] getRealTimes(Solution[] solutions, boolean filterDNF) {
+    public static long[] realTimes(Solution[] solutions, boolean filterDNF) {
         ArrayList<Long> realTimes = new ArrayList<Long>();
         for (int i = 0; i < solutions.length; i++) {
             long actualTime = realTime(solutions[i]);

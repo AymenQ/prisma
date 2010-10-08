@@ -33,7 +33,7 @@ public class Worst implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
-        long[] times = SolutionUtils.getRealTimes(solutions, false);
+        long[] times = SolutionUtils.realTimes(solutions, false);
 
         long worst = 0L;
         for (long time : times) {

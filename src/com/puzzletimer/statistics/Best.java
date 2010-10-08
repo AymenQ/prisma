@@ -33,7 +33,7 @@ public class Best implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
-        long[] times = SolutionUtils.getRealTimes(solutions, false);
+        long[] times = SolutionUtils.realTimes(solutions, false);
 
         long best = Long.MAX_VALUE;
         for (long time : times) {

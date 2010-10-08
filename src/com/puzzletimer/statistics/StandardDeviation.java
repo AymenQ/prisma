@@ -33,7 +33,7 @@ public class StandardDeviation implements StatisticalMeasure {
 
     @Override
     public long calculate(Solution[] solutions) {
-        long[] times = SolutionUtils.getRealTimes(solutions, true);
+        long[] times = SolutionUtils.realTimes(solutions, true);
 
         if (times.length == 0) {
             return 0L;
