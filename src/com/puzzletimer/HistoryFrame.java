@@ -104,6 +104,7 @@ public class HistoryFrame extends JFrame {
                         }
                     }
 
+                    updateHistogram(selectedSolutions);
                     updateStatistics(selectedSolutions);
                 }
             });
