@@ -737,7 +737,7 @@ public class Main extends JFrame {
 
                         Solution[] window = new Solution[size];
                         for (int i = 0; i < size; i++) {
-                            window[i] = solutions[solutions.length - size + i].getSolution();
+                            window[i] = solutions[i].getSolution();
                         }
 
                         measure.setSolutions(window);

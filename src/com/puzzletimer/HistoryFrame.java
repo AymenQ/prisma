@@ -354,7 +354,7 @@ public class HistoryFrame extends JFrame {
 
                 Solution[] window = new Solution[size];
                 for (int j = 0; j < size; j++) {
-                    window[j] = solutions[solutions.length - size + j].getSolution();
+                    window[j] = solutions[j].getSolution();
                 }
 
                 measures[i].setSolutions(window);
