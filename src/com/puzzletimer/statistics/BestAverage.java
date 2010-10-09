@@ -5,6 +5,8 @@ import com.puzzletimer.models.Solution;
 public class BestAverage implements StatisticalMeasure {
     private int minimumWindowSize;
     private int maximumWindowSize;
+    private int windowPosition;
+    private long value;
 
     public BestAverage(int minimumWindowSize, int maximumWindowSize) {
         this.minimumWindowSize = minimumWindowSize;
@@ -31,7 +33,17 @@ public class BestAverage implements StatisticalMeasure {
     }
 
     @Override
-    public long calculate(Solution[] solutions) {
+    public int getWindowPosition() {
+        return this.windowPosition;
+    }
+
+    @Override
+    public long getValue() {
+        return this.value;
+    }
+
+    @Override
+    public void setSolutions(Solution[] solutions) {
         Average average = new Average(this.minimumWindowSize, this.minimumWindowSize);
 
         long bestAverage = Long.MAX_VALUE;
@@ -41,12 +53,13 @@ public class BestAverage implements StatisticalMeasure {
                 window[j] = solutions[i + j];
             }
 
-            long windowAverage = average.calculate(window);
-            if (windowAverage < bestAverage) {
-                bestAverage = windowAverage;
+            average.setSolutions(window);
+            if (average.getValue() <= bestAverage) {
+                bestAverage = average.getValue();
+                this.windowPosition = i;
             }
         }
 
-        return bestAverage;
+        this.value = bestAverage;
     }
 }

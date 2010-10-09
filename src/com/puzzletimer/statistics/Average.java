@@ -6,6 +6,7 @@ import com.puzzletimer.util.SolutionUtils;
 public class Average implements StatisticalMeasure {
     private int minimumWindowSize;
     private int maximumWindowSize;
+    private long value;
 
     public Average(int minimumWindowSize, int maximumWindowSize) {
         this.minimumWindowSize = minimumWindowSize;
@@ -32,7 +33,17 @@ public class Average implements StatisticalMeasure {
     }
 
     @Override
-    public long calculate(Solution[] solutions) {
+    public int getWindowPosition() {
+        return 0;
+    }
+
+    @Override
+    public long getValue() {
+        return this.value;
+    }
+
+    @Override
+    public void setSolutions(Solution[] solutions) {
         long[] times = SolutionUtils.realTimes(solutions, false);
 
         // if number of DNFs is greater than one, return DNF
@@ -41,7 +52,8 @@ public class Average implements StatisticalMeasure {
             if (time == Long.MAX_VALUE) {
                 nDNFs++;
                 if (nDNFs > 1) {
-                    return Long.MAX_VALUE;
+                    this.value = Long.MAX_VALUE;
+                    return;
                 }
             }
         }
@@ -62,6 +74,6 @@ public class Average implements StatisticalMeasure {
             sum += time;
         }
 
-        return (sum - worst - best) / (solutions.length - 2);
+        this.value = (sum - worst - best) / (solutions.length - 2);
     }
 }

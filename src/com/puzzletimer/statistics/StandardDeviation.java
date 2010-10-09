@@ -6,6 +6,7 @@ import com.puzzletimer.util.SolutionUtils;
 public class StandardDeviation implements StatisticalMeasure {
     private int minimumWindowSize;
     private int maximumWindowSize;
+    private long value;
 
     public StandardDeviation(int minimumWindowSize, int maximumWindowSize) {
         this.minimumWindowSize = minimumWindowSize;
@@ -32,11 +33,22 @@ public class StandardDeviation implements StatisticalMeasure {
     }
 
     @Override
-    public long calculate(Solution[] solutions) {
+    public int getWindowPosition() {
+        return 0;
+    }
+
+    @Override
+    public long getValue() {
+        return this.value;
+    }
+
+    @Override
+    public void setSolutions(Solution[] solutions) {
         long[] times = SolutionUtils.realTimes(solutions, true);
 
         if (times.length == 0) {
-            return 0L;
+            this.value = 0L;
+            return;
         }
 
         double mean = 0d;
@@ -51,6 +63,6 @@ public class StandardDeviation implements StatisticalMeasure {
         }
         variance /= times.length;
 
-        return (long) Math.sqrt(variance);
+        this.value = (long) Math.sqrt(variance);
     }
 }

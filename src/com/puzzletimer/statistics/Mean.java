@@ -6,6 +6,7 @@ import com.puzzletimer.util.SolutionUtils;
 public class Mean implements StatisticalMeasure {
     private int minimumWindowSize;
     private int maximumWindowSize;
+    private long value;
 
     public Mean(int minimumWindowSize, int maximumWindowSize) {
         this.minimumWindowSize = minimumWindowSize;
@@ -32,18 +33,29 @@ public class Mean implements StatisticalMeasure {
     }
 
     @Override
-    public long calculate(Solution[] solutions) {
+    public int getWindowPosition() {
+        return 0;
+    }
+
+    @Override
+    public long getValue() {
+        return this.value;
+    }
+
+    @Override
+    public void setSolutions(Solution[] solutions) {
         long[] times = SolutionUtils.realTimes(solutions, false);
 
         long sum = 0L;
         for (long time : times) {
             if (time == Long.MAX_VALUE) {
-                return Long.MAX_VALUE;
+                this.value = Long.MAX_VALUE;
+                return;
             }
 
             sum += time;
         }
 
-        return sum / solutions.length;
+        this.value = sum / solutions.length;
     }
 }

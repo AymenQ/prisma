@@ -1,8 +1,12 @@
 package com.puzzletimer;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.DateFormat;
 
 import javax.swing.JButton;
@@ -78,9 +82,14 @@ public class HistoryFrame extends JFrame {
         solutionManager.addSolutionListener(new SolutionListener() {
             @Override
             public void solutionsUpdated(FullSolution[] solutions) {
+                int[] selectedRows = new int[solutions.length];
+                for (int i = 0; i < selectedRows.length; i++) {
+                    selectedRows[i] = i;
+                }
+
                 updateHistogram(solutions);
                 updateGraph(solutions);
-                updateStatistics(solutions);
+                updateStatistics(solutions, selectedRows);
                 updateTable(solutions);
             }
         });
@@ -94,19 +103,24 @@ public class HistoryFrame extends JFrame {
                     FullSolution[] solutions = solutionManager.getSolutions();
                     FullSolution[] selectedSolutions;
 
-                    int[] rows = HistoryFrame.this.table.getSelectedRows();
-                    if (rows.length <= 0) {
+                    int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
+                    if (selectedRows.length <= 0) {
+                        selectedRows = new int[HistoryFrame.this.table.getRowCount()];
+                        for (int i = 0; i < selectedRows.length; i++) {
+                            selectedRows[i] = i;
+                        }
+
                         selectedSolutions = solutions;
                     } else {
-                        selectedSolutions = new FullSolution[rows.length];
+                        selectedSolutions = new FullSolution[selectedRows.length];
                         for (int i = 0; i < selectedSolutions.length; i++) {
-                            selectedSolutions[i] = solutions[rows[i]];
+                            selectedSolutions[i] = solutions[selectedRows[i]];
                         }
                     }
 
                     updateHistogram(selectedSolutions);
                     updateGraph(selectedSolutions);
-                    updateStatistics(selectedSolutions);
+                    updateStatistics(selectedSolutions, selectedRows);
                 }
             });
 
@@ -267,7 +281,7 @@ public class HistoryFrame extends JFrame {
         this.graphPanel.setSolutions(solutions);
     }
 
-    private void updateStatistics(FullSolution[] solutions) {
+    private void updateStatistics(FullSolution[] solutions, final int[] selectedRows) {
         JLabel labels[] = {
             this.labelMean,
             this.labelStandardDeviation,
@@ -312,6 +326,28 @@ public class HistoryFrame extends JFrame {
             new BestAverage(12, Integer.MAX_VALUE),
         };
 
+        boolean[] clickable = {
+            false,
+            false,
+            true,
+            true,
+
+            true,
+            true,
+            true,
+            true,
+
+            true,
+            true,
+            true,
+            true,
+
+            true,
+            true,
+            true,
+            true,
+        };
+
         for (int i = 0; i < labels.length; i++) {
             if (solutions.length >= measures[i].getMinimumWindowSize()) {
                 int size = Math.min(solutions.length, measures[i].getMaximumWindowSize());
@@ -321,9 +357,40 @@ public class HistoryFrame extends JFrame {
                     window[j] = solutions[solutions.length - size + j].getSolution();
                 }
 
-                labels[i].setText(SolutionUtils.formatMinutes(measures[i].calculate(window)));
+                measures[i].setSolutions(window);
+                labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue()));
             } else {
                 labels[i].setText("XX:XX.XX");
+            }
+
+            if (clickable[i]) {
+                MouseListener[] mouseListeners = labels[i].getMouseListeners();
+                for (MouseListener mouseListener : mouseListeners) {
+                    labels[i].removeMouseListener(mouseListener);
+                }
+
+                labels[i].setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+
+                if (solutions.length >= measures[i].getMinimumWindowSize()) {
+                    labels[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+                    final int windowSize = measures[i].getMinimumWindowSize();
+                    final int windowPosition = measures[i].getWindowPosition();
+
+                    labels[i].addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            HistoryFrame.this.table.removeRowSelectionInterval(
+                                0,  HistoryFrame.this.table.getRowCount() - 1);
+
+                            for (int i = 0; i < windowSize; i++) {
+                                HistoryFrame.this.table.addRowSelectionInterval(
+                                    selectedRows[windowPosition + i],
+                                    selectedRows[windowPosition + i]);
+                            }
+                        }
+                    });
+                }
             }
         }
     }

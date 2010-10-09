@@ -6,5 +6,7 @@ public interface StatisticalMeasure {
     String getDescription();
     int getMinimumWindowSize();
     int getMaximumWindowSize();
-    long calculate(Solution[] solutions);
+    int getWindowPosition();
+    long getValue();
+    void setSolutions(Solution[] solutions);
 }

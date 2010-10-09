@@ -740,7 +740,8 @@ public class Main extends JFrame {
                             window[i] = solutions[solutions.length - size + i].getSolution();
                         }
 
-                        labelValue.setText(SolutionUtils.formatMinutes(measure.calculate(window)));
+                        measure.setSolutions(window);
+                        labelValue.setText(SolutionUtils.formatMinutes(measure.getValue()));
                     } else {
                         labelValue.setText("XX:XX.XX");
                     }
