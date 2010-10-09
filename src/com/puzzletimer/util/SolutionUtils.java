@@ -10,7 +10,13 @@ public class SolutionUtils {
             return "DNF";
         }
 
-        return String.format(
+        String sign = "";
+        if (time < 0) {
+            sign = "-";
+            time = -time;
+        }
+
+        return sign + String.format(
             "%d.%02d",
             time / 1000,
             (time % 1000) / 10);
@@ -21,7 +27,12 @@ public class SolutionUtils {
             return "DNF";
         }
 
-        return String.format(
+        String sign = "";
+        if (time < 0) {
+            sign = "-";
+            time = -time;
+        }
+        return sign + String.format(
             "%02d:%02d.%02d",
             time / 60000,
             (time % 60000) / 1000,
