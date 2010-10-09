@@ -1,11 +1,9 @@
 package com.puzzletimer;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -42,6 +40,7 @@ import com.puzzletimer.util.SolutionUtils;
 @SuppressWarnings("serial")
 public class HistoryFrame extends JFrame {
     private HistogramPanel histogramPanel;
+    private GraphPanel graphPanel;
     private JLabel labelMean;
     private JLabel labelStandardDeviation;
     private JLabel labelBest;
@@ -83,6 +82,7 @@ public class HistoryFrame extends JFrame {
             @Override
             public void solutionsUpdated(FullSolution[] solutions) {
                 updateHistogram(solutions);
+                updateGraph(solutions);
                 updateStatistics(solutions);
                 updateTable(solutions);
             }
@@ -108,6 +108,7 @@ public class HistoryFrame extends JFrame {
                     }
 
                     updateHistogram(selectedSolutions);
+                    updateGraph(selectedSolutions);
                     updateStatistics(selectedSolutions);
                 }
             });
@@ -140,9 +141,8 @@ public class HistoryFrame extends JFrame {
         add(new JLabel("Graph"), "wrap");
 
         // Graph
-        JPanel graph = new JPanel();
-        graph.setBackground(Color.WHITE);
-        add(graph, "growx, height 100, wrap");
+        this.graphPanel = new GraphPanel(new Solution[0]);
+        add(this.graphPanel, "growx, height 100, wrap");
 
         // labelStatistics
         add(new JLabel("Statistics"), "wrap");
@@ -261,6 +261,15 @@ public class HistoryFrame extends JFrame {
         this.histogramPanel.setSolutions(solutions);
     }
 
+    private void updateGraph(FullSolution[] fullSolutions) {
+        Solution[] solutions = new Solution[fullSolutions.length];
+        for (int i = 0; i < solutions.length; i++) {
+            solutions[i] = fullSolutions[i].getSolution();
+        }
+
+        this.graphPanel.setSolutions(solutions);
+    }
+
     private void updateStatistics(FullSolution[] solutions) {
         JLabel labels[] = {
             this.labelMean,
@@ -346,7 +355,7 @@ public class HistoryFrame extends JFrame {
 
         for (FullSolution completeSolution : solutions) {
             // start
-            DateFormat dateFormat = new SimpleDateFormat();
+            DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
             String sStart = dateFormat.format(completeSolution.getSolution().timing.getStart());
 
             // time
