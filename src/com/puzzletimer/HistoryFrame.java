@@ -4,9 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -341,17 +338,6 @@ public class HistoryFrame extends JFrame {
         for (String column : new String[] { "Start", "Time", "Penalty", "Scramble" }) {
             tableModel.addColumn(column);
         }
-
-        // sort solution by start time
-        Arrays.sort(solutions, new Comparator<FullSolution>() {
-            @Override
-            public int compare(FullSolution solution1, FullSolution solution2) {
-                Date start1 = solution1.getSolution().timing.getStart();
-                Date start2 = solution2.getSolution().timing.getStart();
-
-                return start2.compareTo(start1);
-            }
-        });
 
         for (FullSolution completeSolution : solutions) {
             // start

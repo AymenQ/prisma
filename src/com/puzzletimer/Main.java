@@ -616,10 +616,10 @@ public class Main extends JFrame {
                 c.ipady = 4;
                 c.anchor = GridBagConstraints.BASELINE_TRAILING;
 
-                for (int i = solutions.length - 1; i >= Math.max(0, solutions.length - 500); i--) {
+                for (int i = 0; i < Math.min(500, solutions.length); i++) {
                     final int index = i;
 
-                    JLabel labelIndex = new JLabel(Integer.toString(i + 1) + ".");
+                    JLabel labelIndex = new JLabel(Integer.toString(solutions.length - i) + ".");
                     labelIndex.setFont(new Font("Tahoma", Font.BOLD, 13));
                     c.gridx = 0;
                     c.insets = new Insets(0, 0, 0, 8);

@@ -1,16 +1,28 @@
 package com.puzzletimer.state;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import com.puzzletimer.models.FullSolution;
 
 public class SolutionManager {
     private ArrayList<SolutionListener> listeners;
-    private ArrayList<FullSolution> solutions;
+    private SortedSet<FullSolution> solutions;
 
     public SolutionManager() {
         this.listeners = new ArrayList<SolutionListener>();
-        this.solutions = new ArrayList<FullSolution>();
+        this.solutions = new TreeSet<FullSolution>(new Comparator<FullSolution>() {
+            @Override
+            public int compare(FullSolution solution1, FullSolution solution2) {
+                Date start1 = solution1.getSolution().timing.getStart();
+                Date start2 = solution2.getSolution().timing.getStart();
+                return start2.compareTo(start1);
+            }
+        });
     }
 
     public FullSolution[] getSolutions() {
@@ -18,10 +30,8 @@ public class SolutionManager {
     }
 
     public void loadSolutions(FullSolution[] solutions) {
-        this.solutions = new ArrayList<FullSolution>();
-        for (FullSolution solution : solutions) {
-            this.solutions.add(solution);
-        }
+        this.solutions.clear();
+        this.solutions.addAll(Arrays.asList(solutions));
 
         notifyListeners();
     }
@@ -56,9 +66,7 @@ public class SolutionManager {
 
     public void notifyListeners() {
         FullSolution[] solutions = new FullSolution[this.solutions.size()];
-        for (int i = 0; i < this.solutions.size(); i++) {
-            solutions[i] = this.solutions.get(i);
-        }
+        this.solutions.toArray(solutions);
 
         for (SolutionListener listener : this.listeners) {
             listener.solutionsUpdated(solutions);
