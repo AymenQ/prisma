@@ -72,8 +72,9 @@ import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
-    private CategoryManagerFrame categoryManagerDialog;
     private HistoryFrame historyFrame;
+    private SessionSummaryFrame sessionSummaryFrame;
+    private CategoryManagerFrame categoryManagerDialog;
 
     private TimerManager timerManager;
     private CategoryManager categoryManager;
@@ -256,11 +257,14 @@ public class Main extends JFrame {
         // scramble panel
         panelMain.add(createScramblePanel(), "3, 4");
 
-        // category manager
-        this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
-
         // history frame
         this.historyFrame = new HistoryFrame(this.categoryManager, this.solutionManager);
+
+        // session summary
+        this.sessionSummaryFrame = new SessionSummaryFrame(this.categoryManager, this.sessionManager);
+
+        // category manager
+        this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
     }
 
     private JMenuBar createMenuBar() {
@@ -299,6 +303,18 @@ public class Main extends JFrame {
             }
         });
         menuView.add(menuItemHistory);
+
+        // menuItemSessionSummary
+        JMenuItem menuItemSessionSummary = new JMenuItem("Session summary...");
+        menuItemSessionSummary.setMnemonic(KeyEvent.VK_S);
+        menuItemSessionSummary.setAccelerator(KeyStroke.getKeyStroke('B', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItemSessionSummary.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.this.sessionSummaryFrame.setVisible(true);
+            }
+        });
+        menuView.add(menuItemSessionSummary);
 
         // menuCategory
         final JMenu menuCategory = new JMenu("Category");
