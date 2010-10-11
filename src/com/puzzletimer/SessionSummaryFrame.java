@@ -28,6 +28,7 @@ import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
 import com.puzzletimer.statistics.Mean;
 import com.puzzletimer.statistics.StandardDeviation;
+import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.util.SolutionUtils;
 
@@ -120,10 +121,10 @@ public class SessionSummaryFrame extends JFrame {
             solutions[i] = fullSolutions[i].getSolution();
         }
 
-        if (fullSolutions.length >= 1) {
+        if (solutions.length >= 1) {
             // session interval
-            Date start = fullSolutions[fullSolutions.length - 1].getSolution().timing.getStart();
-            Date end = fullSolutions[0].getSolution().timing.getEnd();
+            Date start = solutions[solutions.length - 1].timing.getStart();
+            Date end = solutions[0].timing.getEnd();
 
             DateFormat dateTimeFormat =
                 DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
@@ -132,133 +133,115 @@ public class SessionSummaryFrame extends JFrame {
 
             summary.append(dateTimeFormat.format(start) + " - " + timeFormat.format(end));
             summary.append("\n");
+
             summary.append("\n");
 
-            // mean
-            Mean mean = new Mean(1, Integer.MAX_VALUE);
-            mean.setSolutions(solutions);
+            // statistics
+            String[] labels = {
+                "Mean:              ",
+                "Standard deviation:",
+                "Best Time:         ",
+                "Worst Time:        ",
+            };
 
-            summary.append("Mean:               " + SolutionUtils.formatSeconds(mean.getValue()));
-            summary.append("\n");
+            StatisticalMeasure[] statistics = {
+                new Mean(1, Integer.MAX_VALUE),
+                new StandardDeviation(1, Integer.MAX_VALUE),
+                new Best(1, Integer.MAX_VALUE),
+                new Worst(1, Integer.MAX_VALUE)
+            };
 
-            // standard deviation
-            StandardDeviation standardDeviation = new StandardDeviation(1, Integer.MAX_VALUE);
-            standardDeviation.setSolutions(solutions);
+            int maxStringLength = 0;
+            for (int i = 0; i < statistics.length; i++) {
+                statistics[i].setSolutions(solutions);
 
-            summary.append("Standard deviation: " + SolutionUtils.formatSeconds(standardDeviation.getValue()));
-            summary.append("\n");
+                String s = SolutionUtils.formatSeconds(statistics[i].getValue());
+                if (s.length() > maxStringLength) {
+                    maxStringLength = s.length();
+                }
+            }
 
-            // best
-            Best best = new Best(1, Integer.MAX_VALUE);
-            best.setSolutions(solutions);
+            for (int i = 0; i < labels.length; i++) {
+                summary.append(String.format(
+                    "%s %" + maxStringLength + "s",
+                    labels[i],
+                    SolutionUtils.formatSeconds(statistics[i].getValue())));
+                summary.append("\n");
+            }
 
-            summary.append("Best Time:          " + SolutionUtils.formatSeconds(best.getValue()));
-            summary.append("\n");
-
-            // worst
-            Worst worst = new Worst(1, Integer.MAX_VALUE);
-            worst.setSolutions(solutions);
-
-            summary.append("Worst Time:         " + SolutionUtils.formatSeconds(worst.getValue()));
-            summary.append("\n");
             summary.append("\n");
         }
 
-        // best average of 5
-        if (fullSolutions.length >= 5) {
-            BestAverage bestAverage = new BestAverage(5, Integer.MAX_VALUE);
-            bestAverage.setSolutions(solutions);
+        // best average of X
+        String[] labels = {
+            "Best average of 5:",
+            "Best average of 12:",
+        };
 
-            summary.append("Best Average of 5:  " + SolutionUtils.formatSeconds(bestAverage.getValue()));
-            summary.append("\n");
+        StatisticalMeasure[] statistics = {
+            new BestAverage(5, Integer.MAX_VALUE),
+            new BestAverage(12, Integer.MAX_VALUE),
+        };
 
-            int indexBest = 0;
-            int indexWorst = 0;
-            long[] times = new long[5];
-            for (int i = 0; i < 5; i++) {
-                times[i] = SolutionUtils.realTime(solutions[bestAverage.getWindowPosition() + i]);
+        for (int i = 0; i < statistics.length; i++) {
+            int windowSize = statistics[i].getMinimumWindowSize();
 
-                if (times[i] < times[indexBest]) {
-                    indexBest = i;
+            if (solutions.length >= windowSize) {
+                statistics[i].setSolutions(solutions);
+                int windowPosition = statistics[i].getWindowPosition();
+
+                // value
+                summary.append(labels[i] + " " + SolutionUtils.formatSeconds(statistics[i].getValue()));
+                summary.append("\n");
+
+                // index range
+                summary.append(String.format(
+                    "  %d-%d - ",
+                    solutions.length - windowPosition - windowSize + 1,
+                    solutions.length - windowPosition));
+
+                // find indices of best and worst times
+                int indexBest = 0;
+                int indexWorst = 0;
+                long[] times = new long[windowSize];
+                for (int j = 0; j < windowSize; j++) {
+                    times[j] = SolutionUtils.realTime(solutions[windowPosition + j]);
+
+                    if (times[j] < times[indexBest]) {
+                        indexBest = j;
+                    }
+
+                    if (times[j] > times[indexWorst]) {
+                        indexWorst = j;
+                    }
                 }
 
-                if (times[i] > times[indexWorst]) {
-                    indexWorst = i;
+                // times
+                String sTimes = "";
+                for (int j = windowSize - 1; j >= 0; j--) {
+                    if (j == indexBest || j == indexWorst) {
+                        sTimes += "(" + SolutionUtils.formatSeconds(times[j]) + ") ";
+                    } else {
+                        sTimes += SolutionUtils.formatSeconds(times[j]) + " ";
+                    }
                 }
+
+                summary.append(sTimes.trim());
+                summary.append("\n");
+
+                summary.append("\n");
             }
-
-            String sTimes = "  ";
-            for (int i = 4; i >= 0; i--) {
-                if (i == indexBest || i == indexWorst) {
-                    sTimes += "(" + SolutionUtils.formatSeconds(times[i]) + ") ";
-                } else {
-                    sTimes += SolutionUtils.formatSeconds(times[i]) + " ";
-                }
-            }
-
-            summary.append(sTimes);
-            summary.append("\n");
-            summary.append("\n");
-        }
-
-        // best average of 12
-        if (fullSolutions.length >= 12) {
-            BestAverage bestAverage = new BestAverage(12, Integer.MAX_VALUE);
-            bestAverage.setSolutions(solutions);
-
-            summary.append("Best Average of 12: " + SolutionUtils.formatSeconds(bestAverage.getValue()));
-            summary.append("\n");
-
-            int indexBest = 0;
-            int indexWorst = 0;
-            long[] times = new long[12];
-            for (int i = 0; i < 12; i++) {
-                times[i] = SolutionUtils.realTime(solutions[bestAverage.getWindowPosition() + i]);
-
-                if (times[i] < times[indexBest]) {
-                    indexBest = i;
-                }
-
-                if (times[i] > times[indexWorst]) {
-                    indexWorst = i;
-                }
-            }
-
-            String sTimes = "  ";
-            for (int i = 11; i >= 0; i--) {
-                if (i == indexBest || i == indexWorst) {
-                    sTimes += "(" + SolutionUtils.formatSeconds(times[i]) + ") ";
-                } else {
-                    sTimes += SolutionUtils.formatSeconds(times[i]) + " ";
-                }
-            }
-
-            summary.append(sTimes);
-            summary.append("\n");
-            summary.append("\n");
         }
 
         // solutions
-        int indexBest = 0;
-        int indexWorst = 0;
-        String[] sSolutions = new String[fullSolutions.length];
-        int longestSolutionString = 0;
-        for (int i = 0; i < fullSolutions.length; i++) {
-            long time = SolutionUtils.realTime(fullSolutions[i].getSolution());
+        String[] sSolutions = new String[solutions.length];
+        long[] realTimes = SolutionUtils.realTimes(solutions, false);
 
-            long bestTime = SolutionUtils.realTime(fullSolutions[indexBest].getSolution());
-            if (time < bestTime) {
-                indexBest = i;
-            }
-
-            long worstTime = SolutionUtils.realTime(fullSolutions[indexWorst].getSolution());
-            if (time > worstTime) {
-                indexWorst = i;
-            }
-
-            sSolutions[i] = SolutionUtils.formatSeconds(time);
-            if (sSolutions[i].length() > longestSolutionString) {
-                longestSolutionString = sSolutions[i].length();
+        int maxStringLength = 0;
+        for (int i = 0; i < realTimes.length; i++) {
+            sSolutions[i] = SolutionUtils.formatSeconds(realTimes[i]);
+            if (sSolutions[i].length() > maxStringLength) {
+                maxStringLength = sSolutions[i].length();
             }
         }
 
@@ -268,12 +251,7 @@ public class SessionSummaryFrame extends JFrame {
             summary.append(String.format(indexFormat, fullSolutions.length - i));
 
             // time
-            String timeFormat = "%" + longestSolutionString + "s";
-            if (fullSolutions.length >= 3 && (i == indexBest || i == indexWorst)) {
-                timeFormat = "(" + timeFormat + ")  ";
-            } else {
-                timeFormat = " " + timeFormat + "   ";
-            }
+            String timeFormat = "%" + maxStringLength + "s  ";
             summary.append(String.format(timeFormat, sSolutions[i]));
 
             // scramble
@@ -282,7 +260,6 @@ public class SessionSummaryFrame extends JFrame {
                 sbScramble.append(move + " ");
             }
             summary.append(sbScramble.toString().trim());
-
             summary.append("\n");
         }
 
