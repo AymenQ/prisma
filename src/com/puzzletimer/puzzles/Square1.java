@@ -1,9 +1,10 @@
 package com.puzzletimer.puzzles;
 
+import java.awt.Color;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.algebra.Vector3;
@@ -17,17 +18,22 @@ public class Square1 implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(String[] sequence) {
-        HSLColor[] colors = {
-            new HSLColor( 55, 100,  50), // L - yellow
-            new HSLColor(  0,  85,  45), // B - red
-            new HSLColor(120,  65,  40), // D - green
-            new HSLColor(235, 100,  30), // R - blue
-            new HSLColor( 25, 100,  50), // F - orange
-            new HSLColor(  0,   0, 100), // U - white
+    public String toString() {
+        return getPuzzleInfo().getDescription();
+    }
+
+    @Override
+    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+        Color[] colorArray = {
+            colors.get("Face L"),
+            colors.get("Face B"),
+            colors.get("Face D"),
+            colors.get("Face R"),
+            colors.get("Face F"),
+            colors.get("Face U"),
         };
 
-        Mesh cube = Mesh.cube(colors);
+        Mesh cube = Mesh.cube(colorArray);
 
         Plane planeD = new Plane(
             new Vector3(0, -0.166, 0),

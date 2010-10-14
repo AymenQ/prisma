@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.sound.sampled.AudioFormat;
@@ -53,6 +54,7 @@ import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerBuilder;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
+import com.puzzletimer.state.ColorManager;
 import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SessionListener;
@@ -75,12 +77,14 @@ public class Main extends JFrame {
     private HistoryFrame historyFrame;
     private SessionSummaryFrame sessionSummaryFrame;
     private CategoryManagerFrame categoryManagerDialog;
+    private ColorSchemeFrame colorSchemeFrame;
 
     private TimerManager timerManager;
     private CategoryManager categoryManager;
     private ScrambleManager scrambleManager;
     private SolutionManager solutionManager;
     private SessionManager sessionManager;
+    private ColorManager colorManager;
 
     private AudioFormat audioFormat;
     private Mixer.Info mixerInfo;
@@ -194,6 +198,9 @@ public class Main extends JFrame {
             }
         });
 
+        // color manager
+        this.colorManager = new ColorManager();
+
         // stackmat timer input
         this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
         this.mixerInfo = null;
@@ -265,6 +272,9 @@ public class Main extends JFrame {
 
         // category manager
         this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
+
+        // color scheme
+        this.colorSchemeFrame = new ColorSchemeFrame(this.colorManager);
     }
 
     private JMenuBar createMenuBar() {
@@ -414,6 +424,18 @@ public class Main extends JFrame {
         final JMenu menuOptions = new JMenu("Options");
         menuOptions.setMnemonic(KeyEvent.VK_O);
         menuBar.add(menuOptions);
+
+        // menuColorScheme
+        JMenuItem menuColorScheme = new JMenuItem("Color scheme...");
+        menuColorScheme.setMnemonic(KeyEvent.VK_C);
+        menuColorScheme.setAccelerator(KeyStroke.getKeyStroke('O', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuColorScheme.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.this.colorSchemeFrame.setVisible(true);
+            }
+        });
+        menuOptions.add(menuColorScheme);
 
         // menuTimerTrigger
         final JMenu menuTimerTrigger = new JMenu("Timer trigger");
@@ -792,7 +814,8 @@ public class Main extends JFrame {
                 Category currentCategory = Main.this.categoryManager.getCurrentCategory();
                 Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.scramblerId);
                 Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
-                panel3D.mesh = puzzle.getScrambledPuzzleMesh(sequence);
+                HashMap<String, Color> colors = Main.this.colorManager.getColors(puzzle.getPuzzleInfo().getPuzzleId());
+                panel3D.mesh = puzzle.getScrambledPuzzleMesh(colors, sequence);
                 panel3D.repaint();
             }
         });

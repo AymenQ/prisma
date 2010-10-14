@@ -1,8 +1,8 @@
 package com.puzzletimer.puzzles;
 
+import java.awt.Color;
 import java.util.HashMap;
 
-import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.algebra.Vector3;
@@ -13,6 +13,11 @@ public class RubiksPocketCube implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
         return new PuzzleInfo("2x2x2-CUBE", "2x2x2 cube");
+    }
+
+    @Override
+    public String toString() {
+        return getPuzzleInfo().getDescription();
     }
 
     private class Twist {
@@ -26,17 +31,17 @@ public class RubiksPocketCube implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(String[] sequence) {
-        HSLColor[] colors = {
-            new HSLColor( 20, 100,  50), // L - orange
-            new HSLColor(235, 100,  30), // B - blue
-            new HSLColor( 55, 100,  50), // D - yellow
-            new HSLColor(  0,  85,  45), // R - red
-            new HSLColor(120, 100,  30), // F - green
-            new HSLColor(  0,   0, 100), // U - white
+    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+        Color[] colorArray = {
+            colors.get("Face L"),
+            colors.get("Face B"),
+            colors.get("Face D"),
+            colors.get("Face R"),
+            colors.get("Face F"),
+            colors.get("Face U"),
         };
 
-        Mesh mesh = Mesh.cube(colors);
+        Mesh mesh = Mesh.cube(colorArray);
 
         Plane planeL = new Plane(new Vector3( -0.0, 0, 0), new Vector3(-1, 0, 0));
         Plane planeR = new Plane(new Vector3(  0.0, 0, 0), new Vector3( 1, 0, 0));

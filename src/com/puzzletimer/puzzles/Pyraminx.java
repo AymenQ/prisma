@@ -1,8 +1,8 @@
 package com.puzzletimer.puzzles;
 
+import java.awt.Color;
 import java.util.HashMap;
 
-import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.geometry.Plane;
@@ -12,6 +12,11 @@ public class Pyraminx implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
         return new PuzzleInfo("PYRAMINX", "Pyraminx");
+    }
+
+    @Override
+    public String toString() {
+        return getPuzzleInfo().getDescription();
     }
 
     private static class Twist {
@@ -25,15 +30,15 @@ public class Pyraminx implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(String[] sequence) {
-        HSLColor[] colors = {
-            new HSLColor(235, 100,  30), // blue
-            new HSLColor(120, 100,  30), // green
-            new HSLColor( 55, 100,  50), // yellow
-            new HSLColor(  0,  85,  45), // red
+    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+        Color[] colorArray = {
+            colors.get("Face U"),
+            colors.get("Face R"),
+            colors.get("Face L"),
+            colors.get("Face B"),
         };
 
-        Mesh mesh = Mesh.tetrahedron(colors);
+        Mesh mesh = Mesh.tetrahedron(colorArray);
 
         double h1 = Math.sqrt(8d) / 3d * (Math.sqrt(3d) / 2d * 1.5d);
 

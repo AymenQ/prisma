@@ -32,14 +32,14 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
 
     public Panel3D()
     {
-        mesh = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
-        lightDirection = new Vector3(0d, 0.25d, -1d).normalized();
-        viewerPosition = new Vector3(0d, 0d, -325d);
-        cameraPosition = new Vector3(0d, 0d, -3d);
-        cameraRotation = new Vector3(0d, 0d, 0d);
+        this.mesh = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
+        this.lightDirection = new Vector3(0d, 0.25d, -1d).normalized();
+        this.viewerPosition = new Vector3(0d, 0d, -325d);
+        this.cameraPosition = new Vector3(0d, 0d, -3d);
+        this.cameraRotation = new Vector3(0d, 0d, 0d);
 
-        lastX = 0;
-        lastY = 0;
+        this.lastX = 0;
+        this.lastY = 0;
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -47,16 +47,16 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
     }
 
     private Vector3 toCameraCoordinates(Vector3 v) {
-        return Matrix33.rotationX(-cameraRotation.x).mul(
-               Matrix33.rotationY(-cameraRotation.y).mul(
-               Matrix33.rotationZ(-cameraRotation.z).mul(
-               v.sub(cameraPosition))));
+        return Matrix33.rotationX(-this.cameraRotation.x).mul(
+               Matrix33.rotationY(-this.cameraRotation.y).mul(
+               Matrix33.rotationZ(-this.cameraRotation.z).mul(
+               v.sub(this.cameraPosition))));
     }
 
     private Vector3 perspectiveProjection(Vector3 v) {
         return new Vector3(
-            (getWidth() / 2d) + (-v.x - viewerPosition.x) * (viewerPosition.z / v.z),
-            (getHeight() / 2d) + (v.y - viewerPosition.y) * (viewerPosition.z / v.z),
+            (getWidth() / 2d) + (-v.x - this.viewerPosition.x) * (this.viewerPosition.z / v.z),
+            (getHeight() / 2d) + (v.y - this.viewerPosition.y) * (this.viewerPosition.z / v.z),
             0d);
     }
 
@@ -74,14 +74,14 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
 
         // projection
         final ArrayList<Vector3> pVertices = new ArrayList<Vector3>();
-        for (Vector3 v : mesh.vertices) {
+        for (Vector3 v : this.mesh.vertices) {
             pVertices.add(perspectiveProjection(toCameraCoordinates(v)));
         }
 
         // separate front from back facing polygons
         ArrayList<Face> frontFaces = new ArrayList<Face>();
         ArrayList<Face> backFaces = new ArrayList<Face>();
-        for (Face f : mesh.faces) {
+        for (Face f : this.mesh.faces) {
             Vector3 n = triangleNormal(
                 pVertices.get(f.vertexIndices.get(0)),
                 pVertices.get(f.vertexIndices.get(1)),
@@ -115,13 +115,13 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
             public int compare(Face f1, Face f2) {
                 double centroidZ1 = 0d;
                 for (int i : f1.vertexIndices) {
-                    centroidZ1 += mesh.vertices.get(i).z;
+                    centroidZ1 += Panel3D.this.mesh.vertices.get(i).z;
                 }
                 centroidZ1 /= f1.vertexIndices.size();
 
                 double centroidZ2 = 0d;
                 for (int i : f2.vertexIndices) {
-                    centroidZ2 += mesh.vertices.get(i).z;
+                    centroidZ2 += Panel3D.this.mesh.vertices.get(i).z;
                 }
                 centroidZ2 /= f2.vertexIndices.size();
 
@@ -139,25 +139,32 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
 
             // flat shading
             Vector3 n = triangleNormal(
-                    pVertices.get(f.vertexIndices.get(0)),
-                    pVertices.get(f.vertexIndices.get(1)),
-                    pVertices.get(f.vertexIndices.get(2)));
-            double light = Math.abs(lightDirection.dot(n));
+                    this.mesh.vertices.get(f.vertexIndices.get(0)),
+                    this.mesh.vertices.get(f.vertexIndices.get(1)),
+                    this.mesh.vertices.get(f.vertexIndices.get(2)));
+            double light = Math.abs(this.lightDirection.dot(n));
 
             // draw polygon
-            HSLColor fillColor = new HSLColor(
-                f.color.hue,
-                (int) ((0.9 + 0.1 * light) * (int) f.color.saturation),
-                (int) ((0.8 + 0.2 * light) * (int) f.color.luminance));
-            g2.setColor(fillColor.toColor());
+            float[] hsbColor = Color.RGBtoHSB(
+                f.color.getRed(),
+                f.color.getGreen(),
+                f.color.getBlue(),
+                null);
+            Color fillColor = new Color(
+                Color.HSBtoRGB(
+                    hsbColor[0],
+                    (float) (0.875 + 0.125 * light) * hsbColor[1],
+                    (float) (0.875 + 0.125 * light) * hsbColor[2]));
+            g2.setColor(fillColor);
             g2.fillPolygon(p);
 
             // draw outline
-            HSLColor outlineColor = new HSLColor(
-                fillColor.hue,
-                (int) (0.9 * fillColor.saturation),
-                (int) (0.9 * fillColor.luminance));
-            g2.setColor(outlineColor.toColor());
+            Color outlineColor = new Color(
+                Color.HSBtoRGB(
+                    hsbColor[0],
+                    (float) (0.9 * (0.875 + 0.125 * light) * hsbColor[1]),
+                    (float) (0.9 * (0.875 + 0.125 * light) * hsbColor[2])));
+            g2.setColor(outlineColor);
             g2.drawPolygon(p);
         }
     }
@@ -176,8 +183,8 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
 
     @Override
     public void mousePressed(MouseEvent e) {
-      lastX = e.getX();
-      lastY = e.getY();
+      this.lastX = e.getX();
+      this.lastY = e.getY();
     }
 
     @Override
@@ -186,21 +193,21 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        double angleX = (e.getY() - lastY) / 50d;
-        double angleY = (e.getX() - lastX) / 50d;
+        double angleX = (e.getY() - this.lastY) / 50d;
+        double angleY = (e.getX() - this.lastX) / 50d;
 
-        mesh = mesh.transform(
-            Matrix33.rotationZ(cameraRotation.z).mul(
-            Matrix33.rotationY(cameraRotation.y).mul(
-            Matrix33.rotationX(cameraRotation.x).mul(
+        this.mesh = this.mesh.transform(
+            Matrix33.rotationZ(this.cameraRotation.z).mul(
+            Matrix33.rotationY(this.cameraRotation.y).mul(
+            Matrix33.rotationX(this.cameraRotation.x).mul(
             Matrix33.rotationX(angleX).mul(
             Matrix33.rotationY(angleY).mul(
-            Matrix33.rotationX(-cameraRotation.x).mul(
-            Matrix33.rotationY(-cameraRotation.y).mul(
-            Matrix33.rotationZ(-cameraRotation.z)))))))));
+            Matrix33.rotationX(-this.cameraRotation.x).mul(
+            Matrix33.rotationY(-this.cameraRotation.y).mul(
+            Matrix33.rotationZ(-this.cameraRotation.z)))))))));
 
-        lastX = e.getX();
-        lastY = e.getY();
+        this.lastX = e.getX();
+        this.lastY = e.getY();
 
         repaint();
     }
@@ -211,10 +218,10 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        Vector3 direction = cameraPosition.normalized();
-        Vector3 newPosition = cameraPosition.add(direction.mul(0.1 * e.getWheelRotation()));
+        Vector3 direction = this.cameraPosition.normalized();
+        Vector3 newPosition = this.cameraPosition.add(direction.mul(0.1 * e.getWheelRotation()));
         if (1.0 < newPosition.norm() && newPosition.norm() < 50.0) {
-          cameraPosition = newPosition;
+          this.cameraPosition = newPosition;
         }
 
         repaint();

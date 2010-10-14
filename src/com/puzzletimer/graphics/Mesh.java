@@ -1,5 +1,6 @@
 package com.puzzletimer.graphics;
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 import com.puzzletimer.graphics.algebra.Matrix33;
@@ -18,9 +19,9 @@ public class Mesh {
     }
 
     public Mesh transform(Matrix33 m) {
-        Mesh mesh = new Mesh(new ArrayList<Vector3>(), faces);
+        Mesh mesh = new Mesh(new ArrayList<Vector3>(), this.faces);
 
-        for (Vector3 v : vertices) {
+        for (Vector3 v : this.vertices) {
             mesh.vertices.add(m.mul(v));
         }
 
@@ -28,9 +29,9 @@ public class Mesh {
     }
 
     public Mesh transformHalfspace(Matrix33 m, Plane p) {
-        Mesh mesh = new Mesh(new ArrayList<Vector3>(), faces);
+        Mesh mesh = new Mesh(new ArrayList<Vector3>(), this.faces);
 
-        for (Vector3 v : vertices) {
+        for (Vector3 v : this.vertices) {
             if (Intersection.pointHalfspace(v, p)) {
                 mesh.vertices.add(m.mul(v));
             } else {
@@ -44,12 +45,12 @@ public class Mesh {
     public Mesh union(Mesh m) {
         Mesh mesh = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
 
-        for (Face face : faces) {
+        for (Face face : this.faces) {
             Face f = new Face(new ArrayList<Integer>(), face.color);
 
             for (int i = 0; i < face.vertexIndices.size(); i++)
             {
-                mesh.vertices.add(vertices.get(face.vertexIndices.get(i)));
+                mesh.vertices.add(this.vertices.get(face.vertexIndices.get(i)));
                 f.vertexIndices.add(mesh.vertices.size() - 1);
             }
 
@@ -74,13 +75,13 @@ public class Mesh {
     public Mesh clip(Plane p) {
         Mesh mesh = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
 
-        for (Face face : faces) {
+        for (Face face : this.faces) {
             Face f = new Face(new ArrayList<Integer>(), face.color);
 
             for (int i = 0; i < face.vertexIndices.size(); i++)
             {
-                Vector3 v1 = vertices.get(face.vertexIndices.get(i));
-                Vector3 v2 = vertices.get(face.vertexIndices.get((i + 1) % face.vertexIndices.size()));
+                Vector3 v1 = this.vertices.get(face.vertexIndices.get(i));
+                Vector3 v2 = this.vertices.get(face.vertexIndices.get((i + 1) % face.vertexIndices.size()));
 
                 if (Intersection.pointHalfspace(v1, p)) {
                     if (Intersection.pointHalfspace(v2, p)) {
@@ -118,16 +119,16 @@ public class Mesh {
     public Mesh shortenFaces(double gap) {
         Mesh mesh = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
 
-        for (Face face : faces) {
+        for (Face face : this.faces) {
             Vector3 centroid = new Vector3(0d, 0d, 0d);
             for (int i : face.vertexIndices) {
-                centroid = centroid.add(vertices.get(i));
+                centroid = centroid.add(this.vertices.get(i));
             }
             centroid = centroid.mul(1d / face.vertexIndices.size());
 
             Face f = new Face(new ArrayList<Integer>(), face.color);
             for (int i : face.vertexIndices) {
-                mesh.vertices.add(vertices.get(i).add(centroid.sub(vertices.get(i)).normalized().mul(gap)));
+                mesh.vertices.add(this.vertices.get(i).add(centroid.sub(this.vertices.get(i)).normalized().mul(gap)));
                 f.vertexIndices.add(mesh.vertices.size() - 1);
             }
 
@@ -141,13 +142,13 @@ public class Mesh {
     {
         Mesh mesh = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
 
-        for (Face face : faces) {
+        for (Face face : this.faces) {
             Face f = new Face(new ArrayList<Integer>(), face.color);
 
             for (int i = 0; i < face.vertexIndices.size(); i++)
             {
-                Vector3 v1 = vertices.get(face.vertexIndices.get(i));
-                Vector3 v2 = vertices.get(face.vertexIndices.get((i + 1) % face.vertexIndices.size()));
+                Vector3 v1 = this.vertices.get(face.vertexIndices.get(i));
+                Vector3 v2 = this.vertices.get(face.vertexIndices.get((i + 1) % face.vertexIndices.size()));
 
                 if (v2.sub(v1).norm() > 2 * distanceFromCorners)
                 {
@@ -179,7 +180,7 @@ public class Mesh {
         return ys;
     }
 
-    public static Mesh cube(HSLColor[] colors) {
+    public static Mesh cube(Color[] colors) {
         ArrayList<Vector3> vertices = new ArrayList<Vector3>();
         vertices.add(new Vector3(-0.5, -0.5, -0.5));
         vertices.add(new Vector3(-0.5, -0.5,  0.5));
@@ -201,7 +202,7 @@ public class Mesh {
         return new Mesh(vertices, faces);
     }
 
-    public static Mesh tetrahedron(HSLColor[] colors) {
+    public static Mesh tetrahedron(Color[] colors) {
         double a = 1.5;
         double h = Math.sqrt(3d) / 2d * a;
         double h1 = 2d * Math.sqrt(2d) / 3d * h;
@@ -221,7 +222,7 @@ public class Mesh {
         return new Mesh(vertices, faces);
     }
 
-    public static Mesh dodecahedron(HSLColor[] colors) {
+    public static Mesh dodecahedron(Color[] colors) {
         double a = 0.85d * 1d / Math.sqrt(3d);
         double b = 0.85d * Math.sqrt((3d - Math.sqrt(5d)) / 6d);
         double c = 0.85d * Math.sqrt((3d + Math.sqrt(5d)) / 6d);

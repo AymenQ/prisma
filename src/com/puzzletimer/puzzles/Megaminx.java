@@ -1,8 +1,8 @@
 package com.puzzletimer.puzzles;
 
+import java.awt.Color;
 import java.util.HashMap;
 
-import com.puzzletimer.graphics.HSLColor;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix33;
 import com.puzzletimer.graphics.geometry.Plane;
@@ -12,6 +12,11 @@ public class Megaminx implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
         return new PuzzleInfo("MEGAMINX", "Megaminx");
+    }
+
+    @Override
+    public String toString() {
+        return getPuzzleInfo().getDescription();
     }
 
     private static class Twist {
@@ -25,23 +30,23 @@ public class Megaminx implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(String[] sequence) {
-        HSLColor[] colors = {
-            new HSLColor(200,  90,  50), // light blue
-            new HSLColor( 20, 100,  50), // orange
-            new HSLColor(  0,  85,  45), // red
-            new HSLColor( 30, 100,  30), // brown
-            new HSLColor(120, 100,  30), // green
-            new HSLColor(330,  90,  70), // pink
-            new HSLColor(275,  90,  50), // purple
-            new HSLColor(  0,   0, 100), // white
-            new HSLColor(130, 100,  50), // light green
-            new HSLColor( 55, 100,  50), // yellow
-            new HSLColor(180,  90,  50), // cyan
-            new HSLColor(235, 100,  30), // blue
+    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+        Color[] colorArray = {
+            colors.get("Face 01"),
+            colors.get("Face 02"),
+            colors.get("Face 03"),
+            colors.get("Face 04"),
+            colors.get("Face 05"),
+            colors.get("Face 06"),
+            colors.get("Face 07"),
+            colors.get("Face 08"),
+            colors.get("Face 09"),
+            colors.get("Face 10"),
+            colors.get("Face 11"),
+            colors.get("Face 12"),
         };
 
-        Mesh mesh = Mesh.dodecahedron(colors)
+        Mesh mesh = Mesh.dodecahedron(colorArray)
             .shortenFaces(0.025);
 
         Plane[] planes = new Plane[mesh.faces.size()];
