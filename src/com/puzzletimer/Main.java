@@ -74,6 +74,8 @@ import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame {
+    private Panel3D panel3D;
+
     private HistoryFrame historyFrame;
     private SessionSummaryFrame sessionSummaryFrame;
     private CategoryManagerFrame categoryManagerDialog;
@@ -237,12 +239,25 @@ public class Main extends JFrame {
         panelScramble.setPreferredSize(new Dimension(10000, 150));
         this.scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
-            public void scrambleChanged(String[] sequence) {
+            public void scrambleChanged(final String[] sequence) {
                 panelScramble.removeAll();
 
-                for (String move : sequence) {
-                    JLabel label = new JLabel(move);
+                for (int i = 0; i < sequence.length; i++) {
+                    JLabel label = new JLabel(sequence[i]);
                     label.setFont(new Font("Arial", Font.PLAIN, 18));
+                    label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    final int length = i + 1;
+                    label.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            String[] partialSequence = new String[length];
+                            for (int i = 0; i < length; i++) {
+                                partialSequence[i] = sequence[i];
+                            }
+
+                            Main.this.updateScrambleViewer(partialSequence);
+                        }
+                    });
                     panelScramble.add(label);
                 }
 
@@ -802,25 +817,29 @@ public class Main extends JFrame {
         }));
 
         // panel3D
-        final Panel3D panel3D = new Panel3D();
-        panel3D.setMinimumSize(new Dimension(200, 180));
-        panel3D.setPreferredSize(new Dimension(200, 180));
-        panel3D.setFocusable(false);
-        panelScramble.add(panel3D, "0, 0");
+        this.panel3D = new Panel3D();
+        this.panel3D.setMinimumSize(new Dimension(200, 180));
+        this.panel3D.setPreferredSize(new Dimension(200, 180));
+        this.panel3D.setFocusable(false);
+        panelScramble.add(this.panel3D, "0, 0");
 
         this.scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
             public void scrambleChanged(String[] sequence) {
-                Category currentCategory = Main.this.categoryManager.getCurrentCategory();
-                Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.scramblerId);
-                Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
-                HashMap<String, Color> colors = Main.this.colorManager.getColors(puzzle.getPuzzleInfo().getPuzzleId());
-                panel3D.mesh = puzzle.getScrambledPuzzleMesh(colors, sequence);
-                panel3D.repaint();
+                updateScrambleViewer(sequence);
             }
         });
 
         return panelScramble;
+    }
+
+    private void updateScrambleViewer(String[] sequence) {
+        Category currentCategory = Main.this.categoryManager.getCurrentCategory();
+        Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.scramblerId);
+        Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
+        HashMap<String, Color> colors = Main.this.colorManager.getColors(puzzle.getPuzzleInfo().getPuzzleId());
+        this.panel3D.mesh = puzzle.getScrambledPuzzleMesh(colors, sequence);
+        this.panel3D.repaint();
     }
 
     public static void main(String[] args) {
