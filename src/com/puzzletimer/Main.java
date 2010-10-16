@@ -34,7 +34,6 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
@@ -575,12 +574,12 @@ public class Main extends JFrame {
 
         // menuItemAbout
         final JMenuItem menuItemAbout = new JMenuItem("About...");
-        final JFrame frame = this;
         menuItemAbout.setMnemonic(KeyEvent.VK_A);
         menuItemAbout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "Puzzle Timer 0.2\r\n2010\r\nhttp://www.puzzletimer.com\r\nWalter Souza <walterprs@gmail.com>", "About", JOptionPane.INFORMATION_MESSAGE);
+                AboutDialog aboutDialog = new AboutDialog(Main.this, true);
+                aboutDialog.setVisible(true);
             }
         });
         menuHelp.add(menuItemAbout);
