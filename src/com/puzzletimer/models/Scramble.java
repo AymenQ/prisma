@@ -4,12 +4,12 @@ import java.util.UUID;
 
 public class Scramble {
     private UUID scrambleId;
-    private UUID categoryId;
+    private String scramblerId;
     private String[] sequence;
 
-    public Scramble(UUID scrambleId, UUID categoryId, String[] sequence) {
+    public Scramble(UUID scrambleId, String scramblerId, String[] sequence) {
         this.scrambleId = scrambleId;
-        this.categoryId = categoryId;
+        this.scramblerId = scramblerId;
         this.sequence = sequence;
     }
 
@@ -17,8 +17,8 @@ public class Scramble {
         return this.scrambleId;
     }
 
-    public UUID getCategoryId() {
-        return this.categoryId;
+    public String getScramblerId() {
+        return this.scramblerId;
     }
 
     public String[] getSequence() {

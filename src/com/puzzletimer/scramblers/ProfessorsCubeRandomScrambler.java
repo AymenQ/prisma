@@ -1,7 +1,9 @@
 package com.puzzletimer.scramblers;
 
 import java.util.Random;
+import java.util.UUID;
 
+import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
 
 public class ProfessorsCubeRandomScrambler implements Scrambler {
@@ -21,7 +23,7 @@ public class ProfessorsCubeRandomScrambler implements Scrambler {
     }
 
     @Override
-    public String[] getNextScrambleSequence() {
+    public Scramble getNextScramble() {
         String[] sequence = new String[this.scrambleLength];
         String[] moves = {
             // X axis
@@ -49,6 +51,14 @@ public class ProfessorsCubeRandomScrambler implements Scrambler {
             sequence[i] = moves[12 * axis + this.random.nextInt(12)];
         }
 
-        return sequence;
+        return new Scramble(
+            UUID.randomUUID(),
+            getScramblerInfo().getScramblerId(),
+            sequence);
+    }
+
+    @Override
+    public String toString() {
+        return getScramblerInfo().getDescription();
     }
 }

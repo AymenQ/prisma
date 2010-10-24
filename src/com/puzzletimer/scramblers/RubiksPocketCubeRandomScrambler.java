@@ -1,7 +1,9 @@
 package com.puzzletimer.scramblers;
 
 import java.util.Random;
+import java.util.UUID;
 
+import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.solvers.RubiksPocketCubeSolver;
 
@@ -20,9 +22,18 @@ public class RubiksPocketCubeRandomScrambler implements Scrambler {
     }
 
     @Override
-    public String[] getNextScrambleSequence() {
+    public Scramble getNextScramble() {
         int permutation = this.random.nextInt(RubiksPocketCubeSolver.N_PERMUTATIONS);
         int orientation = this.random.nextInt(RubiksPocketCubeSolver.N_ORIENTATIONS);
-        return RubiksPocketCubeSolver.generate(permutation, orientation);
+
+        return new Scramble(
+            UUID.randomUUID(),
+            getScramblerInfo().getScramblerId(),
+            RubiksPocketCubeSolver.generate(permutation, orientation));
+    }
+
+    @Override
+    public String toString() {
+        return getScramblerInfo().getDescription();
     }
 }

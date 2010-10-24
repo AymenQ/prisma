@@ -1,7 +1,9 @@
 package com.puzzletimer.scramblers;
 
 import java.util.Random;
+import java.util.UUID;
 
+import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeSolver;
@@ -36,7 +38,7 @@ public class RubiksCubeLastLayerScrambler implements Scrambler {
     }
 
     @Override
-    public String[] getNextScrambleSequence() {
+    public Scramble getNextScramble() {
         // id
         byte[] cornersPermutation = IndexMapping.indexToPermutation(0, 8);
         byte[] cornersOrientation = IndexMapping.indexToZeroSumOrientation(0, 3, 8);
@@ -73,6 +75,14 @@ public class RubiksCubeLastLayerScrambler implements Scrambler {
             edgesPermutation,
             edgesOrientation);
 
-        return RubiksCubeSolver.generate(state);
+        return new Scramble(
+            UUID.randomUUID(),
+            getScramblerInfo().getScramblerId(),
+            RubiksCubeSolver.generate(state));
+    }
+
+    @Override
+    public String toString() {
+        return getScramblerInfo().getDescription();
     }
 }

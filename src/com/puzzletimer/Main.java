@@ -75,6 +75,7 @@ import com.puzzletimer.util.SolutionUtils;
 public class Main extends JFrame {
     private Panel3D panel3D;
 
+    private ScrambleQueueFrame scrambleQueueFrame;
     private HistoryFrame historyFrame;
     private SessionSummaryFrame sessionSummaryFrame;
     private CategoryManagerFrame categoryManagerDialog;
@@ -133,8 +134,7 @@ public class Main extends JFrame {
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void currentCategoryChanged(Category category) {
-                Scrambler scrambler = ScramblerBuilder.getScrambler(category.scramblerId);
-                Main.this.scrambleManager.setScrambler(scrambler);
+                Main.this.scrambleManager.setCategory(category);
             }
         });
 
@@ -155,11 +155,7 @@ public class Main extends JFrame {
             @Override
             public void timerStopped(Timing timing) {
                 if (!Main.this.timerStopped) {
-                    Scramble scramble =
-                        new Scramble(
-                            UUID.randomUUID(),
-                            Main.this.categoryManager.getCurrentCategory().getCategoryId(),
-                            Main.this.scrambleManager.getCurrentSequence());
+                    Scramble scramble = Main.this.scrambleManager.getCurrentScramble();
                     Solution solution =
                         new Solution(
                             UUID.randomUUID(),
@@ -238,9 +234,10 @@ public class Main extends JFrame {
         panelScramble.setPreferredSize(new Dimension(10000, 150));
         this.scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
-            public void scrambleChanged(final String[] sequence) {
+            public void scrambleChanged(Scramble scramble) {
                 panelScramble.removeAll();
 
+                final String[] sequence = scramble.getSequence();
                 for (int i = 0; i < sequence.length; i++) {
                     JLabel label = new JLabel(sequence[i]);
                     label.setFont(new Font("Arial", Font.PLAIN, 18));
@@ -277,6 +274,9 @@ public class Main extends JFrame {
 
         // scramble panel
         panelMain.add(createScramblePanel(), "3, 4");
+
+        // scramble queue frame
+        this.scrambleQueueFrame = new ScrambleQueueFrame(this.categoryManager, this.scrambleManager);
 
         // history frame
         this.historyFrame = new HistoryFrame(this.categoryManager, this.solutionManager);
@@ -315,6 +315,18 @@ public class Main extends JFrame {
         JMenu menuView = new JMenu("View");
         menuView.setMnemonic(KeyEvent.VK_V);
         menuBar.add(menuView);
+
+        // menuItemScrambleQueue
+        JMenuItem menuItemScrambleQueue = new JMenuItem("Scramble queue...");
+        menuItemScrambleQueue.setMnemonic(KeyEvent.VK_Q);
+        menuItemScrambleQueue.setAccelerator(KeyStroke.getKeyStroke('Q', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+        menuItemScrambleQueue.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.this.scrambleQueueFrame.setVisible(true);
+            }
+        });
+        menuView.add(menuItemScrambleQueue);
 
         // menuItemHistory
         JMenuItem menuItemHistory = new JMenuItem("History...");
@@ -824,8 +836,8 @@ public class Main extends JFrame {
 
         this.scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
-            public void scrambleChanged(String[] sequence) {
-                updateScrambleViewer(sequence);
+            public void scrambleChanged(Scramble scramble) {
+                updateScrambleViewer(scramble.getSequence());
             }
         });
 

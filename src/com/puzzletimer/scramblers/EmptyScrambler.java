@@ -1,5 +1,8 @@
 package com.puzzletimer.scramblers;
 
+import java.util.UUID;
+
+import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
 
 public class EmptyScrambler implements Scrambler {
@@ -15,7 +18,15 @@ public class EmptyScrambler implements Scrambler {
     }
 
     @Override
-    public String[] getNextScrambleSequence() {
-        return new String[] { };
+    public Scramble getNextScramble() {
+        return new Scramble(
+            UUID.randomUUID(),
+            getScramblerInfo().getScramblerId(),
+            new String[] { });
+    }
+
+    @Override
+    public String toString() {
+        return getScramblerInfo().getDescription();
     }
 }
