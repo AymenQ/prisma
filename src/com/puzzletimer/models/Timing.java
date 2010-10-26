@@ -20,10 +20,13 @@ public class Timing {
     }
 
     public long getElapsedTime() {
-        if (this.end != null) {
-            return this.end.getTime() - this.start.getTime();
-        }
+        long elapsedTime = this.end == null ?
+            new Date().getTime() - this.start.getTime() :
+            this.end.getTime() - this.start.getTime();
 
-        return new Date().getTime() - this.start.getTime();
+        // truncate to centiseconds
+        elapsedTime = 10 * (elapsedTime / 10);
+
+        return elapsedTime;
     }
 }
