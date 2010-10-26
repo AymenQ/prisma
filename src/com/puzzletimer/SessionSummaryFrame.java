@@ -6,14 +6,17 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.text.DateFormat;
 import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -83,6 +86,17 @@ public class SessionSummaryFrame extends JFrame {
                 SessionSummaryFrame.this.setVisible(false);
             }
         });
+
+        // esc key closes window
+        this.getRootPane().registerKeyboardAction(
+            new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    SessionSummaryFrame.this.setVisible(false);
+                }
+            },
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
     private void createComponents() {
