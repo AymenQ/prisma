@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -209,9 +210,11 @@ public class Main extends JFrame {
     }
 
     private void createComponents() {
+        Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puzzletimer/resources/icon.png"));
+
         // frameMain
         setMinimumSize(new Dimension(800, 600));
-        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puzzletimer/resources/icon.png")));
+        setIconImage(icon);
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
@@ -277,18 +280,23 @@ public class Main extends JFrame {
 
         // scramble queue frame
         this.scrambleQueueFrame = new ScrambleQueueFrame(this.categoryManager, this.scrambleManager);
+        this.scrambleQueueFrame.setIconImage(icon);
 
         // history frame
         this.historyFrame = new HistoryFrame(this.categoryManager, this.solutionManager);
+        this.historyFrame.setIconImage(icon);
 
         // session summary
         this.sessionSummaryFrame = new SessionSummaryFrame(this.categoryManager, this.sessionManager);
+        this.sessionSummaryFrame.setIconImage(icon);
 
         // category manager
         this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
+        this.categoryManagerDialog.setIconImage(icon);
 
         // color scheme
         this.colorSchemeFrame = new ColorSchemeFrame(this.colorManager);
+        this.colorSchemeFrame.setIconImage(icon);
     }
 
     private JMenuBar createMenuBar() {
