@@ -278,6 +278,7 @@ public class CategoryManagerFrame extends JFrame {
                     category,
                     true,
                     listener);
+                dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
             }
         });
