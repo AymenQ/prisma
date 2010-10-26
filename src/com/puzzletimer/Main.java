@@ -214,6 +214,7 @@ public class Main extends JFrame {
 
         // frameMain
         setMinimumSize(new Dimension(800, 600));
+        setLocationRelativeTo(null);
         setIconImage(icon);
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
@@ -280,22 +281,27 @@ public class Main extends JFrame {
 
         // scramble queue frame
         this.scrambleQueueFrame = new ScrambleQueueFrame(this.categoryManager, this.scrambleManager);
+        this.scrambleQueueFrame.setLocationRelativeTo(null);
         this.scrambleQueueFrame.setIconImage(icon);
 
         // history frame
         this.historyFrame = new HistoryFrame(this.categoryManager, this.solutionManager);
+        this.historyFrame.setLocationRelativeTo(null);
         this.historyFrame.setIconImage(icon);
 
         // session summary
         this.sessionSummaryFrame = new SessionSummaryFrame(this.categoryManager, this.sessionManager);
+        this.sessionSummaryFrame.setLocationRelativeTo(null);
         this.sessionSummaryFrame.setIconImage(icon);
 
         // category manager
         this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
+        this.categoryManagerDialog.setLocationRelativeTo(null);
         this.categoryManagerDialog.setIconImage(icon);
 
         // color scheme
         this.colorSchemeFrame = new ColorSchemeFrame(this.colorManager);
+        this.colorSchemeFrame.setLocationRelativeTo(null);
         this.colorSchemeFrame.setIconImage(icon);
     }
 
