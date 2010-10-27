@@ -37,38 +37,47 @@ public class Square1RandomScrambler implements Scrambler {
 
         Random r = new Random();
 
-        String[] sequence = new String[this.scrambleLength];
-        for (int i = 0; i < this.scrambleLength; i++) {
-            ArrayList<Integer> choices;
-            int k;
-
+        ArrayList<String> sequence = new ArrayList<String>();
+        int scrambleLength = 0; // turn metric
+        while (scrambleLength < this.scrambleLength) {
             // top
-            choices = new ArrayList<Integer>();
-            k = 0;
+            ArrayList<Integer> topOptions = new ArrayList<Integer>();
             for (int j = 0; j < 12; j++) {
                 if (top[j] && top[(j + 6) % 12]) {
-                    choices.add(j);
-                    k++;
+                    topOptions.add(j);
                 }
             }
 
-            int x = choices.get(r.nextInt(choices.size()));
-            top = rotateClockwise(top, x);
+            int x = topOptions.get(r.nextInt(topOptions.size()));
 
             // bottom
-            choices = new ArrayList<Integer>();
-            k = 0;
+            ArrayList<Integer> bottomOptions = new ArrayList<Integer>();
             for (int j = 0; j < 12; j++) {
                 if (bottom[j] && bottom[(j + 6) % 12]) {
-                    choices.add(j);
-                    k++;
+                    bottomOptions.add(j);
                 }
             }
 
-            int y = choices.get(r.nextInt(choices.size()));
-            bottom = rotateClockwise(bottom, y);
+            int y = bottomOptions.get(r.nextInt(bottomOptions.size()));
 
-            // right
+            // discard null moves
+            if (x == 0 && y == 0) {
+                continue;
+            }
+
+            if (x > 0) {
+                top = rotateClockwise(top, x);
+                scrambleLength++;
+            }
+
+            if (y > 0) {
+                bottom = rotateClockwise(bottom, y);
+                scrambleLength++;
+            }
+
+            sequence.add("(" + (x <= 6 ? x : x - 12) + "," + (y <= 6 ? y : y - 12) + ")");
+
+            // twist
             boolean[] newTop = new boolean[12];
             boolean[] newBottom = new boolean[12];
 
@@ -85,13 +94,18 @@ public class Square1RandomScrambler implements Scrambler {
             top = newTop;
             bottom = newBottom;
 
-            sequence[i] = "(" + (x <= 6 ? x : x - 12) + "," + (y <= 6 ? y : y - 12) + ")";
+            scrambleLength++;
+
+            sequence.add("/");
         }
+
+        String[] sequenceArray = new String[sequence.size()];
+        sequence.toArray(sequenceArray);
 
         return new Scramble(
             UUID.randomUUID(),
             getScramblerInfo().getScramblerId(),
-            sequence);
+            sequenceArray);
     }
 
     @Override

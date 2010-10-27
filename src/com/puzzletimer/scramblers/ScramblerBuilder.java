@@ -27,7 +27,7 @@ public class ScramblerBuilder {
             new ProfessorsCubeRandomScrambler(new ScramblerInfo("5x5x5-CUBE-RANDOM", "5x5x5-CUBE", "Random scrambler"), 60),
             new MegaminxRandomScrambler(new ScramblerInfo("MEGAMINX-RANDOM", "MEGAMINX", "Random scrambler")),
             new PyraminxRandomScrambler(new ScramblerInfo("PYRAMINX-RANDOM", "PYRAMINX", "Random scrambler")),
-            new Square1RandomScrambler(new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"), 20),
+            new Square1RandomScrambler(new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"), 40),
         };
 
         scramblerMap = new HashMap<String, Scrambler>();

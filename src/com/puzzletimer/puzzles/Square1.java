@@ -91,24 +91,39 @@ public class Square1 implements Puzzle {
         cube = topLayer.union(middleLayer).union(bottomLayer);
 
 
+        boolean implicitTwist = sequence.length > 1;
+        for (String m : sequence) {
+            if (m.equals("/")) {
+                implicitTwist = false;
+            }
+        }
+
         Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
         for (String m : sequence) {
-            Matcher matcher = p.matcher(m.toString());
-            matcher.find();
-
-            int top = Integer.parseInt(matcher.group(1));
-            cube = cube.transformHalfspace(
-                Matrix33.rotation(planeU.n, top * Math.PI / 6),
-                planeU);
-
-            int bottom = Integer.parseInt(matcher.group(2));
-            cube = cube.transformHalfspace(
-                    Matrix33.rotation(planeD.n, bottom * Math.PI / 6),
-                    planeD);
-
-            cube = cube.transformHalfspace(
+            if (m.equals("/")) {
+                cube = cube.transformHalfspace(
                     Matrix33.rotation(planeR.n, Math.PI),
                     planeR);
+            } else {
+                Matcher matcher = p.matcher(m.toString());
+                matcher.find();
+
+                int top = Integer.parseInt(matcher.group(1));
+                cube = cube.transformHalfspace(
+                    Matrix33.rotation(planeU.n, top * Math.PI / 6),
+                    planeU);
+
+                int bottom = Integer.parseInt(matcher.group(2));
+                cube = cube.transformHalfspace(
+                        Matrix33.rotation(planeD.n, bottom * Math.PI / 6),
+                        planeD);
+
+                if (implicitTwist) {
+                    cube = cube.transformHalfspace(
+                        Matrix33.rotation(planeR.n, Math.PI),
+                        planeR);
+                }
+            }
         }
 
         return cube
