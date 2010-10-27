@@ -606,6 +606,7 @@ public class Main extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 AboutDialog aboutDialog = new AboutDialog(Main.this, true);
+                aboutDialog.setLocationRelativeTo(null);
                 aboutDialog.setVisible(true);
             }
         });
