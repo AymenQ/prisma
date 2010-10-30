@@ -1,5 +1,6 @@
 package com.puzzletimer.scramblers;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 
@@ -24,38 +25,64 @@ public class RubiksRevengeRandomScrambler implements Scrambler {
 
     @Override
     public Scramble getNextScramble() {
-        String[] sequence = new String[this.scrambleLength];
-        String[] moves = {
-            // X axis
-            "R", "R2", "R'", "Rw", "Rw2", "Rw'",
-            "L", "L2", "L'", "Lw", "Lw2", "Lw'",
+        int[] slice = new int[this.scrambleLength];
+        int[] power = new int[this.scrambleLength];
 
-            // Y axis
-            "U", "U2", "U'", "Uw", "Uw2", "Uw'",
-            "D", "D2", "D'", "Dw", "Dw2", "Dw'",
+        int i = 0;
+        while (i < this.scrambleLength) {
+            int s = this.random.nextInt(12);
+            int p = this.random.nextInt(3);
 
-            // Z axis
-            "F", "F2", "F'", "Fw", "Fw2", "Fw'",
-            "B", "B2", "B'", "Bw", "Bw2", "Bw'",
+            boolean ignore = false;
+            for (int j = i - 1; j >= 0; j--) {
+                // if not in the same axis
+                if (s / 4 != slice[j] / 4) {
+                    break;
+                }
+
+                if (s == slice[j]) {
+                    ignore = true;
+                }
+            }
+
+            if (!ignore) {
+                slice[i] = s;
+                power[i] = p;
+                i++;
+            }
+        }
+
+        // sort moves in the same axis
+        i = 0;
+        while (i < slice.length) {
+            int len = 1;
+            while (i + len < slice.length && slice[i] / 4 == slice[i + len] / 4) {
+                len++;
+            }
+
+            Arrays.sort(slice, i, i + len);
+
+            i += len;
+        }
+
+        String[][] moves = {
+            { "U", "U2", "U'" }, { "Uw", "Uw2", "Uw'" },
+            { "Dw", "Dw2", "Dw'" }, { "D", "D2", "D'" },
+            { "L", "L2", "L'" }, { "Lw", "Lw2", "Lw'" },
+            { "Rw", "Rw2", "Rw'" }, { "R", "R2", "R'" },
+            { "F", "F2", "F'" }, { "Fw", "Fw2", "Fw'" },
+            { "Bw", "Bw2", "Bw'" }, { "B", "B2", "B'" },
         };
 
-        int last = -1;
-        for (int i = 0; i < this.scrambleLength; i++)
-        {
-            int axis = last;
-            do {
-                axis = this.random.nextInt(3);
-            } while (axis == last);
-            last = axis;
-
-            sequence[i] = moves[12 * axis + this.random.nextInt(12)];
+        String[] sequence = new String[this.scrambleLength];
+        for (int j = 0; j < sequence.length; j++) {
+            sequence[j] = moves[slice[j]][power[j]];
         }
 
         return new Scramble(
             UUID.randomUUID(),
             getScramblerInfo().getScramblerId(),
             sequence);
-
     }
 
     @Override
