@@ -1,8 +1,63 @@
 package com.puzzletimer.solvers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class RubiksCubeCrossSolver {
-    private static class State {
+    public static class Move {
+        public byte[] permutation;
+        public byte[] orientation;
+
+        public Move(byte[] permutation, byte[] orientation) {
+            this.permutation = permutation;
+            this.orientation = orientation;
+        }
+
+        public Move multiply(Move move) {
+            byte[] permutation = new byte[12];
+            byte[] orientation = new byte[12];
+
+            for (int i = 0; i < 12; i++) {
+                permutation[i] = move.permutation[this.permutation[i]];
+                orientation[i] = (byte) ((move.orientation[this.permutation[i]] + this.orientation[i]) % 2);
+            }
+
+            return new Move(permutation, orientation);
+        }
+
+        public static HashMap<String, Move> moves;
+
+        static {
+            Move moveU = new Move(new byte[] { 1, 2, 3, 0, 4, 5, 6, 7, 8, 9, 10, 11 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            Move moveD = new Move(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            Move moveL = new Move(new byte[] { 0, 1, 2, 7, 3, 5, 6, 11, 8, 9, 10, 4 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            Move moveR = new Move(new byte[] { 0, 5, 2, 3, 4, 9, 1, 7, 8, 6, 10, 11 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+            Move moveF = new Move(new byte[] { 0, 1, 6, 3, 4, 5, 10, 2, 8, 9, 7, 11 }, new byte[] { 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0 });
+            Move moveB = new Move(new byte[] { 4, 1, 2, 3, 8, 0, 6, 7, 5, 9, 10, 11 }, new byte[] { 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0 });
+
+            moves = new HashMap<String, Move>();
+            moves.put("U",  moveU);
+            moves.put("U2", moveU.multiply(moveU));
+            moves.put("U'", moveU.multiply(moveU).multiply(moveU));
+            moves.put("D",  moveD);
+            moves.put("D2", moveD.multiply(moveD));
+            moves.put("D'", moveD.multiply(moveD).multiply(moveD));
+            moves.put("L",  moveL);
+            moves.put("L2", moveL.multiply(moveL));
+            moves.put("L'", moveL.multiply(moveL).multiply(moveL));
+            moves.put("R",  moveR);
+            moves.put("R2", moveR.multiply(moveR));
+            moves.put("R'", moveR.multiply(moveR).multiply(moveR));
+            moves.put("F",  moveF);
+            moves.put("F2", moveF.multiply(moveF));
+            moves.put("F'", moveF.multiply(moveF).multiply(moveF));
+            moves.put("B",  moveB);
+            moves.put("B2", moveB.multiply(moveB));
+            moves.put("B'", moveB.multiply(moveB).multiply(moveB));
+        }
+    }
+
+    public static class State {
         public boolean[] combination;
         public byte[] permutation;
         public byte[] orientation;
@@ -53,27 +108,23 @@ public class RubiksCubeCrossSolver {
 
             return new State(resultCombination, resultPermutation, resultOrientation);
         }
-    }
 
-    private static class Move {
-        public byte[] permutation;
-        public byte[] orientation;
-
-        public Move(byte[] permutation, byte[] orientation) {
-            this.permutation = permutation;
-            this.orientation = orientation;
-        }
-
-        public Move multiply(Move move) {
-            byte[] permutation = new byte[12];
-            byte[] orientation = new byte[12];
-
-            for (int i = 0; i < 12; i++) {
-                permutation[i] = move.permutation[this.permutation[i]];
-                orientation[i] = (byte) ((move.orientation[this.permutation[i]] + this.orientation[i]) % 2);
+        public State applySequence(String[] sequence) {
+            State state = this;
+            for (String move : sequence) {
+                state = state.multiply(Move.moves.get(move));
             }
 
-            return new Move(permutation, orientation);
+            return state;
+        }
+
+        public static State id;
+
+        static {
+            id = new State(
+                IndexMapping.indexToCombination(0, 4, 12),
+                IndexMapping.indexToPermutation(0, 4),
+                IndexMapping.indexToOrientation(0, 2, 4));
         }
     }
 
@@ -82,39 +133,6 @@ public class RubiksCubeCrossSolver {
     public static final int N_COMBINATIONS = 495;
     public static final int N_PERMUTATIONS = 24;
     public static final int N_ORIENTATIONS = 16;
-
-    // moves
-    private static Move[] moves;
-
-    static {
-        Move moveU = new Move(new byte[] { 1, 2, 3, 0, 4, 5, 6, 7, 8, 9, 10, 11 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        Move moveD = new Move(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        Move moveL = new Move(new byte[] { 0, 1, 2, 7, 3, 5, 6, 11, 8, 9, 10, 4 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        Move moveR = new Move(new byte[] { 0, 5, 2, 3, 4, 9, 1, 7, 8, 6, 10, 11 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-        Move moveF = new Move(new byte[] { 0, 1, 6, 3, 4, 5, 10, 2, 8, 9, 7, 11 }, new byte[] { 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0 });
-        Move moveB = new Move(new byte[] { 4, 1, 2, 3, 8, 0, 6, 7, 5, 9, 10, 11 }, new byte[] { 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0 });
-
-        moves = new Move[] {
-            moveU,
-            moveU.multiply(moveU),
-            moveU.multiply(moveU).multiply(moveU),
-            moveD,
-            moveD.multiply(moveD),
-            moveD.multiply(moveD).multiply(moveD),
-            moveL,
-            moveL.multiply(moveL),
-            moveL.multiply(moveL).multiply(moveL),
-            moveR,
-            moveR.multiply(moveR),
-            moveR.multiply(moveR).multiply(moveR),
-            moveF,
-            moveF.multiply(moveF),
-            moveF.multiply(moveF).multiply(moveF),
-            moveB,
-            moveB.multiply(moveB),
-            moveB.multiply(moveB).multiply(moveB),
-        };
-    }
 
     // distance table
     public static byte[][][] distance;
@@ -130,6 +148,15 @@ public class RubiksCubeCrossSolver {
             }
         }
         distance[0][0][0] = 0;
+
+        Move[] moves = {
+            Move.moves.get("U"), Move.moves.get("U2"), Move.moves.get("U'"),
+            Move.moves.get("D"), Move.moves.get("D2"), Move.moves.get("D'"),
+            Move.moves.get("L"), Move.moves.get("L2"), Move.moves.get("L'"),
+            Move.moves.get("R"), Move.moves.get("R2"), Move.moves.get("R'"),
+            Move.moves.get("F"), Move.moves.get("F2"), Move.moves.get("F'"),
+            Move.moves.get("B"), Move.moves.get("B2"), Move.moves.get("B'"),
+        };
 
         int depth = 0;
         int nVisited = 1;
@@ -167,42 +194,37 @@ public class RubiksCubeCrossSolver {
         }
     }
 
-    public static String[] generate(int combination, int permutation, int orientation)
-    {
-        String[] inverseMoveNames = {
-            "U'", "U2", "U",
-            "D'", "D2", "D",
-            "L'", "L2", "L",
-            "R'", "R2", "R",
-            "F'", "F2", "F",
-            "B'", "B2", "B",
-        };
+    public static String[][] solve(State state) {
+        int combination = IndexMapping.combinationToIndex(state.combination, 4);
+        int permutation = IndexMapping.permutationToIndex(state.permutation);
+        int orientation = IndexMapping.orientationToIndex(state.orientation, 2);
 
-        String[] sequence = new String[distance[combination][permutation][orientation]];
-        for (int i = 0; distance[combination][permutation][orientation] > 0; i++) {
-            State state = new State(
-                IndexMapping.indexToCombination(combination, 4, 12),
-                IndexMapping.indexToPermutation(permutation, 4),
-                IndexMapping.indexToOrientation(orientation, 2, 4));
+        if (distance[combination][permutation][orientation] == 0) {
+            return new String[][] { new String[0] };
+        }
 
-            for (int j = 0; j < N_MOVES; j++) {
-                State result = state.multiply(moves[j]);
+        ArrayList<String[]> solutions = new ArrayList<String[]>();
+        for (String moveName : Move.moves.keySet()) {
+            State result = state.multiply(Move.moves.get(moveName));
 
-                int nextCombination = IndexMapping.combinationToIndex(result.combination, 4);
-                int nextPermutation = IndexMapping.permutationToIndex(result.permutation);
-                int nextOrientation = IndexMapping.orientationToIndex(result.orientation, 2);
+            int resultCombination = IndexMapping.combinationToIndex(result.combination, 4);
+            int resultPermutation = IndexMapping.permutationToIndex(result.permutation);
+            int resultOrientation = IndexMapping.orientationToIndex(result.orientation, 2);
 
-                if (distance[nextCombination][nextPermutation][nextOrientation] == distance[combination][permutation][orientation] - 1) {
-                    sequence[sequence.length - 1 - i] = inverseMoveNames[j];
-
-                    combination = nextCombination;
-                    permutation = nextPermutation;
-                    orientation = nextOrientation;
-                    break;
+            if (distance[resultCombination][resultPermutation][resultOrientation] == distance[combination][permutation][orientation] - 1) {
+                for (String[] solution : solve(result)) {
+                    String[] sequence = new String[solution.length + 1];
+                    sequence[0] = moveName;
+                    for (int i = 1; i < sequence.length; i++) {
+                        sequence[i] = solution[i - 1];
+                    }
+                    solutions.add(sequence);
                 }
             }
         }
 
-        return sequence;
+        String[][] solutionsArray = new String[solutions.size()][];
+        solutions.toArray(solutionsArray);
+        return solutionsArray;
     }
 }

@@ -77,6 +77,7 @@ import com.puzzletimer.util.SolutionUtils;
 public class Main extends JFrame {
     private Panel3D panel3D;
 
+    private TipsFrame tipsFrame;
     private ScrambleQueueFrame scrambleQueueFrame;
     private HistoryFrame historyFrame;
     private SessionSummaryFrame sessionSummaryFrame;
@@ -280,6 +281,11 @@ public class Main extends JFrame {
         // scramble panel
         panelMain.add(createScramblePanel(), "3, 4");
 
+        // tips frame
+        this.tipsFrame = new TipsFrame(this.categoryManager, this.scrambleManager);
+        this.tipsFrame.setLocationRelativeTo(null);
+        this.tipsFrame.setIconImage(icon);
+
         // scramble queue frame
         this.scrambleQueueFrame = new ScrambleQueueFrame(this.categoryManager, this.scrambleManager);
         this.scrambleQueueFrame.setLocationRelativeTo(null);
@@ -290,17 +296,17 @@ public class Main extends JFrame {
         this.historyFrame.setLocationRelativeTo(null);
         this.historyFrame.setIconImage(icon);
 
-        // session summary
+        // session summary frame
         this.sessionSummaryFrame = new SessionSummaryFrame(this.categoryManager, this.sessionManager);
         this.sessionSummaryFrame.setLocationRelativeTo(null);
         this.sessionSummaryFrame.setIconImage(icon);
 
-        // category manager
+        // category manager dialog
         this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
         this.categoryManagerDialog.setLocationRelativeTo(null);
         this.categoryManagerDialog.setIconImage(icon);
 
-        // color scheme
+        // color scheme frame
         this.colorSchemeFrame = new ColorSchemeFrame(this.colorManager);
         this.colorSchemeFrame.setLocationRelativeTo(null);
         this.colorSchemeFrame.setIconImage(icon);
@@ -330,6 +336,18 @@ public class Main extends JFrame {
         JMenu menuView = new JMenu("View");
         menuView.setMnemonic(KeyEvent.VK_V);
         menuBar.add(menuView);
+
+        // menuItemTips
+        JMenuItem menuItemTips = new JMenuItem("Tips...");
+        menuItemTips.setMnemonic(KeyEvent.VK_T);
+        menuItemTips.setAccelerator(KeyStroke.getKeyStroke("ctrl alt T"));
+        menuItemTips.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Main.this.tipsFrame.setVisible(true);
+            }
+        });
+        menuView.add(menuItemTips);
 
         // menuItemScrambleQueue
         JMenuItem menuItemScrambleQueue = new JMenuItem("Scramble queue...");
