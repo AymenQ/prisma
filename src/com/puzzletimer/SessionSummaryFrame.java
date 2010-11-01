@@ -278,5 +278,6 @@ public class SessionSummaryFrame extends JFrame {
         }
 
         this.textAreaSummary.setText(summary.toString());
+        this.textAreaSummary.setCaretPosition(0);
     }
 }
