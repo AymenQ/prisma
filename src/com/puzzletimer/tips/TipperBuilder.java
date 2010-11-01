@@ -9,6 +9,7 @@ public class TipperBuilder {
     static {
         tippers = new Tipper[] {
             new RubiksCubeTipper(),
+            new Square1Tipper(),
         };
 
         tipperMap = new HashMap<String, Tipper>();
