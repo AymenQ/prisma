@@ -156,7 +156,7 @@ public class RubiksCubeRandomScrambler implements Scrambler {
                 }
 
                 edgesOrientationSum += edgesOrientation[i];
-                edgesOrientationSum %= 3;
+                edgesOrientationSum %= 2;
             }
         } while (permutationSign(cornersPermutation) != permutationSign(edgesPermutation));
 

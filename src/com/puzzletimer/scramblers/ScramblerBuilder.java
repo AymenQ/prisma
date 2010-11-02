@@ -111,9 +111,8 @@ public class ScramblerBuilder {
 
         // 3x3x3 easy cross
         Scrambler rubiksCubeEasyCross =
-            new RubiksCubeControlledCrossDistanceScrambler(
+            new RubiksCubeEasyCrossScrambler(
                 new ScramblerInfo("RUBIKS-CUBE-EASY-CROSS", "RUBIKS-CUBE", "Easy cross scrambler"),
-                0,
                 3);
 
         // 4x4x4 random

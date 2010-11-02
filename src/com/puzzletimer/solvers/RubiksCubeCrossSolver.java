@@ -227,4 +227,37 @@ public class RubiksCubeCrossSolver {
         solutions.toArray(solutionsArray);
         return solutionsArray;
     }
+
+    public static String[] generate(State state) {
+        // pick a solution
+        String[] solution = solve(state)[0];
+
+        // invert it
+        HashMap<String, String> inverseMoveNames = new HashMap<String, String>();
+        inverseMoveNames.put("U",  "U'");
+        inverseMoveNames.put("U2", "U2");
+        inverseMoveNames.put("U'", "U");
+        inverseMoveNames.put("D",  "D'");
+        inverseMoveNames.put("D2", "D2");
+        inverseMoveNames.put("D'", "D");
+        inverseMoveNames.put("L",  "L'");
+        inverseMoveNames.put("L2", "L2");
+        inverseMoveNames.put("L'", "L");
+        inverseMoveNames.put("R",  "R'");
+        inverseMoveNames.put("R2", "R2");
+        inverseMoveNames.put("R'", "R");
+        inverseMoveNames.put("F",  "F'");
+        inverseMoveNames.put("F2", "F2");
+        inverseMoveNames.put("F'", "F");
+        inverseMoveNames.put("B",  "B'");
+        inverseMoveNames.put("B2", "B2");
+        inverseMoveNames.put("B'", "B");
+
+        String[] sequence = new String[solution.length];
+        for (int i = 0; i < sequence.length; i++) {
+            sequence[i] = inverseMoveNames.get(solution[solution.length - 1 - i]);
+        }
+
+        return sequence;
+    }
 }
