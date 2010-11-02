@@ -43,6 +43,15 @@ public class RubiksCubeSolver {
             return new State(cornersPermutation, cornersOrientation, edgesPermutation, edgesOrientation);
         }
 
+        public State applySequence(String[] sequence) {
+            State state = this;
+            for (String move : sequence) {
+                state = state.multiply(moves.get(move));
+            }
+
+            return state;
+        }
+
         public static HashMap<String, State> moves;
 
         static {
