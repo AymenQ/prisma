@@ -27,6 +27,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -155,6 +156,7 @@ public class ScrambleQueueFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Scramble files (*.txt)", "txt"));
                 int action = fileChooser.showOpenDialog(ScrambleQueueFrame.this);
                 if (action != JFileChooser.APPROVE_OPTION) {
                     return;
@@ -188,6 +190,8 @@ public class ScrambleQueueFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setSelectedFile(new File("scrambles.txt"));
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Scramble files (*.txt)", "txt"));
                 int action = fileChooser.showSaveDialog(ScrambleQueueFrame.this);
                 if (action != JFileChooser.APPROVE_OPTION) {
                     return;
