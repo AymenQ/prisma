@@ -1,8 +1,8 @@
 package com.puzzletimer.parsers;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import com.puzzletimer.solvers.Square1ShapeSolver;
 
 public class Square1ScrambleParser implements ScrambleParser {
     @Override
@@ -74,80 +74,49 @@ public class Square1ScrambleParser implements ScrambleParser {
             break;
         }
 
+        moves = fixImplicitTwists(moves);
+
+        if (!isValidScramble(moves)) {
+            return new String[0];
+        }
+
         String[] movesArray = new String[moves.size()];
         moves.toArray(movesArray);
-
-        if (!isValidScramble(movesArray)) {
-            movesArray = new String[0];
-        }
 
         return movesArray;
     }
 
-    private void turnTop(boolean[] state, int n) {
-        if (n < 0) {
-            n += 12;
-        }
-
-        for (int i = 0; i < n; i++) {
-            boolean temp = state[0];
-            for (int j = 0; j < 11; j++) {
-                state[j] = state[j + 1];
-            }
-            state[11] = temp;
-        }
-    }
-
-    private void turnBottom(boolean[] state, int n) {
-        if (n < 0) {
-            n += 12;
-        }
-
-        for (int i = 0; i < n; i++) {
-            boolean temp = state[12];
-            for (int j = 0; j < 11; j++) {
-                state[j + 12] = state[j + 13];
-            }
-            state[23] = temp;
-        }
-    }
-
-    private void twist(boolean[] state) {
-        for (int i = 0; i < 5; i++) {
-            boolean temp = state[i + 1];
-            state[i + 1] = state[i + 13];
-            state[i + 13] = temp;
-        }
-    }
-
-    private boolean isTwistable(boolean[] state) {
-        return state[0] && state[6] && state[12] && state[18];
-    }
-
-    private boolean isValidScramble(String[] sequence) {
-        boolean[] state = {
-            // top
-            true, true, false, true, true, false, true, true, false, true, true, false,
-
-            // bottom
-            true, false, true, true, false, true, true, false, true, true, false, true,
-        };
-
-        Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
+    private ArrayList<String> fixImplicitTwists(ArrayList<String> sequence) {
+        boolean implicit = true;
         for (String move : sequence) {
             if (move.equals("/")) {
-                if (!isTwistable(state)) {
+                implicit = false;
+            }
+        }
+
+        if (!implicit) {
+            return sequence;
+        }
+
+        ArrayList<String> newSequence = new ArrayList<String>();
+        for (String move : sequence) {
+            newSequence.add(move);
+            newSequence.add("/");
+        }
+
+        return newSequence;
+    }
+
+    private boolean isValidScramble(ArrayList<String> sequence) {
+        Square1ShapeSolver.State state = Square1ShapeSolver.State.id;
+        for (String move : sequence) {
+            if (move.equals("/")) {
+                if (!state.isTwistable()) {
                     return false;
                 }
-
-                twist(state);
-            } else {
-                Matcher matcher = p.matcher(move);
-                matcher.find();
-
-                turnTop(state, Integer.parseInt(matcher.group(1)));
-                turnBottom(state, Integer.parseInt(matcher.group(2)));
             }
+
+            state = state.applyMove(move);
         }
 
         return true;

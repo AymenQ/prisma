@@ -72,38 +72,34 @@ public class Square1ShapeSolver {
                    (bottom & (1 << 6)) != 0;
         }
 
-        public State applySequence(String[] sequence) {
+        public State applyMove(String move) {
             State state = this;
 
-            boolean implicitTwist = sequence.length > 1;
-            for (String m : sequence) {
-                if (m.equals("/")) {
-                    implicitTwist = false;
+            if (move.equals("/")) {
+                state = state.twist();
+            } else {
+                Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
+                Matcher matcher = p.matcher(move.toString());
+                matcher.find();
+
+                int top = Integer.parseInt(matcher.group(1));
+                for (int i = 0; i < top + 12; i++) {
+                    state = state.rotateTop();
+                }
+
+                int bottom = Integer.parseInt(matcher.group(2));
+                for (int i = 0; i < bottom + 12; i++) {
+                    state = state.rotateBottom();
                 }
             }
 
-            Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
-            for (String m : sequence) {
-                if (m.equals("/")) {
-                    state = state.twist();
-                } else {
-                    Matcher matcher = p.matcher(m.toString());
-                    matcher.find();
+            return state;
+        }
 
-                    int top = Integer.parseInt(matcher.group(1));
-                    for (int i = 0; i < top + 12; i++) {
-                        state = state.rotateTop();
-                    }
-
-                    int bottom = Integer.parseInt(matcher.group(2));
-                    for (int i = 0; i < bottom + 12; i++) {
-                        state = state.rotateBottom();
-                    }
-
-                    if (implicitTwist) {
-                        state = state.twist();
-                    }
-                }
+        public State applySequence(String[] sequence) {
+            State state = this;
+            for (String move : sequence) {
+                state = state.applyMove(move);
             }
 
             return state;

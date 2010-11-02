@@ -91,13 +91,6 @@ public class Square1 implements Puzzle {
         cube = topLayer.union(middleLayer).union(bottomLayer);
 
 
-        boolean implicitTwist = sequence.length > 1;
-        for (String m : sequence) {
-            if (m.equals("/")) {
-                implicitTwist = false;
-            }
-        }
-
         Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
         for (String m : sequence) {
             if (m.equals("/")) {
@@ -117,12 +110,6 @@ public class Square1 implements Puzzle {
                 cube = cube.transformHalfspace(
                         Matrix33.rotation(planeD.n, bottom * Math.PI / 6),
                         planeD);
-
-                if (implicitTwist) {
-                    cube = cube.transformHalfspace(
-                        Matrix33.rotation(planeR.n, Math.PI),
-                        planeR);
-                }
             }
         }
 
