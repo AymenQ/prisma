@@ -24,7 +24,8 @@ public class RubiksCubeTipper implements Tipper {
             RubiksCubeSolver.State.id.applySequence(scramble.getSequence());
 
         // corner cycles
-        for (ArrayList<Byte> cycle : cycles(cubeState.cornersPermutation)) {
+        int[] cornersOrder = { 3, 2, 1, 0, 7, 6, 5, 4 };
+        for (ArrayList<Byte> cycle : cycles(cornersOrder, cubeState.cornersPermutation)) {
             if (cycle.size() < 2) {
                 continue;
             }
@@ -44,7 +45,8 @@ public class RubiksCubeTipper implements Tipper {
         tip.append("\n  ");
 
         // edges
-        for (ArrayList<Byte> cycle : cycles(cubeState.edgesPermutation)) {
+        int[] edgesOrder = { 6, 7, 4, 5, 3, 0, 1, 2, 10, 11, 8, 9 };
+        for (ArrayList<Byte> cycle : cycles(edgesOrder, cubeState.edgesPermutation)) {
             if (cycle.size() < 2) {
                 continue;
             }
@@ -81,7 +83,7 @@ public class RubiksCubeTipper implements Tipper {
         return tip.toString().trim();
     }
 
-    private ArrayList<ArrayList<Byte>> cycles(byte[] permutation) {
+    private ArrayList<ArrayList<Byte>> cycles(int[] order, byte[] permutation) {
         boolean[] visited = new boolean[permutation.length];
         for (int i = 0; i < visited.length; i++) {
             visited[i] = false;
@@ -89,12 +91,12 @@ public class RubiksCubeTipper implements Tipper {
 
         ArrayList<ArrayList<Byte>> cycles = new ArrayList<ArrayList<Byte>>();
         for (int i = 0; i < permutation.length; i++) {
-            if (visited[i] == true) {
+            if (visited[order[i]] == true) {
                 continue;
             }
 
             ArrayList<Byte> cycle = new ArrayList<Byte>();
-            byte current = (byte) i;
+            byte current = (byte) order[i];
             do {
                 cycle.add(current);
                 visited[current] = true;
