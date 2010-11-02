@@ -1,29 +1,33 @@
 package com.puzzletimer.scramblers;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
-import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeSolver;
 
 public class RubiksCubeRandomScrambler implements Scrambler {
     private ScramblerInfo scramblerInfo;
-    private boolean solvedCornersPermutation;
-    private boolean solvedCornersOrientation;
-    private boolean solvedEdgesPermutation;
-    private boolean solvedEdgesOrientation;
+    private byte[] cornersPermutation;
+    private byte[] cornersOrientation;
+    private byte[] edgesPermutation;
+    private byte[] edgesOrientation;
     private Random random;
 
     public RubiksCubeRandomScrambler(
-        ScramblerInfo scramblerInfo,
-        boolean solvedCornersPermutation, boolean solvedCornersOrientation,
-        boolean solvedEdgesPermutation, boolean solvedEdgesOrientation) {
+            ScramblerInfo scramblerInfo,
+            byte[] cornersPermutation,
+            byte[] cornersOrientation,
+            byte[] edgesPermutation,
+            byte[] edgesOrientation) {
         this.scramblerInfo = scramblerInfo;
-        this.solvedCornersPermutation = solvedCornersPermutation;
-        this.solvedCornersOrientation = solvedCornersOrientation;
-        this.solvedEdgesPermutation = solvedEdgesPermutation;
-        this.solvedEdgesOrientation = solvedEdgesOrientation;
+        this.cornersPermutation = cornersPermutation;
+        this.cornersOrientation = cornersOrientation;
+        this.edgesPermutation = edgesPermutation;
+        this.edgesOrientation = edgesOrientation;
         this.random = new Random();
     }
 
@@ -47,27 +51,114 @@ public class RubiksCubeRandomScrambler implements Scrambler {
 
     @Override
     public Scramble getNextScramble() {
-        byte[] cornersPermutation = IndexMapping.indexToPermutation(
-            this.solvedCornersPermutation ? 0 : this.random.nextInt(RubiksCubeSolver.N_CORNERS_PERMUTATIONS), 8);
-        byte[] cornersOrientation = IndexMapping.indexToZeroSumOrientation(
-            this.solvedCornersOrientation ? 0 : this.random.nextInt(RubiksCubeSolver.N_CORNERS_ORIENTATIONS), 3, 8);
-        byte[] edgesPermutation = IndexMapping.indexToPermutation(
-            this.solvedEdgesPermutation ? 0 : this.random.nextInt(RubiksCubeSolver.N_EDGES_PERMUTATIONS), 12);
-        byte[] edgesOrientation = IndexMapping.indexToZeroSumOrientation(
-            this.solvedEdgesOrientation ? 0 : this.random.nextInt(RubiksCubeSolver.N_EDGES_ORIENTATIONS), 2, 12);
+        byte[] cornersPermutation;
+        byte[] cornersOrientation;
+        byte[] edgesPermutation;
+        byte[] edgesOrientation;
 
-        // fix permutations parity
-        if (permutationSign(cornersPermutation) != permutationSign(edgesPermutation)) {
-            if (this.solvedCornersPermutation) {
-                byte temp = edgesPermutation[0];
-                edgesPermutation[0] = edgesPermutation[1];
-                edgesPermutation[1] = temp;
-            } else {
-                byte temp = cornersPermutation[0];
-                cornersPermutation[0] = cornersPermutation[1];
-                cornersPermutation[1] = temp;
+        do {
+            // corners permutation
+            ArrayList<Byte> undefinedCornersPermutation = new ArrayList<Byte>();
+            for (int i = 0; i < this.cornersPermutation.length; i++) {
+                undefinedCornersPermutation.add((byte) i);
             }
-        }
+
+            for (int i = 0; i < this.cornersPermutation.length; i++) {
+                if (this.cornersPermutation[i] >= 0) {
+                    undefinedCornersPermutation.remove((Byte) this.cornersPermutation[i]);
+                }
+            }
+
+            Collections.shuffle(undefinedCornersPermutation, this.random);
+
+            cornersPermutation = new byte[this.cornersPermutation.length];
+            for (int i = 0; i < cornersPermutation.length; i++) {
+                if (this.cornersPermutation[i] >= 0) {
+                    cornersPermutation[i] = this.cornersPermutation[i];
+                } else {
+                    cornersPermutation[i] = undefinedCornersPermutation.get(0);
+                    undefinedCornersPermutation.remove(0);
+                }
+            }
+
+            // corners orientation
+            int nUndefinedCornerOrientations = 0;
+            for (int i = 0; i < this.cornersOrientation.length; i++) {
+                if (this.cornersOrientation[i] < 0) {
+                    nUndefinedCornerOrientations++;
+                }
+            }
+
+            int cornersOrientationSum = 0;
+            cornersOrientation = new byte[this.cornersOrientation.length];
+            for (int i = 0; i < cornersOrientation.length; i++) {
+                if (this.cornersOrientation[i] >= 0) {
+                    cornersOrientation[i] = this.cornersOrientation[i];
+                } else {
+                    if (nUndefinedCornerOrientations == 1) {
+                        cornersOrientation[i] = (byte) ((3 - cornersOrientationSum) % 3);
+                    } else {
+                        cornersOrientation[i] = (byte) this.random.nextInt(3);
+                    }
+
+                    nUndefinedCornerOrientations--;
+                }
+
+                cornersOrientationSum += cornersOrientation[i];
+                cornersOrientationSum %= 3;
+            }
+
+            // edges permutation
+            ArrayList<Byte> undefinedEdgesPermutation = new ArrayList<Byte>();
+            for (int i = 0; i < this.edgesPermutation.length; i++) {
+                undefinedEdgesPermutation.add((byte) i);
+            }
+
+            for (int i = 0; i < this.edgesPermutation.length; i++) {
+                if (this.edgesPermutation[i] >= 0) {
+                    undefinedEdgesPermutation.remove((Byte) this.edgesPermutation[i]);
+                }
+            }
+
+            Collections.shuffle(undefinedEdgesPermutation, this.random);
+
+            edgesPermutation = new byte[this.edgesPermutation.length];
+            for (int i = 0; i < edgesPermutation.length; i++) {
+                if (this.edgesPermutation[i] >= 0) {
+                    edgesPermutation[i] = this.edgesPermutation[i];
+                } else {
+                    edgesPermutation[i] = undefinedEdgesPermutation.get(0);
+                    undefinedEdgesPermutation.remove(0);
+                }
+            }
+
+            // edges orientation
+            int nUndefinedEdgeOrientations = 0;
+            for (int i = 0; i < this.edgesOrientation.length; i++) {
+                if (this.edgesOrientation[i] < 0) {
+                    nUndefinedEdgeOrientations++;
+                }
+            }
+
+            int edgesOrientationSum = 0;
+            edgesOrientation = new byte[this.edgesOrientation.length];
+            for (int i = 0; i < edgesOrientation.length; i++) {
+                if (this.edgesOrientation[i] >= 0) {
+                    edgesOrientation[i] = this.edgesOrientation[i];
+                } else {
+                    if (nUndefinedEdgeOrientations == 1) {
+                        edgesOrientation[i] = (byte) ((2 - edgesOrientationSum) % 2);
+                    } else {
+                        edgesOrientation[i] = (byte) this.random.nextInt(2);
+                    }
+
+                    nUndefinedEdgeOrientations--;
+                }
+
+                edgesOrientationSum += edgesOrientation[i];
+                edgesOrientationSum %= 3;
+            }
+        } while (permutationSign(cornersPermutation) != permutationSign(edgesPermutation));
 
         RubiksCubeSolver.State state = new RubiksCubeSolver.State(
             cornersPermutation,
@@ -79,7 +170,6 @@ public class RubiksCubeRandomScrambler implements Scrambler {
             UUID.randomUUID(),
             getScramblerInfo().getScramblerId(),
             RubiksCubeSolver.generate(state));
-
     }
 
     @Override

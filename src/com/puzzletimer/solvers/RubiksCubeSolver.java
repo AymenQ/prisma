@@ -542,7 +542,7 @@ public class RubiksCubeSolver {
             }
 
             for (int i = 0; i < moves2.length; i++) {
-                if (solution2.size() == 0) {
+                if (solution2.size() == 0 && solution1.size() > 0) {
                     int lastPhase1Move = solution1.get(solution1.size() - 1);
                     if (axes1[lastPhase1Move] == axes2[i]) {
                         continue;
