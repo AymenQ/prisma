@@ -479,22 +479,31 @@ public class RubiksCubeSolver {
 
         if (cornersOrientationDistance[cornersOrientation][eEdgesCombinations] <= depth &&
             edgesOrientationDistance[edgesOrientation][eEdgesCombinations] <= depth) {
-            int lastSide = Integer.MAX_VALUE;
-            if (solution1.size() > 0) {
-                lastSide = sides1[solution1.get(solution1.size() - 1)];
+            int[] lastMoves = { -1, -1 };
+            for (int i = 0; i < lastMoves.length && i < solution1.size(); i++) {
+                lastMoves[i] = solution1.get(solution1.size() - 1 - i);
             }
 
             for (int i = 0; i < moves1.length; i++) {
-                if (sides1[i] != lastSide) {
-                    solution1.add(i);
-                    if (search1(cornersOrientationMove[cornersOrientation][i],
-                                edgesOrientationMove[edgesOrientation][i],
-                                eEdgesCombinationMove[eEdgesCombinations][i],
-                                depth - 1)) {
-                        return true;
-                    }
-                    solution1.remove(solution1.size() - 1);
+                // same side
+                if (lastMoves[0] >= 0 && sides1[i] == sides1[lastMoves[0]]) {
+                    continue;
                 }
+
+                // same axis three times in a row
+                if (lastMoves[0] >= 0 && axes1[i] == axes1[lastMoves[0]] &&
+                    lastMoves[1] >= 0 && axes1[i] == axes1[lastMoves[1]]) {
+                    continue;
+                }
+
+                solution1.add(i);
+                if (search1(cornersOrientationMove[cornersOrientation][i],
+                            edgesOrientationMove[edgesOrientation][i],
+                            eEdgesCombinationMove[eEdgesCombinations][i],
+                            depth - 1)) {
+                    return true;
+                }
+                solution1.remove(solution1.size() - 1);
             }
         }
 
@@ -551,23 +560,31 @@ public class RubiksCubeSolver {
             }
 
             for (int i = 0; i < moves2.length; i++) {
-                if (solution2.size() == 0 && solution1.size() > 0) {
-                    int lastPhase1Move = solution1.get(solution1.size() - 1);
-                    if (axes1[lastPhase1Move] == axes2[i]) {
+                // avoid superflous moves between phases
+                if (solution2.size() == 0) {
+                    int lastPhase1Axis = Integer.MAX_VALUE;
+                    if (solution1.size() > 0) {
+                        lastPhase1Axis = axes1[solution1.get(solution1.size() - 1)];
+                    }
+
+                    if (axes2[i] == lastPhase1Axis) {
                         continue;
                     }
                 }
 
-                if (sides2[i] != lastSide) {
-                    solution2.add(i);
-                    if (search2(cornersPermutationMove[cornersPermutation][i],
-                                uDEdgesPermutationMove[uDEdgesPermutation][i],
-                                eEdgesPermutationMove[eEdgesPermutation][i],
-                                depth - 1)) {
-                        return true;
-                    }
-                    solution2.remove(solution2.size() - 1);
+                // same side
+                if (sides2[i] == lastSide) {
+                    continue;
                 }
+
+                solution2.add(i);
+                if (search2(cornersPermutationMove[cornersPermutation][i],
+                            uDEdgesPermutationMove[uDEdgesPermutation][i],
+                            eEdgesPermutationMove[eEdgesPermutation][i],
+                            depth - 1)) {
+                    return true;
+                }
+                solution2.remove(solution2.size() - 1);
             }
         }
 
