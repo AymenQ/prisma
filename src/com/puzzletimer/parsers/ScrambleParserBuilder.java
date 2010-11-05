@@ -15,6 +15,7 @@ public class ScrambleParserBuilder {
             new RubiksCubeScrambleParser(),
             new RubiksPocketCubeScrambleParser(),
             new RubiksRevengeScramblerParser(),
+            new VCube7ScrambleParser(),
             new Square1ScrambleParser(),
         };
 

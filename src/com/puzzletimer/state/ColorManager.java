@@ -91,6 +91,16 @@ public class ColorManager {
         square1Colors.put("Face U", new Color(255, 255, 255)); // white
         this.colors.put("SQUARE-1", square1Colors);
 
+        // 7x7x7 cube
+        HashMap<String, Color> vCube7Colors = new HashMap<String, Color>();
+        vCube7Colors.put("Face L", new Color(255,  85,   0)); // orange
+        vCube7Colors.put("Face B", new Color(  0,  13, 153)); // blue
+        vCube7Colors.put("Face D", new Color(255, 234,   0)); // yellow
+        vCube7Colors.put("Face R", new Color(212,  17,  17)); // red
+        vCube7Colors.put("Face F", new Color(  0, 153,   0)); // green
+        vCube7Colors.put("Face U", new Color(255, 255, 255)); // white
+        this.colors.put("7x7x7-CUBE", vCube7Colors);
+
         // default colors
         this.defaultColors = new HashMap<String, HashMap<String,Color>>();
         for (String puzzleId : this.colors.keySet()) {

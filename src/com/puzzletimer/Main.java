@@ -107,6 +107,7 @@ public class Main extends JFrame {
             new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 blindfolded", false),
             new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 cube", false),
             new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 blindfolded", false),
+            new Category(null, "7x7x7-CUBE-RANDOM", "7x7x7 cube", false),
             new Category(null, "MEGAMINX-RANDOM", "Megaminx", false),
             new Category(null, "PYRAMINX-RANDOM", "Pyraminx", false),
             new Category(null, "SQUARE-1-RANDOM", "Square-1", false),
@@ -434,12 +435,13 @@ public class Main extends JFrame {
                     new BuiltInCategory(categories[6], 'B', '\0'),
                     new BuiltInCategory(categories[7], '5', '5'),
                     new BuiltInCategory(categories[8], 'B', '\0'),
-                    new BuiltInCategory(categories[9], 'M', 'M'),
-                    new BuiltInCategory(categories[10], 'P', 'P'),
-                    new BuiltInCategory(categories[11], 'S', '1'),
-                    new BuiltInCategory(categories[12], 'C', 'K'),
-                    new BuiltInCategory(categories[13], 'M', 'G'),
-                    new BuiltInCategory(categories[14], 'M', 'A'),
+                    new BuiltInCategory(categories[9], '7', '7'),
+                    new BuiltInCategory(categories[10], 'M', 'M'),
+                    new BuiltInCategory(categories[11], 'P', 'P'),
+                    new BuiltInCategory(categories[12], 'S', '1'),
+                    new BuiltInCategory(categories[13], 'C', 'K'),
+                    new BuiltInCategory(categories[14], 'M', 'G'),
+                    new BuiltInCategory(categories[15], 'M', 'A'),
                 };
 
                 for (final BuiltInCategory builtInCategory : builtInCategories) {
