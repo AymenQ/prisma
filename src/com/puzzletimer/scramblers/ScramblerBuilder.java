@@ -127,6 +127,12 @@ public class ScramblerBuilder {
                 new ScramblerInfo("5x5x5-CUBE-RANDOM", "5x5x5-CUBE", "Random scrambler"),
                 60);
 
+        // 6x6x6 random
+        Scrambler vCube6Random =
+            new VCube6RandomScrambler(
+                new ScramblerInfo("6x6x6-CUBE-RANDOM", "6x6x6-CUBE", "Random scrambler"),
+                80);
+
         // 7x7x7 random
         Scrambler vCube7Random =
             new VCube7RandomScrambler(
@@ -165,6 +171,7 @@ public class ScramblerBuilder {
             rubiksCubeEasyCross,
             rubiksRevengeRandom,
             professorsCubeRandom,
+            vCube6Random,
             vCube7Random,
             megaminxRandom,
             pyraminxRandom,

@@ -91,6 +91,16 @@ public class ColorManager {
         square1Colors.put("Face U", new Color(255, 255, 255)); // white
         this.colors.put("SQUARE-1", square1Colors);
 
+        // 6x6x6 cube
+        HashMap<String, Color> vCube6Colors = new HashMap<String, Color>();
+        vCube6Colors.put("Face L", new Color(255,  85,   0)); // orange
+        vCube6Colors.put("Face B", new Color(  0,  13, 153)); // blue
+        vCube6Colors.put("Face D", new Color(255, 234,   0)); // yellow
+        vCube6Colors.put("Face R", new Color(212,  17,  17)); // red
+        vCube6Colors.put("Face F", new Color(  0, 153,   0)); // green
+        vCube6Colors.put("Face U", new Color(255, 255, 255)); // white
+        this.colors.put("6x6x6-CUBE", vCube6Colors);
+
         // 7x7x7 cube
         HashMap<String, Color> vCube7Colors = new HashMap<String, Color>();
         vCube7Colors.put("Face L", new Color(255,  85,   0)); // orange

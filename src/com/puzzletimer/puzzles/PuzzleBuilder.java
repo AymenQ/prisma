@@ -13,6 +13,7 @@ public class PuzzleBuilder {
             new RubiksCube(),
             new RubiksRevenge(),
             new ProfessorsCube(),
+            new VCube6(),
             new VCube7(),
             new Megaminx(),
             new Pyraminx(),
