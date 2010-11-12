@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.puzzletimer.graphics.Mesh;
-import com.puzzletimer.graphics.algebra.Matrix33;
+import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.algebra.Vector3;
 import com.puzzletimer.graphics.geometry.Plane;
 import com.puzzletimer.models.PuzzleInfo;
@@ -45,19 +45,19 @@ public class Square1 implements Puzzle {
 
         Plane planeR = new Plane(
             new Vector3(0, 0, 0),
-            Matrix33.rotationY(-Math.PI / 12).mul(new Vector3(1, 0, 0)));
+            Matrix44.rotationY(-Math.PI / 12).mul(new Vector3(1, 0, 0)));
 
         Plane p1 = new Plane(
             new Vector3(0, 0, 0),
-            Matrix33.rotationY(Math.PI / 12).mul(new Vector3(1, 0, 0)));
+            Matrix44.rotationY(Math.PI / 12).mul(new Vector3(1, 0, 0)));
 
         Plane p2 = new Plane(
             new Vector3(0, 0, 0),
-            Matrix33.rotationY(-Math.PI / 12).mul(new Vector3(0, 0, 1)));
+            Matrix44.rotationY(-Math.PI / 12).mul(new Vector3(0, 0, 1)));
 
         Plane p3 = new Plane(
             new Vector3(0, 0, 0),
-            Matrix33.rotationY(Math.PI / 12).mul(new Vector3(0, 0, 1)));
+            Matrix44.rotationY(Math.PI / 12).mul(new Vector3(0, 0, 1)));
 
 
         Mesh mesh = cube
@@ -95,7 +95,7 @@ public class Square1 implements Puzzle {
         for (String m : sequence) {
             if (m.equals("/")) {
                 cube = cube.transformHalfspace(
-                    Matrix33.rotation(planeR.n, Math.PI),
+                    Matrix44.rotation(planeR.n, Math.PI),
                     planeR);
             } else {
                 Matcher matcher = p.matcher(m.toString());
@@ -103,18 +103,18 @@ public class Square1 implements Puzzle {
 
                 int top = Integer.parseInt(matcher.group(1));
                 cube = cube.transformHalfspace(
-                    Matrix33.rotation(planeU.n, top * Math.PI / 6),
+                    Matrix44.rotation(planeU.n, top * Math.PI / 6),
                     planeU);
 
                 int bottom = Integer.parseInt(matcher.group(2));
                 cube = cube.transformHalfspace(
-                        Matrix33.rotation(planeD.n, bottom * Math.PI / 6),
+                        Matrix44.rotation(planeD.n, bottom * Math.PI / 6),
                         planeD);
             }
         }
 
         return cube
-            .transform(Matrix33.rotationY(-Math.PI / 6))
-            .transform(Matrix33.rotationX(Math.PI / 7));
+            .transform(Matrix44.rotationY(-Math.PI / 6))
+            .transform(Matrix44.rotationX(Math.PI / 7));
     }
 }

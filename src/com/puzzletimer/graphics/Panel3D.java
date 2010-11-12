@@ -16,7 +16,7 @@ import java.util.Comparator;
 
 import javax.swing.JPanel;
 
-import com.puzzletimer.graphics.algebra.Matrix33;
+import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.algebra.Vector3;
 
 @SuppressWarnings("serial")
@@ -47,9 +47,9 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
     }
 
     private Vector3 toCameraCoordinates(Vector3 v) {
-        return Matrix33.rotationX(-this.cameraRotation.x).mul(
-               Matrix33.rotationY(-this.cameraRotation.y).mul(
-               Matrix33.rotationZ(-this.cameraRotation.z).mul(
+        return Matrix44.rotationX(-this.cameraRotation.x).mul(
+               Matrix44.rotationY(-this.cameraRotation.y).mul(
+               Matrix44.rotationZ(-this.cameraRotation.z).mul(
                v.sub(this.cameraPosition))));
     }
 
@@ -197,14 +197,14 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
         double angleY = (e.getX() - this.lastX) / 50d;
 
         this.mesh = this.mesh.transform(
-            Matrix33.rotationZ(this.cameraRotation.z).mul(
-            Matrix33.rotationY(this.cameraRotation.y).mul(
-            Matrix33.rotationX(this.cameraRotation.x).mul(
-            Matrix33.rotationX(angleX).mul(
-            Matrix33.rotationY(angleY).mul(
-            Matrix33.rotationX(-this.cameraRotation.x).mul(
-            Matrix33.rotationY(-this.cameraRotation.y).mul(
-            Matrix33.rotationZ(-this.cameraRotation.z)))))))));
+            Matrix44.rotationZ(this.cameraRotation.z).mul(
+            Matrix44.rotationY(this.cameraRotation.y).mul(
+            Matrix44.rotationX(this.cameraRotation.x).mul(
+            Matrix44.rotationX(angleX).mul(
+            Matrix44.rotationY(angleY).mul(
+            Matrix44.rotationX(-this.cameraRotation.x).mul(
+            Matrix44.rotationY(-this.cameraRotation.y).mul(
+            Matrix44.rotationZ(-this.cameraRotation.z)))))))));
 
         this.lastX = e.getX();
         this.lastY = e.getY();

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.puzzletimer.graphics.Mesh;
-import com.puzzletimer.graphics.algebra.Matrix33;
+import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.algebra.Vector3;
 import com.puzzletimer.graphics.geometry.Plane;
 import com.puzzletimer.models.PuzzleInfo;
@@ -145,7 +145,7 @@ public class VCube7 implements Puzzle {
         for (String move : sequence) {
             Twist t = twists.get(move);
             mesh = mesh.transformHalfspace(
-                Matrix33.rotation(t.plane.n, t.angle),
+                Matrix44.rotation(t.plane.n, t.angle),
                 t.plane);
         }
 
@@ -156,7 +156,7 @@ public class VCube7 implements Puzzle {
         mesh = new Mesh(newVertices, mesh.faces);
 
         return mesh
-            .transform(Matrix33.rotationY(-Math.PI / 6))
-            .transform(Matrix33.rotationX(Math.PI / 7));
+            .transform(Matrix44.rotationY(-Math.PI / 6))
+            .transform(Matrix44.rotationX(Math.PI / 7));
     }
 }

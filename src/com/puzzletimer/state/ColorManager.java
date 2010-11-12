@@ -51,6 +51,16 @@ public class ColorManager {
         pyraminxColors.put("Face B", new Color(212,  17,  17)); // red
         this.colors.put("PYRAMINX", pyraminxColors);
 
+        // rubik's clock
+        HashMap<String, Color> rubiksClockColors = new HashMap<String, Color>();
+        rubiksClockColors.put("Front",           new Color(128, 255, 255)); // light blue
+        rubiksClockColors.put("Back",            new Color(  0,  16, 204)); // dark blue
+        rubiksClockColors.put("Hand background", new Color(212,  17,  17)); // red
+        rubiksClockColors.put("Hand foreground", new Color(255, 234,   0)); // yellow
+        rubiksClockColors.put("Pin up",          new Color(255, 234,   0)); // yellow
+        rubiksClockColors.put("Pin down",        new Color(204, 187,   0)); // dark yellow
+        this.colors.put("RUBIKS-CLOCK", rubiksClockColors);
+
         // rubik's cube
         HashMap<String, Color> rubiksCubeColors = new HashMap<String, Color>();
         rubiksCubeColors.put("Face L", new Color(255,  85,   0)); // orange

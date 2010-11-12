@@ -155,6 +155,11 @@ public class ScramblerBuilder {
                 new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"),
                 40);
 
+        // rubiks clock random
+        Scrambler rubiksClockRandom =
+            new RubiksClockRandomScrambler(
+                new ScramblerInfo("RUBIKS-CLOCK-RANDOM", "RUBIKS-CLOCK", "Random scrambler"));
+
         scramblers = new Scrambler[] {
             empty,
             rubiksPocketCubeRandom,
@@ -176,6 +181,7 @@ public class ScramblerBuilder {
             megaminxRandom,
             pyraminxRandom,
             square1Random,
+            rubiksClockRandom,
         };
 
         scramblerMap = new HashMap<String, Scrambler>();

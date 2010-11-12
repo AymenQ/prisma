@@ -12,12 +12,13 @@ public class ScrambleParserBuilder {
             new MegaminxScrambleParser(),
             new ProfessorsCubeScrambleParser(),
             new PyraminxScrambleParser(),
+            new RubiksClockScrambleParser(),
             new RubiksCubeScrambleParser(),
             new RubiksPocketCubeScrambleParser(),
             new RubiksRevengeScramblerParser(),
+            new Square1ScrambleParser(),
             new VCube6ScrambleParser(),
             new VCube7ScrambleParser(),
-            new Square1ScrambleParser(),
         };
 
         scrambleParserMap = new HashMap<String, ScrambleParser>();

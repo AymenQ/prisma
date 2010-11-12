@@ -18,6 +18,7 @@ public class PuzzleBuilder {
             new Megaminx(),
             new Pyraminx(),
             new Square1(),
+            new RubiksClock(),
         };
 
         puzzleMap = new HashMap<String, Puzzle>();

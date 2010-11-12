@@ -112,7 +112,7 @@ public class Main extends JFrame {
             new Category(null, "MEGAMINX-RANDOM", "Megaminx", false),
             new Category(null, "PYRAMINX-RANDOM", "Pyraminx", false),
             new Category(null, "SQUARE-1-RANDOM", "Square-1", false),
-            new Category(null, "EMPTY", "Rubik's clock", false),
+            new Category(null, "RUBIKS-CLOCK-RANDOM", "Rubik's clock", false),
             new Category(null, "EMPTY", "Rubik's magic", false),
             new Category(null, "EMPTY", "Master magic", false),
             new Category(null, "RUBIKS-CUBE-FRIDRICH-F2L-TRAINING", "Fridrich - F2L training", true),

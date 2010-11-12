@@ -3,7 +3,7 @@ package com.puzzletimer.graphics;
 import java.awt.Color;
 import java.util.ArrayList;
 
-import com.puzzletimer.graphics.algebra.Matrix33;
+import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.algebra.Vector3;
 import com.puzzletimer.graphics.geometry.Intersection;
 import com.puzzletimer.graphics.geometry.LineSegment;
@@ -18,7 +18,7 @@ public class Mesh {
         this.faces = faces;
     }
 
-    public Mesh transform(Matrix33 m) {
+    public Mesh transform(Matrix44 m) {
         Mesh mesh = new Mesh(new ArrayList<Vector3>(), this.faces);
 
         for (Vector3 v : this.vertices) {
@@ -28,7 +28,7 @@ public class Mesh {
         return mesh;
     }
 
-    public Mesh transformHalfspace(Matrix33 m, Plane p) {
+    public Mesh transformHalfspace(Matrix44 m, Plane p) {
         Mesh mesh = new Mesh(new ArrayList<Vector3>(), this.faces);
 
         for (Vector3 v : this.vertices) {
