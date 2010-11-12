@@ -129,7 +129,7 @@ public class Main extends JFrame {
         Category defaultCategory = categories[1];
 
         // timer manager
-        this.timerManager = new TimerManager(new KeyboardTimer(this, KeyEvent.VK_CONTROL));
+        this.timerManager = new TimerManager(new KeyboardTimer(this, KeyEvent.VK_SPACE));
 
         // categoryManager
         this.categoryManager = new CategoryManager(categories, defaultCategory);
@@ -510,7 +510,6 @@ public class Main extends JFrame {
         final JRadioButtonMenuItem menuItemCtrlKeys = new JRadioButtonMenuItem("Ctrl keys");
         menuItemCtrlKeys.setMnemonic(KeyEvent.VK_C);
         menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke("ctrl C"));
-        menuItemCtrlKeys.setSelected(true);
         menuItemCtrlKeys.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -525,6 +524,7 @@ public class Main extends JFrame {
         final JRadioButtonMenuItem menuItemSpaceKey = new JRadioButtonMenuItem("Space key");
         menuItemSpaceKey.setMnemonic(KeyEvent.VK_S);
         menuItemSpaceKey.setAccelerator(KeyStroke.getKeyStroke(' ', InputEvent.CTRL_MASK));
+        menuItemSpaceKey.setSelected(true);
         menuItemSpaceKey.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -555,7 +555,7 @@ public class Main extends JFrame {
                 } catch (LineUnavailableException ex) {
                     // select the default timer
                     menuItemCtrlKeys.setSelected(true);
-                    Main.this.timerManager.setTimer(new KeyboardTimer(Main.this, KeyEvent.VK_CONTROL));
+                    Main.this.timerManager.setTimer(new KeyboardTimer(Main.this, KeyEvent.VK_SPACE));
                     return;
                 }
 
