@@ -2,7 +2,6 @@ package com.puzzletimer.puzzles;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +9,7 @@ import com.puzzletimer.graphics.Face;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.algebra.Vector3;
+import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.solvers.RubiksClockSolver;
 
@@ -146,15 +146,15 @@ public class RubiksClock implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+    public Mesh getScrambledPuzzleMesh(ColorScheme colorScheme, String[] sequence) {
         RubiksClockSolver.State state = stateFromSequence(sequence);
 
         Mesh handBackground =
-            hand(0.04, 8, 0.001, 3, 0.16, colors.get("Hand background")).transform(
+            hand(0.04, 8, 0.001, 3, 0.16, colorScheme.getFaceColor("HAND-BACKGROUND").getColor()).transform(
                 Matrix44.translation(new Vector3(0, 0, -0.025)));
 
         Mesh handForeground =
-            hand(0.025, 8, 0.001, 3, 0.11, colors.get("Hand foreground")).transform(
+            hand(0.025, 8, 0.001, 3, 0.11, colorScheme.getFaceColor("HAND-FOREGROUND").getColor()).transform(
                 Matrix44.translation(new Vector3(0, 0, -0.05)));
 
         Mesh hands =
@@ -170,7 +170,7 @@ public class RubiksClock implements Puzzle {
                     Matrix44.rotationZ(Math.PI / 6 * state.clocks[3 * i + j]));
 
                 front = front.union(
-                    circle(0.225, 32, colors.get("Front")).union(hands).transform(transformation));
+                    circle(0.225, 32, colorScheme.getFaceColor("FRONT").getColor()).union(hands).transform(transformation));
             }
         }
 
@@ -185,7 +185,7 @@ public class RubiksClock implements Puzzle {
                             0.5 * (0.5 - i),
                             pinDown ? 0.0 : -0.1));
 
-                Color pinColor = colors.get(pinDown ? "Pin down" : "Pin up");
+                Color pinColor = colorScheme.getFaceColor(pinDown ? "PIN-DOWN" : "PIN-UP").getColor();
                 front = front.union(
                     circle(0.05, 16, pinColor).transform(transformation));
             }
@@ -201,7 +201,7 @@ public class RubiksClock implements Puzzle {
                     Matrix44.rotationZ(Math.PI / 6 * state.clocks[9 + 3 * i + j]));
 
                 back = back.union(
-                    circle(0.225, 32, colors.get("Back")).union(hands).transform(transformation));
+                    circle(0.225, 32, colorScheme.getFaceColor("BACK").getColor()).union(hands).transform(transformation));
             }
         }
 
@@ -216,7 +216,7 @@ public class RubiksClock implements Puzzle {
                             0.5 * (0.5 - i),
                             pinDown ? 0.0 : -0.1));
 
-                Color pinColor = colors.get(pinDown ? "Pin down" : "Pin up");
+                Color pinColor = colorScheme.getFaceColor(pinDown ? "PIN-DOWN" : "PIN-UP").getColor();
                 back = back.union(
                     circle(0.05, 16, pinColor).transform(transformation));
             }

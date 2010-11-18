@@ -5,16 +5,18 @@ import java.util.ArrayList;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.scramblers.Scrambler;
-import com.puzzletimer.scramblers.ScramblerBuilder;
+import com.puzzletimer.scramblers.ScramblerProvider;
 
 public class ScrambleManager {
     private ArrayList<ScrambleListener> listeners;
+    private ScramblerProvider scramblerProvider;
     private Scrambler currentScrambler;
     private ArrayList<Scramble> queue;
     private Scramble currentScramble;
 
-    public ScrambleManager(Scrambler scrambler) {
+    public ScrambleManager(ScramblerProvider scramblerProvider, Scrambler scrambler) {
         this.listeners = new ArrayList<ScrambleListener>();
+        this.scramblerProvider = scramblerProvider;
         this.currentScrambler = scrambler;
         this.queue = new ArrayList<Scramble>();
         this.currentScramble = this.currentScrambler.getNextScramble();
@@ -22,7 +24,7 @@ public class ScrambleManager {
 
     public void setCategory(Category category) {
         this.queue.clear();
-        this.currentScrambler = ScramblerBuilder.getScrambler(category.scramblerId);
+        this.currentScrambler = this.scramblerProvider.get(category.scramblerId);
         changeScramble();
         notifyListeners();
     }

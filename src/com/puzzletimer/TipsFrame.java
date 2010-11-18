@@ -18,22 +18,27 @@ import net.miginfocom.swing.MigLayout;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.puzzles.Puzzle;
-import com.puzzletimer.puzzles.PuzzleBuilder;
+import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
-import com.puzzletimer.scramblers.ScramblerBuilder;
+import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.tips.Tipper;
-import com.puzzletimer.tips.TipperBuilder;
+import com.puzzletimer.tips.TipperProvider;
 
 @SuppressWarnings("serial")
 public class TipsFrame extends JFrame {
     private JTextArea textAreaTips;
     private JButton buttonOk;
 
-    public TipsFrame(final CategoryManager categoryManager, ScrambleManager scrambleManager) {
+    public TipsFrame(
+            final PuzzleProvider puzzleProvider,
+            final TipperProvider tipperProvider,
+            final ScramblerProvider scrambleProvider,
+            final CategoryManager categoryManager,
+            ScrambleManager scrambleManager) {
         super();
 
         setMinimumSize(new Dimension(480, 320));
@@ -45,8 +50,8 @@ public class TipsFrame extends JFrame {
         categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
-                Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.scramblerId);
-                Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
+                Scrambler scrambler = scrambleProvider.get(currentCategory.scramblerId);
+                Puzzle puzzle = puzzleProvider.get(scrambler.getScramblerInfo().getPuzzleId());
                 setTitle("Tips - " + puzzle.getPuzzleInfo().getDescription());
             }
         });
@@ -56,9 +61,9 @@ public class TipsFrame extends JFrame {
         scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
             public void scrambleChanged(Scramble scramble) {
-                Scrambler scrambler = ScramblerBuilder.getScrambler(scramble.getScramblerId());
-                Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
-                Tipper tipper = TipperBuilder.getTipper(puzzle.getPuzzleInfo().getPuzzleId());
+                Scrambler scrambler = scrambleProvider.get(scramble.getScramblerId());
+                Puzzle puzzle = puzzleProvider.get(scrambler.getScramblerInfo().getPuzzleId());
+                Tipper tipper = tipperProvider.get(puzzle.getPuzzleInfo().getPuzzleId());
 
                 String tips = "";
                 if (tipper != null) {

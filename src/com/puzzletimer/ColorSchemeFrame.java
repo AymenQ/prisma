@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.HashMap;
-import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,14 +21,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableModel;
 
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.graphics.algebra.Vector3;
+import com.puzzletimer.models.ColorScheme;
+import com.puzzletimer.models.ColorScheme.FaceColor;
 import com.puzzletimer.puzzles.Puzzle;
-import com.puzzletimer.puzzles.PuzzleBuilder;
+import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.state.ColorListener;
 import com.puzzletimer.state.ColorManager;
 
@@ -43,7 +42,7 @@ public class ColorSchemeFrame extends JFrame {
     private JButton buttonDefault;
     private JButton buttonOk;
 
-    public ColorSchemeFrame(final ColorManager colorManager) {
+    public ColorSchemeFrame(final PuzzleProvider puzzleProvider, final ColorManager colorManager) {
         super();
 
         setMinimumSize(new Dimension(480, 600));
@@ -54,9 +53,8 @@ public class ColorSchemeFrame extends JFrame {
         createComponents();
 
         // combo box
-        Puzzle[] puzzles = PuzzleBuilder.getPuzzles();
         Puzzle defaultPuzzle = null;
-        for (Puzzle puzzle : puzzles) {
+        for (Puzzle puzzle : puzzleProvider.getAll()) {
             if (puzzle.getPuzzleInfo().getPuzzleId().equals("RUBIKS-CUBE")) {
                 defaultPuzzle = puzzle;
             }
@@ -69,10 +67,10 @@ public class ColorSchemeFrame extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 Puzzle puzzle =
                     (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
-                HashMap<String, Color> colors =
-                    colorManager.getColors(puzzle.getPuzzleInfo().getPuzzleId());
+                ColorScheme colorScheme =
+                    colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
 
-                update(puzzle, colors);
+                update(puzzle, colorScheme);
             }
         });
         this.comboBoxPuzzle.setSelectedItem(defaultPuzzle);
@@ -95,18 +93,18 @@ public class ColorSchemeFrame extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 Puzzle puzzle =
                     (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
-                String puzzleId =
-                    puzzle.getPuzzleInfo().getPuzzleId();
-                String faceId =
-                    (String) ColorSchemeFrame.this.table.getModel().getValueAt(
-                        ColorSchemeFrame.this.table.getSelectedRow(), 0);
+                ColorScheme colorScheme =
+                    colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
+                FaceColor faceColor =
+                    colorScheme.getFaceColors()[ColorSchemeFrame.this.table.getSelectedRow()];
 
                 Color color = JColorChooser.showDialog(
                     ColorSchemeFrame.this,
-                    faceId + " Color",
-                    colorManager.getColors(puzzleId).get(faceId));
+                    faceColor.getFaceDescription() + " Color",
+                    faceColor.getColor());
                 if (color != null) {
-                    colorManager.setColor(puzzleId, faceId, color);
+                    faceColor.setColor(color);
+                    colorManager.setColorScheme(colorScheme);
                 }
             }
         });
@@ -116,15 +114,15 @@ public class ColorSchemeFrame extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 Puzzle puzzle =
                     (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
-                String puzzleId =
-                    puzzle.getPuzzleInfo().getPuzzleId();
+                ColorScheme colorScheme =
+                    colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
 
-                TableModel tableModel = ColorSchemeFrame.this.table.getModel();
-                for (int row : ColorSchemeFrame.this.table.getSelectedRows()) {
-                    colorManager.setDefaultColor(
-                        puzzleId,
-                        (String) tableModel.getValueAt(row, 0));
+                for (int index : ColorSchemeFrame.this.table.getSelectedRows()) {
+                    FaceColor faceColor = colorScheme.getFaceColors()[index];
+                    faceColor.setColor(faceColor.getDefaultColor());
                 }
+
+                colorManager.setColorScheme(colorScheme);
             }
         });
 
@@ -140,12 +138,12 @@ public class ColorSchemeFrame extends JFrame {
         // update on colors updated events
         colorManager.addColorListener(new ColorListener() {
             @Override
-            public void colorSchemeUpdated(String puzzleId, HashMap<String, Color> colors) {
+            public void colorSchemeUpdated(ColorScheme colorScheme) {
                 Puzzle puzzle =
                     (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
 
-                if (puzzle.getPuzzleInfo().getPuzzleId().equals(puzzleId)) {
-                    update(puzzle, colors);
+                if (puzzle.getPuzzleInfo().getPuzzleId().equals(colorScheme.getPuzzleId())) {
+                    update(puzzle, colorScheme);
                 }
             }
         });
@@ -225,9 +223,9 @@ public class ColorSchemeFrame extends JFrame {
         }
     }
 
-    private void update(Puzzle puzzle, HashMap<String, Color> colors) {
+    private void update(Puzzle puzzle, ColorScheme colorScheme) {
         // puzzle viewer
-        this.panel3D.mesh = puzzle.getScrambledPuzzleMesh(colors, new String[] { });
+        this.panel3D.mesh = puzzle.getScrambledPuzzleMesh(colorScheme, new String[] { });
         this.panel3D.repaint();
 
         // color table
@@ -249,11 +247,10 @@ public class ColorSchemeFrame extends JFrame {
             tableModel.addColumn(column);
         }
 
-        TreeSet<String> orderedKeys = new TreeSet<String>(colors.keySet());
-        for (String key : orderedKeys) {
+        for (FaceColor faceColor : colorScheme.getFaceColors()) {
             tableModel.addRow(new Object[] {
-                key,
-                colors.get(key),
+                faceColor.getFaceDescription(),
+                faceColor.getColor(),
             });
         }
 

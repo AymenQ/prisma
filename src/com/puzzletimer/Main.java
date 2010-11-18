@@ -18,7 +18,13 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.UUID;
 
 import javax.sound.sampled.AudioFormat;
@@ -43,19 +49,27 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.puzzletimer.database.CategoryDAO;
+import com.puzzletimer.database.ColorDAO;
+import com.puzzletimer.database.ConfigurationDAO;
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.models.Category;
+import com.puzzletimer.models.ColorScheme;
+import com.puzzletimer.models.ConfigurationEntry;
 import com.puzzletimer.models.FullSolution;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
 import com.puzzletimer.puzzles.Puzzle;
-import com.puzzletimer.puzzles.PuzzleBuilder;
+import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
-import com.puzzletimer.scramblers.ScramblerBuilder;
+import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
+import com.puzzletimer.state.ColorListener;
 import com.puzzletimer.state.ColorManager;
+import com.puzzletimer.state.ConfigurationListener;
+import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SessionListener;
@@ -71,6 +85,7 @@ import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.timer.KeyboardTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.timer.TimerListener;
+import com.puzzletimer.tips.TipperProvider;
 import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
@@ -84,6 +99,10 @@ public class Main extends JFrame {
     private CategoryManagerFrame categoryManagerDialog;
     private ColorSchemeFrame colorSchemeFrame;
 
+    private PuzzleProvider puzzleProvider;
+    private TipperProvider tipperProvider;
+    private ScramblerProvider scramblerProvider;
+    private ConfigurationManager configurationManager;
     private TimerManager timerManager;
     private CategoryManager categoryManager;
     private ScrambleManager scrambleManager;
@@ -97,45 +116,152 @@ public class Main extends JFrame {
     private boolean timerStopped;
 
     public Main() {
-        Category[] categories = {
-            new Category(null, "2x2x2-CUBE-RANDOM", "2x2x2 cube", false),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube", false),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube one-handed", false),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube blindfolded", false),
-            new Category(null, "RUBIKS-CUBE-RANDOM", "Rubik's cube with feet", false),
-            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 cube", false),
-            new Category(null, "4x4x4-CUBE-RANDOM", "4x4x4 blindfolded", false),
-            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 cube", false),
-            new Category(null, "5x5x5-CUBE-RANDOM", "5x5x5 blindfolded", false),
-            new Category(null, "6x6x6-CUBE-RANDOM", "6x6x6 cube", false),
-            new Category(null, "7x7x7-CUBE-RANDOM", "7x7x7 cube", false),
-            new Category(null, "MEGAMINX-RANDOM", "Megaminx", false),
-            new Category(null, "PYRAMINX-RANDOM", "Pyraminx", false),
-            new Category(null, "SQUARE-1-RANDOM", "Square-1", false),
-            new Category(null, "RUBIKS-CLOCK-RANDOM", "Rubik's clock", false),
-            new Category(null, "EMPTY", "Rubik's magic", false),
-            new Category(null, "EMPTY", "Master magic", false),
-            new Category(null, "RUBIKS-CUBE-FRIDRICH-F2L-TRAINING", "Fridrich - F2L training", true),
-            new Category(null, "RUBIKS-CUBE-FRIDRICH-OLL-TRAINING", "Fridrich - OLL training", true),
-            new Category(null, "RUBIKS-CUBE-FRIDRICH-PLL-TRAINING", "Fridrich - PLL training", true),
-            new Category(null, "RUBIKS-CUBE-3OP-CORNERS-TRAINING", "3OP - Corners training", true),
-            new Category(null, "RUBIKS-CUBE-3OP-CORNERS-PERMUTATION-TRAINING", "3OP - Corners permutation training", true),
-            new Category(null, "RUBIKS-CUBE-3OP-CORNERS-ORIENTATION-TRAINING", "3OP - Corners orientation training", true),
-            new Category(null, "RUBIKS-CUBE-3OP-EDGES-TRAINING", "3OP - Edges training", true),
-            new Category(null, "RUBIKS-CUBE-3OP-EDGES-PERMUTATION-TRAINING", "3OP - Edges permutation training", true),
-            new Category(null, "RUBIKS-CUBE-3OP-EDGES-ORIENTATION-TRAINING", "3OP - Edges orientation training", true),
-            new Category(null, "RUBIKS-CUBE-EASY-CROSS", "Easy cross", true),
-        };
-        Category defaultCategory = categories[1];
+        // make empty database if necessary
+        try {
+            File databaseFile = new File("puzzletimer.h2.db");
+            if (!databaseFile.exists()) {
+                BufferedInputStream input = new BufferedInputStream(getClass().getResourceAsStream("/com/puzzletimer/resources/puzzletimer.h2.db"));
+                FileOutputStream output = new FileOutputStream("puzzletimer.h2.db");
+
+                for (;;) {
+                    int data = input.read();
+                    if (data < 0) {
+                        break;
+                    }
+
+                    output.write(data);
+                }
+
+                input.close();
+                output.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+            // TODO: show error message and quit
+        }
+
+        // connect to database
+        Connection connection = null;
+        try {
+            Class.forName("org.h2.Driver");
+            connection = DriverManager.getConnection("jdbc:h2:puzzletimer;IFEXISTS=TRUE", "sa", "");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+            // TODO: show error message and quit
+        }
+
+        // configuration DAO
+        final ConfigurationDAO configurationDAO = new ConfigurationDAO(connection);
+
+        // color DAO
+        final ColorDAO colorDAO = new ColorDAO(connection);
+
+        // category DAO
+        final CategoryDAO categoryDAO = new CategoryDAO(connection);
+
+
+        // puzzle provider
+        this.puzzleProvider = new PuzzleProvider();
+
+        // tipper provider
+        this.tipperProvider = new TipperProvider();
+
+        // scrambler provider
+        this.scramblerProvider = new ScramblerProvider();
+
+        // configuration manager
+        ConfigurationEntry[] configurationEntries;
+        try {
+            configurationEntries = configurationDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+            // TODO: show error message and quit
+        }
+
+        this.configurationManager = new ConfigurationManager(configurationEntries);
+        this.configurationManager.addConfigurationListener(new ConfigurationListener() {
+            @Override
+            public void configurationEntryUpdated(ConfigurationEntry entry) {
+                try {
+                    configurationDAO.update(entry);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+        });
 
         // timer manager
         this.timerManager = new TimerManager(new KeyboardTimer(this, KeyEvent.VK_SPACE));
 
         // categoryManager
+        Category[] categories;
+        try {
+            categories = categoryDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+            // TODO: show error message and quit
+        }
+
+        UUID currentCategoryId = UUID.fromString(
+            this.configurationManager.getConfigurationEntry("CURRENT-CATEGORY").getValue());
+        Category defaultCategory = null;
+        for (Category category : categories) {
+            if (category.getCategoryId().equals(currentCategoryId)) {
+                defaultCategory = category;
+                break;
+            }
+        }
+
         this.categoryManager = new CategoryManager(categories, defaultCategory);
+        this.categoryManager.addCategoryListener(new CategoryListener() {
+            @Override
+            public void currentCategoryChanged(Category category) {
+                ConfigurationEntry entry =
+                    Main.this.configurationManager.getConfigurationEntry("CURRENT-CATEGORY");
+                entry.setValue(category.getCategoryId().toString());
+                Main.this.configurationManager.setConfigurationEntry(entry);
+            }
+
+            @Override
+            public void categoryAdded(Category category) {
+                try {
+                    categoryDAO.insert(category);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+
+            @Override
+            public void categoryRemoved(Category category) {
+                try {
+                    categoryDAO.delete(category);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+
+            @Override
+            public void categoryUpdated(Category category) {
+                try {
+                    categoryDAO.update(category);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+        });
 
         // scramble manager
-        this.scrambleManager = new ScrambleManager(ScramblerBuilder.getScrambler(defaultCategory.scramblerId));
+        this.scrambleManager = new ScrambleManager(
+            this.scramblerProvider,
+            this.scramblerProvider.get(defaultCategory.scramblerId));
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void currentCategoryChanged(Category category) {
@@ -201,7 +327,26 @@ public class Main extends JFrame {
         });
 
         // color manager
-        this.colorManager = new ColorManager();
+        ColorScheme[] colorSchemes;
+        try {
+            colorSchemes = colorDAO.getAll();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        this.colorManager = new ColorManager(colorSchemes);
+        this.colorManager.addColorListener(new ColorListener() {
+            @Override
+            public void colorSchemeUpdated(ColorScheme colorScheme) {
+                try {
+                    colorDAO.update(colorScheme);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+        });
 
         // stackmat timer input
         this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
@@ -284,32 +429,49 @@ public class Main extends JFrame {
         panelMain.add(createScramblePanel(), "3, 4");
 
         // tips frame
-        this.tipsFrame = new TipsFrame(this.categoryManager, this.scrambleManager);
+        this.tipsFrame = new TipsFrame(
+            this.puzzleProvider,
+            this.tipperProvider,
+            this.scramblerProvider,
+            this.categoryManager,
+            this.scrambleManager);
         this.tipsFrame.setLocationRelativeTo(null);
         this.tipsFrame.setIconImage(icon);
 
         // scramble queue frame
-        this.scrambleQueueFrame = new ScrambleQueueFrame(this.categoryManager, this.scrambleManager);
+        this.scrambleQueueFrame = new ScrambleQueueFrame(
+            this.scramblerProvider,
+            this.categoryManager,
+            this.scrambleManager);
         this.scrambleQueueFrame.setLocationRelativeTo(null);
         this.scrambleQueueFrame.setIconImage(icon);
 
         // history frame
-        this.historyFrame = new HistoryFrame(this.categoryManager, this.solutionManager);
+        this.historyFrame = new HistoryFrame(
+            this.categoryManager,
+            this.solutionManager);
         this.historyFrame.setLocationRelativeTo(null);
         this.historyFrame.setIconImage(icon);
 
         // session summary frame
-        this.sessionSummaryFrame = new SessionSummaryFrame(this.categoryManager, this.sessionManager);
+        this.sessionSummaryFrame = new SessionSummaryFrame(
+            this.categoryManager,
+            this.sessionManager);
         this.sessionSummaryFrame.setLocationRelativeTo(null);
         this.sessionSummaryFrame.setIconImage(icon);
 
         // category manager dialog
-        this.categoryManagerDialog = new CategoryManagerFrame(this.categoryManager);
+        this.categoryManagerDialog = new CategoryManagerFrame(
+            this.puzzleProvider,
+            this.scramblerProvider,
+            this.categoryManager);
         this.categoryManagerDialog.setLocationRelativeTo(null);
         this.categoryManagerDialog.setIconImage(icon);
 
         // color scheme frame
-        this.colorSchemeFrame = new ColorSchemeFrame(this.colorManager);
+        this.colorSchemeFrame = new ColorSchemeFrame(
+            this.puzzleProvider,
+            this.colorManager);
         this.colorSchemeFrame.setLocationRelativeTo(null);
         this.colorSchemeFrame.setIconImage(icon);
     }
@@ -438,10 +600,10 @@ public class Main extends JFrame {
                     new BuiltInCategory(categories[8], 'B', '\0'),
                     new BuiltInCategory(categories[9], '6', '6'),
                     new BuiltInCategory(categories[10], '7', '7'),
-                    new BuiltInCategory(categories[11], 'M', 'M'),
-                    new BuiltInCategory(categories[12], 'P', 'P'),
-                    new BuiltInCategory(categories[13], 'S', '1'),
-                    new BuiltInCategory(categories[14], 'C', 'K'),
+                    new BuiltInCategory(categories[11], 'C', 'K'),
+                    new BuiltInCategory(categories[12], 'M', 'M'),
+                    new BuiltInCategory(categories[13], 'P', 'P'),
+                    new BuiltInCategory(categories[14], 'S', '1'),
                     new BuiltInCategory(categories[15], 'M', 'G'),
                     new BuiltInCategory(categories[16], 'M', 'A'),
                 };
@@ -545,6 +707,7 @@ public class Main extends JFrame {
                 Main.this.timerStopped = true;
 
                 if (Main.this.mixerInfo == null) {
+                    Main.this.timerManager.setTimer(null);
                     return;
                 }
 
@@ -554,7 +717,7 @@ public class Main extends JFrame {
                     targetDataLine.open(Main.this.audioFormat);
                 } catch (LineUnavailableException ex) {
                     // select the default timer
-                    menuItemCtrlKeys.setSelected(true);
+                    menuItemSpaceKey.setSelected(true);
                     Main.this.timerManager.setTimer(new KeyboardTimer(Main.this, KeyEvent.VK_SPACE));
                     return;
                 }
@@ -884,10 +1047,10 @@ public class Main extends JFrame {
 
     private void updateScrambleViewer(String[] sequence) {
         Category currentCategory = Main.this.categoryManager.getCurrentCategory();
-        Scrambler scrambler = ScramblerBuilder.getScrambler(currentCategory.scramblerId);
-        Puzzle puzzle = PuzzleBuilder.getPuzzle(scrambler.getScramblerInfo().getPuzzleId());
-        HashMap<String, Color> colors = Main.this.colorManager.getColors(puzzle.getPuzzleInfo().getPuzzleId());
-        this.panel3D.mesh = puzzle.getScrambledPuzzleMesh(colors, sequence);
+        Scrambler scrambler = this.scramblerProvider.get(currentCategory.scramblerId);
+        Puzzle puzzle = this.puzzleProvider.get(scrambler.getScramblerInfo().getPuzzleId());
+        ColorScheme colorScheme = this.colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
+        this.panel3D.mesh = puzzle.getScrambledPuzzleMesh(colorScheme, sequence);
         this.panel3D.repaint();
     }
 

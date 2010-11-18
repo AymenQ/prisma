@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.geometry.Plane;
+import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 
 public class Megaminx implements Puzzle {
@@ -30,20 +31,20 @@ public class Megaminx implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+    public Mesh getScrambledPuzzleMesh(ColorScheme colorScheme, String[] sequence) {
         Color[] colorArray = {
-            colors.get("Face 01"),
-            colors.get("Face 02"),
-            colors.get("Face 03"),
-            colors.get("Face 04"),
-            colors.get("Face 05"),
-            colors.get("Face 06"),
-            colors.get("Face 07"),
-            colors.get("Face 08"),
-            colors.get("Face 09"),
-            colors.get("Face 10"),
-            colors.get("Face 11"),
-            colors.get("Face 12"),
+            colorScheme.getFaceColor("FACE-1").getColor(),
+            colorScheme.getFaceColor("FACE-2").getColor(),
+            colorScheme.getFaceColor("FACE-3").getColor(),
+            colorScheme.getFaceColor("FACE-4").getColor(),
+            colorScheme.getFaceColor("FACE-5").getColor(),
+            colorScheme.getFaceColor("FACE-6").getColor(),
+            colorScheme.getFaceColor("FACE-7").getColor(),
+            colorScheme.getFaceColor("FACE-8").getColor(),
+            colorScheme.getFaceColor("FACE-9").getColor(),
+            colorScheme.getFaceColor("FACE-10").getColor(),
+            colorScheme.getFaceColor("FACE-11").getColor(),
+            colorScheme.getFaceColor("FACE-12").getColor(),
         };
 
         Mesh mesh = Mesh.dodecahedron(colorArray)

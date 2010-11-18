@@ -1,12 +1,8 @@
 package com.puzzletimer.state;
 
-import java.awt.Color;
-import java.util.HashMap;
+import com.puzzletimer.models.ColorScheme;
 
 public class ColorListener {
-    public void colorUpdated(String puzzleId, String faceId, Color color) {
-    }
-
-    public void colorSchemeUpdated(String puzzleId, HashMap<String, Color> colors) {
+    public void colorSchemeUpdated(ColorScheme colorScheme) {
     }
 }

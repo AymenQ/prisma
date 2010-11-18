@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.geometry.Plane;
+import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 
 public class Pyraminx implements Puzzle {
@@ -30,12 +31,12 @@ public class Pyraminx implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+    public Mesh getScrambledPuzzleMesh(ColorScheme colorScheme, String[] sequence) {
         Color[] colorArray = {
-            colors.get("Face U"),
-            colors.get("Face R"),
-            colors.get("Face L"),
-            colors.get("Face B"),
+            colorScheme.getFaceColor("FACE-U").getColor(),
+            colorScheme.getFaceColor("FACE-R").getColor(),
+            colorScheme.getFaceColor("FACE-L").getColor(),
+            colorScheme.getFaceColor("FACE-B").getColor(),
         };
 
         Mesh mesh = Mesh.tetrahedron(colorArray);

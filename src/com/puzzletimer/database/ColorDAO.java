@@ -1,0 +1,82 @@
+package com.puzzletimer.database;
+
+import java.awt.Color;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import com.puzzletimer.models.ColorScheme;
+import com.puzzletimer.models.ColorScheme.FaceColor;
+
+public class ColorDAO {
+    private Connection connection;
+
+    public ColorDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+    public ColorScheme[] getAll() throws SQLException {
+        Statement statement = this.connection.createStatement();
+
+        ResultSet resultSet = statement.executeQuery(
+            "SELECT PUZZLE_ID, FACE_ID, FACE_DESCRIPTION, DEFAULT_R, DEFAULT_G, DEFAULT_B, R, G, B FROM COLOR " +
+            "ORDER BY \"ORDER\"");
+
+        HashMap<String, ArrayList<FaceColor>> faceColorMap = new HashMap<String, ArrayList<FaceColor>>();
+        while (resultSet.next()) {
+            String puzzleId = resultSet.getString(1);
+            String faceId = resultSet.getString(2);
+            String faceDescription = resultSet.getString(3);
+            int defaultR = resultSet.getInt(4);
+            int defaultG = resultSet.getInt(5);
+            int defaultB = resultSet.getInt(6);
+            int r = resultSet.getInt(7);
+            int g = resultSet.getInt(8);
+            int b = resultSet.getInt(9);
+
+            if (!faceColorMap.containsKey(puzzleId)) {
+                faceColorMap.put(puzzleId, new ArrayList<FaceColor>());
+            }
+
+            faceColorMap.get(puzzleId).add(
+                new FaceColor(
+                    faceId,
+                    faceDescription,
+                    new Color(defaultR, defaultG, defaultB),
+                    new Color(r, g, b)));
+        }
+
+        ArrayList<ColorScheme> colorSchemes = new ArrayList<ColorScheme>();
+        for (String puzzleId : faceColorMap.keySet()) {
+            FaceColor[] faceColors = new FaceColor[faceColorMap.get(puzzleId).size()];
+            faceColorMap.get(puzzleId).toArray(faceColors);
+            colorSchemes.add(new ColorScheme(puzzleId, faceColors));
+        }
+
+        ColorScheme[] colorSchemesArray = new ColorScheme[colorSchemes.size()];
+        colorSchemes.toArray(colorSchemesArray);
+
+        return colorSchemesArray;
+    }
+
+    public void update(ColorScheme colorScheme) throws SQLException {
+        for (FaceColor faceColor : colorScheme.getFaceColors()) {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "UPDATE COLOR SET R = ?, G = ?, B = ? WHERE PUZZLE_ID = ? AND FACE_ID = ?");
+
+            statement.setInt(1, faceColor.getColor().getRed());
+            statement.setInt(2, faceColor.getColor().getGreen());
+            statement.setInt(3, faceColor.getColor().getBlue());
+            statement.setString(4, colorScheme.getPuzzleId());
+            statement.setString(5, faceColor.getFaceId());
+
+            statement.execute();
+
+            statement.close();
+        }
+    }
+}

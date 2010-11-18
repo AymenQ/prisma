@@ -216,6 +216,11 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     }
 
     @Override
+    public String getTimerId() {
+        return "STACKMAT-TIMER";
+    }
+
+    @Override
     public void dataReceived(byte[] data) {
         // hands status
         for (TimerListener listener : this.listeners) {

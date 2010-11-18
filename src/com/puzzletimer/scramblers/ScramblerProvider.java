@@ -4,16 +4,11 @@ import java.util.HashMap;
 
 import com.puzzletimer.models.ScramblerInfo;
 
-public class ScramblerBuilder {
-    private static Scrambler[] scramblers;
-    private static HashMap<String, Scrambler> scramblerMap;
+public class ScramblerProvider {
+    private Scrambler[] scramblers;
+    private HashMap<String, Scrambler> scramblerMap;
 
-    static {
-        // empty
-        Scrambler empty =
-            new EmptyScrambler(
-                new ScramblerInfo("EMPTY", "OTHER", "Empty scrambler"));
-
+    public ScramblerProvider() {
         // 2x2x2 random
         Scrambler rubiksPocketCubeRandom =
             new RubiksPocketCubeRandomScrambler(
@@ -139,6 +134,11 @@ public class ScramblerBuilder {
                 new ScramblerInfo("7x7x7-CUBE-RANDOM", "7x7x7-CUBE", "Random scrambler"),
                 100);
 
+        // rubiks clock random
+        Scrambler rubiksClockRandom =
+            new RubiksClockRandomScrambler(
+                new ScramblerInfo("RUBIKS-CLOCK-RANDOM", "RUBIKS-CLOCK", "Random scrambler"));
+
         // megaminx random
         Scrambler megaminxRandom =
             new MegaminxRandomScrambler(
@@ -155,13 +155,12 @@ public class ScramblerBuilder {
                 new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"),
                 40);
 
-        // rubiks clock random
-        Scrambler rubiksClockRandom =
-            new RubiksClockRandomScrambler(
-                new ScramblerInfo("RUBIKS-CLOCK-RANDOM", "RUBIKS-CLOCK", "Random scrambler"));
+        // empty
+        Scrambler empty =
+            new EmptyScrambler(
+                new ScramblerInfo("EMPTY", "OTHER", "Empty scrambler"));
 
-        scramblers = new Scrambler[] {
-            empty,
+        this.scramblers = new Scrambler[] {
             rubiksPocketCubeRandom,
             rubiksCubeRandom,
             rubiksCubeFridrichF2LTraining,
@@ -178,23 +177,24 @@ public class ScramblerBuilder {
             professorsCubeRandom,
             vCube6Random,
             vCube7Random,
+            rubiksClockRandom,
             megaminxRandom,
             pyraminxRandom,
             square1Random,
-            rubiksClockRandom,
+            empty,
         };
 
-        scramblerMap = new HashMap<String, Scrambler>();
-        for (Scrambler scrambler : scramblers) {
-            scramblerMap.put(scrambler.getScramblerInfo().getScramblerId(), scrambler);
+        this.scramblerMap = new HashMap<String, Scrambler>();
+        for (Scrambler scrambler : this.scramblers) {
+            this.scramblerMap.put(scrambler.getScramblerInfo().getScramblerId(), scrambler);
         }
     }
 
-    public static Scrambler getScrambler(String scramblerId) {
-        return scramblerMap.get(scramblerId);
+    public Scrambler[] getAll() {
+        return this.scramblers;
     }
 
-    public static Scrambler[] getScramblers() {
-        return scramblers;
+    public Scrambler get(String scramblerId) {
+        return this.scramblerMap.get(scramblerId);
     }
 }

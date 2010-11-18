@@ -16,17 +16,22 @@ public class TimerManager {
     }
 
     public void setTimer(Timer timer) {
-        for (TimerListener listener : this.listeners) {
-            this.currentTimer.removeEventListener(listener);
+        if (this.currentTimer != null) {
+            for (TimerListener listener : this.listeners) {
+                this.currentTimer.removeEventListener(listener);
+            }
+            this.currentTimer.stop();
         }
-        this.currentTimer.stop();
 
         this.currentTimer = timer;
 
-        for (TimerListener listener : this.listeners) {
-            this.currentTimer.addEventListener(listener);
+        if (timer != null) {
+            for (TimerListener listener : this.listeners) {
+                listener.timerChanged(timer);
+                this.currentTimer.addEventListener(listener);
+            }
+            this.currentTimer.start();
         }
-        this.currentTimer.start();
     }
 
     public void addTimerListener(TimerListener listener) {

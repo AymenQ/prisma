@@ -3,6 +3,9 @@ package com.puzzletimer.timer;
 import com.puzzletimer.models.Timing;
 
 public class TimerListener {
+    public void timerChanged(Timer timer) {
+    }
+
     public void leftHandPressed() {
     }
 

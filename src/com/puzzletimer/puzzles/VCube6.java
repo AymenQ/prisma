@@ -7,6 +7,7 @@ import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.algebra.Matrix44;
 import com.puzzletimer.graphics.algebra.Vector3;
 import com.puzzletimer.graphics.geometry.Plane;
+import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 
 public class VCube6 implements Puzzle {
@@ -31,14 +32,14 @@ public class VCube6 implements Puzzle {
     }
 
     @Override
-    public Mesh getScrambledPuzzleMesh(HashMap<String, Color> colors, String[] sequence) {
+    public Mesh getScrambledPuzzleMesh(ColorScheme colorScheme, String[] sequence) {
         Color[] colorArray = {
-            colors.get("Face L"),
-            colors.get("Face B"),
-            colors.get("Face D"),
-            colors.get("Face R"),
-            colors.get("Face F"),
-            colors.get("Face U"),
+            colorScheme.getFaceColor("FACE-L").getColor(),
+            colorScheme.getFaceColor("FACE-B").getColor(),
+            colorScheme.getFaceColor("FACE-D").getColor(),
+            colorScheme.getFaceColor("FACE-R").getColor(),
+            colorScheme.getFaceColor("FACE-F").getColor(),
+            colorScheme.getFaceColor("FACE-U").getColor(),
         };
 
         Mesh mesh = Mesh.cube(colorArray);

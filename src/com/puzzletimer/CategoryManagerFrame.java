@@ -27,9 +27,9 @@ import com.puzzletimer.models.Category;
 import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.models.ScramblerInfo;
 import com.puzzletimer.puzzles.Puzzle;
-import com.puzzletimer.puzzles.PuzzleBuilder;
+import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
-import com.puzzletimer.scramblers.ScramblerBuilder;
+import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 
@@ -48,6 +48,8 @@ class CategoryEditorDialog extends JDialog {
     public CategoryEditorDialog(
             JFrame owner,
             boolean modal,
+            Puzzle[] puzzles,
+            final Scrambler[] scramblers,
             final Category category,
             boolean isEditable,
             final CategoryEditorListener listener) {
@@ -63,7 +65,7 @@ class CategoryEditorDialog extends JDialog {
         this.textFieldDescription.setText(category.description);
 
         // fill puzzles combo box
-        for (Puzzle puzzle : PuzzleBuilder.getPuzzles()) {
+        for (Puzzle puzzle : puzzles) {
             this.comboBoxPuzzle.addItem(puzzle.getPuzzleInfo());
         }
 
@@ -74,7 +76,7 @@ class CategoryEditorDialog extends JDialog {
                 CategoryEditorDialog.this.comboBoxScrambler.removeAllItems();
 
                 PuzzleInfo selectedPuzzle = (PuzzleInfo) CategoryEditorDialog.this.comboBoxPuzzle.getSelectedItem();
-                for (Scrambler scrambler : ScramblerBuilder.getScramblers()) {
+                for (Scrambler scrambler : scramblers) {
                     ScramblerInfo scramblerInfo = scrambler.getScramblerInfo();
                     if (scramblerInfo.getPuzzleId().equals(selectedPuzzle.getPuzzleId())) {
                         CategoryEditorDialog.this.comboBoxScrambler.addItem(scramblerInfo);
@@ -112,7 +114,7 @@ class CategoryEditorDialog extends JDialog {
 
         // select puzzle
         ScramblerInfo categoryScramblerInfo = null;
-        for (Scrambler scrambler : ScramblerBuilder.getScramblers()) {
+        for (Scrambler scrambler : scramblers) {
             ScramblerInfo scramblerInfo = scrambler.getScramblerInfo();
             if (scramblerInfo.getScramblerId().equals(category.scramblerId)) {
                 categoryScramblerInfo = scramblerInfo;
@@ -194,7 +196,10 @@ public class CategoryManagerFrame extends JFrame {
     private JButton buttonRemove;
     private JButton buttonOk;
 
-    public CategoryManagerFrame(final CategoryManager categoryManager) {
+    public CategoryManagerFrame(
+            final PuzzleProvider puzzleProvider,
+            final ScramblerProvider scramblerProvider,
+            final CategoryManager categoryManager) {
         setTitle("Category Manager");
         setMinimumSize(new Dimension(640, 480));
         setPreferredSize(getMinimumSize());
@@ -217,9 +222,9 @@ public class CategoryManagerFrame extends JFrame {
 
                 for (Category category : categories) {
                     ScramblerInfo scramblerInfo =
-                        ScramblerBuilder.getScrambler(category.scramblerId).getScramblerInfo();
+                        scramblerProvider.get(category.scramblerId).getScramblerInfo();
                     PuzzleInfo puzzleInfo =
-                        PuzzleBuilder.getPuzzle(scramblerInfo.getPuzzleId()).getPuzzleInfo();
+                        puzzleProvider.get(scramblerInfo.getPuzzleId()).getPuzzleInfo();
 
                     tableModel.addRow(new Object[] {
                         category.description,
@@ -275,6 +280,8 @@ public class CategoryManagerFrame extends JFrame {
                 CategoryEditorDialog dialog = new CategoryEditorDialog(
                     CategoryManagerFrame.this,
                     true,
+                    puzzleProvider.getAll(),
+                    scramblerProvider.getAll(),
                     category,
                     true,
                     listener);
@@ -300,8 +307,10 @@ public class CategoryManagerFrame extends JFrame {
                 CategoryEditorDialog dialog = new CategoryEditorDialog(
                     CategoryManagerFrame.this,
                     true,
+                    puzzleProvider.getAll(),
+                    scramblerProvider.getAll(),
                     category,
-                    true,
+                    false,
                     listener);
                 dialog.setVisible(true);
             }

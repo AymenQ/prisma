@@ -108,6 +108,17 @@ public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
     }
 
     @Override
+    public String getTimerId() {
+        if (this.keyCode == KeyEvent.VK_CONTROL) {
+            return "KEYBOARD-TIMER-CONTROL";
+        } else if (this.keyCode == KeyEvent.VK_SPACE) {
+            return "KEYBOARD-TIMER-SPACE";
+        }
+
+        return null;
+    }
+
+    @Override
     public void start()
     {
         this.state.addEventListener(this);

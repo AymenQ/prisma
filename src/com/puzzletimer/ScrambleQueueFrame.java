@@ -38,7 +38,7 @@ import com.puzzletimer.models.Scramble;
 import com.puzzletimer.parsers.ScrambleParser;
 import com.puzzletimer.parsers.ScrambleParserBuilder;
 import com.puzzletimer.scramblers.Scrambler;
-import com.puzzletimer.scramblers.ScramblerBuilder;
+import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleListener;
@@ -57,7 +57,10 @@ public class ScrambleQueueFrame extends JFrame {
     private JButton buttonImportFromScrambler;
     private JButton buttonOk;
 
-    public ScrambleQueueFrame(final CategoryManager categoryManager, final ScrambleManager scrambleManager) {
+    public ScrambleQueueFrame(
+            final ScramblerProvider scramblerProvider,
+            final CategoryManager categoryManager,
+            final ScrambleManager scrambleManager) {
         super();
 
         setMinimumSize(new Dimension(640, 480));
@@ -75,11 +78,11 @@ public class ScrambleQueueFrame extends JFrame {
                 // scrambler combobox
                 ScrambleQueueFrame.this.comboBoxScrambler.removeAllItems();
 
-                Scrambler currentScrambler = ScramblerBuilder.getScrambler(
+                Scrambler currentScrambler = scramblerProvider.get(
                     categoryManager.getCurrentCategory().scramblerId);
                 String puzzleId = currentScrambler.getScramblerInfo().getPuzzleId();
 
-                for (Scrambler scrambler : ScramblerBuilder.getScramblers()) {
+                for (Scrambler scrambler : scramblerProvider.getAll()) {
                     if (scrambler.getScramblerInfo().getPuzzleId().equals(puzzleId)) {
                         ScrambleQueueFrame.this.comboBoxScrambler.addItem(scrambler);
                     }
@@ -163,7 +166,7 @@ public class ScrambleQueueFrame extends JFrame {
                 }
 
                 Category category = categoryManager.getCurrentCategory();
-                Scrambler scrambler = ScramblerBuilder.getScrambler(category.scramblerId);
+                Scrambler scrambler = scramblerProvider.get(category.scramblerId);
                 String puzzleId = scrambler.getScramblerInfo().getPuzzleId();
                 ScrambleParser scrambleParser = ScrambleParserBuilder.getScrambleParser(puzzleId);
 
