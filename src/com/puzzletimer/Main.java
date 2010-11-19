@@ -76,6 +76,7 @@ import com.puzzletimer.state.SessionListener;
 import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.state.SolutionListener;
 import com.puzzletimer.state.SolutionManager;
+import com.puzzletimer.state.TimerListener;
 import com.puzzletimer.state.TimerManager;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
@@ -84,7 +85,7 @@ import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.timer.KeyboardTimer;
 import com.puzzletimer.timer.StackmatTimer;
-import com.puzzletimer.timer.TimerListener;
+import com.puzzletimer.timer.Timer;
 import com.puzzletimer.tips.TipperProvider;
 import com.puzzletimer.util.SolutionUtils;
 
@@ -194,8 +195,59 @@ public class Main extends JFrame {
             }
         });
 
+        // stackmat timer input
+        this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
+        this.mixerInfo = null;
+
         // timer manager
-        this.timerManager = new TimerManager(new KeyboardTimer(this, KeyEvent.VK_SPACE));
+        this.timerManager = new TimerManager();
+        this.timerManager.addTimerListener(new TimerListener() {
+            @Override
+            public void timerChanged(Timer timer) {
+                Main.this.configurationManager.setConfigurationEntry(
+                    new ConfigurationEntry("TIMER-TRIGGER", timer.getTimerId()));
+            }
+        });
+
+        // retrieve stackmat timer input device configuration
+        ConfigurationEntry stackmatTimerInputDeviceEntry =
+            this.configurationManager.getConfigurationEntry("STACKMAT-TIMER-INPUT-DEVICE");
+        for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
+            if (stackmatTimerInputDeviceEntry.getValue().equals(mixerInfo.getName())) {
+                this.mixerInfo = mixerInfo;
+                break;
+            }
+        }
+
+        // retrieve timer trigger configuration
+        ConfigurationEntry timerTriggerEntry =
+            this.configurationManager.getConfigurationEntry("TIMER-TRIGGER");
+        Timer timer = null;
+        if (timerTriggerEntry.getValue().equals("KEYBOARD-TIMER-CONTROL")) {
+            timer = new KeyboardTimer(this.timerManager, this, KeyEvent.VK_CONTROL);
+        } else if (timerTriggerEntry.getValue().equals("KEYBOARD-TIMER-SPACE")) {
+            timer = new KeyboardTimer(this.timerManager, this, KeyEvent.VK_SPACE);
+        } else if (timerTriggerEntry.getValue().equals("STACKMAT-TIMER")) {
+            if (this.mixerInfo != null) {
+                TargetDataLine targetDataLine = null;
+                try {
+                    targetDataLine = AudioSystem.getTargetDataLine(Main.this.audioFormat, Main.this.mixerInfo);
+                    targetDataLine.open(Main.this.audioFormat);
+                    timer = new StackmatTimer(this.timerManager, targetDataLine);
+                } catch (LineUnavailableException e) {
+                    e.printStackTrace();
+                    // TODO: show error message?
+                }
+
+                timer = new StackmatTimer(this.timerManager, targetDataLine);
+            } else {
+                timer = new KeyboardTimer(this.timerManager, this, KeyEvent.VK_SPACE);
+            }
+        }
+
+        this.timerManager.setTimer(timer);
+        Main.this.configurationManager.setConfigurationEntry(
+            new ConfigurationEntry("TIMER-TRIGGER", timer.getTimerId()));
 
         // categoryManager
         Category[] categories;
@@ -347,10 +399,6 @@ public class Main extends JFrame {
                 }
             }
         });
-
-        // stackmat timer input
-        this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
-        this.mixerInfo = null;
 
         createComponents();
 
@@ -668,15 +716,20 @@ public class Main extends JFrame {
         menuOptions.add(menuTimerTrigger);
         ButtonGroup timerTriggerGroup = new ButtonGroup();
 
+        ConfigurationEntry timerTriggerEntry =
+            this.configurationManager.getConfigurationEntry("TIMER-TRIGGER");
+
         // menuItemCtrlKeys
         final JRadioButtonMenuItem menuItemCtrlKeys = new JRadioButtonMenuItem("Ctrl keys");
         menuItemCtrlKeys.setMnemonic(KeyEvent.VK_C);
         menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke("ctrl C"));
+        menuItemCtrlKeys.setSelected(timerTriggerEntry.getValue().equals("KEYBOARD-TIMER-CONTROL"));
         menuItemCtrlKeys.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.this.timerStopped = false;
-                Main.this.timerManager.setTimer(new KeyboardTimer(Main.this, KeyEvent.VK_CONTROL));
+                Main.this.timerStopped = true;
+                Timer timer = new KeyboardTimer(Main.this.timerManager, Main.this, KeyEvent.VK_CONTROL);
+                Main.this.timerManager.setTimer(timer);
             }
         });
         menuTimerTrigger.add(menuItemCtrlKeys);
@@ -686,12 +739,13 @@ public class Main extends JFrame {
         final JRadioButtonMenuItem menuItemSpaceKey = new JRadioButtonMenuItem("Space key");
         menuItemSpaceKey.setMnemonic(KeyEvent.VK_S);
         menuItemSpaceKey.setAccelerator(KeyStroke.getKeyStroke(' ', InputEvent.CTRL_MASK));
-        menuItemSpaceKey.setSelected(true);
+        menuItemSpaceKey.setSelected(timerTriggerEntry.getValue().equals("KEYBOARD-TIMER-SPACE"));
         menuItemSpaceKey.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Main.this.timerStopped = false;
-                Main.this.timerManager.setTimer(new KeyboardTimer(Main.this, KeyEvent.VK_SPACE));
+                Main.this.timerStopped = true;
+                Timer timer = new KeyboardTimer(Main.this.timerManager, Main.this, KeyEvent.VK_SPACE);
+                Main.this.timerManager.setTimer(timer);
             }
         });
         menuTimerTrigger.add(menuItemSpaceKey);
@@ -701,6 +755,7 @@ public class Main extends JFrame {
         final JRadioButtonMenuItem menuItemStackmatTimer = new JRadioButtonMenuItem("Stackmat timer");
         menuItemStackmatTimer.setMnemonic(KeyEvent.VK_T);
         menuItemStackmatTimer.setAccelerator(KeyStroke.getKeyStroke("ctrl T"));
+        menuItemStackmatTimer.setSelected(timerTriggerEntry.getValue().equals("STACKMAT-TIMER"));
         menuItemStackmatTimer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -718,11 +773,13 @@ public class Main extends JFrame {
                 } catch (LineUnavailableException ex) {
                     // select the default timer
                     menuItemSpaceKey.setSelected(true);
-                    Main.this.timerManager.setTimer(new KeyboardTimer(Main.this, KeyEvent.VK_SPACE));
+                    Timer defaultTimer = new KeyboardTimer(Main.this.timerManager, Main.this, KeyEvent.VK_SPACE);
+                    Main.this.timerManager.setTimer(defaultTimer);
                     return;
                 }
 
-                Main.this.timerManager.setTimer(new StackmatTimer(targetDataLine));
+                Timer timer = new StackmatTimer(Main.this.timerManager, targetDataLine);
+                Main.this.timerManager.setTimer(timer);
             }
         });
         menuTimerTrigger.add(menuItemStackmatTimer);
@@ -734,19 +791,10 @@ public class Main extends JFrame {
         menuOptions.add(stackmatTimerInputDevice);
         ButtonGroup stackmatTimerInputDeviceGroup = new ButtonGroup();
 
-        // menuItemNone
-        JRadioButtonMenuItem menuItemNone = new JRadioButtonMenuItem("None");
-        menuItemNone.setSelected(true);
-        menuItemNone.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                Main.this.mixerInfo = null;
-            }
-        });
-        stackmatTimerInputDevice.add(menuItemNone);
-        stackmatTimerInputDeviceGroup.add(menuItemNone);
-
         // menuItemDevice
+        ConfigurationEntry stackmatTimerInputDeviceEntry =
+            this.configurationManager.getConfigurationEntry("STACKMAT-TIMER-INPUT-DEVICE");
+
         for (final Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
             Line.Info[] targetLinesInfo =
                 AudioSystem.getTargetLineInfo(new Info(TargetDataLine.class, this.audioFormat));
@@ -764,10 +812,13 @@ public class Main extends JFrame {
             }
 
             JRadioButtonMenuItem menuItemDevice = new JRadioButtonMenuItem(mixerInfo.getName());
+            menuItemDevice.setSelected(stackmatTimerInputDeviceEntry.getValue().equals(mixerInfo.getName()));
             menuItemDevice.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
                     Main.this.mixerInfo = mixerInfo;
+                    Main.this.configurationManager.setConfigurationEntry(
+                        new ConfigurationEntry("STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName()));
                 }
             });
             stackmatTimerInputDevice.add(menuItemDevice);
@@ -775,7 +826,8 @@ public class Main extends JFrame {
 
             if (Main.this.mixerInfo == null) {
                 Main.this.mixerInfo = mixerInfo;
-                menuItemDevice.setSelected(true);
+                this.configurationManager.setConfigurationEntry(
+                    new ConfigurationEntry("STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName()));
             }
         }
 

@@ -1,6 +1,7 @@
-package com.puzzletimer.timer;
+package com.puzzletimer.state;
 
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.timer.Timer;
 
 public class TimerListener {
     public void timerChanged(Timer timer) {

@@ -9,6 +9,7 @@ import java.util.EventListener;
 import javax.swing.JFrame;
 
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.state.TimerManager;
 
 interface TimerStateListener extends EventListener {
     void timerStarted();
@@ -91,20 +92,19 @@ class TimerState {
 }
 
 public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
+    private TimerManager timerManager;
     private JFrame parent;
     private int keyCode;
     private Date start;
     private java.util.Timer repeater;
     private TimerState state;
-    private ArrayList<TimerListener> listeners;
 
-    public KeyboardTimer(JFrame parent, int keyCode)
-    {
+    public KeyboardTimer(TimerManager timerManager, JFrame parent, int keyCode) {
+        this.timerManager = timerManager;
         this.parent = parent;
         this.keyCode = keyCode;
         this.start = null;
         this.state = new TimerState();
-        this.listeners = new ArrayList<TimerListener>();
     }
 
     @Override
@@ -140,9 +140,7 @@ public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
         this.start = new Date();
 
         // timer ready
-        for (TimerListener listener : this.listeners) {
-            listener.timerReady();
-        }
+        this.timerManager.timerReady();
 
         // timer running
         this.repeater = new java.util.Timer();
@@ -150,9 +148,7 @@ public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
             @Override
             public void run() {
                 Timing timing = new Timing(KeyboardTimer.this.start, new Date());
-                for (TimerListener listener : KeyboardTimer.this.listeners) {
-                    listener.timerRunning(timing);
-                }
+                KeyboardTimer.this.timerManager.timerRunning(timing);
             }
         }, 0, 5);
     }
@@ -162,10 +158,8 @@ public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
         this.repeater.cancel();
 
         Timing timing = new Timing(this.start, new Date());
-        for (TimerListener listener : this.listeners) {
-            listener.timerStopped(timing);
-            listener.timerReady();
-        }
+        this.timerManager.timerStopped(timing);
+        this.timerManager.timerReady();
     }
 
     @Override
@@ -173,27 +167,19 @@ public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
         if (keyEvent.getKeyCode() == this.keyCode) {
             switch (keyEvent.getKeyLocation()) {
                 case KeyEvent.KEY_LOCATION_LEFT:
-                    for (TimerListener listener : this.listeners) {
-                        listener.leftHandPressed();
-                    }
+                    this.timerManager.leftHandPressed();
                     this.state.pressLeftButton();
                     break;
 
                 case KeyEvent.KEY_LOCATION_RIGHT:
-                    for (TimerListener listener : this.listeners) {
-                        listener.rightHandPressed();
-                    }
+                    this.timerManager.rightHandPressed();
                     this.state.pressRightButton();
                     break;
 
                 default:
-                    for (TimerListener listener : this.listeners) {
-                        listener.leftHandPressed();
-                    }
+                    this.timerManager.leftHandPressed();
                     this.state.pressLeftButton();
-                    for (TimerListener listener : this.listeners) {
-                        listener.rightHandPressed();
-                    }
+                    this.timerManager.rightHandPressed();
                     this.state.pressRightButton();
                     break;
             }
@@ -205,27 +191,19 @@ public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
         if (keyEvent.getKeyCode() == this.keyCode) {
             switch (keyEvent.getKeyLocation()) {
                 case KeyEvent.KEY_LOCATION_LEFT:
-                    for (TimerListener listener : this.listeners) {
-                        listener.leftHandReleased();
-                    }
+                    this.timerManager.leftHandReleased();
                     this.state.releaseLeftButton();
                     break;
 
                 case KeyEvent.KEY_LOCATION_RIGHT:
-                    for (TimerListener listener : this.listeners) {
-                        listener.rightHandReleased();
-                    }
+                    this.timerManager.rightHandReleased();
                     this.state.releaseRightButton();
                     break;
 
                 default:
-                    for (TimerListener listener : this.listeners) {
-                        listener.leftHandReleased();
-                    }
+                    this.timerManager.leftHandReleased();
                     this.state.releaseLeftButton();
-                    for (TimerListener listener : this.listeners) {
-                        listener.rightHandReleased();
-                    }
+                    this.timerManager.rightHandReleased();
                     this.state.releaseRightButton();
                     break;
             }
@@ -234,15 +212,5 @@ public class KeyboardTimer implements Timer, TimerStateListener, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
-    }
-
-    @Override
-    public void addEventListener(TimerListener listener) {
-        this.listeners.add(listener);
-    }
-
-    @Override
-    public void removeEventListener(TimerListener listener) {
-        this.listeners.remove(listener);
     }
 }
