@@ -1,7 +1,6 @@
 package com.puzzletimer.scramblers;
 
 import java.util.Random;
-import java.util.UUID;
 
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
@@ -27,7 +26,6 @@ public class RubiksPocketCubeRandomScrambler implements Scrambler {
         int orientation = this.random.nextInt(RubiksPocketCubeSolver.N_ORIENTATIONS);
 
         return new Scramble(
-            UUID.randomUUID(),
             getScramblerInfo().getScramblerId(),
             RubiksPocketCubeSolver.generate(permutation, orientation));
     }

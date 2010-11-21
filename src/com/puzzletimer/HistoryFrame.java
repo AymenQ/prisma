@@ -25,7 +25,6 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.models.Category;
-import com.puzzletimer.models.FullSolution;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
@@ -84,14 +83,14 @@ public class HistoryFrame extends JFrame {
         // statistics, table
         solutionManager.addSolutionListener(new SolutionListener() {
             @Override
-            public void solutionsUpdated(FullSolution[] solutions) {
+            public void solutionsUpdated(Solution[] solutions) {
                 int[] selectedRows = new int[solutions.length];
                 for (int i = 0; i < selectedRows.length; i++) {
                     selectedRows[i] = i;
                 }
 
-                updateHistogram(solutions);
-                updateGraph(solutions);
+                HistoryFrame.this.histogramPanel.setSolutions(solutions);
+                HistoryFrame.this.graphPanel.setSolutions(solutions);
                 updateStatistics(solutions, selectedRows);
                 updateTable(solutions);
             }
@@ -103,8 +102,8 @@ public class HistoryFrame extends JFrame {
             new ListSelectionListener() {
                 @Override
                 public void valueChanged(ListSelectionEvent event) {
-                    FullSolution[] solutions = solutionManager.getSolutions();
-                    FullSolution[] selectedSolutions;
+                    Solution[] solutions = solutionManager.getSolutions();
+                    Solution[] selectedSolutions;
 
                     int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
                     if (selectedRows.length <= 0) {
@@ -115,14 +114,14 @@ public class HistoryFrame extends JFrame {
 
                         selectedSolutions = solutions;
                     } else {
-                        selectedSolutions = new FullSolution[selectedRows.length];
+                        selectedSolutions = new Solution[selectedRows.length];
                         for (int i = 0; i < selectedSolutions.length; i++) {
                             selectedSolutions[i] = solutions[selectedRows[i]];
                         }
                     }
 
-                    updateHistogram(selectedSolutions);
-                    updateGraph(selectedSolutions);
+                    HistoryFrame.this.histogramPanel.setSolutions(selectedSolutions);
+                    HistoryFrame.this.graphPanel.setSolutions(selectedSolutions);
                     updateStatistics(selectedSolutions, selectedRows);
                 }
             });
@@ -277,25 +276,7 @@ public class HistoryFrame extends JFrame {
         add(this.buttonOk, "width 100, right");
     }
 
-    private void updateHistogram(FullSolution[] fullSolutions) {
-        Solution[] solutions = new Solution[fullSolutions.length];
-        for (int i = 0; i < solutions.length; i++) {
-            solutions[i] = fullSolutions[i].getSolution();
-        }
-
-        this.histogramPanel.setSolutions(solutions);
-    }
-
-    private void updateGraph(FullSolution[] fullSolutions) {
-        Solution[] solutions = new Solution[fullSolutions.length];
-        for (int i = 0; i < solutions.length; i++) {
-            solutions[i] = fullSolutions[i].getSolution();
-        }
-
-        this.graphPanel.setSolutions(solutions);
-    }
-
-    private void updateStatistics(FullSolution[] solutions, final int[] selectedRows) {
+    private void updateStatistics(Solution[] solutions, final int[] selectedRows) {
         JLabel labels[] = {
             this.labelMean,
             this.labelStandardDeviation,
@@ -368,7 +349,7 @@ public class HistoryFrame extends JFrame {
 
                 Solution[] window = new Solution[size];
                 for (int j = 0; j < size; j++) {
-                    window[j] = solutions[j].getSolution();
+                    window[j] = solutions[j];
                 }
 
                 measures[i].setSolutions(window);
@@ -409,7 +390,7 @@ public class HistoryFrame extends JFrame {
         }
     }
 
-    private void updateTable(FullSolution[] solutions) {
+    private void updateTable(Solution[] solutions) {
         DefaultTableModel tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -420,17 +401,17 @@ public class HistoryFrame extends JFrame {
             tableModel.addColumn(column);
         }
 
-        for (FullSolution completeSolution : solutions) {
+        for (Solution solution : solutions) {
             // start
             DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
-            String sStart = dateFormat.format(completeSolution.getSolution().timing.getStart());
+            String sStart = dateFormat.format(solution.timing.getStart());
 
             // time
-            String sTime = SolutionUtils.formatMinutes(completeSolution.getSolution().timing.getElapsedTime());
+            String sTime = SolutionUtils.formatMinutes(solution.timing.getElapsedTime());
 
             // scramble
             StringBuilder stringBuilder = new StringBuilder();
-            for (String move : completeSolution.getScramble().getSequence()) {
+            for (String move : solution.getScramble().getSequence()) {
                 stringBuilder.append(move + " ");
             }
             String sScramble = stringBuilder.toString().trim();
@@ -438,7 +419,7 @@ public class HistoryFrame extends JFrame {
             tableModel.addRow(new Object[] {
                 sStart,
                 sTime,
-                completeSolution.getSolution().penalty,
+                solution.penalty,
                 sScramble,
             });
         }

@@ -21,7 +21,6 @@ import javax.swing.KeyStroke;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.models.Category;
-import com.puzzletimer.models.FullSolution;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
@@ -61,7 +60,7 @@ public class SessionSummaryFrame extends JFrame {
         // summary
         sessionManager.addSessionListener(new SessionListener() {
             @Override
-            public void solutionsUpdated(FullSolution[] solutions) {
+            public void solutionsUpdated(Solution[] solutions) {
                 updateSummary(categoryManager.getCurrentCategory(), solutions);
             }
         });
@@ -123,17 +122,12 @@ public class SessionSummaryFrame extends JFrame {
         add(this.buttonOk, "width 100, right");
     }
 
-    private void updateSummary(Category currentCategory, FullSolution[] fullSolutions) {
+    private void updateSummary(Category currentCategory, Solution[] solutions) {
         StringBuilder summary = new StringBuilder();
 
         // categoryName
         summary.append(currentCategory.description);
         summary.append("\n");
-
-        Solution[] solutions = new Solution[fullSolutions.length];
-        for (int i = 0; i < solutions.length; i++) {
-            solutions[i] = fullSolutions[i].getSolution();
-        }
 
         if (solutions.length >= 1) {
             // session interval
@@ -259,10 +253,10 @@ public class SessionSummaryFrame extends JFrame {
             }
         }
 
-        for (int i = fullSolutions.length - 1; i >= 0; i--) {
+        for (int i = solutions.length - 1; i >= 0; i--) {
             // index
-            String indexFormat = "%" + ((int) Math.log10(fullSolutions.length) + 1) + "d. ";
-            summary.append(String.format(indexFormat, fullSolutions.length - i));
+            String indexFormat = "%" + ((int) Math.log10(solutions.length) + 1) + "d. ";
+            summary.append(String.format(indexFormat, solutions.length - i));
 
             // time
             String timeFormat = "%" + maxStringLength + "s  ";
@@ -270,7 +264,7 @@ public class SessionSummaryFrame extends JFrame {
 
             // scramble
             StringBuilder sbScramble = new StringBuilder();
-            for (String move : fullSolutions[i].getScramble().getSequence()) {
+            for (String move : solutions[i].getScramble().getSequence()) {
                 sbScramble.append(move + " ");
             }
             summary.append(sbScramble.toString().trim());

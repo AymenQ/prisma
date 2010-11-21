@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.UUID;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -390,7 +389,6 @@ public class ScrambleQueueFrame extends JFrame {
         while (scanner.hasNextLine()) {
             scrambles.add(
                 new Scramble(
-                    UUID.randomUUID(),
                     "",
                     scrambleParser.parse(scanner.nextLine().trim())));
         }

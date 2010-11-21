@@ -52,11 +52,11 @@ import javax.swing.UIManager;
 import com.puzzletimer.database.CategoryDAO;
 import com.puzzletimer.database.ColorDAO;
 import com.puzzletimer.database.ConfigurationDAO;
+import com.puzzletimer.database.SolutionDAO;
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.ConfigurationEntry;
-import com.puzzletimer.models.FullSolution;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
@@ -161,6 +161,9 @@ public class Main extends JFrame {
 
         // category DAO
         final CategoryDAO categoryDAO = new CategoryDAO(connection);
+
+        // solution DAO
+        final SolutionDAO solutionDAO = new SolutionDAO(connection);
 
 
         // puzzle provider
@@ -323,10 +326,48 @@ public class Main extends JFrame {
 
         // solution manager
         this.solutionManager = new SolutionManager();
+        this.solutionManager.addSolutionListener(new SolutionListener() {
+            @Override
+            public void solutionAdded(Solution solution) {
+                try {
+                    solutionDAO.insert(solution);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+
+            @Override
+            public void solutionUpdated(Solution solution) {
+                try {
+                    solutionDAO.update(solution);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+
+            @Override
+            public void solutionRemoved(Solution solution) {
+                try {
+                    solutionDAO.delete(solution);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+            }
+        });
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void currentCategoryChanged(Category category) {
-                Main.this.solutionManager.loadSolutions(new FullSolution[0]);
+                Solution[] solutions = null;
+                try {
+                    solutions = solutionDAO.getAll(category);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    // TODO: show error message
+                }
+                Main.this.solutionManager.loadSolutions(solutions);
             }
         });
         this.timerManager.addTimerListener(new TimerListener() {
@@ -338,14 +379,13 @@ public class Main extends JFrame {
             @Override
             public void timerStopped(Timing timing) {
                 if (!Main.this.timerStopped) {
-                    Scramble scramble = Main.this.scrambleManager.getCurrentScramble();
-                    Solution solution =
+                    Main.this.solutionManager.addSolution(
                         new Solution(
                             UUID.randomUUID(),
-                            scramble.getScrambleId(),
+                            Main.this.categoryManager.getCurrentCategory().getCategoryId(),
+                            Main.this.scrambleManager.getCurrentScramble(),
                             timing,
-                            "");
-                    Main.this.solutionManager.addSolution(new FullSolution(solution, scramble));
+                            ""));
                     Main.this.scrambleManager.changeScramble();
                 }
 
@@ -363,17 +403,17 @@ public class Main extends JFrame {
         });
         this.solutionManager.addSolutionListener(new SolutionListener() {
             @Override
-            public void solutionAdded(FullSolution solution) {
+            public void solutionAdded(Solution solution) {
                 Main.this.sessionManager.addSolution(solution);
             }
 
             @Override
-            public void solutionRemoved(FullSolution solution) {
+            public void solutionRemoved(Solution solution) {
                 Main.this.sessionManager.removeSolution(solution);
             }
 
             @Override
-            public void solutionsUpdated(FullSolution[] solutions) {
+            public void solutionsUpdated(Solution[] solutions) {
                 Main.this.sessionManager.notifyListeners();
             }
         });
@@ -925,7 +965,7 @@ public class Main extends JFrame {
 
         this.sessionManager.addSessionListener(new SessionListener() {
             @Override
-            public void solutionsUpdated(final FullSolution[] solutions) {
+            public void solutionsUpdated(final Solution[] solutions) {
                 JPanel panelTimes = new JPanel();
                 panelTimes.setLayout(new GridBagLayout());
 
@@ -942,7 +982,7 @@ public class Main extends JFrame {
                     c.insets = new Insets(0, 0, 0, 8);
                     panelTimes.add(labelIndex, c);
 
-                    JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].getSolution().timing.getElapsedTime()));
+                    JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].timing.getElapsedTime()));
                     labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                     c.gridx = 2;
                     c.insets = new Insets(0, 0, 0, 16);
@@ -950,18 +990,18 @@ public class Main extends JFrame {
 
                     final JLabel labelPlus2 = new JLabel("+2");
                     labelPlus2.setFont(new Font("Tahoma", Font.PLAIN, 13));
-                    if (!solutions[index].getSolution().penalty.equals("+2")) {
+                    if (!solutions[index].penalty.equals("+2")) {
                         labelPlus2.setForeground(Color.LIGHT_GRAY);
                     }
                     labelPlus2.setCursor(new Cursor(Cursor.HAND_CURSOR));
                     labelPlus2.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            if (!solutions[index].getSolution().penalty.equals("+2")) {
-                                solutions[index].getSolution().penalty = "+2";
+                            if (!solutions[index].penalty.equals("+2")) {
+                                solutions[index].penalty = "+2";
                                 Main.this.solutionManager.updateSolution(solutions[index]);
-                            } else if (solutions[index].getSolution().penalty.equals("+2")) {
-                                solutions[index].getSolution().penalty = "";
+                            } else if (solutions[index].penalty.equals("+2")) {
+                                solutions[index].penalty = "";
                                 Main.this.solutionManager.updateSolution(solutions[index]);
                             }
                         }
@@ -972,18 +1012,18 @@ public class Main extends JFrame {
 
                     final JLabel labelDNF = new JLabel("DNF");
                     labelDNF.setFont(new Font("Tahoma", Font.PLAIN, 13));
-                    if (!solutions[index].getSolution().penalty.equals("DNF")) {
+                    if (!solutions[index].penalty.equals("DNF")) {
                         labelDNF.setForeground(Color.LIGHT_GRAY);
                     }
                     labelDNF.setCursor(new Cursor(Cursor.HAND_CURSOR));
                     labelDNF.addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            if (!solutions[index].getSolution().penalty.equals("DNF")) {
-                                solutions[index].getSolution().penalty = "DNF";
+                            if (!solutions[index].penalty.equals("DNF")) {
+                                solutions[index].penalty = "DNF";
                                 Main.this.solutionManager.updateSolution(solutions[index]);
-                            } else if (solutions[index].getSolution().penalty.equals("DNF")) {
-                                solutions[index].getSolution().penalty = "";
+                            } else if (solutions[index].penalty.equals("DNF")) {
+                                solutions[index].penalty = "";
                                 Main.this.solutionManager.updateSolution(solutions[index]);
                             }
                         }
@@ -1048,13 +1088,13 @@ public class Main extends JFrame {
 
             this.sessionManager.addSessionListener(new SessionListener() {
                 @Override
-                public void solutionsUpdated(FullSolution[] solutions) {
+                public void solutionsUpdated(Solution[] solutions) {
                     if (solutions.length >= measure.getMinimumWindowSize()) {
                         int size = Math.min(solutions.length, measure.getMaximumWindowSize());
 
                         Solution[] window = new Solution[size];
                         for (int i = 0; i < size; i++) {
-                            window[i] = solutions[i].getSolution();
+                            window[i] = solutions[i];
                         }
 
                         measure.setSolutions(window);

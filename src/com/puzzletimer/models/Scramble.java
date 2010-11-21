@@ -1,20 +1,12 @@
 package com.puzzletimer.models;
 
-import java.util.UUID;
-
 public class Scramble {
-    private UUID scrambleId;
     private String scramblerId;
     private String[] sequence;
 
-    public Scramble(UUID scrambleId, String scramblerId, String[] sequence) {
-        this.scrambleId = scrambleId;
+    public Scramble(String scramblerId, String[] sequence) {
         this.scramblerId = scramblerId;
         this.sequence = sequence;
-    }
-
-    public UUID getScrambleId() {
-        return this.scrambleId;
     }
 
     public String getScramblerId() {

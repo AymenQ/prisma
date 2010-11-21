@@ -1,8 +1,8 @@
 package com.puzzletimer.state;
 
-import com.puzzletimer.models.FullSolution;
+import com.puzzletimer.models.Solution;
 
 public class SessionListener {
-    public void solutionsUpdated(FullSolution[] solutions) {
+    public void solutionsUpdated(Solution[] solutions) {
     }
 }

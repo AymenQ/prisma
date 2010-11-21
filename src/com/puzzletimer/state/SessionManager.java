@@ -6,30 +6,30 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.puzzletimer.models.FullSolution;
+import com.puzzletimer.models.Solution;
 
 public class SessionManager {
     private ArrayList<SessionListener> listeners;
-    private SortedSet<FullSolution> solutions;
+    private SortedSet<Solution> solutions;
 
     public SessionManager() {
         this.listeners = new ArrayList<SessionListener>();
-        this.solutions = new TreeSet<FullSolution>(new Comparator<FullSolution>() {
+        this.solutions = new TreeSet<Solution>(new Comparator<Solution>() {
             @Override
-            public int compare(FullSolution solution1, FullSolution solution2) {
-                Date start1 = solution1.getSolution().timing.getStart();
-                Date start2 = solution2.getSolution().timing.getStart();
+            public int compare(Solution solution1, Solution solution2) {
+                Date start1 = solution1.timing.getStart();
+                Date start2 = solution2.timing.getStart();
                 return start2.compareTo(start1);
             }
         });
     }
 
-    public void addSolution(FullSolution solution) {
+    public void addSolution(Solution solution) {
         this.solutions.add(solution);
         notifyListeners();
     }
 
-    public void removeSolution(FullSolution solution) {
+    public void removeSolution(Solution solution) {
         this.solutions.remove(solution);
         notifyListeners();
     }
@@ -40,7 +40,7 @@ public class SessionManager {
     }
 
     public void notifyListeners() {
-        FullSolution[] solutions = new FullSolution[this.solutions.size()];
+        Solution[] solutions = new Solution[this.solutions.size()];
         this.solutions.toArray(solutions);
 
         for (SessionListener listener : this.listeners) {
