@@ -109,8 +109,9 @@ public class Main {
         this.configurationManager = new ConfigurationManager(this.configurationDAO.getAll());
         this.configurationManager.addConfigurationListener(new ConfigurationListener() {
             @Override
-            public void configurationEntryUpdated(ConfigurationEntry entry) {
-                Main.this.configurationDAO.update(entry);
+            public void configurationEntryUpdated(String key, String value) {
+                Main.this.configurationDAO.update(
+                    new ConfigurationEntry(key, value));
             }
         });
 
@@ -131,8 +132,8 @@ public class Main {
 
             @Override
             public void timerChanged(Timer timer) {
-                Main.this.configurationManager.setConfigurationEntry(
-                    new ConfigurationEntry("TIMER-TRIGGER", timer.getTimerId()));
+                Main.this.configurationManager.setConfiguration(
+                    "TIMER-TRIGGER", timer.getTimerId());
             }
         });
 
@@ -155,7 +156,7 @@ public class Main {
         Category[] categories = this.categoryDAO.getAll();
 
         UUID currentCategoryId = UUID.fromString(
-            this.configurationManager.getConfigurationEntry("CURRENT-CATEGORY").getValue());
+            this.configurationManager.getConfiguration("CURRENT-CATEGORY"));
         Category currentCategory = null;
         for (Category category : categories) {
             if (category.getCategoryId().equals(currentCategoryId)) {
@@ -167,10 +168,9 @@ public class Main {
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void currentCategoryChanged(Category category) {
-                Main.this.configurationManager.setConfigurationEntry(
-                    new ConfigurationEntry(
-                        "CURRENT-CATEGORY",
-                        category.getCategoryId().toString()));
+                Main.this.configurationManager.setConfiguration(
+                    "CURRENT-CATEGORY",
+                    category.getCategoryId().toString());
                 Main.this.solutionManager.loadSolutions(Main.this.solutionDAO.getAll(category));
                 Main.this.sessionManager.clearSession();
             }

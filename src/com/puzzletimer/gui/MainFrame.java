@@ -42,7 +42,6 @@ import net.miginfocom.swing.MigLayout;
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.ColorScheme;
-import com.puzzletimer.models.ConfigurationEntry;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
@@ -573,26 +572,26 @@ public class MainFrame extends JFrame {
         this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
         this.mixerInfo = null;
 
-        ConfigurationEntry stackmatTimerInputDeviceEntry =
-            this.configurationManager.getConfigurationEntry("STACKMAT-TIMER-INPUT-DEVICE");
+        String stackmatTimerInputDeviceName =
+            this.configurationManager.getConfiguration("STACKMAT-TIMER-INPUT-DEVICE");
         for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
-            if (stackmatTimerInputDeviceEntry.getValue().equals(mixerInfo.getName())) {
+            if (stackmatTimerInputDeviceName.equals(mixerInfo.getName())) {
                 this.mixerInfo = mixerInfo;
                 break;
             }
         }
 
-        ConfigurationEntry timerTriggerEntry =
-            this.configurationManager.getConfigurationEntry("TIMER-TRIGGER");
-        if (timerTriggerEntry.getValue().equals("KEYBOARD-TIMER-CONTROL")) {
+        String timerTriggerId =
+            this.configurationManager.getConfiguration("TIMER-TRIGGER");
+        if (timerTriggerId.equals("KEYBOARD-TIMER-CONTROL")) {
             this.menuItemCtrlKeys.setSelected(true);
             this.timerManager.setTimer(
                 new KeyboardTimer(this.timerManager, this, KeyEvent.VK_CONTROL));
-        } else if (timerTriggerEntry.getValue().equals("KEYBOARD-TIMER-SPACE")) {
+        } else if (timerTriggerId.equals("KEYBOARD-TIMER-SPACE")) {
             this.menuItemSpaceKey.setSelected(true);
             this.timerManager.setTimer(
                 new KeyboardTimer(this.timerManager, this, KeyEvent.VK_SPACE));
-        } else if (timerTriggerEntry.getValue().equals("STACKMAT-TIMER")) {
+        } else if (timerTriggerId.equals("STACKMAT-TIMER")) {
             if (this.mixerInfo != null) {
                 TargetDataLine targetDataLine = null;
                 try {
@@ -822,13 +821,13 @@ public class MainFrame extends JFrame {
             }
 
             JRadioButtonMenuItem menuItemDevice = new JRadioButtonMenuItem(mixerInfo.getName());
-            menuItemDevice.setSelected(stackmatTimerInputDeviceEntry.getValue().equals(mixerInfo.getName()));
+            menuItemDevice.setSelected(stackmatTimerInputDeviceName.equals(mixerInfo.getName()));
             menuItemDevice.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
                     MainFrame.this.mixerInfo = mixerInfo;
-                    MainFrame.this.configurationManager.setConfigurationEntry(
-                        new ConfigurationEntry("STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName()));
+                    MainFrame.this.configurationManager.setConfiguration(
+                        "STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName());
                 }
             });
             this.stackmatTimerInputDevice.add(menuItemDevice);
@@ -837,8 +836,8 @@ public class MainFrame extends JFrame {
             if (MainFrame.this.mixerInfo == null) {
                 menuItemDevice.setSelected(true);
                 MainFrame.this.mixerInfo = mixerInfo;
-                this.configurationManager.setConfigurationEntry(
-                    new ConfigurationEntry("STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName()));
+                this.configurationManager.setConfiguration(
+                    "STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName());
             }
         }
 

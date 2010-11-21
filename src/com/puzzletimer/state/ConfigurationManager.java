@@ -18,14 +18,14 @@ public class ConfigurationManager {
         }
     }
 
-    public ConfigurationEntry getConfigurationEntry(String key) {
-        return this.entryMap.get(key);
+    public String getConfiguration(String key) {
+        return this.entryMap.get(key).getValue();
     }
 
-    public void setConfigurationEntry(ConfigurationEntry entry) {
-        this.entryMap.put(entry.getKey(), entry);
+    public void setConfiguration(String key, String value) {
+        this.entryMap.put(key, new ConfigurationEntry(key, value));
         for (ConfigurationListener listener : this.listeners) {
-            listener.configurationEntryUpdated(entry);
+            listener.configurationEntryUpdated(key, value);
         }
     }
 
