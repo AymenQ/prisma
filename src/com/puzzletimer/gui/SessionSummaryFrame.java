@@ -33,6 +33,7 @@ import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.util.SolutionUtils;
+import com.puzzletimer.util.StringUtils;
 
 @SuppressWarnings("serial")
 public class SessionSummaryFrame extends JFrame {
@@ -263,11 +264,7 @@ public class SessionSummaryFrame extends JFrame {
             summary.append(String.format(timeFormat, sSolutions[i]));
 
             // scramble
-            StringBuilder sbScramble = new StringBuilder();
-            for (String move : solutions[i].getScramble().getSequence()) {
-                sbScramble.append(move + " ");
-            }
-            summary.append(sbScramble.toString().trim());
+            summary.append(StringUtils.join(" ", solutions[i].getScramble().getSequence()));
             summary.append("\n");
         }
 

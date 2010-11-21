@@ -6,6 +6,7 @@ import java.util.HashMap;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.solvers.RubiksCubeCrossSolver;
 import com.puzzletimer.solvers.RubiksCubeSolver;
+import com.puzzletimer.util.StringUtils;
 
 public class RubiksCubeTipper implements Tipper {
     @Override
@@ -72,12 +73,7 @@ public class RubiksCubeTipper implements Tipper {
 
         tip.append("Optimal cross:\n");
         for (String[] solution : RubiksCubeCrossSolver.solve(crossState)) {
-            StringBuilder crossSolution = new StringBuilder();
-            for (String move : applyX2(solution)) {
-                crossSolution.append(move + " ");
-            }
-
-            tip.append("  " + crossSolution.toString().trim() +  "\n");
+            tip.append("  " + StringUtils.join(" ", applyX2(solution)) +  "\n");
         }
 
         return tip.toString().trim();

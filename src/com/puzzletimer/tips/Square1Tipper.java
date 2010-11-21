@@ -2,6 +2,7 @@ package com.puzzletimer.tips;
 
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.solvers.Square1ShapeSolver;
+import com.puzzletimer.util.StringUtils;
 
 public class Square1Tipper implements Tipper {
     @Override
@@ -11,14 +12,9 @@ public class Square1Tipper implements Tipper {
 
     @Override
     public String getTips(Scramble scramble) {
-        Square1ShapeSolver.State state =
-            Square1ShapeSolver.State.id.applySequence(scramble.getSequence());
+        String[] solution = Square1ShapeSolver.solve(
+            Square1ShapeSolver.State.id.applySequence(scramble.getSequence()));
 
-        StringBuilder tip = new StringBuilder("Optimal cube shape:\n  ");
-        for (String move : Square1ShapeSolver.solve(state)) {
-            tip.append(move + " ");
-        }
-
-        return tip.toString().trim();
+        return "Optimal cube shape:\n  " + StringUtils.join(" ", solution);
     }
 }

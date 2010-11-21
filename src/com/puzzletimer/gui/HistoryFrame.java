@@ -39,6 +39,7 @@ import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.util.SolutionUtils;
+import com.puzzletimer.util.StringUtils;
 
 @SuppressWarnings("serial")
 public class HistoryFrame extends JFrame {
@@ -409,18 +410,11 @@ public class HistoryFrame extends JFrame {
             // time
             String sTime = SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime());
 
-            // scramble
-            StringBuilder stringBuilder = new StringBuilder();
-            for (String move : solution.getScramble().getSequence()) {
-                stringBuilder.append(move + " ");
-            }
-            String sScramble = stringBuilder.toString().trim();
-
             tableModel.addRow(new Object[] {
                 sStart,
                 sTime,
                 solution.getPenalty(),
-                sScramble,
+                StringUtils.join(" ", solution.getScramble().getSequence()),
             });
         }
 

@@ -13,6 +13,7 @@ import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.util.StringUtils;
 
 public class SolutionDAO {
     private Connection connection;
@@ -65,15 +66,10 @@ public class SolutionDAO {
             PreparedStatement statement = this.connection.prepareStatement(
                 "INSERT INTO SOLUTION VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-            StringBuilder sequence = new StringBuilder();
-            for (String move : solution.getScramble().getSequence()) {
-                sequence.append(move + " ");
-            }
-
             statement.setString(1, solution.getSolutionId().toString());
             statement.setString(2, solution.getCategoryId().toString());
             statement.setString(3, solution.getScramble().getScramblerId());
-            statement.setString(4, sequence.toString().trim());
+            statement.setString(4, StringUtils.join(" ", solution.getScramble().getSequence()));
             statement.setTimestamp(5, new Timestamp(solution.getTiming().getStart().getTime()));
             statement.setTimestamp(6, new Timestamp(solution.getTiming().getEnd().getTime()));
             statement.setString(7, solution.getPenalty());
