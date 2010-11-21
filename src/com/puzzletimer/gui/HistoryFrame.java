@@ -404,10 +404,10 @@ public class HistoryFrame extends JFrame {
         for (Solution solution : solutions) {
             // start
             DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
-            String sStart = dateFormat.format(solution.timing.getStart());
+            String sStart = dateFormat.format(solution.getTiming().getStart());
 
             // time
-            String sTime = SolutionUtils.formatMinutes(solution.timing.getElapsedTime());
+            String sTime = SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime());
 
             // scramble
             StringBuilder stringBuilder = new StringBuilder();
@@ -419,7 +419,7 @@ public class HistoryFrame extends JFrame {
             tableModel.addRow(new Object[] {
                 sStart,
                 sTime,
-                solution.penalty,
+                solution.getPenalty(),
                 sScramble,
             });
         }

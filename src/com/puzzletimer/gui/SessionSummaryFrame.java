@@ -131,8 +131,8 @@ public class SessionSummaryFrame extends JFrame {
 
         if (solutions.length >= 1) {
             // session interval
-            Date start = solutions[solutions.length - 1].timing.getStart();
-            Date end = solutions[0].timing.getEnd();
+            Date start = solutions[solutions.length - 1].getTiming().getStart();
+            Date end = solutions[0].getTiming().getEnd();
 
             DateFormat dateTimeFormat =
                 DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);

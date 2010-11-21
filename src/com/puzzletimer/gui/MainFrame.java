@@ -231,31 +231,31 @@ public class MainFrame extends JFrame {
             this.panel.removeAll();
 
             for (int i = 0; i < solutions.length; i++) {
-                final int index = i;
+                final Solution solution = solutions[i];
 
                 JLabel labelIndex = new JLabel(Integer.toString(solutions.length - i) + ".");
                 labelIndex.setFont(new Font("Tahoma", Font.BOLD, 13));
                 this.panel.add(labelIndex);
 
-                JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].timing.getElapsedTime()));
+                JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime()));
                 labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                 this.panel.add(labelTime);
 
                 final JLabel labelPlus2 = new JLabel("+2");
                 labelPlus2.setFont(new Font("Tahoma", Font.PLAIN, 13));
-                if (!solutions[index].penalty.equals("+2")) {
+                if (!solution.getPenalty().equals("+2")) {
                     labelPlus2.setForeground(Color.LIGHT_GRAY);
                 }
                 labelPlus2.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 labelPlus2.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (!solutions[index].penalty.equals("+2")) {
-                            solutions[index].penalty = "+2";
-                            TimesScrollPane.this.solutionManager.updateSolution(solutions[index]);
-                        } else if (solutions[index].penalty.equals("+2")) {
-                            solutions[index].penalty = "";
-                            TimesScrollPane.this.solutionManager.updateSolution(solutions[index]);
+                        if (!solution.getPenalty().equals("+2")) {
+                            TimesScrollPane.this.solutionManager.updateSolution(
+                                solution.setPenalty("+2"));
+                        } else if (solution.getPenalty().equals("+2")) {
+                            TimesScrollPane.this.solutionManager.updateSolution(
+                                solution.setPenalty(""));
                         }
                     }
                 });
@@ -263,19 +263,19 @@ public class MainFrame extends JFrame {
 
                 final JLabel labelDNF = new JLabel("DNF");
                 labelDNF.setFont(new Font("Tahoma", Font.PLAIN, 13));
-                if (!solutions[index].penalty.equals("DNF")) {
+                if (!solution.getPenalty().equals("DNF")) {
                     labelDNF.setForeground(Color.LIGHT_GRAY);
                 }
                 labelDNF.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 labelDNF.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (!solutions[index].penalty.equals("DNF")) {
-                            solutions[index].penalty = "DNF";
-                            TimesScrollPane.this.solutionManager.updateSolution(solutions[index]);
-                        } else if (solutions[index].penalty.equals("DNF")) {
-                            solutions[index].penalty = "";
-                            TimesScrollPane.this.solutionManager.updateSolution(solutions[index]);
+                        if (!solution.getPenalty().equals("DNF")) {
+                            TimesScrollPane.this.solutionManager.updateSolution(
+                                solution.setPenalty("DNF"));
+                        } else if (solution.getPenalty().equals("DNF")) {
+                            TimesScrollPane.this.solutionManager.updateSolution(
+                                solution.setPenalty(""));
                         }
                     }
                 });
@@ -287,7 +287,7 @@ public class MainFrame extends JFrame {
                 labelX.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        TimesScrollPane.this.solutionManager.removeSolution(solutions[index]);
+                        TimesScrollPane.this.solutionManager.removeSolution(solution);
                     }
                 });
                 this.panel.add(labelX, "wrap");

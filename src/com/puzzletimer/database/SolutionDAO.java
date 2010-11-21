@@ -74,9 +74,9 @@ public class SolutionDAO {
             statement.setString(2, solution.getCategoryId().toString());
             statement.setString(3, solution.getScramble().getScramblerId());
             statement.setString(4, sequence.toString().trim());
-            statement.setTimestamp(5, new Timestamp(solution.timing.getStart().getTime()));
-            statement.setTimestamp(6, new Timestamp(solution.timing.getEnd().getTime()));
-            statement.setString(7, solution.penalty);
+            statement.setTimestamp(5, new Timestamp(solution.getTiming().getStart().getTime()));
+            statement.setTimestamp(6, new Timestamp(solution.getTiming().getEnd().getTime()));
+            statement.setString(7, solution.getPenalty());
 
             statement.executeUpdate();
 
@@ -91,8 +91,8 @@ public class SolutionDAO {
             PreparedStatement statement = this.connection.prepareStatement(
                 "UPDATE SOLUTION SET END = ?, PENALTY = ? WHERE SOLUTION_ID = ?");
 
-            statement.setTimestamp(1, new Timestamp(solution.timing.getEnd().getTime()));
-            statement.setString(2, solution.penalty);
+            statement.setTimestamp(1, new Timestamp(solution.getTiming().getEnd().getTime()));
+            statement.setString(2, solution.getPenalty());
             statement.setString(3, solution.getSolutionId().toString());
 
             statement.executeUpdate();

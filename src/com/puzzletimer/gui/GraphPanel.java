@@ -37,7 +37,7 @@ public class GraphPanel extends JPanel {
             long time = SolutionUtils.realTime(solution);
             if (time != Long.MAX_VALUE) {
                 this.solutionTimes.add(time);
-                this.startTimes.add(solution.timing.getStart().getTime());
+                this.startTimes.add(solution.getTiming().getStart().getTime());
             }
         }
 

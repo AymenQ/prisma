@@ -40,15 +40,15 @@ public class SolutionUtils {
     }
 
     public static long realTime(Solution solution) {
-        if (solution.penalty.equals("DNF")) {
+        if (solution.getPenalty().equals("DNF")) {
             return Long.MAX_VALUE;
         }
 
-        if (solution.penalty.equals("+2")) {
-            return solution.timing.getElapsedTime() + 2000;
+        if (solution.getPenalty().equals("+2")) {
+            return solution.getTiming().getElapsedTime() + 2000;
         }
 
-        return solution.timing.getElapsedTime();
+        return solution.getTiming().getElapsedTime();
     }
 
     public static long[] realTimes(Solution[] solutions, boolean filterDNF) {

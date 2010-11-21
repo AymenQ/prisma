@@ -6,8 +6,8 @@ public class Solution {
     private UUID solutionId;
     private UUID categoryId;
     private Scramble scramble;
-    public Timing timing;
-    public String penalty;
+    private Timing timing;
+    private String penalty;
 
     public Solution(UUID solutionId, UUID categoryId, Scramble scramble, Timing timing, String penalty) {
         this.solutionId = solutionId;
@@ -27,5 +27,31 @@ public class Solution {
 
     public Scramble getScramble() {
         return this.scramble;
+    }
+
+    public Timing getTiming() {
+        return this.timing;
+    }
+
+    public Solution setTiming(Timing timing) {
+        return new Solution(
+            this.solutionId,
+            this.categoryId,
+            this.scramble,
+            timing,
+            this.penalty);
+    }
+
+    public String getPenalty() {
+        return this.penalty;
+    }
+
+    public Solution setPenalty(String penalty) {
+        return new Solution(
+            this.solutionId,
+            this.categoryId,
+            this.scramble,
+            this.timing,
+            penalty);
     }
 }

@@ -1,43 +1,53 @@
 package com.puzzletimer.state;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.HashMap;
+import java.util.UUID;
 
 import com.puzzletimer.models.Solution;
 
 public class SolutionManager {
     private ArrayList<SolutionListener> listeners;
-    private SortedSet<Solution> solutions;
+    private HashMap<UUID, Solution> solutions;
 
     public SolutionManager() {
         this.listeners = new ArrayList<SolutionListener>();
-        this.solutions = new TreeSet<Solution>(new Comparator<Solution>() {
-            @Override
-            public int compare(Solution solution1, Solution solution2) {
-                Date start1 = solution1.timing.getStart();
-                Date start2 = solution2.timing.getStart();
-                return start2.compareTo(start1);
-            }
-        });
+        this.solutions = new HashMap<UUID, Solution>();
     }
 
     public Solution[] getSolutions() {
-        return this.solutions.toArray(new Solution[this.solutions.size()]);
+        ArrayList<Solution> solutions =
+            new ArrayList<Solution>(this.solutions.values());
+
+        Collections.sort(solutions,new Comparator<Solution>() {
+            @Override
+            public int compare(Solution solution1, Solution solution2) {
+                Date start1 = solution1.getTiming().getStart();
+                Date start2 = solution2.getTiming().getStart();
+                return start2.compareTo(start1);
+            }
+        });
+
+        Solution[] solutionsArray = new Solution[solutions.size()];
+        solutions.toArray(solutionsArray);
+
+        return solutionsArray;
     }
 
     public void loadSolutions(Solution[] solutions) {
         this.solutions.clear();
-        this.solutions.addAll(Arrays.asList(solutions));
+        for (Solution solution : solutions) {
+            this.solutions.put(solution.getSolutionId(), solution);
+        }
 
         notifyListeners();
     }
 
     public void addSolution(Solution solution) {
-        this.solutions.add(solution);
+        this.solutions.put(solution.getSolutionId(), solution);
 
         for (SolutionListener listener : this.listeners) {
             listener.solutionAdded(solution);
@@ -47,7 +57,7 @@ public class SolutionManager {
     }
 
     public void removeSolution(Solution solution) {
-        this.solutions.remove(solution);
+        this.solutions.remove(solution.getSolutionId());
 
         for (SolutionListener listener : this.listeners) {
             listener.solutionRemoved(solution);
@@ -57,6 +67,8 @@ public class SolutionManager {
     }
 
     public void updateSolution(Solution solution) {
+        this.solutions.put(solution.getSolutionId(), solution);
+
         for (SolutionListener listener : this.listeners) {
             listener.solutionUpdated(solution);
         }
@@ -65,8 +77,7 @@ public class SolutionManager {
     }
 
     public void notifyListeners() {
-        Solution[] solutions = new Solution[this.solutions.size()];
-        this.solutions.toArray(solutions);
+        Solution[] solutions = getSolutions();
 
         for (SolutionListener listener : this.listeners) {
             listener.solutionsUpdated(solutions);

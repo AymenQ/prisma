@@ -213,7 +213,7 @@ public class Main {
 
             @Override
             public void solutionUpdated(Solution solution) {
-                Main.this.sessionManager.notifyListeners();
+                Main.this.sessionManager.updateSolution(solution);
                 Main.this.solutionDAO.update(solution);
             }
 
