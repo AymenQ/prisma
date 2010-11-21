@@ -54,8 +54,8 @@ public class CategoryDAO {
 
             statement.setInt(1, 0);
             statement.setString(2, category.getCategoryId().toString());
-            statement.setString(3, category.scramblerId.toString());
-            statement.setString(4, category.description);
+            statement.setString(3, category.getScramblerId().toString());
+            statement.setString(4, category.getDescription());
             statement.setBoolean(5, category.isUserDefined());
 
             statement.executeUpdate();
@@ -71,8 +71,8 @@ public class CategoryDAO {
             PreparedStatement statement = this.connection.prepareStatement(
                 "UPDATE CATEGORY SET SCRAMBLER_ID = ?, DESCRIPTION = ?, USER_DEFINED = ? WHERE CATEGORY_ID = ?");
 
-            statement.setString(1, category.scramblerId.toString());
-            statement.setString(2, category.description);
+            statement.setString(1, category.getScramblerId().toString());
+            statement.setString(2, category.getDescription());
             statement.setBoolean(3, category.isUserDefined());
             statement.setString(4, category.getCategoryId().toString());
 

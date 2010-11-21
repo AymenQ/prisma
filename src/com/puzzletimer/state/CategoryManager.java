@@ -41,6 +41,13 @@ public class CategoryManager {
     }
 
     public void updateCategory(Category category) {
+        for (int i = 0; i < this.categories.size(); i++) {
+            if (this.categories.get(i).getCategoryId().equals(category.getCategoryId())) {
+                this.categories.set(i, category);
+                break;
+            }
+        }
+
         for (CategoryListener listener : this.listeners) {
             listener.categoryUpdated(category);
         }

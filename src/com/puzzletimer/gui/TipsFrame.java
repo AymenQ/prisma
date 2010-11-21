@@ -50,7 +50,7 @@ public class TipsFrame extends JFrame {
         categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
-                Scrambler scrambler = scrambleProvider.get(currentCategory.scramblerId);
+                Scrambler scrambler = scrambleProvider.get(currentCategory.getScramblerId());
                 Puzzle puzzle = puzzleProvider.get(scrambler.getScramblerInfo().getPuzzleId());
                 setTitle("Tips - " + puzzle.getPuzzleInfo().getDescription());
             }

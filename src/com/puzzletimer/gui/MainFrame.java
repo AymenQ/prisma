@@ -616,7 +616,7 @@ public class MainFrame extends JFrame {
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
-                setTitle("Puzzle Timer - " + currentCategory.description);
+                setTitle("Puzzle Timer - " + currentCategory.getDescription());
             }
         });
 
@@ -716,7 +716,7 @@ public class MainFrame extends JFrame {
                 };
 
                 for (final BuiltInCategory builtInCategory : builtInCategories) {
-                    JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(builtInCategory.category.description);
+                    JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(builtInCategory.category.getDescription());
                     menuItemCategory.setMnemonic(builtInCategory.mnemonic);
                     if (builtInCategory.accelerator != '\0') {
                         menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(builtInCategory.accelerator, InputEvent.CTRL_MASK));
@@ -737,7 +737,7 @@ public class MainFrame extends JFrame {
                 // user defined categories
                 for (final Category category : categories) {
                     if (category.isUserDefined()) {
-                        JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.description);
+                        JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.getDescription());
                         menuItemCategory.setSelected(category == currentCategory);
                         menuItemCategory.addActionListener(new ActionListener() {
                             @Override

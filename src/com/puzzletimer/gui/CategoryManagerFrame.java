@@ -62,7 +62,7 @@ class CategoryEditorDialog extends JDialog {
         createComponents();
 
         // set category description
-        this.textFieldDescription.setText(category.description);
+        this.textFieldDescription.setText(category.getDescription());
 
         // fill puzzles combo box
         for (Puzzle puzzle : puzzles) {
@@ -93,12 +93,12 @@ class CategoryEditorDialog extends JDialog {
         this.buttonOk.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                category.scramblerId =
+                String scramblerId =
                     ((ScramblerInfo) CategoryEditorDialog.this.comboBoxScrambler.getSelectedItem()).getScramblerId();
-                category.description =
+                String description =
                     CategoryEditorDialog.this.textFieldDescription.getText();
 
-                listener.categoryEdited(category);
+                listener.categoryEdited(category.setScramblerId(scramblerId).setDescription(description));
 
                 dispose();
             }
@@ -116,7 +116,7 @@ class CategoryEditorDialog extends JDialog {
         ScramblerInfo categoryScramblerInfo = null;
         for (Scrambler scrambler : scramblers) {
             ScramblerInfo scramblerInfo = scrambler.getScramblerInfo();
-            if (scramblerInfo.getScramblerId().equals(category.scramblerId)) {
+            if (scramblerInfo.getScramblerId().equals(category.getScramblerId())) {
                 categoryScramblerInfo = scramblerInfo;
                 break;
             }
@@ -222,12 +222,12 @@ public class CategoryManagerFrame extends JFrame {
 
                 for (Category category : categories) {
                     ScramblerInfo scramblerInfo =
-                        scramblerProvider.get(category.scramblerId).getScramblerInfo();
+                        scramblerProvider.get(category.getScramblerId()).getScramblerInfo();
                     PuzzleInfo puzzleInfo =
                         puzzleProvider.get(scramblerInfo.getPuzzleId()).getPuzzleInfo();
 
                     tableModel.addRow(new Object[] {
-                        category.description,
+                        category.getDescription(),
                         puzzleInfo.getDescription(),
                         scramblerInfo.getDescription(),
                     });

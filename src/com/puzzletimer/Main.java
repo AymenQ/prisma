@@ -194,7 +194,7 @@ public class Main {
         // scramble manager
         this.scrambleManager = new ScrambleManager(
             this.scramblerProvider,
-            this.scramblerProvider.get(currentCategory.scramblerId));
+            this.scramblerProvider.get(currentCategory.getScramblerId()));
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void currentCategoryChanged(Category category) {

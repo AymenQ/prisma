@@ -72,13 +72,13 @@ public class ScrambleQueueFrame extends JFrame {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 // title
-                setTitle("Scramble Queue - " + currentCategory.description);
+                setTitle("Scramble Queue - " + currentCategory.getDescription());
 
                 // scrambler combobox
                 ScrambleQueueFrame.this.comboBoxScrambler.removeAllItems();
 
                 Scrambler currentScrambler = scramblerProvider.get(
-                    categoryManager.getCurrentCategory().scramblerId);
+                    categoryManager.getCurrentCategory().getScramblerId());
                 String puzzleId = currentScrambler.getScramblerInfo().getPuzzleId();
 
                 for (Scrambler scrambler : scramblerProvider.getAll()) {
@@ -165,7 +165,7 @@ public class ScrambleQueueFrame extends JFrame {
                 }
 
                 Category category = categoryManager.getCurrentCategory();
-                Scrambler scrambler = scramblerProvider.get(category.scramblerId);
+                Scrambler scrambler = scramblerProvider.get(category.getScramblerId());
                 String puzzleId = scrambler.getScramblerInfo().getPuzzleId();
                 ScrambleParser scrambleParser = ScrambleParserBuilder.getScrambleParser(puzzleId);
 

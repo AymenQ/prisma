@@ -52,7 +52,7 @@ public class SessionSummaryFrame extends JFrame {
         categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
-                setTitle("Session Summary - " + currentCategory.description);
+                setTitle("Session Summary - " + currentCategory.getDescription());
             }
         });
         categoryManager.notifyListeners();
@@ -126,7 +126,7 @@ public class SessionSummaryFrame extends JFrame {
         StringBuilder summary = new StringBuilder();
 
         // categoryName
-        summary.append(currentCategory.description);
+        summary.append(currentCategory.getDescription());
         summary.append("\n");
 
         if (solutions.length >= 1) {

@@ -24,7 +24,7 @@ public class ScrambleManager {
 
     public void setCategory(Category category) {
         this.queue.clear();
-        this.currentScrambler = this.scramblerProvider.get(category.scramblerId);
+        this.currentScrambler = this.scramblerProvider.get(category.getScramblerId());
         changeScramble();
         notifyListeners();
     }
