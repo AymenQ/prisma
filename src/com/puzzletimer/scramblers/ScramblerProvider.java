@@ -1,5 +1,6 @@
 package com.puzzletimer.scramblers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.puzzletimer.models.ScramblerInfo;
@@ -9,10 +10,20 @@ public class ScramblerProvider {
     private HashMap<String, Scrambler> scramblerMap;
 
     public ScramblerProvider() {
+        // 2x2x2 importer
+        Scrambler rubiksPocketCubeImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("2x2x2-CUBE-IMPORTER", "2x2x2-CUBE", "Importer scrambler"));
+
         // 2x2x2 random
         Scrambler rubiksPocketCubeRandom =
             new RubiksPocketCubeRandomScrambler(
                 new ScramblerInfo("2x2x2-CUBE-RANDOM", "2x2x2-CUBE", "Random scrambler"));
+
+        // 3x3x3 importer
+        Scrambler rubiksCubeImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-IMPORTER", "RUBIKS-CUBE", "Importer scrambler"));
 
         // 3x3x3 random
         Scrambler rubiksCubeRandom =
@@ -110,11 +121,21 @@ public class ScramblerProvider {
                 new ScramblerInfo("RUBIKS-CUBE-EASY-CROSS", "RUBIKS-CUBE", "Easy cross scrambler"),
                 3);
 
+        // 4x4x4 importer
+        Scrambler rubiksRevengeImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("4x4x4-CUBE-IMPORTER", "4x4x4-CUBE", "Importer scrambler"));
+
         // 4x4x4 random
         Scrambler rubiksRevengeRandom =
             new RubiksRevengeRandomScrambler(
                 new ScramblerInfo("4x4x4-CUBE-RANDOM", "4x4x4-CUBE", "Random scrambler"),
                 40);
+
+        // 5x5x5 importer
+        Scrambler professorsCubeImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("5x5x5-CUBE-IMPORTER", "5x5x5-CUBE", "Importer scrambler"));
 
         // 5x5x5 random
         Scrambler professorsCubeRandom =
@@ -122,11 +143,21 @@ public class ScramblerProvider {
                 new ScramblerInfo("5x5x5-CUBE-RANDOM", "5x5x5-CUBE", "Random scrambler"),
                 60);
 
+        // 6x6x6 importer
+        Scrambler vCube6Importer =
+            new EmptyScrambler(
+                new ScramblerInfo("6x6x6-CUBE-IMPORTER", "6x6x6-CUBE", "Importer scrambler"));
+
         // 6x6x6 random
         Scrambler vCube6Random =
             new VCube6RandomScrambler(
                 new ScramblerInfo("6x6x6-CUBE-RANDOM", "6x6x6-CUBE", "Random scrambler"),
                 80);
+
+        // 7x7x7 importer
+        Scrambler vCube7Importer =
+            new EmptyScrambler(
+                new ScramblerInfo("7x7x7-CUBE-IMPORTER", "7x7x7-CUBE", "Importer scrambler"));
 
         // 7x7x7 random
         Scrambler vCube7Random =
@@ -134,20 +165,40 @@ public class ScramblerProvider {
                 new ScramblerInfo("7x7x7-CUBE-RANDOM", "7x7x7-CUBE", "Random scrambler"),
                 100);
 
+        // rubiks clock importer
+        Scrambler rubiksClockImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("RUBIKS-CLOCK-IMPORTER", "RUBIKS-CLOCK", "Importer scrambler"));
+
         // rubiks clock random
         Scrambler rubiksClockRandom =
             new RubiksClockRandomScrambler(
                 new ScramblerInfo("RUBIKS-CLOCK-RANDOM", "RUBIKS-CLOCK", "Random scrambler"));
+
+        // megaminx importer
+        Scrambler megaminxImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("MEGAMINX-IMPORTER", "MEGAMINX", "Importer scrambler"));
 
         // megaminx random
         Scrambler megaminxRandom =
             new MegaminxRandomScrambler(
                 new ScramblerInfo("MEGAMINX-RANDOM", "MEGAMINX", "Random scrambler"));
 
+        // pyraminx importer
+        Scrambler pyraminxImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("PYRAMINX-IMPORTER", "PYRAMINX", "Importer scrambler"));
+
         // pyraminx random
         Scrambler pyraminxRandom =
             new PyraminxRandomScrambler(
                 new ScramblerInfo("PYRAMINX-RANDOM", "PYRAMINX", "Random scrambler"));
+
+        // pyraminx importer
+        Scrambler square1Importer =
+            new EmptyScrambler(
+                new ScramblerInfo("SQUARE-1-IMPORTER", "SQUARE-1", "Importer scrambler"));
 
         // square-1 random
         Scrambler square1Random =
@@ -155,13 +206,20 @@ public class ScramblerProvider {
                 new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"),
                 40);
 
+        // other importer
+        Scrambler otherImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("OTHER-IMPORTER", "OTHER", "Importer scrambler"));
+
         // empty
         Scrambler empty =
             new EmptyScrambler(
                 new ScramblerInfo("EMPTY", "OTHER", "Empty scrambler"));
 
         this.scramblers = new Scrambler[] {
+            rubiksPocketCubeImporter,
             rubiksPocketCubeRandom,
+            rubiksCubeImporter,
             rubiksCubeRandom,
             rubiksCubeFridrichF2LTraining,
             rubiksCubeFridrichOLLTraining,
@@ -173,14 +231,23 @@ public class ScramblerProvider {
             rubiksCube3OPEdgesPermutationTraining,
             rubiksCube3OPEdgesOrientationTraining,
             rubiksCubeEasyCross,
+            rubiksRevengeImporter,
             rubiksRevengeRandom,
+            professorsCubeImporter,
             professorsCubeRandom,
+            vCube6Importer,
             vCube6Random,
+            vCube7Importer,
             vCube7Random,
+            rubiksClockImporter,
             rubiksClockRandom,
+            megaminxImporter,
             megaminxRandom,
+            pyraminxImporter,
             pyraminxRandom,
+            square1Importer,
             square1Random,
+            otherImporter,
             empty,
         };
 
@@ -191,7 +258,17 @@ public class ScramblerProvider {
     }
 
     public Scrambler[] getAll() {
-        return this.scramblers;
+        ArrayList<Scrambler> scramblers = new ArrayList<Scrambler>();
+        for (Scrambler scrambler : this.scramblers) {
+            if (!scrambler.getScramblerInfo().getScramblerId().endsWith("-IMPORTER")) {
+                scramblers.add(scrambler);
+            }
+        }
+
+        Scrambler[] scramblersArray = new Scrambler[scramblers.size()];
+        scramblers.toArray(scramblersArray);
+
+        return scramblersArray;
     }
 
     public Scrambler get(String scramblerId) {

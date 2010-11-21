@@ -2,12 +2,12 @@ package com.puzzletimer.parsers;
 
 import java.util.HashMap;
 
-public class ScrambleParserBuilder {
-    private static ScrambleParser[] scrambleParsers;
-    private static HashMap<String, ScrambleParser> scrambleParserMap;
+public class ScrambleParserProvider {
+    private ScrambleParser[] scrambleParsers;
+    private HashMap<String, ScrambleParser> scrambleParserMap;
 
-    static {
-        scrambleParsers = new ScrambleParser[] {
+    public ScrambleParserProvider() {
+        this.scrambleParsers = new ScrambleParser[] {
             new EmptyScrambleParser(),
             new MegaminxScrambleParser(),
             new ProfessorsCubeScrambleParser(),
@@ -21,13 +21,13 @@ public class ScrambleParserBuilder {
             new VCube7ScrambleParser(),
         };
 
-        scrambleParserMap = new HashMap<String, ScrambleParser>();
-        for (ScrambleParser scrambleParser : scrambleParsers) {
-            scrambleParserMap.put(scrambleParser.getPuzzleId(), scrambleParser);
+        this.scrambleParserMap = new HashMap<String, ScrambleParser>();
+        for (ScrambleParser scrambleParser : this.scrambleParsers) {
+            this.scrambleParserMap.put(scrambleParser.getPuzzleId(), scrambleParser);
         }
     }
 
-    public static ScrambleParser getScrambleParser(String puzzleId) {
-        return scrambleParserMap.get(puzzleId);
+    public ScrambleParser get(String puzzleId) {
+        return this.scrambleParserMap.get(puzzleId);
     }
 }

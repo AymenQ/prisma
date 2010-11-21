@@ -35,7 +35,7 @@ import net.miginfocom.swing.MigLayout;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.parsers.ScrambleParser;
-import com.puzzletimer.parsers.ScrambleParserBuilder;
+import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
@@ -58,6 +58,7 @@ public class ScrambleQueueFrame extends JFrame {
     private JButton buttonOk;
 
     public ScrambleQueueFrame(
+            final ScrambleParserProvider scrambleParserProvider,
             final ScramblerProvider scramblerProvider,
             final CategoryManager categoryManager,
             final ScrambleManager scrambleManager) {
@@ -168,12 +169,13 @@ public class ScrambleQueueFrame extends JFrame {
                 Category category = categoryManager.getCurrentCategory();
                 Scrambler scrambler = scramblerProvider.get(category.getScramblerId());
                 String puzzleId = scrambler.getScramblerInfo().getPuzzleId();
-                ScrambleParser scrambleParser = ScrambleParserBuilder.getScrambleParser(puzzleId);
+                ScrambleParser scrambleParser = scrambleParserProvider.get(puzzleId);
 
                 Scramble[] scrambles;
                 try {
                     scrambles = loadScramblesFromFile(
                         fileChooser.getSelectedFile(),
+                        puzzleId + "-IMPORTER",
                         scrambleParser);
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(
@@ -377,7 +379,7 @@ public class ScrambleQueueFrame extends JFrame {
         this.buttonExport.setEnabled(nRows > 0);
     }
 
-    private Scramble[] loadScramblesFromFile(File file, ScrambleParser scrambleParser) throws IOException {
+    private Scramble[] loadScramblesFromFile(File file, String scramblerId, ScrambleParser scrambleParser) throws IOException {
         FileInputStream fileInputStream = new FileInputStream(file);
         Scanner scanner = new Scanner(fileInputStream, "UTF-8");
 
@@ -385,7 +387,7 @@ public class ScrambleQueueFrame extends JFrame {
         while (scanner.hasNextLine()) {
             scrambles.add(
                 new Scramble(
-                    "",
+                    scramblerId,
                     scrambleParser.parse(scanner.nextLine().trim())));
         }
 

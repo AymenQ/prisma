@@ -24,6 +24,7 @@ import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.ConfigurationEntry;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
@@ -50,6 +51,7 @@ public class Main {
     private TimerManager timerManager;
     private PuzzleProvider puzzleProvider;
     private ColorManager colorManager;
+    private ScrambleParserProvider scrambleParserProvider;
     private ScramblerProvider scramblerProvider;
     private CategoryManager categoryManager;
     private ScrambleManager scrambleManager;
@@ -96,15 +98,6 @@ public class Main {
         // configuration DAO
         this.configurationDAO = new ConfigurationDAO(connection);
 
-        // color DAO
-        this.colorDAO = new ColorDAO(connection);
-
-        // category DAO
-        this.categoryDAO = new CategoryDAO(connection);
-
-        // solution DAO
-        this.solutionDAO = new SolutionDAO(connection);
-
         // configuration manager
         this.configurationManager = new ConfigurationManager(this.configurationDAO.getAll());
         this.configurationManager.addConfigurationListener(new ConfigurationListener() {
@@ -140,6 +133,9 @@ public class Main {
         // puzzle provider
         this.puzzleProvider = new PuzzleProvider();
 
+        // color DAO
+        this.colorDAO = new ColorDAO(connection);
+
         // color manager
         this.colorManager = new ColorManager(this.colorDAO.getAll());
         this.colorManager.addColorListener(new ColorListener() {
@@ -149,8 +145,14 @@ public class Main {
             }
         });
 
+        // scramble parser provider
+        this.scrambleParserProvider = new ScrambleParserProvider();
+
         // scrambler provider
         this.scramblerProvider = new ScramblerProvider();
+
+        // category DAO
+        this.categoryDAO = new CategoryDAO(connection);
 
         // categoryManager
         Category[] categories = this.categoryDAO.getAll();
@@ -202,6 +204,9 @@ public class Main {
             }
         });
 
+        // solution DAO
+        this.solutionDAO = new SolutionDAO(connection, this.scramblerProvider, this.scrambleParserProvider);
+
         // solution manager
         this.solutionManager = new SolutionManager();
         this.solutionManager.addSolutionListener(new SolutionListener() {
@@ -246,6 +251,7 @@ public class Main {
                     main.timerManager,
                     main.puzzleProvider,
                     main.colorManager,
+                    main.scrambleParserProvider,
                     main.scramblerProvider,
                     main.categoryManager,
                     main.scrambleManager,

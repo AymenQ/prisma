@@ -45,6 +45,7 @@ import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
@@ -507,6 +508,7 @@ public class MainFrame extends JFrame {
     private TimerManager timerManager;
     private PuzzleProvider puzzleProvider;
     private ColorManager colorManager;
+    private ScrambleParserProvider scrambleParserProvider;
     private ScramblerProvider scramblerProvider;
     private CategoryManager categoryManager;
     private ScrambleManager scrambleManager;
@@ -548,12 +550,14 @@ public class MainFrame extends JFrame {
             TimerManager timerManager,
             PuzzleProvider puzzleProvider,
             ColorManager colorManager,
+            ScrambleParserProvider scrambleParserProvider,
             ScramblerProvider scramblerProvider,
             CategoryManager categoryManager,
             ScrambleManager scrambleManager,
             SolutionManager solutionManager,
             SessionManager sessionManager) {
         this.puzzleProvider = puzzleProvider;
+        this.scrambleParserProvider = scrambleParserProvider;
         this.scramblerProvider = scramblerProvider;
         this.configurationManager = configurationManager;
         this.timerManager = timerManager;
@@ -1007,6 +1011,7 @@ public class MainFrame extends JFrame {
 
         // scramble queue frame
         this.scrambleQueueFrame = new ScrambleQueueFrame(
+            this.scrambleParserProvider,
             this.scramblerProvider,
             this.categoryManager,
             this.scrambleManager);

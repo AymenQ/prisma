@@ -13,16 +13,30 @@ import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.parsers.ScrambleParser;
+import com.puzzletimer.parsers.ScrambleParserProvider;
+import com.puzzletimer.scramblers.Scrambler;
+import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.util.StringUtils;
 
 public class SolutionDAO {
     private Connection connection;
+    private ScramblerProvider scramblerProvider;
+    private ScrambleParserProvider scrambleParserProvider;
 
-    public SolutionDAO(Connection connection) {
+    public SolutionDAO(
+            Connection connection,
+            ScramblerProvider scramblerProvider,
+            ScrambleParserProvider scrambleParserProvider) {
         this.connection = connection;
+        this.scramblerProvider = scramblerProvider;
+        this.scrambleParserProvider = scrambleParserProvider;
     }
 
     public Solution[] getAll(Category category) {
+        Scrambler scrambler = this.scramblerProvider.get(category.getScramblerId());
+        ScrambleParser scramblerParser = this.scrambleParserProvider.get(scrambler.getScramblerInfo().getPuzzleId());
+
         ArrayList<Solution> solutions = new ArrayList<Solution>();
 
         try {
@@ -45,8 +59,7 @@ public class SolutionDAO {
                 Date end = resultSet.getTimestamp(6);
                 String penalty = resultSet.getString(7);
 
-                // TODO: should use parser
-                Scramble scramble = new Scramble(scramblerId, sequence.split("\\s+"));
+                Scramble scramble = new Scramble(scramblerId, scramblerParser.parse(sequence));
                 Solution solution = new Solution(solutionId, categoryId, scramble, new Timing(start, end), penalty);
 
                 solutions.add(solution);

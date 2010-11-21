@@ -145,7 +145,7 @@ INSERT INTO SCRAMBLER VALUES
     ( 0, 'PYRAMINX-RANDOM',                              'PYRAMINX',     'Random scrambler',                             FALSE),
     (-1, 'SQUARE-1-IMPORTER',                            'SQUARE-1',     'Importer scrambler',                            TRUE),
     ( 0, 'SQUARE-1-RANDOM',                              'SQUARE-1',     'Random scrambler',                             FALSE),
-    (-1, 'EMPTY-IMPORTER',                               'OTHER',        'Importer scrambler',                            TRUE),
+    (-1, 'OTHER-IMPORTER',                               'OTHER',        'Importer scrambler',                            TRUE),
     ( 0, 'EMPTY',                                        'OTHER',        'Empty scrambler',                              FALSE);
 
 
