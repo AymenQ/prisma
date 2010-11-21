@@ -1,4 +1,4 @@
-package com.puzzletimer;
+package com.puzzletimer.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -312,6 +312,7 @@ public class CategoryManagerFrame extends JFrame {
                     category,
                     false,
                     listener);
+                dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
             }
         });

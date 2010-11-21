@@ -1,4 +1,4 @@
-package com.puzzletimer;
+package com.puzzletimer.gui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

@@ -1,4 +1,4 @@
-package com.puzzletimer;
+package com.puzzletimer.gui;
 
 import java.awt.Color;
 import java.awt.Component;

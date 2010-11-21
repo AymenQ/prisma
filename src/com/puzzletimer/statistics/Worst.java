@@ -15,15 +15,6 @@ public class Worst implements StatisticalMeasure {
     }
 
     @Override
-    public String getDescription() {
-        String description = "Worst Time";
-        if (this.maximumWindowSize < Integer.MAX_VALUE) {
-            description += " (last " + this.maximumWindowSize + ")";
-        }
-        return description;
-    }
-
-    @Override
     public int getMinimumWindowSize() {
         return this.minimumWindowSize;
     }

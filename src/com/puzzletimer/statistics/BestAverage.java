@@ -14,15 +14,6 @@ public class BestAverage implements StatisticalMeasure {
     }
 
     @Override
-    public String getDescription() {
-        String description = "Best Mean";
-        if (this.maximumWindowSize < Integer.MAX_VALUE) {
-            description += " (last " + this.maximumWindowSize + ")";
-        }
-        return description;
-    }
-
-    @Override
     public int getMinimumWindowSize() {
         return this.minimumWindowSize;
     }

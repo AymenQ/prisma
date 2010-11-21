@@ -194,11 +194,13 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private StackmatTimerReader stackmatTimerReader;
     private Date timingStart;
     private java.util.Timer repeater;
+    private boolean ready;
 
     public StackmatTimer(TimerManager timerManager, TargetDataLine targetDataLine) {
         this.timerManager = timerManager;
         this.stackmatTimerReader = new StackmatTimerReader(targetDataLine);
         this.timingStart = null;
+        this.ready = false;
 
         this.stackmatTimerReader.addEventListener(this);
 
@@ -206,7 +208,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.repeater.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (StackmatTimer.this.timingStart != null) {
+                if (StackmatTimer.this.ready && StackmatTimer.this.timingStart != null) {
                     Timing timing = new Timing(StackmatTimer.this.timingStart, new Date());
                     StackmatTimer.this.timerManager.timerRunning(timing);
                 }
@@ -257,17 +259,21 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
         // timer ready
         if (data[0] == 'A' || data[0] == 'I') {
+            this.ready = true;
             this.timerManager.timerReady();
         }
 
         // timer running
-        else if (data[0] == ' ' || data[0] == 'L' || data[0] == 'R') {
+        else if (this.ready && (data[0] == ' ' || data[0] == 'L' || data[0] == 'R')) {
             this.timerManager.timerRunning(timing);
         }
 
         // timer stopped
         else if (data[0] == 'S') {
-            this.timerManager.timerStopped(timing);
+            if (this.ready) {
+                this.ready = false;
+                this.timerManager.timerStopped(timing);
+            }
         }
     }
 
