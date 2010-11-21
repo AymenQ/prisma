@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.UUID;
 
 import javax.sound.sampled.AudioFormat;
@@ -176,25 +175,13 @@ public class Main extends JFrame {
         this.scramblerProvider = new ScramblerProvider();
 
         // configuration manager
-        ConfigurationEntry[] configurationEntries;
-        try {
-            configurationEntries = configurationDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-            // TODO: show error message and quit
-        }
+        ConfigurationEntry[] configurationEntries = configurationDAO.getAll();
 
         this.configurationManager = new ConfigurationManager(configurationEntries);
         this.configurationManager.addConfigurationListener(new ConfigurationListener() {
             @Override
             public void configurationEntryUpdated(ConfigurationEntry entry) {
-                try {
-                    configurationDAO.update(entry);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                configurationDAO.update(entry);
             }
         });
 
@@ -253,14 +240,7 @@ public class Main extends JFrame {
             new ConfigurationEntry("TIMER-TRIGGER", timer.getTimerId()));
 
         // categoryManager
-        Category[] categories;
-        try {
-            categories = categoryDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-            // TODO: show error message and quit
-        }
+        Category[] categories = categoryDAO.getAll();
 
         UUID currentCategoryId = UUID.fromString(
             this.configurationManager.getConfigurationEntry("CURRENT-CATEGORY").getValue());
@@ -284,32 +264,17 @@ public class Main extends JFrame {
 
             @Override
             public void categoryAdded(Category category) {
-                try {
-                    categoryDAO.insert(category);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                categoryDAO.insert(category);
             }
 
             @Override
             public void categoryRemoved(Category category) {
-                try {
-                    categoryDAO.delete(category);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                categoryDAO.delete(category);
             }
 
             @Override
             public void categoryUpdated(Category category) {
-                try {
-                    categoryDAO.update(category);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                categoryDAO.update(category);
             }
         });
 
@@ -329,45 +294,23 @@ public class Main extends JFrame {
         this.solutionManager.addSolutionListener(new SolutionListener() {
             @Override
             public void solutionAdded(Solution solution) {
-                try {
-                    solutionDAO.insert(solution);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                solutionDAO.insert(solution);
             }
 
             @Override
             public void solutionUpdated(Solution solution) {
-                try {
-                    solutionDAO.update(solution);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                solutionDAO.update(solution);
             }
 
             @Override
             public void solutionRemoved(Solution solution) {
-                try {
-                    solutionDAO.delete(solution);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                solutionDAO.delete(solution);
             }
         });
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void currentCategoryChanged(Category category) {
-                Solution[] solutions = null;
-                try {
-                    solutions = solutionDAO.getAll(category);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
-                Main.this.solutionManager.loadSolutions(solutions);
+                Main.this.solutionManager.loadSolutions(solutionDAO.getAll(category));
             }
         });
         this.timerManager.addTimerListener(new TimerListener() {
@@ -419,24 +362,13 @@ public class Main extends JFrame {
         });
 
         // color manager
-        ColorScheme[] colorSchemes;
-        try {
-            colorSchemes = colorDAO.getAll();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-        }
+        ColorScheme[] colorSchemes = colorDAO.getAll();
 
         this.colorManager = new ColorManager(colorSchemes);
         this.colorManager.addColorListener(new ColorListener() {
             @Override
             public void colorSchemeUpdated(ColorScheme colorScheme) {
-                try {
-                    colorDAO.update(colorScheme);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // TODO: show error message
-                }
+                colorDAO.update(colorScheme);
             }
         });
 

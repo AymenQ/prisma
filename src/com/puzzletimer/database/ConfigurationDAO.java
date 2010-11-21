@@ -16,18 +16,23 @@ public class ConfigurationDAO {
         this.connection = connection;
     }
 
-    public ConfigurationEntry[] getAll() throws SQLException {
-        Statement statement = this.connection.createStatement();
-
-        ResultSet resultSet = statement.executeQuery(
-            "SELECT KEY, VALUE FROM CONFIGURATION");
-
+    public ConfigurationEntry[] getAll() {
         ArrayList<ConfigurationEntry> entries = new ArrayList<ConfigurationEntry>();
-        while (resultSet.next()) {
-            String key = resultSet.getString(1);
-            String value = resultSet.getString(2);
 
-            entries.add(new ConfigurationEntry(key, value));
+        try {
+            Statement statement = this.connection.createStatement();
+
+            ResultSet resultSet = statement.executeQuery(
+                "SELECT KEY, VALUE FROM CONFIGURATION");
+
+            while (resultSet.next()) {
+                String key = resultSet.getString(1);
+                String value = resultSet.getString(2);
+
+                entries.add(new ConfigurationEntry(key, value));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
 
         ConfigurationEntry[] entriesArray = new ConfigurationEntry[entries.size()];
@@ -36,15 +41,19 @@ public class ConfigurationDAO {
         return entriesArray;
     }
 
-    public void update(ConfigurationEntry entry) throws SQLException {
-        PreparedStatement statement = this.connection.prepareStatement(
-            "UPDATE CONFIGURATION SET VALUE = ? WHERE KEY = ?");
+    public void update(ConfigurationEntry entry) {
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                "UPDATE CONFIGURATION SET VALUE = ? WHERE KEY = ?");
 
-        statement.setString(1, entry.getValue());
-        statement.setString(2, entry.getKey());
+            statement.setString(1, entry.getValue());
+            statement.setString(2, entry.getKey());
 
-        statement.execute();
+            statement.executeUpdate();
 
-        statement.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 }
