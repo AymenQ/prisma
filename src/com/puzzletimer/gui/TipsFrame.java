@@ -103,8 +103,8 @@ public class TipsFrame extends JFrame {
                 "",
                 "[pref!][]16[pref!]"));
 
-        // labelSessionSummary
-        add(new JLabel("Summary"), "wrap");
+        // labelTips
+        add(new JLabel("Tips"), "wrap");
 
         // textAreaContents
         this.textAreaTips = new JTextArea();
