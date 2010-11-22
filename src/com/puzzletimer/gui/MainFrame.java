@@ -1021,6 +1021,7 @@ public class MainFrame extends JFrame {
         // history frame
         this.historyFrame = new HistoryFrame(
             this.categoryManager,
+            this.scrambleManager,
             this.solutionManager);
         this.historyFrame.setLocationRelativeTo(null);
         this.historyFrame.setIconImage(icon);

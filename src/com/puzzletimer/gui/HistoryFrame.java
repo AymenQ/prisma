@@ -25,9 +25,11 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.models.Category;
+import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
+import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SolutionListener;
 import com.puzzletimer.state.SolutionManager;
 import com.puzzletimer.statistics.Average;
@@ -62,9 +64,14 @@ public class HistoryFrame extends JFrame {
     private JLabel labelBestAverageOf5;
     private JLabel labelBestAverageOf12;
     private JTable table;
+    private JButton buttonRemove;
+    private JButton buttonEnqueueScramble;
     private JButton buttonOk;
 
-    public HistoryFrame(final CategoryManager categoryManager, final SolutionManager solutionManager) {
+    public HistoryFrame(
+            final CategoryManager categoryManager,
+            final ScrambleManager scrambleManager,
+            final SolutionManager solutionManager) {
         super();
 
         setMinimumSize(new Dimension(800, 600));
@@ -124,8 +131,40 @@ public class HistoryFrame extends JFrame {
                     HistoryFrame.this.histogramPanel.setSolutions(selectedSolutions);
                     HistoryFrame.this.graphPanel.setSolutions(selectedSolutions);
                     updateStatistics(selectedSolutions, selectedRows);
+
+                    HistoryFrame.this.buttonEnqueueScramble.setEnabled(HistoryFrame.this.table.getSelectedRowCount() > 0);
+                    HistoryFrame.this.buttonRemove.setEnabled(HistoryFrame.this.table.getSelectedRowCount() > 0);
                 }
             });
+
+        // enqueue scramble button
+        this.buttonEnqueueScramble.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Solution[] solutions = solutionManager.getSolutions();
+
+                int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
+                Scramble[] selectedScrambles = new Scramble[selectedRows.length];
+                for (int i = 0; i < selectedScrambles.length; i++) {
+                    selectedScrambles[i] = solutions[selectedRows[i]].getScramble();
+                }
+
+                scrambleManager.addScrambles(selectedScrambles);
+            }
+        });
+
+        // remove button
+        this.buttonRemove.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Solution[] solutions = solutionManager.getSolutions();
+
+                int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
+                for (int i = 0; i < selectedRows.length; i++) {
+                    solutionManager.removeSolution(solutions[selectedRows[i]]);
+                }
+            }
+        });
 
         // close button
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -152,25 +191,25 @@ public class HistoryFrame extends JFrame {
         setLayout(
             new MigLayout(
                 "fill",
-                "",
+                "[][pref!]",
                 "[pref!][pref!]12[pref!][pref!]12[pref!][pref!]12[pref!][]16[pref!]"));
 
         // labelHistogram
-        add(new JLabel("Histogram"), "wrap");
+        add(new JLabel("Histogram"), "span, wrap");
 
         // histogram
         this.histogramPanel = new HistogramPanel(new Solution[0], 17);
-        add(this.histogramPanel, "growx, height 100, wrap");
+        add(this.histogramPanel, "growx, height 100, span, wrap");
 
         // labelGraph
-        add(new JLabel("Graph"), "wrap");
+        add(new JLabel("Graph"), "span, wrap");
 
         // Graph
         this.graphPanel = new GraphPanel(new Solution[0]);
-        add(this.graphPanel, "growx, height 100, wrap");
+        add(this.graphPanel, "growx, height 100, span, wrap");
 
         // labelStatistics
-        add(new JLabel("Statistics"), "wrap");
+        add(new JLabel("Statistics"), "span, wrap");
 
         // panelStatistics
         JPanel panelStatistics = new JPanel(
@@ -178,7 +217,7 @@ public class HistoryFrame extends JFrame {
                 "fill, insets 0 n 0 n",
                 "[][pref!]32[][pref!]32[][pref!]32[][pref!]",
                 ""));
-        add(panelStatistics, "growx, wrap");
+        add(panelStatistics, "growx, span, wrap");
 
         // labelMean
         panelStatistics.add(new JLabel("Mean:"), "");
@@ -262,7 +301,7 @@ public class HistoryFrame extends JFrame {
 
         // labelTimes
         JLabel labelTimes = new JLabel("Times");
-        add(labelTimes, "wrap");
+        add(labelTimes, "span, wrap");
 
         // table
         this.table = new JTable();
@@ -270,11 +309,21 @@ public class HistoryFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(this.table);
         this.table.setFillsViewportHeight(true);
-        add(scrollPane, "grow, wrap");
+        add(scrollPane, "grow");
+
+        // buttonEnqueueScramble
+        this.buttonEnqueueScramble = new JButton("Enqueue scramble");
+        this.buttonEnqueueScramble.setEnabled(false);
+        add(this.buttonEnqueueScramble, "growx, top, split, flowy");
+
+        // buttonRemove
+        this.buttonRemove = new JButton("Remove");
+        this.buttonRemove.setEnabled(false);
+        add(this.buttonRemove, "growx, top, gaptop 20, split, wrap");
 
         // buttonOk
         this.buttonOk = new JButton("OK");
-        add(this.buttonOk, "width 100, right");
+        add(this.buttonOk, "width 100, right, span");
     }
 
     private void updateStatistics(Solution[] solutions, final int[] selectedRows) {
