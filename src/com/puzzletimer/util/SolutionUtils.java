@@ -1,6 +1,8 @@
 package com.puzzletimer.util;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.puzzletimer.models.Solution;
 
@@ -37,6 +39,71 @@ public class SolutionUtils {
             time / 60000,
             (time % 60000) / 1000,
             (time % 1000) / 10);
+    }
+
+    public static long parseTime(String input) {
+        Pattern pattern;
+        Matcher matcher;
+
+        // 00:00.00
+        pattern = Pattern.compile("\\s*(\\d+):(\\d+)\\.(\\d{1,2})\\s*");
+        matcher = pattern.matcher(input);
+        if (matcher.matches()) {
+            long time = 0;
+
+            // minutes
+            time += 60000 * Integer.parseInt(matcher.group(1));
+
+            // seconds
+            time += 1000 * Integer.parseInt(matcher.group(2));
+
+            // centiseconds
+            int fraction = Integer.parseInt(matcher.group(3));
+            time += fraction < 10 ? 100 * fraction : 10 * fraction;
+
+            return time;
+        }
+
+        // 00:00
+        pattern = Pattern.compile("\\s*(\\d+):(\\d+)\\s*");
+        matcher = pattern.matcher(input);
+        if (matcher.matches()) {
+            long time = 0;
+
+            // minutes
+            time += 60000 * Integer.parseInt(matcher.group(1));
+
+            // seconds
+            time += 1000 * Integer.parseInt(matcher.group(2));
+
+            return time;
+        }
+
+        // 00.00
+        pattern = Pattern.compile("\\s*(\\d+)\\.(\\d{1,2})\\s*");
+        matcher = pattern.matcher(input);
+        if (matcher.matches()) {
+            long time = 0;
+
+            // seconds
+            time += 1000 * Integer.parseInt(matcher.group(1));
+
+            // centiseconds
+            int fraction = Integer.parseInt(matcher.group(2));
+            time += fraction < 10 ? 100 * fraction : 10 * fraction;
+
+            return time;
+        }
+
+        // 00
+        pattern = Pattern.compile("\\s*(\\d+)\\s*");
+        matcher = pattern.matcher(input);
+        if (matcher.matches()) {
+            // seconds
+            return 1000 * Integer.parseInt(matcher.group(1));
+        }
+
+        return 0;
     }
 
     public static long realTime(Solution solution) {

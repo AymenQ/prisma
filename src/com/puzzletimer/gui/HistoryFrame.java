@@ -9,14 +9,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -27,6 +31,7 @@ import net.miginfocom.swing.MigLayout;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
+import com.puzzletimer.models.Timing;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleManager;
@@ -45,6 +50,145 @@ import com.puzzletimer.util.StringUtils;
 
 @SuppressWarnings("serial")
 public class HistoryFrame extends JFrame {
+    private static class SolutionEditingDialog extends JDialog {
+        public static class SolutionEditingDialogListener {
+            public void solutionEdited(Solution solution) {
+            }
+        }
+
+        private JTextField textFieldStart;
+        private JTextField textFieldTime;
+        private JComboBox comboBoxPenalty;
+        private JTextField textFieldScramble;
+        private JButton buttonOk;
+        private JButton buttonCancel;
+
+        public SolutionEditingDialog(
+                JFrame owner,
+                boolean modal,
+                final Solution solution,
+                final SolutionEditingDialogListener listener) {
+            super(owner, modal);
+
+            setTitle("Solution Editor");
+            setMinimumSize(new Dimension(480, 200));
+            setPreferredSize(getMinimumSize());
+
+            createComponents();
+
+            // start
+            DateFormat dateFormat =
+                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+            this.textFieldStart.setText(
+                dateFormat.format(solution.getTiming().getStart()));
+
+            // time
+            this.textFieldTime.setText(
+                SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime()));
+
+            // penalty
+            this.comboBoxPenalty.addItem("");
+            this.comboBoxPenalty.addItem("+2");
+            this.comboBoxPenalty.addItem("DNF");
+            this.comboBoxPenalty.setSelectedItem(solution.getPenalty());
+
+            // scramble
+            this.textFieldScramble.setText(StringUtils.join(" ", solution.getScramble().getSequence()));
+            this.textFieldScramble.setCaretPosition(0);
+
+            // ok button
+            this.buttonOk.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    // timing
+                    long time =
+                        SolutionUtils.parseTime(
+                            SolutionEditingDialog.this.textFieldTime.getText());
+                    Timing timing =
+                        new Timing(
+                            solution.getTiming().getStart(),
+                            new Date(solution.getTiming().getStart().getTime() + time));
+
+                    // penalty
+                    String penalty =
+                        (String) SolutionEditingDialog.this.comboBoxPenalty.getSelectedItem();
+
+                    listener.solutionEdited(
+                        solution
+                            .setTiming(timing)
+                            .setPenalty(penalty));
+
+                    SolutionEditingDialog.this.dispose();
+                }
+            });
+
+            // cancel button
+            this.buttonCancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    SolutionEditingDialog.this.dispose();
+                }
+            });
+
+            // esc key closes window
+            this.getRootPane().registerKeyboardAction(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent arg0) {
+                        SolutionEditingDialog.this.dispose();
+                    }
+                },
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+        }
+
+        private void createComponents() {
+            setLayout(
+                new MigLayout(
+                    "fill, wrap",
+                    "[pref!][fill]",
+                    "[pref!]8[pref!]8[pref!]8[pref!]16[bottom]"));
+
+            // labelStart
+            add(new JLabel("Start:"));
+
+            // textFieldStart
+            this.textFieldStart = new JTextField();
+            this.textFieldStart.setEditable(false);
+            add(this.textFieldStart);
+
+            // labelTime
+            add(new JLabel("Time:"));
+
+            // textFieldTime
+            this.textFieldTime = new JTextField();
+            add(this.textFieldTime);
+
+            // labelPenalty
+            add(new JLabel("Penalty:"));
+
+            // comboBoxPenalty
+            this.comboBoxPenalty = new JComboBox();
+            add(this.comboBoxPenalty);
+
+            // labelScramble
+            add(new JLabel("Scramble:"));
+
+            // textFieldScramble
+            this.textFieldScramble = new JTextField();
+            this.textFieldScramble.setEditable(false);
+            add(this.textFieldScramble);
+
+            // buttonOk
+            this.buttonOk = new JButton("OK");
+            add(this.buttonOk, "right, width 100, span 2, split");
+
+            // buttonCancel
+            this.buttonCancel = new JButton("Cancel");
+            add(this.buttonCancel, "width 100");
+        }
+    }
+
     private HistogramPanel histogramPanel;
     private GraphPanel graphPanel;
     private JLabel labelMean;
@@ -64,8 +208,9 @@ public class HistoryFrame extends JFrame {
     private JLabel labelBestAverageOf5;
     private JLabel labelBestAverageOf12;
     private JTable table;
+    private JButton buttonEdit;
     private JButton buttonRemove;
-    private JButton buttonEnqueueScramble;
+    private JButton buttonEnqueueScrambles;
     private JButton buttonOk;
 
     public HistoryFrame(
@@ -132,24 +277,38 @@ public class HistoryFrame extends JFrame {
                     HistoryFrame.this.graphPanel.setSolutions(selectedSolutions);
                     updateStatistics(selectedSolutions, selectedRows);
 
-                    HistoryFrame.this.buttonEnqueueScramble.setEnabled(HistoryFrame.this.table.getSelectedRowCount() > 0);
-                    HistoryFrame.this.buttonRemove.setEnabled(HistoryFrame.this.table.getSelectedRowCount() > 0);
+                    HistoryFrame.this.buttonEdit.setEnabled(
+                        HistoryFrame.this.table.getSelectedRowCount() == 1);
+                    HistoryFrame.this.buttonRemove.setEnabled(
+                        HistoryFrame.this.table.getSelectedRowCount() > 0);
+                    HistoryFrame.this.buttonEnqueueScrambles.setEnabled(
+                        HistoryFrame.this.table.getSelectedRowCount() > 0);
                 }
             });
 
-        // enqueue scramble button
-        this.buttonEnqueueScramble.addActionListener(new ActionListener() {
+        // edit button
+        this.buttonEdit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Solution[] solutions = solutionManager.getSolutions();
+                Solution solution = solutions[HistoryFrame.this.table.getSelectedRow()];
 
-                int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
-                Scramble[] selectedScrambles = new Scramble[selectedRows.length];
-                for (int i = 0; i < selectedScrambles.length; i++) {
-                    selectedScrambles[i] = solutions[selectedRows[i]].getScramble();
-                }
+                HistoryFrame.SolutionEditingDialog.SolutionEditingDialogListener listener =
+                    new HistoryFrame.SolutionEditingDialog.SolutionEditingDialogListener() {
+                        @Override
+                        public void solutionEdited(Solution solution) {
+                            solutionManager.updateSolution(solution);
+                        }
+                    };
 
-                scrambleManager.addScrambles(selectedScrambles);
+                SolutionEditingDialog solutionEditingDialog =
+                    new SolutionEditingDialog(
+                        HistoryFrame.this,
+                        true,
+                        solution,
+                        listener);
+                solutionEditingDialog.setLocationRelativeTo(null);
+                solutionEditingDialog.setVisible(true);
             }
         });
 
@@ -163,6 +322,22 @@ public class HistoryFrame extends JFrame {
                 for (int i = 0; i < selectedRows.length; i++) {
                     solutionManager.removeSolution(solutions[selectedRows[i]]);
                 }
+            }
+        });
+
+        // enqueue scrambles button
+        this.buttonEnqueueScrambles.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Solution[] solutions = solutionManager.getSolutions();
+
+                int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
+                Scramble[] selectedScrambles = new Scramble[selectedRows.length];
+                for (int i = 0; i < selectedScrambles.length; i++) {
+                    selectedScrambles[i] = solutions[selectedRows[i]].getScramble();
+                }
+
+                scrambleManager.addScrambles(selectedScrambles);
             }
         });
 
@@ -299,8 +474,8 @@ public class HistoryFrame extends JFrame {
         this.labelBestAverageOf12 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelBestAverageOf12, "");
 
-        // labelTimes
-        JLabel labelTimes = new JLabel("Times");
+        // labelSolutions
+        JLabel labelTimes = new JLabel("Solutions");
         add(labelTimes, "span, wrap");
 
         // table
@@ -311,15 +486,20 @@ public class HistoryFrame extends JFrame {
         this.table.setFillsViewportHeight(true);
         add(scrollPane, "grow");
 
-        // buttonEnqueueScramble
-        this.buttonEnqueueScramble = new JButton("Enqueue scramble");
-        this.buttonEnqueueScramble.setEnabled(false);
-        add(this.buttonEnqueueScramble, "growx, top, split, flowy");
+        // buttonEdit
+        this.buttonEdit = new JButton("Edit...");
+        this.buttonEdit.setEnabled(false);
+        add(this.buttonEdit, "growx, top, split 3, flowy");
 
         // buttonRemove
         this.buttonRemove = new JButton("Remove");
         this.buttonRemove.setEnabled(false);
-        add(this.buttonRemove, "growx, top, gaptop 20, split, wrap");
+        add(this.buttonRemove, "growx, top");
+
+        // buttonEnqueueScrambles
+        this.buttonEnqueueScrambles = new JButton("Enqueue scrambles");
+        this.buttonEnqueueScrambles.setEnabled(false);
+        add(this.buttonEnqueueScrambles, "growx, top, gaptop 20, wrap");
 
         // buttonOk
         this.buttonOk = new JButton("OK");
