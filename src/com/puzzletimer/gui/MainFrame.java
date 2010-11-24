@@ -1020,6 +1020,8 @@ public class MainFrame extends JFrame {
 
         // history frame
         this.historyFrame = new HistoryFrame(
+            this.scramblerProvider,
+            this.scrambleParserProvider,
             this.categoryManager,
             this.scrambleManager,
             this.solutionManager);

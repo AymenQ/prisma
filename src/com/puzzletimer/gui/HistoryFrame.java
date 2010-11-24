@@ -9,7 +9,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
@@ -32,6 +35,10 @@ import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.parsers.ScrambleParser;
+import com.puzzletimer.parsers.ScrambleParserProvider;
+import com.puzzletimer.scramblers.Scrambler;
+import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleManager;
@@ -50,6 +57,130 @@ import com.puzzletimer.util.StringUtils;
 
 @SuppressWarnings("serial")
 public class HistoryFrame extends JFrame {
+    private static class SolutionImporterDialog extends JDialog {
+        public static class SolutionImporterListener {
+            public void solutionsImported(Solution[] solutions) {
+            }
+        }
+
+        private JTextArea textAreaContents;
+        private JButton buttonOk;
+        private JButton buttonCancel;
+
+        public SolutionImporterDialog(
+                JFrame owner,
+                boolean modal,
+                final UUID categoryId,
+                final String scramblerId,
+                final ScrambleParser scrambleParser,
+                final SolutionImporterListener listener) {
+            super(owner, modal);
+
+            setTitle("Solution Importer");
+            setMinimumSize(new Dimension(640, 480));
+            setPreferredSize(getMinimumSize());
+
+            createComponents();
+
+            // ok button
+            this.buttonOk.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    String contents =
+                        SolutionImporterDialog.this.textAreaContents.getText();
+
+                    Date start = new Date();
+                    ArrayList<Solution> solutions = new ArrayList<Solution>();
+                    for (String line : contents.split("\n")) {
+                        line = line.trim();
+
+                        // ignore blank lines and comments
+                        if (line.length() == 0 || line.startsWith("#")) {
+                            continue;
+                        }
+
+                        // separate time from scramble
+                        String[] parts = line.split("\\s+", 2);
+
+                        // time
+                        long time = SolutionUtils.parseTime(parts[0]);
+                        Timing timing =
+                            new Timing(
+                                start,
+                                new Date(start.getTime() + time));
+
+                        // scramble
+                        Scramble scramble = new Scramble(scramblerId, new String[0]);
+                        if (parts.length > 1) {
+                            scramble = new Scramble(
+                                scramblerId,
+                                scrambleParser.parse(parts[1]));
+                        }
+
+                        solutions.add(
+                            new Solution(
+                                UUID.randomUUID(),
+                                categoryId,
+                                scramble,
+                                timing,
+                                ""));
+                    }
+
+                    Solution[] solutionsArray = new Solution[solutions.size()];
+                    solutions.toArray(solutionsArray);
+
+                    listener.solutionsImported(solutionsArray);
+
+                    SolutionImporterDialog.this.dispose();
+                }
+            });
+
+            // cancel button
+            this.buttonCancel.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent event) {
+                    SolutionImporterDialog.this.dispose();
+                }
+            });
+
+            // esc key closes window
+            this.getRootPane().registerKeyboardAction(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent arg0) {
+                        SolutionImporterDialog.this.dispose();
+                    }
+                },
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+        }
+
+        private void createComponents() {
+            setLayout(
+                new MigLayout(
+                    "fill",
+                    "",
+                    "[pref!][fill]16[pref!]"));
+
+            // labelSolutions
+            add(new JLabel("Solutions"), "wrap");
+
+            // textAreaContents
+            this.textAreaContents = new JTextArea(
+                "# one solution per line\n" +
+                "# format: time [scramble]");
+            add(this.textAreaContents, "growx, wrap");
+
+            // buttonOk
+            this.buttonOk = new JButton("OK");
+            add(this.buttonOk, "right, width 100, span 2, split");
+
+            // buttonCancel
+            this.buttonCancel = new JButton("Cancel");
+            add(this.buttonCancel, "width 100");
+        }
+    }
+
     private static class SolutionEditingDialog extends JDialog {
         public static class SolutionEditingDialogListener {
             public void solutionEdited(Solution solution) {
@@ -208,12 +339,15 @@ public class HistoryFrame extends JFrame {
     private JLabel labelBestAverageOf5;
     private JLabel labelBestAverageOf12;
     private JTable table;
+    private JButton buttonAddSolutions;
     private JButton buttonEdit;
     private JButton buttonRemove;
     private JButton buttonEnqueueScrambles;
     private JButton buttonOk;
 
     public HistoryFrame(
+            final ScramblerProvider scramblerProvider,
+            final ScrambleParserProvider scrambleParserProvider,
             final CategoryManager categoryManager,
             final ScrambleManager scrambleManager,
             final SolutionManager solutionManager) {
@@ -285,6 +419,38 @@ public class HistoryFrame extends JFrame {
                         HistoryFrame.this.table.getSelectedRowCount() > 0);
                 }
             });
+
+        // add solutions button
+        this.buttonAddSolutions.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SolutionImporterDialog.SolutionImporterListener listener =
+                    new SolutionImporterDialog.SolutionImporterListener() {
+                        @Override
+                        public void solutionsImported(Solution[] solutions) {
+                            for (Solution solution : solutions) {
+                                solutionManager.addSolution(solution);
+                            }
+                        }
+                    };
+
+                Category currentCategory = categoryManager.getCurrentCategory();
+                Scrambler currentScrambler = scramblerProvider.get(currentCategory.getScramblerId());
+                String puzzleId = currentScrambler.getScramblerInfo().getPuzzleId();
+                ScrambleParser scrambleParser = scrambleParserProvider.get(puzzleId);
+
+                SolutionImporterDialog solutionEditingDialog =
+                    new SolutionImporterDialog(
+                        HistoryFrame.this,
+                        true,
+                        currentCategory.getCategoryId(),
+                        currentCategory.getScramblerId(),
+                        scrambleParser,
+                        listener);
+                solutionEditingDialog.setLocationRelativeTo(null);
+                solutionEditingDialog.setVisible(true);
+            }
+        });
 
         // edit button
         this.buttonEdit.addActionListener(new ActionListener() {
@@ -486,10 +652,14 @@ public class HistoryFrame extends JFrame {
         this.table.setFillsViewportHeight(true);
         add(scrollPane, "grow");
 
+        // buttonAddSolutions
+        this.buttonAddSolutions = new JButton("Add solutions...");
+        add(this.buttonAddSolutions, "growx, top, split 4, flowy");
+
         // buttonEdit
         this.buttonEdit = new JButton("Edit...");
         this.buttonEdit.setEnabled(false);
-        add(this.buttonEdit, "growx, top, split 3, flowy");
+        add(this.buttonEdit, "growx, top");
 
         // buttonRemove
         this.buttonRemove = new JButton("Remove");
