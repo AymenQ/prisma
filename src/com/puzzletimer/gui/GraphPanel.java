@@ -77,6 +77,11 @@ public class GraphPanel extends JPanel {
         } else {
             this.startIntervalStart = this.startTimes.get(this.startTimes.size() - 1);
             this.startIntervalEnd = this.startTimes.get(0);
+
+            if (this.startIntervalStart == this.startIntervalEnd) {
+                this.startIntervalStart = this.startTimes.get(0) - 5000;
+                this.startIntervalEnd = this.startTimes.get(0) + 5000;
+            }
         }
 
         // repaint
