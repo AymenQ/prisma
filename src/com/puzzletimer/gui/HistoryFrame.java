@@ -49,6 +49,7 @@ import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
 import com.puzzletimer.statistics.BestMean;
 import com.puzzletimer.statistics.Mean;
+import com.puzzletimer.statistics.Percentile;
 import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
@@ -322,21 +323,23 @@ public class HistoryFrame extends JFrame {
 
     private HistogramPanel histogramPanel;
     private GraphPanel graphPanel;
+
     private JLabel labelMean;
-    private JLabel labelStandardDeviation;
     private JLabel labelBest;
-    private JLabel labelWorst;
     private JLabel labelMeanOf3;
-    private JLabel labelMeanOf10;
-    private JLabel labelMeanOf100;
-    private JLabel labelMeanOf1000;
-    private JLabel labelAverageOf5;
-    private JLabel labelAverageOf12;
-    private JLabel labelAverageOf100;
-    private JLabel labelAverageOf1000;
     private JLabel labelBestMeanOf3;
+    private JLabel labelStandardDeviation;
+    private JLabel labelLowerQuartile;
+    private JLabel labelMeanOf10;
     private JLabel labelBestMeanOf10;
+    private JLabel labelMedian;
+    private JLabel labelMeanOf100;
+    private JLabel labelBestMeanOf100;
+    private JLabel labelUpperQuartile;
+    private JLabel labelAverageOf5;
     private JLabel labelBestAverageOf5;
+    private JLabel labelWorst;
+    private JLabel labelAverageOf12;
     private JLabel labelBestAverageOf12;
     private JTable table;
     private JButton buttonAddSolutions;
@@ -540,14 +543,14 @@ public class HistoryFrame extends JFrame {
 
         // histogram
         this.histogramPanel = new HistogramPanel(new Solution[0], 17);
-        add(this.histogramPanel, "growx, height 100, span, wrap");
+        add(this.histogramPanel, "growx, height 90, span, wrap");
 
         // labelGraph
         add(new JLabel("Graph"), "span, wrap");
 
         // Graph
         this.graphPanel = new GraphPanel(new Solution[0]);
-        add(this.graphPanel, "growx, height 100, span, wrap");
+        add(this.graphPanel, "growx, height 90, span, wrap");
 
         // labelStatistics
         add(new JLabel("Statistics"), "span, wrap");
@@ -557,7 +560,7 @@ public class HistoryFrame extends JFrame {
             new MigLayout(
                 "fill, insets 0 n 0 n",
                 "[][pref!]32[][pref!]32[][pref!]32[][pref!]",
-                ""));
+                "[pref!]1[pref!]1[pref!]1[pref!]1[pref!]"));
         add(panelStatistics, "growx, span, wrap");
 
         // labelMean
@@ -565,75 +568,80 @@ public class HistoryFrame extends JFrame {
         this.labelMean = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelMean, "");
 
-        // labelStandardDeviation
-        panelStatistics.add(new JLabel("Standard Deviation:"), "");
-        this.labelStandardDeviation = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelStandardDeviation, "");
-
         // labelBest
         panelStatistics.add(new JLabel("Best:"), "");
         this.labelBest = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelBest, "");
-
-        // labelWorst
-        panelStatistics.add(new JLabel("Worst:"), "");
-        this.labelWorst = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelWorst, "wrap");
 
         // labelMeanOf3
         panelStatistics.add(new JLabel("Mean of 3:"), "");
         this.labelMeanOf3 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelMeanOf3, "");
 
+        // labelBestMeanOf3
+        panelStatistics.add(new JLabel("Best mean of 3:"), "");
+        this.labelBestMeanOf3 = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelBestMeanOf3, "wrap");
+
+        // labelStandardDeviation
+        panelStatistics.add(new JLabel("Standard Deviation:"), "");
+        this.labelStandardDeviation = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelStandardDeviation, "");
+
+        // labelLowerQuartile
+        panelStatistics.add(new JLabel("Lower quartile:"), "");
+        this.labelLowerQuartile = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelLowerQuartile, "");
+
         // labelMeanOf10
         panelStatistics.add(new JLabel("Mean of 10:"), "");
         this.labelMeanOf10 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelMeanOf10, "");
+
+        // labelBestMeanOf10
+        panelStatistics.add(new JLabel("Best mean of 10:"), "");
+        this.labelBestMeanOf10 = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelBestMeanOf10, "wrap");
+
+        // labelMedian
+        panelStatistics.add(new JLabel("Median:"), "skip 2");
+        this.labelMedian = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelMedian, "");
 
         // labelMeanOf100
         panelStatistics.add(new JLabel("Mean of 100:"), "");
         this.labelMeanOf100 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelMeanOf100, "");
 
-        // labelBestMeanOf1000
-        panelStatistics.add(new JLabel("Mean of 1000:"), "");
-        this.labelMeanOf1000 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelMeanOf1000, "wrap");
+        // labelBestMeanOf100
+        panelStatistics.add(new JLabel("Best mean of 100:"), "");
+        this.labelBestMeanOf100 = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelBestMeanOf100, "wrap");
+
+        // labelUpperQuartile
+        panelStatistics.add(new JLabel("Upper quartile:"), "skip 2");
+        this.labelUpperQuartile = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelUpperQuartile, "");
 
         // labelAverageOf5
         panelStatistics.add(new JLabel("Average of 5:"), "");
         this.labelAverageOf5 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelAverageOf5, "");
 
+        // labelBestAverageOf5
+        panelStatistics.add(new JLabel("Best average of 5:"), "");
+        this.labelBestAverageOf5 = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelBestAverageOf5, "wrap");
+
+        // labelWorst
+        panelStatistics.add(new JLabel("Worst:"), "skip 2");
+        this.labelWorst = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelWorst, "");
+
         // labelAverageOf12
         panelStatistics.add(new JLabel("Average of 12:"), "");
         this.labelAverageOf12 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelAverageOf12, "");
-
-        // labelAverageOf100
-        panelStatistics.add(new JLabel("Average of 100:"), "");
-        this.labelAverageOf100 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelAverageOf100, "");
-
-        // labelAverageOf1000
-        panelStatistics.add(new JLabel("Average of 1000:"), "");
-        this.labelAverageOf1000 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelAverageOf1000, "wrap");
-
-        // labelBestMeanOf3
-        panelStatistics.add(new JLabel("Best mean of 3:"), "");
-        this.labelBestMeanOf3 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestMeanOf3, "");
-
-        // labelBestMeanOf10
-        panelStatistics.add(new JLabel("Best mean of 10:"), "");
-        this.labelBestMeanOf10 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestMeanOf10, "");
-
-        // labelBestAverageOf5
-        panelStatistics.add(new JLabel("Best average of 5:"), "");
-        this.labelBestAverageOf5 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestAverageOf5, "");
 
         // labelBestAverageOf12
         panelStatistics.add(new JLabel("Best average of 12:"), "");
@@ -679,64 +687,58 @@ public class HistoryFrame extends JFrame {
     private void updateStatistics(Solution[] solutions, final int[] selectedRows) {
         JLabel labels[] = {
             this.labelMean,
-            this.labelStandardDeviation,
             this.labelBest,
-            this.labelWorst,
-
             this.labelMeanOf3,
-            this.labelMeanOf10,
-            this.labelMeanOf100,
-            this.labelMeanOf1000,
-
-            this.labelAverageOf5,
-            this.labelAverageOf12,
-            this.labelAverageOf100,
-            this.labelAverageOf1000,
-
             this.labelBestMeanOf3,
+            this.labelStandardDeviation,
+            this.labelLowerQuartile,
+            this.labelMeanOf10,
             this.labelBestMeanOf10,
+            this.labelMedian,
+            this.labelMeanOf100,
+            this.labelBestMeanOf100,
+            this.labelUpperQuartile,
+            this.labelAverageOf5,
             this.labelBestAverageOf5,
+            this.labelWorst,
+            this.labelAverageOf12,
             this.labelBestAverageOf12,
         };
 
         StatisticalMeasure[] measures = {
             new Mean(1, Integer.MAX_VALUE),
-            new StandardDeviation(1, Integer.MAX_VALUE),
             new Best(1, Integer.MAX_VALUE),
-            new Worst(1, Integer.MAX_VALUE),
-
             new Mean(3, 3),
-            new Mean(10, 10),
-            new Mean(100, 100),
-            new Mean(1000, 1000),
-
-            new Average(5, 5),
-            new Average(12, 12),
-            new Average(100, 100),
-            new Average(1000, 1000),
-
             new BestMean(3, Integer.MAX_VALUE),
+            new StandardDeviation(1, Integer.MAX_VALUE),
+            new Percentile(1, Integer.MAX_VALUE, 0.25),
+            new Mean(10, 10),
             new BestMean(10, Integer.MAX_VALUE),
+            new Percentile(1, Integer.MAX_VALUE, 0.5),
+            new Mean(100, 100),
+            new BestMean(100, Integer.MAX_VALUE),
+            new Percentile(1, Integer.MAX_VALUE, 0.75),
+            new Average(5, 5),
             new BestAverage(5, Integer.MAX_VALUE),
+            new Worst(1, Integer.MAX_VALUE),
+            new Average(12, 12),
             new BestAverage(12, Integer.MAX_VALUE),
         };
 
         boolean[] clickable = {
             false,
+            true,
+            true,
+            true,
+            false,
             false,
             true,
             true,
-
+            false,
             true,
             true,
+            false,
             true,
-            true,
-
-            true,
-            true,
-            true,
-            true,
-
             true,
             true,
             true,
