@@ -52,6 +52,12 @@ public class Percentile implements StatisticalMeasure {
         }
 
         int index = (int) Math.floor(position);
+
+        if (times[index - 1] == Long.MAX_VALUE || (position - index != 0d && times[index] == Long.MAX_VALUE)) {
+            this.value = Long.MAX_VALUE;
+            return;
+        }
+
         this.value = (long) (times[index - 1] + (position - index) * (times[index] - times[index - 1]));
     }
 }
