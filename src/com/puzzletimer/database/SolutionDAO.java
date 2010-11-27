@@ -75,23 +75,40 @@ public class SolutionDAO {
     }
 
     public void insert(Solution solution) {
+        insert(new Solution[] { solution });
+    }
+
+    public void insert(Solution[] solutions) {
         try {
+            this.connection.setAutoCommit(false);
+
             PreparedStatement statement = this.connection.prepareStatement(
                 "INSERT INTO SOLUTION VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-            statement.setString(1, solution.getSolutionId().toString());
-            statement.setString(2, solution.getCategoryId().toString());
-            statement.setString(3, solution.getScramble().getScramblerId());
-            statement.setString(4, StringUtils.join(" ", solution.getScramble().getSequence()));
-            statement.setTimestamp(5, new Timestamp(solution.getTiming().getStart().getTime()));
-            statement.setTimestamp(6, new Timestamp(solution.getTiming().getEnd().getTime()));
-            statement.setString(7, solution.getPenalty());
+            for (Solution solution : solutions) {
+                statement.setString(1, solution.getSolutionId().toString());
+                statement.setString(2, solution.getCategoryId().toString());
+                statement.setString(3, solution.getScramble().getScramblerId());
+                statement.setString(4, StringUtils.join(" ", solution.getScramble().getSequence()));
+                statement.setTimestamp(5, new Timestamp(solution.getTiming().getStart().getTime()));
+                statement.setTimestamp(6, new Timestamp(solution.getTiming().getEnd().getTime()));
+                statement.setString(7, solution.getPenalty());
 
-            statement.executeUpdate();
+                statement.addBatch();
+            }
 
+            statement.executeBatch();
             statement.close();
+
+            this.connection.commit();
         } catch (SQLException e) {
             throw new DatabaseException(e);
+        } finally {
+            try {
+                this.connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
         }
     }
 

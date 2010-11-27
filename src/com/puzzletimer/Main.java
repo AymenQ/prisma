@@ -310,6 +310,17 @@ public class Main {
             }
 
             @Override
+            public void solutionsAdded(Solution[] solutions) {
+                try {
+                    Main.this.solutionDAO.insert(solutions);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
+            }
+
+            @Override
             public void solutionUpdated(Solution solution) {
                 Main.this.sessionManager.updateSolution(solution);
 

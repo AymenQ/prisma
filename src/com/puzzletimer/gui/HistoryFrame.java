@@ -435,9 +435,7 @@ public class HistoryFrame extends JFrame {
                     new SolutionImporterDialog.SolutionImporterListener() {
                         @Override
                         public void solutionsImported(Solution[] solutions) {
-                            for (Solution solution : solutions) {
-                                solutionManager.addSolution(solution);
-                            }
+                            solutionManager.addSolutions(solutions);
                         }
                     };
 

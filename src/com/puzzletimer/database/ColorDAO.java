@@ -72,20 +72,21 @@ public class ColorDAO {
         try {
             this.connection.setAutoCommit(false);
 
-            for (FaceColor faceColor : colorScheme.getFaceColors()) {
-                PreparedStatement statement = this.connection.prepareStatement(
-                    "UPDATE COLOR SET R = ?, G = ?, B = ? WHERE PUZZLE_ID = ? AND FACE_ID = ?");
+            PreparedStatement statement = this.connection.prepareStatement(
+                "UPDATE COLOR SET R = ?, G = ?, B = ? WHERE PUZZLE_ID = ? AND FACE_ID = ?");
 
+            for (FaceColor faceColor : colorScheme.getFaceColors()) {
                 statement.setInt(1, faceColor.getColor().getRed());
                 statement.setInt(2, faceColor.getColor().getGreen());
                 statement.setInt(3, faceColor.getColor().getBlue());
                 statement.setString(4, colorScheme.getPuzzleId());
                 statement.setString(5, faceColor.getFaceId());
 
-                statement.executeUpdate();
-
-                statement.close();
+                statement.addBatch();
             }
+
+            statement.executeBatch();
+            statement.close();
 
             this.connection.commit();
         } catch (SQLException e) {

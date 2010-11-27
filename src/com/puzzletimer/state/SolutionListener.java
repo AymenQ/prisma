@@ -6,6 +6,9 @@ public class SolutionListener {
     public void solutionAdded(Solution solution) {
     }
 
+    public void solutionsAdded(Solution[] solutions) {
+    }
+
     public void solutionRemoved(Solution solution) {
     }
 

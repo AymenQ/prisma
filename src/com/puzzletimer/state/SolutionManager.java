@@ -56,6 +56,18 @@ public class SolutionManager {
         notifyListeners();
     }
 
+    public void addSolutions(Solution[] solutions) {
+        for (Solution solution : solutions) {
+            this.solutions.put(solution.getSolutionId(), solution);
+        }
+
+        for (SolutionListener listener : this.listeners) {
+            listener.solutionsAdded(solutions);
+        }
+
+        notifyListeners();
+    }
+
     public void removeSolution(Solution solution) {
         this.solutions.remove(solution.getSolutionId());
 
