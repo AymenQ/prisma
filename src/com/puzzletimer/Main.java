@@ -11,6 +11,7 @@ import java.sql.DriverManager;
 import java.util.UUID;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -88,9 +89,13 @@ public class Main {
                 output.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            return;
-            // TODO: show error message and quit
+            JFrame frame = new JFrame();
+            JOptionPane.showMessageDialog(
+                frame,
+                "Couldn't create database.",
+                "Puzzle Timer",
+                JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
 
         // connect to database
@@ -99,9 +104,13 @@ public class Main {
             Class.forName("org.h2.Driver");
             connection = DriverManager.getConnection("jdbc:h2:puzzletimer;IFEXISTS=TRUE", "sa", "");
         } catch (Exception e) {
-            e.printStackTrace();
-            return;
-            // TODO: show error message and quit
+            JFrame frame = new JFrame();
+            JOptionPane.showMessageDialog(
+                frame,
+                "Couldn't connect to database. Isn't Puzzle Timer already running?",
+                "Puzzle Timer",
+                JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
         }
 
         // message manager
@@ -354,12 +363,12 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                Main main = new Main();
-
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 } catch (Exception e){
                 }
+
+                Main main = new Main();
 
                 Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puzzletimer/resources/icon.png"));
 

@@ -612,13 +612,24 @@ public class MainFrame extends JFrame {
                     this.timerManager.setTimer(
                         new StackmatTimer(this.timerManager, targetDataLine));
                 } catch (LineUnavailableException e) {
-                    e.printStackTrace();
-                    // TODO: show error message?
+                    // select the default timer
+                    this.menuItemSpaceKey.setSelected(true);
+                    this.timerManager.setTimer(
+                        new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
+
+                    MainFrame.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
                 }
             } else {
+                // select the default timer
                 this.menuItemSpaceKey.setSelected(true);
                 this.timerManager.setTimer(
-                    new KeyboardTimer(this.timerManager, this, KeyEvent.VK_SPACE));
+                    new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
+
+                MainFrame.this.messageManager.enqueueMessage(
+                    MessageType.ERROR,
+                    "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
             }
         }
 
