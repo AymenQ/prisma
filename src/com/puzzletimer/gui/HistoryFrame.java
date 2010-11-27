@@ -126,6 +126,8 @@ public class HistoryFrame extends JFrame {
                                 scramble,
                                 timing,
                                 ""));
+
+                        start = new Date(start.getTime() + time);
                     }
 
                     Solution[] solutionsArray = new Solution[solutions.size()];
