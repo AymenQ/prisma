@@ -17,6 +17,7 @@ import javax.swing.UIManager;
 import com.puzzletimer.database.CategoryDAO;
 import com.puzzletimer.database.ColorDAO;
 import com.puzzletimer.database.ConfigurationDAO;
+import com.puzzletimer.database.DatabaseException;
 import com.puzzletimer.database.SolutionDAO;
 import com.puzzletimer.gui.MainFrame;
 import com.puzzletimer.models.Category;
@@ -114,8 +115,14 @@ public class Main {
         this.configurationManager.addConfigurationListener(new ConfigurationListener() {
             @Override
             public void configurationEntryUpdated(String key, String value) {
-                Main.this.configurationDAO.update(
-                    new ConfigurationEntry(key, value));
+                try {
+                    Main.this.configurationDAO.update(
+                        new ConfigurationEntry(key, value));
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
         });
 
@@ -188,7 +195,13 @@ public class Main {
         this.colorManager.addColorListener(new ColorListener() {
             @Override
             public void colorSchemeUpdated(ColorScheme colorScheme) {
-                Main.this.colorDAO.update(colorScheme);
+                try {
+                    Main.this.colorDAO.update(colorScheme);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
         });
 
@@ -220,23 +233,49 @@ public class Main {
                 Main.this.configurationManager.setConfiguration(
                     "CURRENT-CATEGORY",
                     category.getCategoryId().toString());
-                Main.this.solutionManager.loadSolutions(Main.this.solutionDAO.getAll(category));
-                Main.this.sessionManager.clearSession();
+
+                try {
+                    Main.this.solutionManager.loadSolutions(
+                        Main.this.solutionDAO.getAll(category));
+                    Main.this.sessionManager.clearSession();
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
 
             @Override
             public void categoryAdded(Category category) {
-                Main.this.categoryDAO.insert(category);
+                try {
+                    Main.this.categoryDAO.insert(category);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
 
             @Override
             public void categoryRemoved(Category category) {
-                Main.this.categoryDAO.delete(category);
+                try {
+                    Main.this.categoryDAO.delete(category);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
 
             @Override
             public void categoryUpdated(Category category) {
-                Main.this.categoryDAO.update(category);
+                try {
+                    Main.this.categoryDAO.update(category);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
         });
 
@@ -260,19 +299,40 @@ public class Main {
             @Override
             public void solutionAdded(Solution solution) {
                 Main.this.sessionManager.addSolution(solution);
-                Main.this.solutionDAO.insert(solution);
+
+                try {
+                    Main.this.solutionDAO.insert(solution);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
 
             @Override
             public void solutionUpdated(Solution solution) {
                 Main.this.sessionManager.updateSolution(solution);
-                Main.this.solutionDAO.update(solution);
+
+                try {
+                    Main.this.solutionDAO.update(solution);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
 
             @Override
             public void solutionRemoved(Solution solution) {
                 Main.this.sessionManager.removeSolution(solution);
-                Main.this.solutionDAO.delete(solution);
+
+                try {
+                    Main.this.solutionDAO.delete(solution);
+                } catch (DatabaseException e) {
+                    Main.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "DATABASE ERROR: " + e.getMessage());
+                }
             }
         });
 

@@ -806,6 +806,11 @@ public class MainFrame extends JFrame {
                     MainFrame.this.menuItemSpaceKey.setSelected(true);
                     MainFrame.this.timerManager.setTimer(
                         new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
+
+                    MainFrame.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
+
                     return;
                 }
 

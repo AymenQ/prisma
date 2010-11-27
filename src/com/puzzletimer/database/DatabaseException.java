@@ -13,4 +13,9 @@ public class DatabaseException extends RuntimeException {
     public SQLException getSqlException() {
         return this.sqlException;
     }
+
+    @Override
+    public String getMessage() {
+        return this.sqlException.getMessage();
+    }
 }
