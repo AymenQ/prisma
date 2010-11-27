@@ -54,6 +54,8 @@ import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ColorManager;
 import com.puzzletimer.state.ConfigurationManager;
+import com.puzzletimer.state.MessageListener;
+import com.puzzletimer.state.MessageManager;
 import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SessionListener;
@@ -61,6 +63,7 @@ import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.state.SolutionManager;
 import com.puzzletimer.state.TimerListener;
 import com.puzzletimer.state.TimerManager;
+import com.puzzletimer.state.MessageManager.MessageType;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.Mean;
@@ -504,6 +507,7 @@ public class MainFrame extends JFrame {
         }
     }
 
+    private MessageManager messageManager;
     private ConfigurationManager configurationManager;
     private TimerManager timerManager;
     private PuzzleProvider puzzleProvider;
@@ -527,6 +531,7 @@ public class MainFrame extends JFrame {
     private JRadioButtonMenuItem menuItemSpaceKey;
     private JRadioButtonMenuItem menuItemStackmatTimer;
     private JMenuItem menuItemAbout;
+    private JLabel labelMessage;
     private ScramblePanel scramblePanel;
     private TimerPanel timerPanel;
     private TimesScrollPane timesScrollPane;
@@ -546,6 +551,7 @@ public class MainFrame extends JFrame {
     private ButtonGroup stackmatTimerInputDeviceGroup;
 
     public MainFrame(
+            MessageManager messageManager,
             ConfigurationManager configurationManager,
             TimerManager timerManager,
             PuzzleProvider puzzleProvider,
@@ -556,6 +562,7 @@ public class MainFrame extends JFrame {
             ScrambleManager scrambleManager,
             SolutionManager solutionManager,
             SessionManager sessionManager) {
+        this.messageManager = messageManager;
         this.puzzleProvider = puzzleProvider;
         this.scrambleParserProvider = scrambleParserProvider;
         this.scramblerProvider = scramblerProvider;
@@ -854,6 +861,27 @@ public class MainFrame extends JFrame {
                 aboutDialog.setVisible(true);
             }
         });
+
+        // labelMessage
+        this.messageManager.addMessageListener(new MessageListener() {
+            @Override
+            public void clear() {
+                MainFrame.this.labelMessage.setPreferredSize(new Dimension());
+                MainFrame.this.labelMessage.setVisible(false);
+            }
+
+            @Override
+            public void messageReceived(MessageType messageType, String message) {
+                MainFrame.this.labelMessage.setPreferredSize(new Dimension(10000, 30));
+                if (messageType == MessageType.INFORMATION) {
+                    MainFrame.this.labelMessage.setBackground(new Color(0x45, 0x73, 0xD5));
+                } else if (messageType == MessageType.ERROR) {
+                    MainFrame.this.labelMessage.setBackground(new Color(0xFF, 0x40, 0x40));
+                }
+                MainFrame.this.labelMessage.setText(message);
+                MainFrame.this.labelMessage.setVisible(true);
+            }
+        });
     }
 
     private void createComponents() {
@@ -962,28 +990,37 @@ public class MainFrame extends JFrame {
         // panelMain
         JPanel panelMain = new JPanel(new TableLayout(new double[][] {
             { 3, 0.3, 0.4, 0.3, 3 },
-            { 20, 0.5, TableLayout.PREFERRED, 0.5, TableLayout.PREFERRED, 3 },
+            { 3, TableLayout.PREFERRED, 10, 0.5, TableLayout.PREFERRED, 0.5, TableLayout.PREFERRED, 3 },
         }));
         add(panelMain);
 
+        // labelMessage
+        this.labelMessage = new JLabel("Rubik's cube - New personal record: XX:XX.XX (single)");
+        this.labelMessage.setPreferredSize(new Dimension());
+        this.labelMessage.setOpaque(true);
+        this.labelMessage.setHorizontalAlignment(JLabel.CENTER);
+        this.labelMessage.setForeground(new Color(0xFF, 0xFF, 0xFF));
+        this.labelMessage.setVisible(false);
+        panelMain.add(this.labelMessage, "1, 1, 3, 1");
+
         // panelScramble
         this.scramblePanel = new ScramblePanel(this.scrambleManager);
-        panelMain.add(this.scramblePanel, "1, 1, 3, 1");
+        panelMain.add(this.scramblePanel, "1, 3, 3, 3");
 
         // timer panel
         this.timerPanel = new TimerPanel(this.timerManager);
-        panelMain.add(this.timerPanel, "1, 2, 3, 2");
+        panelMain.add(this.timerPanel, "1, 4, 3, 4");
 
         // times scroll pane
         this.timesScrollPane = new TimesScrollPane(this.solutionManager, this.sessionManager);
         this.timesScrollPane.setBorder(BorderFactory.createTitledBorder("Times"));
         this.timesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        panelMain.add(this.timesScrollPane, "1, 4");
+        panelMain.add(this.timesScrollPane, "1, 6");
 
         // statistics panel
         this.statisticsPanel = new StatisticsPanel(this.sessionManager);
         this.statisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
-        panelMain.add(this.statisticsPanel, "2, 4");
+        panelMain.add(this.statisticsPanel, "2, 6");
 
         // scramble viewer panel
         this.scrambleViewerPanel = new ScrambleViewerPanel(
@@ -992,7 +1029,7 @@ public class MainFrame extends JFrame {
             this.scramblerProvider,
             this.scrambleManager);
         this.scrambleViewerPanel.setBorder(BorderFactory.createTitledBorder("Scramble"));
-        panelMain.add(this.scrambleViewerPanel, "3, 4");
+        panelMain.add(this.scrambleViewerPanel, "3, 6");
 
         this.scramblePanel.setScrambleViewerPanel(this.scrambleViewerPanel);
 
