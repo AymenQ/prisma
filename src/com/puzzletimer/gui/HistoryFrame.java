@@ -28,6 +28,7 @@ import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -799,26 +800,35 @@ public class HistoryFrame extends JFrame {
                 return false;
             }
         };
-        for (String column : new String[] { "Start", "Time", "Penalty", "Scramble" }) {
+        for (String column : new String[] { "#", "Start", "Time", "Penalty", "Scramble" }) {
             tableModel.addColumn(column);
         }
 
-        for (Solution solution : solutions) {
-            // start
-            DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
-            String sStart = dateFormat.format(solution.getTiming().getStart());
+        this.table.setModel(tableModel);
 
-            // time
-            String sTime = SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime());
+        this.table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
-            tableModel.addRow(new Object[] {
-                sStart,
-                sTime,
-                solution.getPenalty(),
-                StringUtils.join(" ", solution.getScramble().getSequence()),
-            });
+        int[] columnsWidth = { 100, 400, 200, 200, 1000 };
+        for (int i = 0; i < columnsWidth.length; i++) {
+            TableColumn indexColumn = this.table.getColumnModel().getColumn(i);
+            indexColumn.setPreferredWidth(columnsWidth[i]);
         }
 
-        this.table.setModel(tableModel);
+        for (int i = 0; i < solutions.length; i++) {
+            // start
+            DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+            String sStart = dateFormat.format(solutions[i].getTiming().getStart());
+
+            // time
+            String sTime = SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime());
+
+            tableModel.addRow(new Object[] {
+                solutions.length - i,
+                sStart,
+                sTime,
+                solutions[i].getPenalty(),
+                StringUtils.join(" ", solutions[i].getScramble().getSequence()),
+            });
+        }
     }
 }
