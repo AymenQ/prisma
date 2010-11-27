@@ -173,7 +173,8 @@ public class HistoryFrame extends JFrame {
             this.textAreaContents = new JTextArea(
                 "# one solution per line\n" +
                 "# format: time [scramble]");
-            add(this.textAreaContents, "growx, wrap");
+            JScrollPane scrollPane = new JScrollPane(this.textAreaContents);
+            add(scrollPane, "growx, wrap");
 
             // buttonOk
             this.buttonOk = new JButton("OK");
