@@ -165,7 +165,7 @@ public class Main {
                         if (measures[i].getWindowPosition() == 0) {
                             Main.this.messageManager.enqueueMessage(
                                 MessageType.INFORMATION,
-                                String.format("%s - Personal record: %s (%s)",
+                                String.format("Personal Record - %s: %s (%s)",
                                     Main.this.categoryManager.getCurrentCategory().getDescription(),
                                     SolutionUtils.formatMinutes(measures[i].getValue()),
                                     descriptions[i]));
