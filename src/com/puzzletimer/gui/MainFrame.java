@@ -102,23 +102,29 @@ public class MainFrame extends JFrame {
         private void setScramble(final Scramble scramble) {
             removeAll();
 
-            for (int i = 0; i < scramble.getSequence().length; i++) {
-                JLabel labelMove = new JLabel(scramble.getSequence()[i]);
-                labelMove.setFont(new Font("Arial", Font.PLAIN, 18));
-                labelMove.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            final JLabel[] labels = new JLabel[scramble.getSequence().length];
+            for (int i = 0; i < labels.length; i++) {
+                labels[i] = new JLabel(scramble.getSequence()[i]);
+                labels[i].setFont(new Font("Arial", Font.PLAIN, 18));
+                labels[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-                final int length = i + 1;
-                labelMove.addMouseListener(new MouseAdapter() {
+                final int index = i;
+                labels[i].addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
+                        for (int i = 0; i < labels.length; i++) {
+                            labels[i].setForeground(
+                                i <= index ? Color.BLACK : Color.LIGHT_GRAY);
+                        }
+
                         ScramblePanel.this.scrambleViewerPanel.setScramble(
                             new Scramble(
                                 scramble.getScramblerId(),
-                                Arrays.copyOf(scramble.getSequence(), length)));
+                                Arrays.copyOf(scramble.getSequence(), index + 1)));
                     }
                 });
 
-                add(labelMove, "gap 10");
+                add(labels[i], "gap 10");
             }
 
             revalidate();
