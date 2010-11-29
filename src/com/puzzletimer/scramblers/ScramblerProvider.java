@@ -34,6 +34,24 @@ public class ScramblerProvider {
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 });
 
+        // 3x3x3 <L, U>
+        Scrambler rubiksCubeLU =
+            new RubiksCubeRandomScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-LU", "RUBIKS-CUBE", "<L, U> scrambler"),
+                new byte[] { -1, -1, -1, -1, -1,  5,  6, -1 },
+                new byte[] { -1, -1, -1, -1, -1,  0,  0, -1 },
+                new byte[] { -1,  1,  2, -1, -1, -1, -1, -1,  8,  9, 10, -1 },
+                new byte[] { -1,  0,  0, -1, -1, -1, -1, -1,  0,  0,  0, -1 });
+
+        // 3x3x3 <R, U>
+        Scrambler rubiksCubeRU =
+            new RubiksCubeRandomScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-RU", "RUBIKS-CUBE", "<R, U> scrambler"),
+                new byte[] { -1, -1, -1, -1,  4, -1, -1,  7 },
+                new byte[] { -1, -1, -1, -1,  0, -1, -1,  0 },
+                new byte[] {  0, -1, -1,  3, -1, -1, -1, -1,  8, -1, 10, 11 },
+                new byte[] {  0, -1, -1,  0, -1, -1, -1, -1,  0, -1,  0,  0 });
+
         // 3x3x3 fridrich f2l training
         Scrambler rubiksCubeFridrichF2LTraining =
             new RubiksCubeRandomScrambler(
@@ -114,6 +132,24 @@ public class ScramblerProvider {
                 new byte[] {  0,  0,  0,  0,  0,  0,  0,  0 },
                 new byte[] {  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11 },
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 });
+
+        // 3x3x3 3op orientation training
+        Scrambler rubiksCube3OPOrientationTraining =
+            new RubiksCubeRandomScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-3OP-ORIENTATION-TRAINING", "RUBIKS-CUBE", "3OP - Orientation training scrambler"),
+                new byte[] {  0,  1,  2,  3,  4,  5,  6,  7 },
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
+                new byte[] {  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11 },
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 });
+
+        // 3x3x3 3op permutation training
+        Scrambler rubiksCube3OPPermutationTraining =
+            new RubiksCubeRandomScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-3OP-PERMUTATION-TRAINING", "RUBIKS-CUBE", "3OP - Permutation training scrambler"),
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
+                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0 },
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
 
         // 3x3x3 easy cross
         Scrambler rubiksCubeEasyCross =
@@ -221,6 +257,8 @@ public class ScramblerProvider {
             rubiksPocketCubeRandom,
             rubiksCubeImporter,
             rubiksCubeRandom,
+            rubiksCubeLU,
+            rubiksCubeRU,
             rubiksCubeFridrichF2LTraining,
             rubiksCubeFridrichOLLTraining,
             rubiksCubeFridrichPLLTraining,
@@ -230,6 +268,8 @@ public class ScramblerProvider {
             rubiksCube3OPEdgesTraining,
             rubiksCube3OPEdgesPermutationTraining,
             rubiksCube3OPEdgesOrientationTraining,
+            rubiksCube3OPOrientationTraining,
+            rubiksCube3OPPermutationTraining,
             rubiksCubeEasyCross,
             rubiksRevengeImporter,
             rubiksRevengeRandom,
