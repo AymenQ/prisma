@@ -32,11 +32,12 @@ class StackmatTimerReader implements Runnable {
         this.running = false;
     }
 
-    private byte[] readPacket(byte[] samples, int offset, byte bitThreshold) {
+    private byte[] readPacket(byte[] samples, int offset, byte bitThreshold, boolean isInverted) {
         byte[] data = new byte[9];
         for (int i = 0; i < 9; i++) {
             // start bit
-            if (samples[offset + (int) (10 * i * this.period)] <= bitThreshold) {
+            boolean startBit = samples[offset + (int) (10 * i * this.period)] <= bitThreshold;
+            if ((isInverted && startBit) || (!isInverted && !startBit)) {
                 return new byte[9]; // invalid data
             }
 
@@ -48,8 +49,13 @@ class StackmatTimerReader implements Runnable {
                 }
             }
 
+            if (isInverted) {
+                data[i] = (byte) ~data[i];
+            }
+
             // stop bit
-            if (samples[offset + (int) ((10 * i + 9) * this.period)] > bitThreshold) {
+            boolean stopBit = samples[offset + (int) ((10 * i + 9) * this.period)] <= bitThreshold;
+            if ((isInverted && !stopBit) || (!isInverted && stopBit)) {
                 return new byte[9]; // invalid data
             }
         }
@@ -74,14 +80,6 @@ class StackmatTimerReader implements Runnable {
                data[8] == '\r';
     }
 
-    private byte[] inverted(byte[] data) {
-        byte[] invertedData = new byte[data.length];
-        for (int i = 0; i < invertedData.length; i++) {
-            invertedData[i] = (byte) ~data[i];
-        }
-        return invertedData;
-    }
-
     @Override
     public void run() {
         this.running = true;
@@ -104,14 +102,15 @@ class StackmatTimerReader implements Runnable {
             // find packet start
             loop: for (offset = 0; offset + 0.119171 * this.sampleRate < buffer.length; offset++) {
                 for (int threshold = 0; threshold < 256; threshold++) {
-                    byte[] data = readPacket(buffer, offset, (byte) (threshold - 127));
+                    byte[] data = readPacket(buffer, offset, (byte) (threshold - 127), false);
                     if (isValidPacket(data)) {
                         isPacketStart = true;
                         break loop;
                     }
 
                     // try inverting the signal
-                    if (isValidPacket(inverted(data))) {
+                    data = readPacket(buffer, offset, (byte) (threshold - 127), true);
+                    if (isValidPacket(data)) {
                         isPacketStart = true;
                         isSignalInverted = true;
                         break loop;
@@ -127,10 +126,7 @@ class StackmatTimerReader implements Runnable {
             HashMap<Long, Integer> packetHistogram = new HashMap<Long, Integer>();
             for (int i = 0; i < this.period; i++) {
                 for (int threshold = 0; threshold < 256; threshold++) {
-                    byte data[] = readPacket(buffer, offset + i, (byte) (threshold - 127));
-                    if (isSignalInverted) {
-                        data = inverted(data);
-                    }
+                    byte data[] = readPacket(buffer, offset + i, (byte) (threshold - 127), isSignalInverted);
 
                     if (isValidPacket(data)) {
                         // encode packet
