@@ -19,6 +19,7 @@ public class PuzzleProvider {
             new Pyraminx(),
             new Square1(),
             new FloppyCube(),
+            new TowerCube(),
             new Other(),
         };
 

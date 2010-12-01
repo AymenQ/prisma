@@ -116,6 +116,7 @@ public class FloppyCubeSolver {
                     distance[cornersPermutationIndex][edgesOrientationIndex] - 1) {
                     sequence.add(move);
                     state = nextState;
+                    break;
                 }
             }
         }

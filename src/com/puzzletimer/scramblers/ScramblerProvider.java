@@ -252,6 +252,16 @@ public class ScramblerProvider {
             new FloppyCubeRandomScrambler(
                 new ScramblerInfo("FLOPPY-CUBE-RANDOM", "FLOPPY-CUBE", "Random scrambler"));
 
+        // tower cube importer
+        Scrambler towerCubeImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("TOWER-CUBE-IMPORTER", "TOWER-CUBE", "Importer scrambler"));
+
+        // tower cube random
+        Scrambler towerCubeRandom =
+            new TowerCubeRandomScrambler(
+                new ScramblerInfo("TOWER-CUBE-RANDOM", "TOWER-CUBE", "Random scrambler"));
+
         // other importer
         Scrambler otherImporter =
             new EmptyScrambler(
@@ -299,6 +309,8 @@ public class ScramblerProvider {
             square1Random,
             floppyCubeImporter,
             floppyCubeRandom,
+            towerCubeImporter,
+            towerCubeRandom,
             otherImporter,
             empty,
         };

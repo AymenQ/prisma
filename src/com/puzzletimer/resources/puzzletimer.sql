@@ -18,7 +18,8 @@ INSERT INTO PUZZLE VALUES
     ( 8, 'PYRAMINX',     'Pyraminx'),
     ( 9, 'SQUARE-1',     'Square-1'),
     (10, 'FLOPPY-CUBE',  'Floppy cube'),
-    (11, 'OTHER',        'Other');
+    (11, 'TOWER-CUBE',   'Tower cube'),
+    (12, 'OTHER',        'Other');
 
 
 CREATE TABLE COLOR(
@@ -107,7 +108,13 @@ INSERT INTO COLOR VALUES
     ('FLOPPY-CUBE',   2, 'FACE-L',          'Face L',          153, 255, 153, 153, 255, 153),
     ('FLOPPY-CUBE',   3, 'FACE-R',          'Face R',           51, 185, 255,  51, 185, 255),
     ('FLOPPY-CUBE',   4, 'FACE-F',          'Face F',          255,   0,  38, 255,   0,  38),
-    ('FLOPPY-CUBE',   5, 'FACE-B',          'Face B',          255, 239,  51, 255, 239,  51);
+    ('FLOPPY-CUBE',   5, 'FACE-B',          'Face B',          255, 239,  51, 255, 239,  51),
+    ('TOWER-CUBE',    0, 'FACE-U',          'Face U',          200, 204, 200, 200, 204, 200),
+    ('TOWER-CUBE',    1, 'FACE-D',          'Face D',           75,  77,  75,  75,  77,  75),
+    ('TOWER-CUBE',    2, 'FACE-L',          'Face L',          153, 255, 153, 153, 255, 153),
+    ('TOWER-CUBE',    3, 'FACE-R',          'Face R',           51, 185, 255,  51, 185, 255),
+    ('TOWER-CUBE',    4, 'FACE-F',          'Face F',          255,   0,  38, 255,   0,  38),
+    ('TOWER-CUBE',    5, 'FACE-B',          'Face B',          255, 239,  51, 255, 239,  51);
 
 
 CREATE TABLE SCRAMBLER(
@@ -158,6 +165,8 @@ INSERT INTO SCRAMBLER VALUES
     ( 0, 'SQUARE-1-RANDOM',                              'SQUARE-1',     'Random scrambler',                             FALSE),
     (-1, 'FLOPPY-CUBE-IMPORTER',                         'FLOPPY-CUBE',  'Importer scrambler',                            TRUE),
     ( 0, 'FLOPPY-CUBE-RANDOM',                           'FLOPPY-CUBE',  'Random scrambler',                             FALSE),
+    (-1, 'TOWER-CUBE-IMPORTER',                          'TOWER-CUBE',   'Importer scrambler',                            TRUE),
+    ( 0, 'TOWER-CUBE-RANDOM',                            'TOWER-CUBE',   'Random scrambler',                             FALSE),
     (-1, 'OTHER-IMPORTER',                               'OTHER',        'Importer scrambler',                            TRUE),
     ( 0, 'EMPTY',                                        'OTHER',        'Empty scrambler',                              FALSE);
 
