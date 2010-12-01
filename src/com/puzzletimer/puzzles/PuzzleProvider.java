@@ -20,6 +20,7 @@ public class PuzzleProvider {
             new Square1(),
             new FloppyCube(),
             new TowerCube(),
+            new RubiksDomino(),
             new Other(),
         };
 

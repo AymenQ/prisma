@@ -21,6 +21,7 @@ public class ScrambleParserProvider {
             new VCube7ScrambleParser(),
             new FloppyCubeScrambleParser(),
             new TowerCubeScrambleParser(),
+            new RubiksDominoScrambleParser(),
         };
 
         this.scrambleParserMap = new HashMap<String, ScrambleParser>();

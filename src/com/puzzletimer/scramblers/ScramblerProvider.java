@@ -262,6 +262,16 @@ public class ScramblerProvider {
             new TowerCubeRandomScrambler(
                 new ScramblerInfo("TOWER-CUBE-RANDOM", "TOWER-CUBE", "Random scrambler"));
 
+        // rubik's domino importer
+        Scrambler rubiksDominoImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("RUBIKS-DOMINO-IMPORTER", "RUBIKS-DOMINO", "Importer scrambler"));
+
+        // rubik's domino random
+        Scrambler rubiksDominoRandom =
+            new RubiksDominoRandomScrambler(
+                new ScramblerInfo("RUBIKS-DOMINO-RANDOM", "RUBIKS-DOMINO", "Random scrambler"));
+
         // other importer
         Scrambler otherImporter =
             new EmptyScrambler(
@@ -311,6 +321,8 @@ public class ScramblerProvider {
             floppyCubeRandom,
             towerCubeImporter,
             towerCubeRandom,
+            rubiksDominoImporter,
+            rubiksDominoRandom,
             otherImporter,
             empty,
         };
