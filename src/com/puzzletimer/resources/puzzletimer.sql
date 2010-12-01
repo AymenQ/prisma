@@ -17,7 +17,8 @@ INSERT INTO PUZZLE VALUES
     ( 7, 'MEGAMINX',     'Megaminx'),
     ( 8, 'PYRAMINX',     'Pyraminx'),
     ( 9, 'SQUARE-1',     'Square-1'),
-    (10, 'OTHER',        'Other');
+    (10, 'FLOPPY-CUBE',  'Floppy cube'),
+    (11, 'OTHER',        'Other');
 
 
 CREATE TABLE COLOR(
@@ -100,7 +101,13 @@ INSERT INTO COLOR VALUES
     ('SQUARE-1',      2, 'FACE-L',          'Face L',          255, 234,   0, 255, 234,   0),
     ('SQUARE-1',      3, 'FACE-R',          'Face R',            0,  13, 153,   0,  13, 153),
     ('SQUARE-1',      4, 'FACE-F',          'Face F',          255,  85,   0, 255,  85,   0),
-    ('SQUARE-1',      5, 'FACE-B',          'Face B',          212,  17,  17, 212,  17,  17);
+    ('SQUARE-1',      5, 'FACE-B',          'Face B',          212,  17,  17, 212,  17,  17),
+    ('FLOPPY-CUBE',   0, 'FACE-U',          'Face U',          200, 204, 200, 200, 204, 200),
+    ('FLOPPY-CUBE',   1, 'FACE-D',          'Face D',           75,  77,  75,  75,  77,  75),
+    ('FLOPPY-CUBE',   2, 'FACE-L',          'Face L',          153, 255, 153, 153, 255, 153),
+    ('FLOPPY-CUBE',   3, 'FACE-R',          'Face R',           51, 185, 255,  51, 185, 255),
+    ('FLOPPY-CUBE',   4, 'FACE-F',          'Face F',          255,   0,  38, 255,   0,  38),
+    ('FLOPPY-CUBE',   5, 'FACE-B',          'Face B',          255, 239,  51, 255, 239,  51);
 
 
 CREATE TABLE SCRAMBLER(
@@ -149,6 +156,8 @@ INSERT INTO SCRAMBLER VALUES
     ( 0, 'PYRAMINX-RANDOM',                              'PYRAMINX',     'Random scrambler',                             FALSE),
     (-1, 'SQUARE-1-IMPORTER',                            'SQUARE-1',     'Importer scrambler',                            TRUE),
     ( 0, 'SQUARE-1-RANDOM',                              'SQUARE-1',     'Random scrambler',                             FALSE),
+    (-1, 'FLOPPY-CUBE-IMPORTER',                         'FLOPPY-CUBE',  'Importer scrambler',                            TRUE),
+    ( 0, 'FLOPPY-CUBE-RANDOM',                           'FLOPPY-CUBE',  'Random scrambler',                             FALSE),
     (-1, 'OTHER-IMPORTER',                               'OTHER',        'Importer scrambler',                            TRUE),
     ( 0, 'EMPTY',                                        'OTHER',        'Empty scrambler',                              FALSE);
 

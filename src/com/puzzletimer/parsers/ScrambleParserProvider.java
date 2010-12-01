@@ -19,6 +19,7 @@ public class ScrambleParserProvider {
             new Square1ScrambleParser(),
             new VCube6ScrambleParser(),
             new VCube7ScrambleParser(),
+            new FloppyCubeScrambleParser(),
         };
 
         this.scrambleParserMap = new HashMap<String, ScrambleParser>();
