@@ -66,9 +66,13 @@ import com.puzzletimer.state.TimerManager;
 import com.puzzletimer.state.MessageManager.MessageType;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
+import com.puzzletimer.statistics.BestAverage;
+import com.puzzletimer.statistics.BestMean;
 import com.puzzletimer.statistics.Mean;
+import com.puzzletimer.statistics.Percentile;
 import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
+import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.timer.KeyboardTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.timer.Timer;
@@ -308,46 +312,46 @@ public class MainFrame extends JFrame {
 
     private class StatisticsPanel extends JPanel {
         private JLabel labelMean;
+        private JLabel labelBestTime;
+        private JLabel labelMedian;
+        private JLabel labelWorstTime;
         private JLabel labelStandardDeviation;
-        private JLabel labelBest;
         private JLabel labelMeanOf3;
+        private JLabel labelBestMeanOf3;
         private JLabel labelAverageOf5;
-        private JLabel labelStandardDeviationOf3;
-        private JLabel labelBestOf3;
-        private JLabel labelMeanOf10;
+        private JLabel labelBestAverageOf5;
         private JLabel labelAverageOf12;
-        private JLabel labelStandardDeviationOf10;
-        private JLabel labelBestOf10;
+        private JLabel labelBestAverageOf12;
 
         private StatisticsPanel(SessionManager sessionManager) {
             createComponents();
 
             final JLabel[] labels = {
                 this.labelMean,
+                this.labelBestTime,
+                this.labelMedian,
+                this.labelWorstTime,
                 this.labelStandardDeviation,
-                this.labelBest,
                 this.labelMeanOf3,
+                this.labelBestMeanOf3,
                 this.labelAverageOf5,
-                this.labelStandardDeviationOf3,
-                this.labelBestOf3,
-                this.labelMeanOf10,
+                this.labelBestAverageOf5,
                 this.labelAverageOf12,
-                this.labelStandardDeviationOf10,
-                this.labelBestOf10,
+                this.labelBestAverageOf12,
             };
 
             final StatisticalMeasure[] measures = {
                 new Mean(1, Integer.MAX_VALUE),
-                new StandardDeviation(1, Integer.MAX_VALUE),
                 new Best(1, Integer.MAX_VALUE),
+                new Percentile(1, Integer.MAX_VALUE, 0.5),
+                new Worst(1, Integer.MAX_VALUE),
+                new StandardDeviation(1, Integer.MAX_VALUE),
                 new Mean(3, 3),
+                new BestMean(3, Integer.MAX_VALUE),
                 new Average(5, 5),
-                new StandardDeviation(3, 3),
-                new Best(3, 3),
-                new Mean(10, 10),
+                new BestAverage(5, Integer.MAX_VALUE),
                 new Average(12, 12),
-                new StandardDeviation(10, 10),
-                new Best(10, 10),
+                new BestAverage(12, Integer.MAX_VALUE),
             };
 
             sessionManager.addSessionListener(new SessionListener() {
@@ -377,7 +381,7 @@ public class MainFrame extends JFrame {
                 new MigLayout(
                     "center",
                     "[pref!,right]8[pref!]",
-                    "1[pref!]1[pref!]1[pref!]6[pref!]1[pref!]1[pref!]1[pref!]6[pref!]1[pref!]1[pref!]1[pref!]1"));
+                    "1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]1"));
 
             // labelMean
             JLabel labelMeanDescription = new JLabel("Mean:");
@@ -387,6 +391,30 @@ public class MainFrame extends JFrame {
             this.labelMean = new JLabel("XX:XX.XX");
             add(this.labelMean, "wrap");
 
+            // labelBestTime
+            JLabel labelBestTimeDescription = new JLabel("Best Time:");
+            labelBestTimeDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelBestTimeDescription);
+
+            this.labelBestTime = new JLabel("XX:XX.XX");
+            add(this.labelBestTime, "wrap");
+
+            // labelMedian
+            JLabel labelMedianDescription = new JLabel("Median:");
+            labelMedianDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelMedianDescription);
+
+            this.labelMedian = new JLabel("XX:XX.XX");
+            add(this.labelMedian, "wrap");
+
+            // labelWorstTime
+            JLabel labelWorstTimeDescription = new JLabel("Worst Time:");
+            labelWorstTimeDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelWorstTimeDescription);
+
+            this.labelWorstTime = new JLabel("XX:XX.XX");
+            add(this.labelWorstTime, "wrap");
+
             // labelStandardDeviation
             JLabel labelStandardDeviationDescription = new JLabel("Standard Deviation:");
             labelStandardDeviationDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
@@ -395,77 +423,53 @@ public class MainFrame extends JFrame {
             this.labelStandardDeviation = new JLabel("XX:XX.XX");
             add(this.labelStandardDeviation, "wrap");
 
-            // labelBest
-            JLabel labelBestDescription = new JLabel("Best Time:");
-            labelBestDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
-            add(labelBestDescription);
-
-            this.labelBest = new JLabel("XX:XX.XX");
-            add(this.labelBest, "wrap");
-
             // labelMeanOf3
-            JLabel labelMeanOf3Description = new JLabel("Mean (last 3):");
+            JLabel labelMeanOf3Description = new JLabel("Mean of 3:");
             labelMeanOf3Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelMeanOf3Description);
 
             this.labelMeanOf3 = new JLabel("XX:XX.XX");
             add(this.labelMeanOf3, "wrap");
 
+            // labelBestMeanOf3
+            JLabel labelBestMeanOf3Description = new JLabel("Best Mean of 3:");
+            labelBestMeanOf3Description.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelBestMeanOf3Description);
+
+            this.labelBestMeanOf3 = new JLabel("XX:XX.XX");
+            add(this.labelBestMeanOf3, "wrap");
+
             // labelAverageOf5
-            JLabel labelAverageOf5Description = new JLabel("Average (last 5):");
+            JLabel labelAverageOf5Description = new JLabel("Average of 5:");
             labelAverageOf5Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelAverageOf5Description);
 
             this.labelAverageOf5 = new JLabel("XX:XX.XX");
             add(this.labelAverageOf5, "wrap");
 
-            // labelStandardDeviationOf3
-            JLabel labelStandardDeviationOf3Description = new JLabel("Standard Deviation (last 3):");
-            labelStandardDeviationOf3Description.setFont(new Font("Tahoma", Font.BOLD, 11));
-            add(labelStandardDeviationOf3Description);
+            // labelBestAverageOf5
+            JLabel labelBestAverageOf5Description = new JLabel("Best Average of 5:");
+            labelBestAverageOf5Description.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelBestAverageOf5Description);
 
-            this.labelStandardDeviationOf3 = new JLabel("XX:XX.XX");
-            add(this.labelStandardDeviationOf3, "wrap");
-
-            // labelBestOf3
-            JLabel labelBestOf3Description = new JLabel("Best Time (last 3):");
-            labelBestOf3Description.setFont(new Font("Tahoma", Font.BOLD, 11));
-            add(labelBestOf3Description);
-
-            this.labelBestOf3 = new JLabel("XX:XX.XX");
-            add(this.labelBestOf3, "wrap");
-
-            // labelMeanOf10
-            JLabel labelMeanOf10Description = new JLabel("Mean (last 10):");
-            labelMeanOf10Description.setFont(new Font("Tahoma", Font.BOLD, 11));
-            add(labelMeanOf10Description);
-
-            this.labelMeanOf10 = new JLabel("XX:XX.XX");
-            add(this.labelMeanOf10, "wrap");
+            this.labelBestAverageOf5 = new JLabel("XX:XX.XX");
+            add(this.labelBestAverageOf5, "wrap");
 
             // labelAverageOf12
-            JLabel labelAverageOf12Description = new JLabel("Average (last 12):");
+            JLabel labelAverageOf12Description = new JLabel("Average of 12:");
             labelAverageOf12Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelAverageOf12Description);
 
             this.labelAverageOf12 = new JLabel("XX:XX.XX");
             add(this.labelAverageOf12, "wrap");
 
-            // labelStandardDeviationOf10
-            JLabel labelStandardDeviationOf10Description = new JLabel("Standard Deviation (last 10):");
-            labelStandardDeviationOf10Description.setFont(new Font("Tahoma", Font.BOLD, 11));
-            add(labelStandardDeviationOf10Description);
+            // labelBestAverageOf12
+            JLabel labelBestAverageOf12Description = new JLabel("Best Average of 12:");
+            labelBestAverageOf12Description.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelBestAverageOf12Description);
 
-            this.labelStandardDeviationOf10 = new JLabel("XX:XX.XX");
-            add(this.labelStandardDeviationOf10, "wrap");
-
-            // labelBestOf10
-            JLabel labelBestOf10Description = new JLabel("Best Time (last 10):");
-            labelBestOf10Description.setFont(new Font("Tahoma", Font.BOLD, 11));
-            add(labelBestOf10Description);
-
-            this.labelBestOf10 = new JLabel("XX:XX.XX");
-            add(this.labelBestOf10, "wrap");
+            this.labelBestAverageOf12 = new JLabel("XX:XX.XX");
+            add(this.labelBestAverageOf12, "wrap");
         }
     }
 
