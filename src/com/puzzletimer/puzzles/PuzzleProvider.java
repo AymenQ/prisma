@@ -18,6 +18,7 @@ public class PuzzleProvider {
             new Megaminx(),
             new Pyraminx(),
             new Square1(),
+            new Skewb(),
             new FloppyCube(),
             new TowerCube(),
             new RubiksDomino(),

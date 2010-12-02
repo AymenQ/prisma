@@ -242,6 +242,16 @@ public class ScramblerProvider {
                 new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"),
                 40);
 
+        // skewb importer
+        Scrambler skewbImporter =
+            new EmptyScrambler(
+                new ScramblerInfo("SKEWB-IMPORTER", "SKEWB", "Importer scrambler"));
+
+        // skewb random
+        Scrambler skewbRandom =
+            new SkewbRandomScrambler(
+                new ScramblerInfo("SKEWB-RANDOM", "SKEWB", "Random scrambler"));
+
         // floppy cube importer
         Scrambler floppyCubeImporter =
             new EmptyScrambler(
@@ -315,6 +325,8 @@ public class ScramblerProvider {
             megaminxRandom,
             pyraminxImporter,
             pyraminxRandom,
+            skewbImporter,
+            skewbRandom,
             square1Importer,
             square1Random,
             floppyCubeImporter,

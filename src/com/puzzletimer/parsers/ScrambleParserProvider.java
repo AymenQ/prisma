@@ -9,19 +9,20 @@ public class ScrambleParserProvider {
     public ScrambleParserProvider() {
         this.scrambleParsers = new ScrambleParser[] {
             new EmptyScrambleParser(),
+            new FloppyCubeScrambleParser(),
             new MegaminxScrambleParser(),
             new ProfessorsCubeScrambleParser(),
             new PyraminxScrambleParser(),
             new RubiksClockScrambleParser(),
             new RubiksCubeScrambleParser(),
+            new RubiksDominoScrambleParser(),
             new RubiksPocketCubeScrambleParser(),
             new RubiksRevengeScramblerParser(),
+            new SkewbScrambleParser(),
             new Square1ScrambleParser(),
+            new TowerCubeScrambleParser(),
             new VCube6ScrambleParser(),
             new VCube7ScrambleParser(),
-            new FloppyCubeScrambleParser(),
-            new TowerCubeScrambleParser(),
-            new RubiksDominoScrambleParser(),
         };
 
         this.scrambleParserMap = new HashMap<String, ScrambleParser>();

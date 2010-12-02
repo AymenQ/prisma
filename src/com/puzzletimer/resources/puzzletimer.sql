@@ -17,10 +17,11 @@ INSERT INTO PUZZLE VALUES
     ( 7, 'MEGAMINX',      'Megaminx'),
     ( 8, 'PYRAMINX',      'Pyraminx'),
     ( 9, 'SQUARE-1',      'Square-1'),
-    (10, 'FLOPPY-CUBE',   'Floppy cube'),
-    (11, 'TOWER-CUBE',    'Tower cube'),
-    (12, 'RUBIKS-DOMINO', 'Rubik''s domino'),
-    (13, 'OTHER',         'Other');
+    (10, 'SKEWB',         'Skewb'),
+    (11, 'FLOPPY-CUBE',   'Floppy cube'),
+    (12, 'TOWER-CUBE',    'Tower cube'),
+    (13, 'RUBIKS-DOMINO', 'Rubik''s domino'),
+    (14, 'OTHER',         'Other');
 
 
 CREATE TABLE COLOR(
@@ -104,6 +105,12 @@ INSERT INTO COLOR VALUES
     ('SQUARE-1',       3, 'FACE-R',          'Face R',            0,  13, 153,   0,  13, 153),
     ('SQUARE-1',       4, 'FACE-F',          'Face F',          255,  85,   0, 255,  85,   0),
     ('SQUARE-1',       5, 'FACE-B',          'Face B',          212,  17,  17, 212,  17,  17),
+    ('SKEWB',          0, 'FACE-U',          'Face U',          255, 255, 255, 255, 255, 255),
+    ('SKEWB',          1, 'FACE-D',          'Face D',          255, 234,   0, 255, 234,   0),
+    ('SKEWB',          2, 'FACE-L',          'Face L',          255,  85,   0, 255,  85,   0),
+    ('SKEWB',          3, 'FACE-R',          'Face R',          212,  17,  17, 212,  17,  17),
+    ('SKEWB',          4, 'FACE-F',          'Face F',            0, 153,   0,   0, 153,   0),
+    ('SKEWB',          5, 'FACE-B',          'Face B',            0,  13, 153,   0,  13, 153),
     ('FLOPPY-CUBE',    0, 'FACE-U',          'Face U',          200, 204, 200, 200, 204, 200),
     ('FLOPPY-CUBE',    1, 'FACE-D',          'Face D',           75,  77,  75,  75,  77,  75),
     ('FLOPPY-CUBE',    2, 'FACE-L',          'Face L',          153, 255, 153, 153, 255, 153),
@@ -170,6 +177,8 @@ INSERT INTO SCRAMBLER VALUES
     ( 0, 'PYRAMINX-RANDOM',                              'PYRAMINX',     'Random scrambler',                             FALSE),
     (-1, 'SQUARE-1-IMPORTER',                            'SQUARE-1',     'Importer scrambler',                            TRUE),
     ( 0, 'SQUARE-1-RANDOM',                              'SQUARE-1',     'Random scrambler',                             FALSE),
+    (-1, 'SKEWB-IMPORTER',                               'SKEWB',        'Importer scrambler',                            TRUE),
+    ( 0, 'SKEWB-RANDOM',                                 'SKEWB',        'Random scrambler',                             FALSE),
     (-1, 'FLOPPY-CUBE-IMPORTER',                         'FLOPPY-CUBE',  'Importer scrambler',                            TRUE),
     ( 0, 'FLOPPY-CUBE-RANDOM',                           'FLOPPY-CUBE',  'Random scrambler',                             FALSE),
     (-1, 'TOWER-CUBE-IMPORTER',                          'TOWER-CUBE',   'Importer scrambler',                            TRUE),
