@@ -145,6 +145,8 @@ CREATE TABLE SCRAMBLER(
 INSERT INTO SCRAMBLER VALUES
     (-1, '2x2x2-CUBE-IMPORTER',                          '2x2x2-CUBE',   'Importer scrambler',                            TRUE),
     ( 0, '2x2x2-CUBE-RANDOM',                            '2x2x2-CUBE',   'Random scrambler',                             FALSE),
+    ( 1, '2x2x2-CUBE-URF',                               '2x2x2-CUBE',   '<U, R, F> scrambler',                          FALSE),
+    ( 2, '2x2x2-CUBE-SUBOPTIMAL-URF',                    '2x2x2-CUBE',   'Suboptimal <U, R, F> scrambler',               FALSE),
     (-1, 'RUBIKS-CUBE-IMPORTER',                         'RUBIKS-CUBE',  'Importer scrambler',                            TRUE),
     ( 0, 'RUBIKS-CUBE-RANDOM',                           'RUBIKS-CUBE',  'Random scrambler',                             FALSE),
     ( 1, 'RUBIKS-CUBE-LU',                               'RUBIKS-CUBE',  '<L, U> scrambler',                             FALSE),

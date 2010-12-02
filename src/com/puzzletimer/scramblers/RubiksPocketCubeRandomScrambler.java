@@ -8,10 +8,12 @@ import com.puzzletimer.solvers.RubiksPocketCubeSolver;
 
 public class RubiksPocketCubeRandomScrambler implements Scrambler {
     private ScramblerInfo scramblerInfo;
+    private RubiksPocketCubeSolver solver;
     private Random random;
 
-    public RubiksPocketCubeRandomScrambler(ScramblerInfo scramblerInfo) {
+    public RubiksPocketCubeRandomScrambler(ScramblerInfo scramblerInfo, int minScrambleLength, String[] generatingSet) {
         this.scramblerInfo = scramblerInfo;
+        this.solver = new RubiksPocketCubeSolver(minScrambleLength, generatingSet);
         this.random = new Random();
     }
 
@@ -22,12 +24,10 @@ public class RubiksPocketCubeRandomScrambler implements Scrambler {
 
     @Override
     public Scramble getNextScramble() {
-        int permutation = this.random.nextInt(RubiksPocketCubeSolver.N_PERMUTATIONS);
-        int orientation = this.random.nextInt(RubiksPocketCubeSolver.N_ORIENTATIONS);
-
         return new Scramble(
             getScramblerInfo().getScramblerId(),
-            RubiksPocketCubeSolver.generate(permutation, orientation));
+            this.solver.generate(
+                this.solver.getRandomState(this.random)));
     }
 
     @Override

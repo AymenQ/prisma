@@ -18,7 +18,23 @@ public class ScramblerProvider {
         // 2x2x2 random
         Scrambler rubiksPocketCubeRandom =
             new RubiksPocketCubeRandomScrambler(
-                new ScramblerInfo("2x2x2-CUBE-RANDOM", "2x2x2-CUBE", "Random scrambler"));
+                new ScramblerInfo("2x2x2-CUBE-RANDOM", "2x2x2-CUBE", "Random scrambler"),
+                0,
+                new String[] { "U", "D", "L", "R", "F", "B" });
+
+        // 2x2x2 <U, R, F>
+        Scrambler rubiksPocketCubeURF =
+            new RubiksPocketCubeRandomScrambler(
+                new ScramblerInfo("2x2x2-CUBE-URF", "2x2x2-CUBE", "<U, R, F> scrambler"),
+                0,
+                new String[] { "U", "R", "F" });
+
+        // 2x2x2 suboptimal <U, R, F>
+        Scrambler rubiksPocketCubeSuboptimalURF =
+            new RubiksPocketCubeRandomScrambler(
+                new ScramblerInfo("2x2x2-CUBE-SUBOPTIMAL-URF", "2x2x2-CUBE", "Suboptimal <U, R, F> scrambler"),
+                11,
+                new String[] { "U", "R", "F" });
 
         // 3x3x3 importer
         Scrambler rubiksCubeImporter =
@@ -295,6 +311,8 @@ public class ScramblerProvider {
         this.scramblers = new Scrambler[] {
             rubiksPocketCubeImporter,
             rubiksPocketCubeRandom,
+            rubiksPocketCubeURF,
+            rubiksPocketCubeSuboptimalURF,
             rubiksCubeImporter,
             rubiksCubeRandom,
             rubiksCubeLU,

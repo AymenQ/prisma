@@ -1,5 +1,9 @@
 package com.puzzletimer.solvers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Random;
+
 public class RubiksPocketCubeSolver {
     public static class State {
         public byte[] permutation;
@@ -21,152 +25,220 @@ public class RubiksPocketCubeSolver {
 
             return new State(resultPermutation, resultOrientation);
         }
+
+        public static State id;
+
+        static {
+            id = new State(
+                new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 },
+                new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 });
+        }
     }
 
-    public static final int N_PERMUTATIONS = 40320;
-    public static final int N_ORIENTATIONS = 2187;
-    public static final int N_MOVES = 18;
+    private final int N_PERMUTATIONS = 40320;
+    private final int N_ORIENTATIONS = 2187;
 
-    private static State[] moves;
+    private int minScrambleLength;
+    private ArrayList<State> moves;
+    private ArrayList<String> moveNames;
+    private boolean initialized;
+    private int[][] permutationMove;
+    private int[][] orientationMove;
+    private byte[] permutationDistance;
+    private byte[] orientationDistance;
 
-    private static int[][] permutationMove;
-    private static int[][] orientationMove;
+    public RubiksPocketCubeSolver(int minScrambleLenght, String[] generatingSet) {
+        this.minScrambleLength = minScrambleLenght;
 
-    private static byte[] permutationDistance;
-    private static byte[] orientationDistance;
+        HashMap<String, State> table = new HashMap<String, State>();
+        table.put("U", new State(new byte[] { 3, 0, 1, 2, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }));
+        table.put("D", new State(new byte[] { 0, 1, 2, 3, 5, 6, 7, 4 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }));
+        table.put("L", new State(new byte[] { 4, 1, 2, 0, 7, 5, 6, 3 }, new byte[] { 2, 0, 0, 1, 1, 0, 0, 2 }));
+        table.put("R", new State(new byte[] { 0, 2, 6, 3, 4, 1, 5, 7 }, new byte[] { 0, 1, 2, 0, 0, 2, 1, 0 }));
+        table.put("F", new State(new byte[] { 0, 1, 3, 7, 4, 5, 2, 6 }, new byte[] { 0, 0, 1, 2, 0, 0, 2, 1 }));
+        table.put("B", new State(new byte[] { 1, 5, 2, 3, 0, 4, 6, 7 }, new byte[] { 1, 2, 0, 0, 2, 1, 0, 0 }));
 
-    static {
-        moves = new State[] {
-            new State(new byte[] { 3, 0, 1, 2, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 2, 3, 0, 1, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 1, 2, 3, 0, 4, 5, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 0, 1, 2, 3, 5, 6, 7, 4 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 0, 1, 2, 3, 6, 7, 4, 5 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 0, 1, 2, 3, 7, 4, 5, 6 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 4, 1, 2, 0, 7, 5, 6, 3 }, new byte[] { 2, 0, 0, 1, 1, 0, 0, 2 }),
-            new State(new byte[] { 7, 1, 2, 4, 3, 5, 6, 0 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 3, 1, 2, 7, 0, 5, 6, 4 }, new byte[] { 2, 0, 0, 1, 1, 0, 0, 2 }),
-            new State(new byte[] { 0, 2, 6, 3, 4, 1, 5, 7 }, new byte[] { 0, 1, 2, 0, 0, 2, 1, 0 }),
-            new State(new byte[] { 0, 6, 5, 3, 4, 2, 1, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 0, 5, 1, 3, 4, 6, 2, 7 }, new byte[] { 0, 1, 2, 0, 0, 2, 1, 0 }),
-            new State(new byte[] { 0, 1, 3, 7, 4, 5, 2, 6 }, new byte[] { 0, 0, 1, 2, 0, 0, 2, 1 }),
-            new State(new byte[] { 0, 1, 7, 6, 4, 5, 3, 2 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 0, 1, 6, 2, 4, 5, 7, 3 }, new byte[] { 0, 0, 1, 2, 0, 0, 2, 1 }),
-            new State(new byte[] { 1, 5, 2, 3, 0, 4, 6, 7 }, new byte[] { 1, 2, 0, 0, 2, 1, 0, 0 }),
-            new State(new byte[] { 5, 4, 2, 3, 1, 0, 6, 7 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0 }),
-            new State(new byte[] { 4, 0, 2, 3, 5, 1, 6, 7 }, new byte[] { 1, 2, 0, 0, 2, 1, 0, 0 }),
-        };
+        this.moves = new ArrayList<State>();
+        this.moveNames = new ArrayList<String>();
+        for (String moveName : generatingSet) {
+            State move = table.get(moveName);
 
+            this.moves.add(move);
+            this.moveNames.add(moveName);
+
+            this.moves.add(move.multiply(move));
+            this.moveNames.add(moveName + "2");
+
+            this.moves.add(move.multiply(move).multiply(move));
+            this.moveNames.add(moveName + "'");
+        }
+
+        this.initialized = false;
+    }
+
+    private void initialize() {
         // move tables
-        permutationMove = new int[N_PERMUTATIONS][N_MOVES];
-        for (int i = 0; i < N_PERMUTATIONS; i++) {
+        this.permutationMove = new int[this.N_PERMUTATIONS][this.moves.size()];
+        for (int i = 0; i < this.permutationMove.length; i++) {
             State state = new State(IndexMapping.indexToPermutation(i, 8), new byte[8]);
-            for (int j = 0; j < N_MOVES; j++) {
-                permutationMove[i][j] = IndexMapping.permutationToIndex(state.multiply(moves[j]).permutation);
+            for (int j = 0; j < this.moves.size(); j++) {
+                this.permutationMove[i][j] =
+                    IndexMapping.permutationToIndex(
+                        state.multiply(this.moves.get(j)).permutation);
             }
         }
 
-        orientationMove = new int[N_ORIENTATIONS][N_MOVES];
-        for (int i = 0; i < N_ORIENTATIONS; i++) {
+        this.orientationMove = new int[this.N_ORIENTATIONS][this.moves.size()];
+        for (int i = 0; i < this.orientationMove.length; i++) {
             State state = new State(new byte[8], IndexMapping.indexToZeroSumOrientation(i, 3, 8));
-            for (int j = 0; j < N_MOVES; j++) {
-                orientationMove[i][j] = IndexMapping.zeroSumOrientationToIndex(state.multiply(moves[j]).orientation, 3);
+            for (int j = 0; j < this.moves.size(); j++) {
+                this.orientationMove[i][j] =
+                    IndexMapping.zeroSumOrientationToIndex(
+                        state.multiply(this.moves.get(j)).orientation, 3);
             }
         }
 
         // prune tables
-        permutationDistance = new byte[N_PERMUTATIONS];
-        for (int i = 0; i < permutationDistance.length; i++) {
-            permutationDistance[i] = -1;
+        this.permutationDistance = new byte[this.N_PERMUTATIONS];
+        for (int i = 0; i < this.permutationDistance.length; i++) {
+            this.permutationDistance[i] = -1;
         }
-        permutationDistance[0] = 0;
+        this.permutationDistance[0] = 0;
 
-        int distance = 0;
-        int nVisited = 1;
-        while (nVisited < N_PERMUTATIONS) {
-            for (int i = 0; i < N_PERMUTATIONS; i++) {
-                if (permutationDistance[i] == distance) {
-                    for (int k = 0; k < N_MOVES; k++) {
-                        int next = permutationMove[i][k];
-                        if (permutationDistance[next] < 0) {
-                            permutationDistance[next] = (byte) (distance + 1);
+        int nVisited;
+        int depth = 0;
+        do {
+            nVisited = 0;
+
+            for (int i = 0; i < this.permutationDistance.length; i++) {
+                if (this.permutationDistance[i] == depth) {
+                    for (int j = 0; j < this.moves.size(); j++) {
+                        int next = this.permutationMove[i][j];
+                        if (this.permutationDistance[next] < 0) {
+                            this.permutationDistance[next] = (byte) (depth + 1);
                             nVisited++;
                         }
                     }
                 }
             }
-            distance++;
-        }
 
-        orientationDistance = new byte[N_ORIENTATIONS];
-        for (int i = 0; i < orientationDistance.length; i++) {
-            orientationDistance[i] = -1;
-        }
-        orientationDistance[0] = 0;
+            depth++;
+        } while (nVisited > 0);
 
-        distance = 0;
-        nVisited = 1;
-        while (nVisited < N_ORIENTATIONS) {
-            for (int i = 0; i < N_ORIENTATIONS; i++) {
-                if (orientationDistance[i] == distance) {
-                    for (int k = 0; k < N_MOVES; k++) {
-                        int next = orientationMove[i][k];
-                        if (orientationDistance[next] < 0) {
-                            orientationDistance[next] = (byte) (distance + 1);
+        this.orientationDistance = new byte[this.N_ORIENTATIONS];
+        for (int i = 0; i < this.orientationDistance.length; i++) {
+            this.orientationDistance[i] = -1;
+        }
+        this.orientationDistance[0] = 0;
+
+        depth = 0;
+        do {
+            nVisited = 0;
+
+            for (int i = 0; i < this.orientationDistance.length; i++) {
+                if (this.orientationDistance[i] == depth) {
+                    for (int j = 0; j < this.moves.size(); j++) {
+                        int next = this.orientationMove[i][j];
+                        if (this.orientationDistance[next] < 0) {
+                            this.orientationDistance[next] = (byte) (depth + 1);
                             nVisited++;
                         }
                     }
                 }
             }
-            distance++;
-        }
+
+            depth++;
+        } while (nVisited > 0);
+
+        this.initialized = true;
     }
 
-    private static int[] solution(int permutation, int orientation) {
-        for (int depth = 0;; depth++) {
-            int[] solution = new int[depth];
-            if (search(permutation, orientation, depth, solution, 6)) {
-                return solution;
+    public String[] solve(State state) {
+        if (!this.initialized) {
+            initialize();
+        }
+
+        int permutation =
+            IndexMapping.permutationToIndex(state.permutation);
+        int orientation =
+            IndexMapping.zeroSumOrientationToIndex(state.orientation, 3);
+
+        for (int depth = this.minScrambleLength;; depth++) {
+            ArrayList<String> solution = new ArrayList<String>();
+            if (search(permutation, orientation, depth, solution, -1)) {
+                String[] sequence = new String[solution.size()];
+                solution.toArray(sequence);
+
+                return sequence;
             }
         }
     }
 
-    private static boolean search(int permutation, int orientation, int depth, int[] solution, int axis) {
+    private boolean search(int permutation, int orientation, int depth, ArrayList<String> solution, int lastFace) {
         if (depth == 0) {
             return permutation == 0 && orientation == 0;
         }
 
-        if (permutationDistance[permutation] <= depth && orientationDistance[orientation] <= depth) {
-            for (int i = 0; i < N_MOVES; i++) {
-                if (i / 3 != axis) {
-                    solution[depth - 1] = i;
-                    if (search(permutationMove[permutation][i], orientationMove[orientation][i], depth - 1, solution, i / 3)) {
-                        return true;
-                    }
+        if (this.permutationDistance[permutation] <= depth &&
+            this.orientationDistance[orientation] <= depth) {
+            for (int i = 0; i < this.moves.size(); i++) {
+                if (i / 3 == lastFace) {
+                    continue;
                 }
+
+                solution.add(this.moveNames.get(i));
+                if (search(
+                    this.permutationMove[permutation][i],
+                    this.orientationMove[orientation][i],
+                    depth - 1,
+                    solution,
+                    i / 3)) {
+                    return true;
+                }
+                solution.remove(solution.size() - 1);
             }
         }
 
         return false;
     }
 
-    public static String[] generate(int permutation, int orientation) {
-        String[] inverseMoveNames = {
-            "U'", "U2", "U",
-            "D'", "D2", "D",
-            "L'", "L2", "L",
-            "R'", "R2", "R",
-            "F'", "F2", "F",
-            "B'", "B2", "B",
-        };
+    public String[] generate(State state) {
+        HashMap<String, String> inverseMoveNames = new HashMap<String, String>();
+        inverseMoveNames.put("U",  "U'");
+        inverseMoveNames.put("U2", "U2");
+        inverseMoveNames.put("U'", "U");
+        inverseMoveNames.put("D",  "D'");
+        inverseMoveNames.put("D2", "D2");
+        inverseMoveNames.put("D'", "D");
+        inverseMoveNames.put("L",  "L'");
+        inverseMoveNames.put("L2", "L2");
+        inverseMoveNames.put("L'", "L");
+        inverseMoveNames.put("R",  "R'");
+        inverseMoveNames.put("R2", "R2");
+        inverseMoveNames.put("R'", "R");
+        inverseMoveNames.put("F",  "F'");
+        inverseMoveNames.put("F2", "F2");
+        inverseMoveNames.put("F'", "F");
+        inverseMoveNames.put("B",  "B'");
+        inverseMoveNames.put("B2", "B2");
+        inverseMoveNames.put("B'", "B");
 
-        int[] solution = solution(permutation, orientation);
+        String[] solution = solve(state);
 
         String[] sequence = new String[solution.length];
         for (int i = 0; i < sequence.length; i++) {
-            sequence[i] = inverseMoveNames[solution[i]];
+            sequence[i] = inverseMoveNames.get(solution[solution.length - 1 - i]);
         }
 
         return sequence;
+    }
+
+    public State getRandomState(Random random) {
+        State state = State.id;
+        for (int i = 0; i < 100; i++) {
+            state = state.multiply(this.moves.get(random.nextInt(this.moves.size())));
+        }
+
+        return state;
     }
 }
