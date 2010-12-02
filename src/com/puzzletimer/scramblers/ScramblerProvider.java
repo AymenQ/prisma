@@ -245,7 +245,14 @@ public class ScramblerProvider {
         // pyraminx random
         Scrambler pyraminxRandom =
             new PyraminxRandomScrambler(
-                new ScramblerInfo("PYRAMINX-RANDOM", "PYRAMINX", "Random scrambler"));
+                new ScramblerInfo("PYRAMINX-RANDOM", "PYRAMINX", "Random scrambler"),
+                0);
+
+        // pyraminx random
+        Scrambler pyraminxSuboptimalRandom =
+            new PyraminxRandomScrambler(
+                new ScramblerInfo("PYRAMINX-SUBOPTIMAL-RANDOM", "PYRAMINX", "Suboptimal random scrambler"),
+                11);
 
         // pyraminx importer
         Scrambler square1Importer =
@@ -343,6 +350,7 @@ public class ScramblerProvider {
             megaminxRandom,
             pyraminxImporter,
             pyraminxRandom,
+            pyraminxSuboptimalRandom,
             skewbImporter,
             skewbRandom,
             square1Importer,

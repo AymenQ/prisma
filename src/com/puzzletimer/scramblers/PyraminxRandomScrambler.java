@@ -8,10 +8,12 @@ import com.puzzletimer.solvers.PyraminxSolver;
 
 public class PyraminxRandomScrambler implements Scrambler {
     private ScramblerInfo scramblerInfo;
+    private PyraminxSolver solver;
     private Random random;
 
-    public PyraminxRandomScrambler(ScramblerInfo scramblerInfo) {
+    public PyraminxRandomScrambler(ScramblerInfo scramblerInfo, int minScrambleLength) {
         this.scramblerInfo = scramblerInfo;
+        this.solver = new PyraminxSolver(minScrambleLength);
         this.random = new Random();
     }
 
@@ -22,15 +24,10 @@ public class PyraminxRandomScrambler implements Scrambler {
 
     @Override
     public Scramble getNextScramble() {
-        int tipsOrientation = this.random.nextInt(PyraminxSolver.N_VERTICES_ORIERNTATIONS);
-        int verticesOrientation = this.random.nextInt(PyraminxSolver.N_VERTICES_ORIERNTATIONS);
-        int edgesPermutation = this.random.nextInt(PyraminxSolver.N_EDGES_PERMUTATIONS);
-        int edgesOrientation = this.random.nextInt(PyraminxSolver.N_EDGES_ORIENTATIONS);
-        String[] sequence = PyraminxSolver.generate(tipsOrientation, verticesOrientation, edgesPermutation, edgesOrientation);
-
         return new Scramble(
             getScramblerInfo().getScramblerId(),
-            sequence);
+            this.solver.generate(
+                this.solver.getRandomState(this.random)));
     }
 
     @Override
