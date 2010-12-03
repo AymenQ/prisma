@@ -18,6 +18,7 @@ public class ScrambleParserProvider {
             new RubiksDominoScrambleParser(),
             new RubiksPocketCubeScrambleParser(),
             new RubiksRevengeScramblerParser(),
+            new RubiksTowerScramblerParser(),
             new SkewbScrambleParser(),
             new Square1ScrambleParser(),
             new TowerCubeScrambleParser(),

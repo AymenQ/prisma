@@ -21,6 +21,7 @@ public class PuzzleProvider {
             new Skewb(),
             new FloppyCube(),
             new TowerCube(),
+            new RubiksTower(),
             new RubiksDomino(),
             new Other(),
         };
