@@ -49,6 +49,7 @@ import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
 import com.puzzletimer.statistics.BestMean;
+import com.puzzletimer.statistics.InterquartileMean;
 import com.puzzletimer.statistics.Mean;
 import com.puzzletimer.statistics.Percentile;
 import com.puzzletimer.statistics.StandardDeviation;
@@ -332,10 +333,11 @@ public class HistoryFrame extends JFrame {
     private JLabel labelBest;
     private JLabel labelMeanOf3;
     private JLabel labelBestMeanOf3;
-    private JLabel labelStandardDeviation;
+    private JLabel labelInterquartileMean;
     private JLabel labelLowerQuartile;
     private JLabel labelMeanOf10;
     private JLabel labelBestMeanOf10;
+    private JLabel labelStandardDeviation;
     private JLabel labelMedian;
     private JLabel labelMeanOf100;
     private JLabel labelBestMeanOf100;
@@ -585,10 +587,10 @@ public class HistoryFrame extends JFrame {
         this.labelBestMeanOf3 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelBestMeanOf3, "wrap");
 
-        // labelStandardDeviation
-        panelStatistics.add(new JLabel("Standard Deviation:"), "");
-        this.labelStandardDeviation = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelStandardDeviation, "");
+        // labelInterquartileMean
+        panelStatistics.add(new JLabel("Interquartile mean:"), "");
+        this.labelInterquartileMean = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelInterquartileMean, "");
 
         // labelLowerQuartile
         panelStatistics.add(new JLabel("Lower quartile:"), "");
@@ -605,8 +607,13 @@ public class HistoryFrame extends JFrame {
         this.labelBestMeanOf10 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelBestMeanOf10, "wrap");
 
+        // labelStandardDeviation
+        panelStatistics.add(new JLabel("Standard deviation:"), "");
+        this.labelStandardDeviation = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelStandardDeviation, "");
+
         // labelMedian
-        panelStatistics.add(new JLabel("Median:"), "skip 2");
+        panelStatistics.add(new JLabel("Median:"), "");
         this.labelMedian = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelMedian, "");
 
@@ -692,10 +699,11 @@ public class HistoryFrame extends JFrame {
             this.labelBest,
             this.labelMeanOf3,
             this.labelBestMeanOf3,
-            this.labelStandardDeviation,
+            this.labelInterquartileMean,
             this.labelLowerQuartile,
             this.labelMeanOf10,
             this.labelBestMeanOf10,
+            this.labelStandardDeviation,
             this.labelMedian,
             this.labelMeanOf100,
             this.labelBestMeanOf100,
@@ -712,10 +720,11 @@ public class HistoryFrame extends JFrame {
             new Best(1, Integer.MAX_VALUE),
             new Mean(3, 3),
             new BestMean(3, Integer.MAX_VALUE),
-            new StandardDeviation(1, Integer.MAX_VALUE),
+            new InterquartileMean(3, Integer.MAX_VALUE),
             new Percentile(1, Integer.MAX_VALUE, 0.25),
             new Mean(10, 10),
             new BestMean(10, Integer.MAX_VALUE),
+            new StandardDeviation(1, Integer.MAX_VALUE),
             new Percentile(1, Integer.MAX_VALUE, 0.5),
             new Mean(100, 100),
             new BestMean(100, Integer.MAX_VALUE),
@@ -736,6 +745,7 @@ public class HistoryFrame extends JFrame {
             false,
             true,
             true,
+            false,
             false,
             true,
             true,
