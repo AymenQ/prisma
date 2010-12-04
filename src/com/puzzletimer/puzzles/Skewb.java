@@ -88,7 +88,7 @@ public class Skewb implements Puzzle {
         }
 
         return mesh
-            .transform(Matrix44.rotationY(-Math.PI / 4))
+            .transform(Matrix44.rotationY(-Math.PI / 6))
             .transform(Matrix44.rotationX(Math.PI / 7));
     }
 }
