@@ -75,7 +75,6 @@ import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.timer.KeyboardTimer;
 import com.puzzletimer.timer.StackmatTimer;
-import com.puzzletimer.timer.Timer;
 import com.puzzletimer.tips.TipperProvider;
 import com.puzzletimer.util.SolutionUtils;
 
@@ -602,46 +601,7 @@ public class MainFrame extends JFrame {
             }
         }
 
-        String timerTriggerId =
-            this.configurationManager.getConfiguration("TIMER-TRIGGER");
-        if (timerTriggerId.equals("KEYBOARD-TIMER-CONTROL")) {
-            this.menuItemCtrlKeys.setSelected(true);
-            this.timerManager.setTimer(
-                new KeyboardTimer(this.timerManager, this, KeyEvent.VK_CONTROL));
-        } else if (timerTriggerId.equals("KEYBOARD-TIMER-SPACE")) {
-            this.menuItemSpaceKey.setSelected(true);
-            this.timerManager.setTimer(
-                new KeyboardTimer(this.timerManager, this, KeyEvent.VK_SPACE));
-        } else if (timerTriggerId.equals("STACKMAT-TIMER")) {
-            if (this.mixerInfo != null) {
-                TargetDataLine targetDataLine = null;
-                try {
-                    targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
-                    targetDataLine.open(MainFrame.this.audioFormat);
-                    this.menuItemStackmatTimer.setSelected(true);
-                    this.timerManager.setTimer(
-                        new StackmatTimer(this.timerManager, targetDataLine));
-                } catch (LineUnavailableException e) {
-                    // select the default timer
-                    this.menuItemSpaceKey.setSelected(true);
-                    this.timerManager.setTimer(
-                        new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
-
-                    MainFrame.this.messageManager.enqueueMessage(
-                        MessageType.ERROR,
-                        "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
-                }
-            } else {
-                // select the default timer
-                this.menuItemSpaceKey.setSelected(true);
-                this.timerManager.setTimer(
-                    new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
-
-                MainFrame.this.messageManager.enqueueMessage(
-                    MessageType.ERROR,
-                    "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
-            }
-        }
+        setTimerTrigger(this.configurationManager.getConfiguration("TIMER-TRIGGER"));
 
         // title
         this.categoryManager.addCategoryListener(new CategoryListener() {
@@ -795,8 +755,7 @@ public class MainFrame extends JFrame {
         this.menuItemCtrlKeys.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Timer timer = new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_CONTROL);
-                MainFrame.this.timerManager.setTimer(timer);
+                setTimerTrigger("KEYBOARD-TIMER-CONTROL");
             }
         });
 
@@ -804,8 +763,7 @@ public class MainFrame extends JFrame {
         this.menuItemSpaceKey.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Timer timer = new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE);
-                MainFrame.this.timerManager.setTimer(timer);
+                setTimerTrigger("KEYBOARD-TIMER-SPACE");
             }
         });
 
@@ -813,30 +771,7 @@ public class MainFrame extends JFrame {
         this.menuItemStackmatTimer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (MainFrame.this.mixerInfo == null) {
-                    MainFrame.this.timerManager.setTimer(null);
-                    return;
-                }
-
-                TargetDataLine targetDataLine;
-                try {
-                    targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
-                    targetDataLine.open(MainFrame.this.audioFormat);
-                } catch (LineUnavailableException ex) {
-                    // select the default timer
-                    MainFrame.this.menuItemSpaceKey.setSelected(true);
-                    MainFrame.this.timerManager.setTimer(
-                        new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
-
-                    MainFrame.this.messageManager.enqueueMessage(
-                        MessageType.ERROR,
-                        "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
-
-                    return;
-                }
-
-                MainFrame.this.timerManager.setTimer(
-                    new StackmatTimer(MainFrame.this.timerManager, targetDataLine));
+                setTimerTrigger("STACKMAT-TIMER");
             }
         });
 
@@ -865,6 +800,12 @@ public class MainFrame extends JFrame {
                     MainFrame.this.mixerInfo = mixerInfo;
                     MainFrame.this.configurationManager.setConfiguration(
                         "STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName());
+
+                    String timerTrigger =
+                        MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
+                    if (timerTrigger.equals("STACKMAT-TIMER")) {
+                        setTimerTrigger("STACKMAT-TIMER");
+                    }
                 }
             });
             this.stackmatTimerInputDevice.add(menuItemDevice);
@@ -908,6 +849,47 @@ public class MainFrame extends JFrame {
                 MainFrame.this.labelMessage.setVisible(true);
             }
         });
+    }
+
+    private void setTimerTrigger(String timerTriggerId) {
+        if (timerTriggerId.equals("KEYBOARD-TIMER-CONTROL")) {
+            this.menuItemCtrlKeys.setSelected(true);
+            this.timerManager.setTimer(
+                new KeyboardTimer(this.timerManager, this, KeyEvent.VK_CONTROL));
+        } else if (timerTriggerId.equals("KEYBOARD-TIMER-SPACE")) {
+            this.menuItemSpaceKey.setSelected(true);
+            this.timerManager.setTimer(
+                new KeyboardTimer(this.timerManager, this, KeyEvent.VK_SPACE));
+        } else if (timerTriggerId.equals("STACKMAT-TIMER")) {
+            if (this.mixerInfo != null) {
+                TargetDataLine targetDataLine = null;
+                try {
+                    targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
+                    targetDataLine.open(MainFrame.this.audioFormat);
+                    this.menuItemStackmatTimer.setSelected(true);
+                    this.timerManager.setTimer(
+                        new StackmatTimer(this.timerManager, targetDataLine));
+                } catch (LineUnavailableException e) {
+                    // select the default timer
+                    this.menuItemSpaceKey.setSelected(true);
+                    this.timerManager.setTimer(
+                        new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
+
+                    MainFrame.this.messageManager.enqueueMessage(
+                        MessageType.ERROR,
+                        "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
+                }
+            } else {
+                // select the default timer
+                this.menuItemSpaceKey.setSelected(true);
+                this.timerManager.setTimer(
+                    new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
+
+                MainFrame.this.messageManager.enqueueMessage(
+                    MessageType.ERROR,
+                    "ERROR: Couldn't select Stackmat Timer. Using Space Key instead.");
+            }
+        }
     }
 
     private void createComponents() {
