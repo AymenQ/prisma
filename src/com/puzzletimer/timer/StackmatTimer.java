@@ -86,7 +86,7 @@ class StackmatTimerReader implements Runnable {
 
         this.targetDataLine.start();
 
-        byte[] buffer = new byte[(int) (this.sampleRate / 4)];
+        byte[] buffer = new byte[(int) (this.sampleRate / 8)];
         int offset = buffer.length;
 
         while (this.running) {
