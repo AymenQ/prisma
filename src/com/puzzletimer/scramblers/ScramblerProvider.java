@@ -262,8 +262,7 @@ public class ScramblerProvider {
         // square-1 random
         Scrambler square1Random =
             new Square1RandomScrambler(
-                new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"),
-                40);
+                new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"));
 
         // skewb importer
         Scrambler skewbImporter =
