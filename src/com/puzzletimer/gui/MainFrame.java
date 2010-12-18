@@ -27,6 +27,7 @@ import javax.sound.sampled.DataLine.Info;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -73,7 +74,8 @@ import com.puzzletimer.statistics.Percentile;
 import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
-import com.puzzletimer.timer.KeyboardTimer;
+import com.puzzletimer.timer.ControlKeysTimer;
+import com.puzzletimer.timer.SpaceKeyTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.tips.TipperProvider;
 import com.puzzletimer.util.SolutionUtils;
@@ -170,13 +172,41 @@ public class MainFrame extends JFrame {
                 }
 
                 @Override
-                public void timerRunning(Timing timing) {
-                    TimerPanel.this.labelTime.setText(SolutionUtils.formatMinutes(timing.getElapsedTime()));
+                public void inspectionRunning(long remainingTime) {
+                    Color startColor = Color.BLACK;
+                    Color endColor = new Color(0xFF, 0x30, 0x30);
+
+                    Color color;
+                    if (remainingTime > 7000) {
+                        color = startColor;
+                    } else if (remainingTime > 0) {
+                        double x = remainingTime / 7000.0;
+                        color = new Color(
+                            (int) (x * startColor.getRed()   + (1 - x) * endColor.getRed()),
+                            (int) (x * startColor.getGreen() + (1 - x) * endColor.getGreen()),
+                            (int) (x * startColor.getBlue()  + (1 - x) * endColor.getBlue()));
+                    } else {
+                        color = endColor;
+                        remainingTime = 0;
+                    }
+
+                    TimerPanel.this.labelTime.setForeground(color);
+                    TimerPanel.this.labelTime.setText(
+                        SolutionUtils.formatSeconds(remainingTime));
                 }
 
                 @Override
-                public void timerStopped(Timing timing) {
-                    TimerPanel.this.labelTime.setText(SolutionUtils.formatMinutes(timing.getElapsedTime()));
+                public void solutionRunning(Timing timing) {
+                    TimerPanel.this.labelTime.setForeground(Color.BLACK);
+                    TimerPanel.this.labelTime.setText(
+                        SolutionUtils.formatMinutes(timing.getElapsedTime()));
+                }
+
+                @Override
+                public void solutionFinished(Timing timing, String penalty) {
+                    TimerPanel.this.labelTime.setForeground(Color.BLACK);
+                    TimerPanel.this.labelTime.setText(
+                        SolutionUtils.formatMinutes(timing.getElapsedTime()));
                 }
             });
         }
@@ -535,7 +565,10 @@ public class MainFrame extends JFrame {
     private JMenuItem menuItemHistory;
     private JMenuItem menuItemSessionSummary;
     private JMenu menuCategory;
-    private JMenuItem menuColorScheme;
+    private JMenuItem menuItemColorScheme;
+    private JCheckBoxMenuItem menuItemInspectionTime;
+    private JMenu stackmatTimerInputDevice;
+    private ButtonGroup stackmatTimerInputDeviceGroup;
     private JRadioButtonMenuItem menuItemCtrlKeys;
     private JRadioButtonMenuItem menuItemSpaceKey;
     private JRadioButtonMenuItem menuItemStackmatTimer;
@@ -556,8 +589,6 @@ public class MainFrame extends JFrame {
 
     private AudioFormat audioFormat;
     private Mixer.Info mixerInfo;
-    private JMenu stackmatTimerInputDevice;
-    private ButtonGroup stackmatTimerInputDeviceGroup;
 
     public MainFrame(
             MessageManager messageManager,
@@ -744,10 +775,20 @@ public class MainFrame extends JFrame {
         });
 
         // menuColorScheme
-        this.menuColorScheme.addActionListener(new ActionListener() {
+        this.menuItemColorScheme.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.colorSchemeFrame.setVisible(true);
+            }
+        });
+
+        // menuItemInspectionTime
+        this.menuItemInspectionTime.setSelected(timerManager.isInspectionEnabled());
+        this.menuItemInspectionTime.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.timerManager.setInspectionEnabled(
+                    MainFrame.this.menuItemInspectionTime.isSelected());
             }
         });
 
@@ -855,11 +896,11 @@ public class MainFrame extends JFrame {
         if (timerTriggerId.equals("KEYBOARD-TIMER-CONTROL")) {
             this.menuItemCtrlKeys.setSelected(true);
             this.timerManager.setTimer(
-                new KeyboardTimer(this.timerManager, this, KeyEvent.VK_CONTROL));
+                new ControlKeysTimer(this, this.timerManager));
         } else if (timerTriggerId.equals("KEYBOARD-TIMER-SPACE")) {
             this.menuItemSpaceKey.setSelected(true);
             this.timerManager.setTimer(
-                new KeyboardTimer(this.timerManager, this, KeyEvent.VK_SPACE));
+                new SpaceKeyTimer(this, this.timerManager));
         } else if (timerTriggerId.equals("STACKMAT-TIMER")) {
             if (this.mixerInfo != null) {
                 TargetDataLine targetDataLine = null;
@@ -868,12 +909,12 @@ public class MainFrame extends JFrame {
                     targetDataLine.open(MainFrame.this.audioFormat);
                     this.menuItemStackmatTimer.setSelected(true);
                     this.timerManager.setTimer(
-                        new StackmatTimer(this.timerManager, targetDataLine));
+                        new StackmatTimer(targetDataLine, this.timerManager));
                 } catch (LineUnavailableException e) {
                     // select the default timer
                     this.menuItemSpaceKey.setSelected(true);
                     this.timerManager.setTimer(
-                        new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
+                        new SpaceKeyTimer(this, this.timerManager));
 
                     MainFrame.this.messageManager.enqueueMessage(
                         MessageType.ERROR,
@@ -883,7 +924,7 @@ public class MainFrame extends JFrame {
                 // select the default timer
                 this.menuItemSpaceKey.setSelected(true);
                 this.timerManager.setTimer(
-                    new KeyboardTimer(MainFrame.this.timerManager, MainFrame.this, KeyEvent.VK_SPACE));
+                    new SpaceKeyTimer(this, this.timerManager));
 
                 MainFrame.this.messageManager.enqueueMessage(
                     MessageType.ERROR,
@@ -947,10 +988,16 @@ public class MainFrame extends JFrame {
         menuBar.add(menuOptions);
 
         // menuColorScheme
-        this.menuColorScheme = new JMenuItem("Color scheme...");
-        this.menuColorScheme.setMnemonic(KeyEvent.VK_C);
-        this.menuColorScheme.setAccelerator(KeyStroke.getKeyStroke("ctrl alt K"));
-        menuOptions.add(this.menuColorScheme);
+        this.menuItemColorScheme = new JMenuItem("Color scheme...");
+        this.menuItemColorScheme.setMnemonic(KeyEvent.VK_C);
+        this.menuItemColorScheme.setAccelerator(KeyStroke.getKeyStroke("ctrl alt K"));
+        menuOptions.add(this.menuItemColorScheme);
+
+        // menuItemInspectionTime
+        this.menuItemInspectionTime = new JCheckBoxMenuItem("Inspection time");
+        this.menuItemInspectionTime.setMnemonic(KeyEvent.VK_I);
+        this.menuItemInspectionTime.setAccelerator(KeyStroke.getKeyStroke("ctrl alt I"));
+        menuOptions.add(this.menuItemInspectionTime);
 
         // menuTimerTrigger
         JMenu menuTimerTrigger = new JMenu("Timer trigger");

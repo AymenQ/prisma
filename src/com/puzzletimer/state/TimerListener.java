@@ -4,8 +4,13 @@ import com.puzzletimer.models.Timing;
 import com.puzzletimer.timer.Timer;
 
 public class TimerListener {
+    // timer
+
     public void timerChanged(Timer timer) {
     }
+
+
+    // hands
 
     public void leftHandPressed() {
     }
@@ -19,12 +24,29 @@ public class TimerListener {
     public void rightHandReleased() {
     }
 
-    public void timerReady() {
+
+    // inspection
+
+    public void inspectionEnabledSet(boolean inspectionEnabled) {
     }
 
-    public void timerRunning(Timing timing) {
+    public void inspectionStarted() {
     }
 
-    public void timerStopped(Timing timing) {
+    public void inspectionRunning(long remainingTime) {
+    }
+
+    public void inspectionFinished() {
+    }
+
+    // solution
+
+    public void solutionStarted() {
+    }
+
+    public void solutionRunning(Timing timing) {
+    }
+
+    public void solutionFinished(Timing timing, String penalty) {
     }
 }

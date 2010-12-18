@@ -137,9 +137,11 @@ public class Main {
 
         // timer manager
         this.timerManager = new TimerManager();
+        this.timerManager.setInspectionEnabled(
+            this.configurationManager.getConfiguration("INSPECTION-TIME-ENABLED").equals("TRUE"));
         this.timerManager.addTimerListener(new TimerListener() {
             @Override
-            public void timerStopped(Timing timing) {
+            public void solutionFinished(Timing timing, String penalty) {
                 // add solution
                 Main.this.solutionManager.addSolution(
                     new Solution(
@@ -147,7 +149,7 @@ public class Main {
                         Main.this.categoryManager.getCurrentCategory().getCategoryId(),
                         Main.this.scrambleManager.getCurrentScramble(),
                         timing,
-                        ""));
+                        penalty));
 
                 // check for personal records
                 Solution[] solutions = Main.this.solutionManager.getSolutions();
@@ -190,6 +192,12 @@ public class Main {
             public void timerChanged(Timer timer) {
                 Main.this.configurationManager.setConfiguration(
                     "TIMER-TRIGGER", timer.getTimerId());
+            }
+
+            @Override
+            public void inspectionEnabledSet(boolean inspectionEnabled) {
+                Main.this.configurationManager.setConfiguration(
+                    "INSPECTION-TIME-ENABLED", inspectionEnabled ? "TRUE" : "FALSE");
             }
         });
 
