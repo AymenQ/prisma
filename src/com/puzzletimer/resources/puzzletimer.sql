@@ -187,6 +187,7 @@ INSERT INTO SCRAMBLER VALUES
     ( 1, 'PYRAMINX-SUBOPTIMAL-RANDOM',                   'PYRAMINX',      'Suboptimal random scrambler',                  FALSE),
     (-1, 'SQUARE-1-IMPORTER',                            'SQUARE-1',      'Importer scrambler',                            TRUE),
     ( 0, 'SQUARE-1-RANDOM',                              'SQUARE-1',      'Random scrambler',                             FALSE),
+    ( 1, 'SQUARE-1-CUBE-SHAPE',                          'SQUARE-1',      'Cube shape scrambler',                         FALSE),
     (-1, 'SKEWB-IMPORTER',                               'SKEWB',         'Importer scrambler',                            TRUE),
     ( 0, 'SKEWB-RANDOM',                                 'SKEWB',         'Random scrambler',                             FALSE),
     (-1, 'FLOPPY-CUBE-IMPORTER',                         'FLOPPY-CUBE',   'Importer scrambler',                            TRUE),

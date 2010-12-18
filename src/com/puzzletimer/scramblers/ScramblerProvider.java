@@ -264,6 +264,11 @@ public class ScramblerProvider {
             new Square1RandomScrambler(
                 new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", "Random scrambler"));
 
+        // square-1 cube shape
+        Scrambler square1CubeShape =
+            new Square1CubeShapeScrambler(
+                new ScramblerInfo("SQUARE-1-CUBE-SHAPE", "SQUARE-1", "Cube shape scrambler"));
+
         // skewb importer
         Scrambler skewbImporter =
             new EmptyScrambler(
@@ -364,6 +369,7 @@ public class ScramblerProvider {
             skewbRandom,
             square1Importer,
             square1Random,
+            square1CubeShape,
             floppyCubeImporter,
             floppyCubeRandom,
             towerCubeImporter,
