@@ -21,7 +21,7 @@ public class SolutionUtils {
         return sign + String.format(
             "%d.%02d",
             time / 1000,
-            (time % 1000) / 10);
+            Math.round((time % 1000) / 10.0));
     }
 
     public static String formatMinutes(long time) {
@@ -34,11 +34,12 @@ public class SolutionUtils {
             sign = "-";
             time = -time;
         }
+
         return sign + String.format(
             "%02d:%02d.%02d",
             time / 60000,
             (time % 60000) / 1000,
-            (time % 1000) / 10);
+            Math.round((time % 1000) / 10.0));
     }
 
     public static long parseTime(String input) {
