@@ -1,8 +1,8 @@
 package com.puzzletimer.util;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Locale;
+import java.util.Scanner;
 
 import com.puzzletimer.models.Solution;
 
@@ -18,10 +18,12 @@ public class SolutionUtils {
             time = -time;
         }
 
+        time = (time + 5) / 10;
+
         return sign + String.format(
-            "%d.%02d",
-            time / 1000,
-            Math.round((time % 1000) / 10.0));
+            Locale.ENGLISH,
+            "%.2f",
+            time / 100.0);
     }
 
     public static String formatMinutes(long time) {
@@ -35,76 +37,61 @@ public class SolutionUtils {
             time = -time;
         }
 
+        time = (time + 5) / 10;
+
         return sign + String.format(
-            "%02d:%02d.%02d",
-            time / 60000,
-            (time % 60000) / 1000,
-            Math.round((time % 1000) / 10.0));
+            Locale.ENGLISH,
+            "%02d:%05.2f",
+            time / 6000,
+            (time % 6000) / 100.0);
     }
 
     public static long parseTime(String input) {
-        Pattern pattern;
-        Matcher matcher;
+        Scanner scanner = new Scanner(input.trim());
+        scanner.useLocale(Locale.ENGLISH);
+
+        long time;
 
         // 00:00.00
-        pattern = Pattern.compile("\\s*(\\d+):(\\d+)\\.(\\d{1,2})\\s*");
-        matcher = pattern.matcher(input);
-        if (matcher.matches()) {
-            long time = 0;
+        if (input.contains(":")) {
+            scanner.useDelimiter(":");
 
-            // minutes
-            time += 60000 * Integer.parseInt(matcher.group(1));
+            if (!scanner.hasNextLong()) {
+                return 0;
+            }
 
-            // seconds
-            time += 1000 * Integer.parseInt(matcher.group(2));
+            long minutes = scanner.nextLong();
+            if (minutes < 0) {
+                return 0;
+            }
 
-            // centiseconds
-            int fraction = Integer.parseInt(matcher.group(3));
-            time += fraction < 10 ? 100 * fraction : 10 * fraction;
+            if (!scanner.hasNextDouble()) {
+                return 0;
+            }
 
-            return time;
-        }
+            double seconds = scanner.nextDouble();
+            if (seconds < 0.0 || seconds >= 60.0) {
+                return 0;
+            }
 
-        // 00:00
-        pattern = Pattern.compile("\\s*(\\d+):(\\d+)\\s*");
-        matcher = pattern.matcher(input);
-        if (matcher.matches()) {
-            long time = 0;
-
-            // minutes
-            time += 60000 * Integer.parseInt(matcher.group(1));
-
-            // seconds
-            time += 1000 * Integer.parseInt(matcher.group(2));
-
-            return time;
+            time = (long) (60000 * minutes + 1000 * seconds);
         }
 
         // 00.00
-        pattern = Pattern.compile("\\s*(\\d+)\\.(\\d{1,2})\\s*");
-        matcher = pattern.matcher(input);
-        if (matcher.matches()) {
-            long time = 0;
+        else {
+            if (!scanner.hasNextDouble()) {
+                return 0;
+            }
 
-            // seconds
-            time += 1000 * Integer.parseInt(matcher.group(1));
+            double seconds = scanner.nextDouble();
+            if (seconds < 0.0) {
+                return 0;
+            }
 
-            // centiseconds
-            int fraction = Integer.parseInt(matcher.group(2));
-            time += fraction < 10 ? 100 * fraction : 10 * fraction;
-
-            return time;
+            time = (long) (1000 * seconds);
         }
 
-        // 00
-        pattern = Pattern.compile("\\s*(\\d+)\\s*");
-        matcher = pattern.matcher(input);
-        if (matcher.matches()) {
-            // seconds
-            return 1000 * Integer.parseInt(matcher.group(1));
-        }
-
-        return 0;
+        return 10 * ((time + 5) / 10);
     }
 
     public static long realTime(Solution solution) {
