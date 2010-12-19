@@ -93,10 +93,10 @@ public class PyraminxSolver {
             "b", "b'",
         };
 
-        State moveU = new State(new byte[] { 0, 0, 0, 0 }, new byte[] { 1, 0, 0, 0 }, new byte[] { 2, 0, 1, 3, 4, 5 }, new byte[] { 0, 0, 0, 0, 0, 0 });
-        State moveL = new State(new byte[] { 0, 0, 0, 0 }, new byte[] { 0, 1, 0, 0 }, new byte[] { 0, 1, 5, 3, 2, 4 }, new byte[] { 0, 0, 1, 0, 0, 1 });
-        State moveR = new State(new byte[] { 0, 0, 0, 0 }, new byte[] { 0, 0, 1, 0 }, new byte[] { 0, 4, 2, 1, 3, 5 }, new byte[] { 0, 1, 0, 0, 1, 0 });
-        State moveB = new State(new byte[] { 0, 0, 0, 0 }, new byte[] { 0, 0, 0, 1 }, new byte[] { 3, 1, 2, 5, 4, 0 }, new byte[] { 1, 0, 0, 1, 0, 0 });
+        State moveU = new State(new byte[] { 1, 0, 0, 0 }, new byte[] { 1, 0, 0, 0 }, new byte[] { 2, 0, 1, 3, 4, 5 }, new byte[] { 0, 0, 0, 0, 0, 0 });
+        State moveL = new State(new byte[] { 0, 1, 0, 0 }, new byte[] { 0, 1, 0, 0 }, new byte[] { 0, 1, 5, 3, 2, 4 }, new byte[] { 0, 0, 1, 0, 0, 1 });
+        State moveR = new State(new byte[] { 0, 0, 1, 0 }, new byte[] { 0, 0, 1, 0 }, new byte[] { 0, 4, 2, 1, 3, 5 }, new byte[] { 0, 1, 0, 0, 1, 0 });
+        State moveB = new State(new byte[] { 0, 0, 0, 1 }, new byte[] { 0, 0, 0, 1 }, new byte[] { 3, 1, 2, 5, 4, 0 }, new byte[] { 1, 0, 0, 1, 0, 0 });
 
         this.moves = new State[] {
             moveU,
@@ -380,14 +380,29 @@ public class PyraminxSolver {
         inverseMoveNames.put("B'", "B");
 
         String[] solution = solve(state);
+
+        HashMap<String, State> moves = new HashMap<String, State>();
+        moves.put("U",  this.moves[0]);
+        moves.put("U'", this.moves[1]);
+        moves.put("L",  this.moves[2]);
+        moves.put("L'", this.moves[3]);
+        moves.put("R",  this.moves[4]);
+        moves.put("R'", this.moves[5]);
+        moves.put("B",  this.moves[6]);
+        moves.put("B'", this.moves[7]);
+
+        for (String move : solution) {
+            state = state.multiply(moves.get(move));
+        }
+
         String[] tipsSolution = solveTips(state);
 
         String[] sequence = new String[tipsSolution.length + solution.length];
-        for (int i = 0; i < tipsSolution.length; i++) {
-            sequence[i] = inverseMoveNames.get(tipsSolution[tipsSolution.length - 1 - i]);
-        }
         for (int i = 0; i < solution.length; i++) {
-            sequence[tipsSolution.length + i] = inverseMoveNames.get(solution[solution.length - 1 - i]);
+            sequence[i] = inverseMoveNames.get(solution[solution.length - 1 - i]);
+        }
+        for (int i = 0; i < tipsSolution.length; i++) {
+            sequence[solution.length + i] = inverseMoveNames.get(tipsSolution[tipsSolution.length - 1 - i]);
         }
 
         return sequence;
