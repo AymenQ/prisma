@@ -73,44 +73,13 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // projection
-        final ArrayList<Vector3> pVertices = new ArrayList<Vector3>();
+        ArrayList<Vector3> pVertices = new ArrayList<Vector3>();
         for (Vector3 v : this.mesh.vertices) {
             pVertices.add(perspectiveProjection(toCameraCoordinates(v)));
         }
 
-        // separate front from back facing polygons
-        ArrayList<Face> frontFaces = new ArrayList<Face>();
-        ArrayList<Face> backFaces = new ArrayList<Face>();
-        for (Face f : this.mesh.faces) {
-            Vector3 n = triangleNormal(
-                pVertices.get(f.vertexIndices.get(0)),
-                pVertices.get(f.vertexIndices.get(1)),
-                pVertices.get(f.vertexIndices.get(2)));
-
-            if (n.z >= 0d) {
-                frontFaces.add(f);
-            } else {
-                backFaces.add(f);
-            }
-        }
-
-        // draw backfacing polygons
-        g2.setColor(new Color(0.1f, 0.1f, 0.1f, 0.2f));
-        for (Face f : backFaces) {
-            Polygon p = new Polygon();
-            for (int i : f.vertexIndices) {
-                p.addPoint(
-                        (int) pVertices.get(i).x,
-                        (int) pVertices.get(i).y);
-            }
-
-            g2.fillPolygon(p);
-        }
-
-        // draw frontfacing polygons
-
         // painter's algorithm
-        Collections.sort(frontFaces, new Comparator<Face>() {
+        Collections.sort(this.mesh.faces, new Comparator<Face>() {
             @Override
             public int compare(Face f1, Face f2) {
                 double centroidZ1 = 0d;
@@ -129,43 +98,59 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
             }
         });
 
-        for (Face f : frontFaces) {
+        Color backfacingColor =
+            new Color(
+                (4 * getBackground().getRed()   + 32) / 5,
+                (4 * getBackground().getGreen() + 32) / 5,
+                (4 * getBackground().getBlue()  + 32) / 5);
+
+        for (Face f : this.mesh.faces) {
             Polygon p = new Polygon();
             for (int i : f.vertexIndices) {
                 p.addPoint(
-                        (int) pVertices.get(i).x,
-                        (int) pVertices.get(i).y);
+                    (int) pVertices.get(i).x,
+                    (int) pVertices.get(i).y);
             }
 
-            // flat shading
             Vector3 n = triangleNormal(
-                    this.mesh.vertices.get(f.vertexIndices.get(0)),
-                    this.mesh.vertices.get(f.vertexIndices.get(1)),
-                    this.mesh.vertices.get(f.vertexIndices.get(2)));
-            double light = Math.abs(this.lightDirection.dot(n));
+                pVertices.get(f.vertexIndices.get(0)),
+                pVertices.get(f.vertexIndices.get(1)),
+                pVertices.get(f.vertexIndices.get(2)));
 
-            // draw polygon
-            float[] hsbColor = Color.RGBtoHSB(
-                f.color.getRed(),
-                f.color.getGreen(),
-                f.color.getBlue(),
-                null);
-            Color fillColor = new Color(
-                Color.HSBtoRGB(
-                    hsbColor[0],
-                    (float) (0.875 + 0.125 * light) * hsbColor[1],
-                    (float) (0.875 + 0.125 * light) * hsbColor[2]));
-            g2.setColor(fillColor);
-            g2.fillPolygon(p);
+            // front facing
+            if (n.z >= 0d) {
+                // flat shading
+                double light = Math.abs(this.lightDirection.dot(n));
 
-            // draw outline
-            Color outlineColor = new Color(
-                Color.HSBtoRGB(
-                    hsbColor[0],
-                    (float) (0.9 * (0.875 + 0.125 * light) * hsbColor[1]),
-                    (float) (0.9 * (0.875 + 0.125 * light) * hsbColor[2])));
-            g2.setColor(outlineColor);
-            g2.drawPolygon(p);
+                // draw polygon
+                float[] hsbColor = Color.RGBtoHSB(
+                    f.color.getRed(),
+                    f.color.getGreen(),
+                    f.color.getBlue(),
+                    null);
+                Color fillColor = new Color(
+                    Color.HSBtoRGB(
+                        hsbColor[0],
+                        (float) (0.875 + 0.125 * light) * hsbColor[1],
+                        (float) (0.875 + 0.125 * light) * hsbColor[2]));
+                g2.setColor(fillColor);
+                g2.fillPolygon(p);
+
+                // draw outline
+                Color outlineColor = new Color(
+                    Color.HSBtoRGB(
+                        hsbColor[0],
+                        (float) (0.9 * (0.875 + 0.125 * light) * hsbColor[1]),
+                        (float) (0.9 * (0.875 + 0.125 * light) * hsbColor[2])));
+                g2.setColor(outlineColor);
+                g2.drawPolygon(p);
+            }
+
+            // back facing
+            else {
+                g2.setColor(backfacingColor);
+                g2.fillPolygon(p);
+            }
         }
     }
 
@@ -221,7 +206,7 @@ public class Panel3D extends JPanel implements MouseListener, MouseMotionListene
         Vector3 direction = this.cameraPosition.normalized();
         Vector3 newPosition = this.cameraPosition.add(direction.mul(0.1 * e.getWheelRotation()));
         if (1.0 < newPosition.norm() && newPosition.norm() < 50.0) {
-          this.cameraPosition = newPosition;
+            this.cameraPosition = newPosition;
         }
 
         repaint();
