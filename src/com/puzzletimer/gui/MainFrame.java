@@ -16,6 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -41,6 +43,7 @@ import javax.swing.KeyStroke;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.graphics.Panel3D;
+import com.puzzletimer.gui.SolutionEditingDialog.SolutionEditingDialogListener;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.Scramble;
@@ -559,6 +562,7 @@ public class MainFrame extends JFrame {
     private SessionManager sessionManager;
 
     private JMenu menuFile;
+    private JMenuItem menuItemAddSolution;
     private JMenuItem menuItemExit;
     private JMenuItem menuItemTips;
     private JMenuItem menuItemScrambleQueue;
@@ -589,6 +593,7 @@ public class MainFrame extends JFrame {
 
     private AudioFormat audioFormat;
     private Mixer.Info mixerInfo;
+
 
     public MainFrame(
             MessageManager messageManager,
@@ -639,6 +644,35 @@ public class MainFrame extends JFrame {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 setTitle("Puzzle Timer - " + currentCategory.getDescription());
+            }
+        });
+
+        // menuItemAddSolution
+        this.menuItemAddSolution.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Date now = new Date();
+                Solution solution = new Solution(
+                    UUID.randomUUID(),
+                    MainFrame.this.categoryManager.getCurrentCategory().getCategoryId(),
+                    MainFrame.this.scrambleManager.getCurrentScramble(),
+                    new Timing(now, now),
+                    "");
+
+                SolutionEditingDialogListener listener =
+                    new SolutionEditingDialogListener() {
+                        @Override
+                        public void solutionEdited(Solution solution) {
+                            MainFrame.this.solutionManager.addSolution(solution);
+                            MainFrame.this.scrambleManager.changeScramble();
+                        }
+                    };
+
+                SolutionEditingDialog solutionEditingDialog =
+                    new SolutionEditingDialog(MainFrame.this, true, solution, listener);
+                solutionEditingDialog.setTitle("Add solution");
+                solutionEditingDialog.setLocationRelativeTo(null);
+                solutionEditingDialog.setVisible(true);
             }
         });
 
@@ -942,6 +976,14 @@ public class MainFrame extends JFrame {
         this.menuFile = new JMenu("File");
         this.menuFile.setMnemonic(KeyEvent.VK_F);
         menuBar.add(this.menuFile);
+
+        // menuItemAddSolution
+        this.menuItemAddSolution = new JMenuItem("Add solution...");
+        this.menuItemAddSolution.setMnemonic(KeyEvent.VK_A);
+        this.menuItemAddSolution.setAccelerator(KeyStroke.getKeyStroke("ctrl A"));
+        this.menuFile.add(this.menuItemAddSolution);
+
+        this.menuFile.addSeparator();
 
         // menuItemExit
         this.menuItemExit = new JMenuItem("Exit");
