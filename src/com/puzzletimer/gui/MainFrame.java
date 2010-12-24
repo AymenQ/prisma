@@ -177,7 +177,7 @@ public class MainFrame extends JFrame {
                 @Override
                 public void inspectionRunning(long remainingTime) {
                     Color startColor = Color.BLACK;
-                    Color endColor = new Color(0xFF, 0x30, 0x30);
+                    Color endColor = new Color(0xD4, 0x11, 0x11);
 
                     Color color;
                     if (remainingTime > 7000) {
