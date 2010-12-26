@@ -2,18 +2,23 @@ package com.puzzletimer;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
 import java.util.UUID;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import org.h2.tools.RunScript;
 
 import com.puzzletimer.database.CategoryDAO;
 import com.puzzletimer.database.ColorDAO;
@@ -69,41 +74,45 @@ public class Main {
     private SessionManager sessionManager;
 
     public Main() {
-        // make empty database if necessary
+        // load database driver
         try {
-            File databaseFile = new File("puzzletimer.h2.db");
-            if (!databaseFile.exists()) {
-                BufferedInputStream input = new BufferedInputStream(getClass().getResourceAsStream("/com/puzzletimer/resources/puzzletimer.h2.db"));
-                FileOutputStream output = new FileOutputStream("puzzletimer.h2.db");
-
-                for (;;) {
-                    int data = input.read();
-                    if (data < 0) {
-                        break;
-                    }
-
-                    output.write(data);
-                }
-
-                input.close();
-                output.close();
-            }
-        } catch (IOException e) {
+            Class.forName("org.h2.Driver");
+        } catch (ClassNotFoundException e) {
             JFrame frame = new JFrame();
             JOptionPane.showMessageDialog(
                 frame,
-                "Couldn't create database.",
+                "Couldn't load database driver",
                 "Puzzle Timer",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
 
+        // create initial database if necessary
+        File databaseFile = new File("puzzletimer.h2.db");
+        if (!databaseFile.exists()) {
+            try {
+                Connection connection = DriverManager.getConnection("jdbc:h2:puzzletimer", "sa", "");
+                Reader script = new InputStreamReader(
+                    getClass().getResourceAsStream(
+                        "/com/puzzletimer/resources/database/puzzletimer0.3.sql"));
+                RunScript.execute(connection, script);
+                connection.close();
+            } catch (SQLException e) {
+                JFrame frame = new JFrame();
+                JOptionPane.showMessageDialog(
+                    frame,
+                    "Database error: " + e.getMessage(),
+                    "Puzzle Timer",
+                    JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
+        }
+
         // connect to database
         Connection connection = null;
         try {
-            Class.forName("org.h2.Driver");
             connection = DriverManager.getConnection("jdbc:h2:puzzletimer;IFEXISTS=TRUE", "sa", "");
-        } catch (Exception e) {
+        } catch (SQLException e) {
             JFrame frame = new JFrame();
             JOptionPane.showMessageDialog(
                 frame,
@@ -111,6 +120,43 @@ public class Main {
                 "Puzzle Timer",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(0);
+        }
+
+        // update database if necessary
+        String[] versions = { "0.3", "0.4" };
+
+        for (;;) {
+            String currentVersion = "";
+            try {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(
+                    "SELECT VALUE FROM CONFIGURATION WHERE KEY = 'VERSION'");
+                while (resultSet.next()) {
+                    currentVersion = resultSet.getString(1);
+                }
+            } catch (SQLException e) {
+            }
+
+            int versionIndex = Arrays.binarySearch(versions, currentVersion);
+            if (versionIndex < 0 || versionIndex == versions.length - 1) {
+                break;
+            }
+
+            try {
+                String scriptName = "puzzletimer" + versions[versionIndex + 1] + ".sql";
+                Reader script = new InputStreamReader(
+                    getClass().getResourceAsStream(
+                        "/com/puzzletimer/resources/database/" + scriptName));
+                RunScript.execute(connection, script);
+            } catch (SQLException e) {
+                JFrame frame = new JFrame();
+                JOptionPane.showMessageDialog(
+                    frame,
+                    "Database error: " + e.getMessage(),
+                    "Puzzle Timer",
+                    JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
+            }
         }
 
         // message manager
