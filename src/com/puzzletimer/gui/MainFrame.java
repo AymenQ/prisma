@@ -662,7 +662,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 public void inspectionRunning(long remainingTime) {
-                    int[] soundStartTimes = { 7000, 3000, 0, -2000 };
+                    int[] soundStartTimes = { 7000, 3000, 0, -2000, Integer.MIN_VALUE };
                     if (remainingTime <= soundStartTimes[this.next]) {
                         inspectionClips[this.next].setFramePosition(0);
                         inspectionClips[this.next].start();
