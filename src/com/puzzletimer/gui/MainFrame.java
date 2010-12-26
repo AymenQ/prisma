@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
@@ -638,6 +639,39 @@ public class MainFrame extends JFrame {
         }
 
         setTimerTrigger(this.configurationManager.getConfiguration("TIMER-TRIGGER"));
+
+        // inspection time sounds
+        try {
+            final Clip[] inspectionClips = new Clip[4];
+
+            String[] fileNames = { "eight_seconds.wav", "go.wav", "plus_two.wav", "dnf.wav" };
+            for (int i = 0; i < inspectionClips.length; i++) {
+                inspectionClips[i] = AudioSystem.getClip();
+                inspectionClips[i].open(
+                    AudioSystem.getAudioInputStream(
+                        MainFrame.class.getResourceAsStream("/com/puzzletimer/resources/inspection/" + fileNames[i])));
+            }
+
+            this.timerManager.addTimerListener(new TimerListener() {
+                private int next;
+
+                @Override
+                public void inspectionStarted() {
+                    this.next = 0;
+                }
+
+                @Override
+                public void inspectionRunning(long remainingTime) {
+                    int[] soundStartTimes = { 7000, 3000, 0, -2000 };
+                    if (remainingTime <= soundStartTimes[this.next]) {
+                        inspectionClips[this.next].setFramePosition(0);
+                        inspectionClips[this.next].start();
+                        this.next++;
+                    }
+                }
+            });
+        } catch (Exception e) {
+        }
 
         // title
         this.categoryManager.addCategoryListener(new CategoryListener() {
