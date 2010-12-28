@@ -42,6 +42,7 @@ import com.puzzletimer.state.ConfigurationListener;
 import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.state.MessageManager;
 import com.puzzletimer.state.ScrambleManager;
+import com.puzzletimer.state.SessionListener;
 import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.state.SolutionListener;
 import com.puzzletimer.state.SolutionManager;
@@ -196,39 +197,6 @@ public class Main {
                         Main.this.scrambleManager.getCurrentScramble(),
                         timing,
                         penalty));
-
-                // check for personal records
-                Solution[] solutions = Main.this.solutionManager.getSolutions();
-
-                StatisticalMeasure[] measures = {
-                    new Best(1, Integer.MAX_VALUE),
-                    new BestMean(3, 3),
-                    new BestMean(100, 100),
-                    new BestAverage(5, 5),
-                    new BestAverage(12, 12),
-                };
-
-                String[] descriptions = {
-                    "single",
-                    "mean of 3",
-                    "mean of 100",
-                    "average of 5",
-                    "average of 12",
-                };
-
-                for (int i = 0; i < measures.length; i++) {
-                    if (solutions.length >= measures[i].getMinimumWindowSize()) {
-                        measures[i].setSolutions(solutions);
-                        if (measures[i].getWindowPosition() == 0) {
-                            Main.this.messageManager.enqueueMessage(
-                                MessageType.INFORMATION,
-                                String.format("Personal Record - %s: %s (%s)",
-                                    Main.this.categoryManager.getCurrentCategory().getDescription(),
-                                    SolutionUtils.formatMinutes(measures[i].getValue()),
-                                    descriptions[i]));
-                        }
-                    }
-                }
 
                 // gerate next scramble
                 Main.this.scrambleManager.changeScramble();
@@ -412,6 +380,43 @@ public class Main {
 
         // session manager
         this.sessionManager = new SessionManager();
+        this.sessionManager.addSessionListener(new SessionListener() {
+            @Override
+            public void solutionsUpdated(Solution[] sessionSolutions) {
+                // check for personal records
+                StatisticalMeasure[] measures = {
+                    new Best(1, Integer.MAX_VALUE),
+                    new BestMean(3, 3),
+                    new BestMean(100, 100),
+                    new BestAverage(5, 5),
+                    new BestAverage(12, 12),
+                };
+
+                String[] descriptions = {
+                    "single",
+                    "mean of 3",
+                    "mean of 100",
+                    "average of 5",
+                    "average of 12",
+                };
+
+                Solution[] solutions = Main.this.solutionManager.getSolutions();
+
+                for (int i = 0; i < measures.length; i++) {
+                    if (sessionSolutions.length >= measures[i].getMinimumWindowSize()) {
+                        measures[i].setSolutions(solutions);
+                        if (measures[i].getWindowPosition() == 0) {
+                            Main.this.messageManager.enqueueMessage(
+                                MessageType.INFORMATION,
+                                String.format("Personal Record - %s: %s (%s)",
+                                    Main.this.categoryManager.getCurrentCategory().getDescription(),
+                                    SolutionUtils.formatMinutes(measures[i].getValue()),
+                                    descriptions[i]));
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {

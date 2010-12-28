@@ -1126,7 +1126,7 @@ public class MainFrame extends JFrame {
         add(panelMain);
 
         // labelMessage
-        this.labelMessage = new JLabel("Rubik's cube - New personal record: XX:XX.XX (single)");
+        this.labelMessage = new JLabel();
         this.labelMessage.setPreferredSize(new Dimension());
         this.labelMessage.setOpaque(true);
         this.labelMessage.setHorizontalAlignment(JLabel.CENTER);
