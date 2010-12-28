@@ -74,12 +74,15 @@ public class SpaceKeyTimer implements Timer {
 
                 switch (SpaceKeyTimer.this.state) {
                     case RUNNING:
-                        SpaceKeyTimer.this.repeater.cancel();
+                        Date now = new Date();
+                        if (now.getTime() - SpaceKeyTimer.this.start.getTime() > 250) {
+                            SpaceKeyTimer.this.repeater.cancel();
 
-                        SpaceKeyTimer.this.timerManager.finishSolution(
-                            new Timing(SpaceKeyTimer.this.start, new Date()));
+                            SpaceKeyTimer.this.timerManager.finishSolution(
+                                new Timing(SpaceKeyTimer.this.start, new Date()));
 
-                        SpaceKeyTimer.this.state = State.FINISHED;
+                            SpaceKeyTimer.this.state = State.FINISHED;
+                        }
                         break;
                 }
 

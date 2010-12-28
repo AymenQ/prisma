@@ -104,12 +104,15 @@ public class ControlKeysTimer implements Timer {
 
                     case RUNNING:
                         if (ControlKeysTimer.this.leftPressed && ControlKeysTimer.this.rightPressed) {
-                            ControlKeysTimer.this.repeater.cancel();
+                            Date now = new Date();
+                            if (now.getTime() - ControlKeysTimer.this.start.getTime() > 250) {
+                                ControlKeysTimer.this.repeater.cancel();
 
-                            ControlKeysTimer.this.timerManager.finishSolution(
-                                new Timing(ControlKeysTimer.this.start, new Date()));
+                                ControlKeysTimer.this.timerManager.finishSolution(
+                                    new Timing(ControlKeysTimer.this.start, now));
 
-                            ControlKeysTimer.this.state = State.FINISHED;
+                                ControlKeysTimer.this.state = State.FINISHED;
+                            }
                         }
                         break;
                 }
