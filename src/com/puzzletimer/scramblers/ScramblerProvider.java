@@ -74,25 +74,25 @@ public class ScramblerProvider {
                 new ScramblerInfo("RUBIKS-CUBE-FRIDRICH-F2L-TRAINING", "RUBIKS-CUBE", "Fridrich - F2L training scrambler"),
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
-                new byte[] { -1, -1, -1, -1,  4,  5,  6,  7, -1, -1, -1, -1 },
-                new byte[] { -1, -1, -1, -1,  0,  0,  0,  0, -1, -1, -1, -1 });
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1,  8,  9, 10, 11 },
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1,  0,  0,  0,  0 });
 
         // 3x3x3 fridrich oll training
         Scrambler rubiksCubeFridrichOLLTraining =
             new RubiksCubeRandomScrambler(
                 new ScramblerInfo("RUBIKS-CUBE-FRIDRICH-OLL-TRAINING", "RUBIKS-CUBE", "Fridrich - OLL training scrambler"),
-                new byte[] {  0,  1,  2,  3, -1, -1, -1, -1 },
-                new byte[] {  0,  0,  0,  0, -1, -1, -1, -1 },
-                new byte[] {  0,  1,  2,  3,  4,  5,  6,  7, -1, -1, -1, -1 },
-                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0, -1, -1, -1, -1 });
+                new byte[] { -1, -1, -1, -1,  4,  5,  6,  7 },
+                new byte[] { -1, -1, -1, -1,  0,  0,  0,  0 },
+                new byte[] {  0,  1,  2,  3, -1, -1, -1, -1,  8,  9, 10, 11 },
+                new byte[] {  0,  0,  0,  0, -1, -1, -1, -1,  0,  0,  0,  0 });
 
         // 3x3x3 fridrich pll training
         Scrambler rubiksCubeFridrichPLLTraining =
             new RubiksCubeRandomScrambler(
                 new ScramblerInfo("RUBIKS-CUBE-FRIDRICH-PLL-TRAINING", "RUBIKS-CUBE", "Fridrich - PLL training scrambler"),
-                new byte[] {  0,  1,  2,  3, -1, -1, -1, -1 },
+                new byte[] { -1, -1, -1, -1,  4,  5,  6,  7 },
                 new byte[] {  0,  0,  0,  0,  0,  0,  0,  0 },
-                new byte[] {  0,  1,  2,  3,  4,  5,  6,  7, -1, -1, -1, -1 },
+                new byte[] {  0,  1,  2,  3, -1, -1, -1, -1,  8,  9, 10, 11 },
                 new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
 
         // 3x3x3 3op corners training
