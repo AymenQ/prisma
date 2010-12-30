@@ -27,6 +27,7 @@ public class SpaceKeyTimer implements Timer {
     private TimerListener timerListener;
     private java.util.Timer repeater;
     private Date start;
+    private Date finish;
     private State state;
 
     public SpaceKeyTimer(JFrame frame, TimerManager timerManager) {
@@ -35,6 +36,7 @@ public class SpaceKeyTimer implements Timer {
         this.inspectionEnabled = false;
         this.repeater = null;
         this.start = null;
+        this.finish = new Date(0);
         this.state = this.inspectionEnabled ?
             State.READY_FOR_INSPECTION : State.READY;
     }
@@ -74,15 +76,17 @@ public class SpaceKeyTimer implements Timer {
 
                 switch (SpaceKeyTimer.this.state) {
                     case RUNNING:
-                        Date now = new Date();
-                        if (now.getTime() - SpaceKeyTimer.this.start.getTime() > 250) {
-                            SpaceKeyTimer.this.repeater.cancel();
-
-                            SpaceKeyTimer.this.timerManager.finishSolution(
-                                new Timing(SpaceKeyTimer.this.start, new Date()));
-
-                            SpaceKeyTimer.this.state = State.FINISHED;
+                        SpaceKeyTimer.this.finish = new Date();
+                        if (SpaceKeyTimer.this.finish.getTime() - SpaceKeyTimer.this.start.getTime() < 250) {
+                            break;
                         }
+
+                        SpaceKeyTimer.this.repeater.cancel();
+
+                        SpaceKeyTimer.this.timerManager.finishSolution(
+                            new Timing(SpaceKeyTimer.this.start, SpaceKeyTimer.this.finish));
+
+                        SpaceKeyTimer.this.state = State.FINISHED;
                         break;
                 }
 
@@ -98,12 +102,20 @@ public class SpaceKeyTimer implements Timer {
 
                 switch (SpaceKeyTimer.this.state) {
                     case READY_FOR_INSPECTION:
+                        if (new Date().getTime() - SpaceKeyTimer.this.finish.getTime() < 250) {
+                            break;
+                        }
+
                         SpaceKeyTimer.this.timerManager.startInspection();
 
                         SpaceKeyTimer.this.state = State.READY;
                         break;
 
                     case READY:
+                        if (new Date().getTime() - SpaceKeyTimer.this.finish.getTime() < 250) {
+                            break;
+                        }
+
                         SpaceKeyTimer.this.timerManager.startSolution();
 
                         SpaceKeyTimer.this.start = new Date();

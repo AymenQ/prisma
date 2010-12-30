@@ -30,6 +30,7 @@ public class ControlKeysTimer implements Timer {
     private TimerListener timerListener;
     private java.util.Timer repeater;
     private Date start;
+    private Date finish;
     private State state;
 
     public ControlKeysTimer(JFrame frame, TimerManager timerManager) {
@@ -40,6 +41,7 @@ public class ControlKeysTimer implements Timer {
         this.rightPressed = false;
         this.repeater = null;
         this.start = null;
+        this.finish = new Date(0);
         this.state = ControlKeysTimer.this.inspectionEnabled ?
             State.READY_FOR_INSPECTION : State.NOT_READY;
     }
@@ -91,6 +93,10 @@ public class ControlKeysTimer implements Timer {
 
                 switch (ControlKeysTimer.this.state) {
                     case READY_FOR_INSPECTION:
+                        if (new Date().getTime() - ControlKeysTimer.this.finish.getTime() < 250) {
+                            break;
+                        }
+
                         ControlKeysTimer.this.timerManager.startInspection();
 
                         ControlKeysTimer.this.state = State.NOT_READY;
@@ -104,15 +110,17 @@ public class ControlKeysTimer implements Timer {
 
                     case RUNNING:
                         if (ControlKeysTimer.this.leftPressed && ControlKeysTimer.this.rightPressed) {
-                            Date now = new Date();
-                            if (now.getTime() - ControlKeysTimer.this.start.getTime() > 250) {
-                                ControlKeysTimer.this.repeater.cancel();
-
-                                ControlKeysTimer.this.timerManager.finishSolution(
-                                    new Timing(ControlKeysTimer.this.start, now));
-
-                                ControlKeysTimer.this.state = State.FINISHED;
+                            ControlKeysTimer.this.finish = new Date();
+                            if (ControlKeysTimer.this.finish.getTime() - ControlKeysTimer.this.start.getTime() < 250) {
+                                break;
                             }
+
+                            ControlKeysTimer.this.repeater.cancel();
+
+                            ControlKeysTimer.this.timerManager.finishSolution(
+                                new Timing(ControlKeysTimer.this.start, ControlKeysTimer.this.finish));
+
+                            ControlKeysTimer.this.state = State.FINISHED;
                         }
                         break;
                 }
@@ -138,6 +146,10 @@ public class ControlKeysTimer implements Timer {
 
                 switch (ControlKeysTimer.this.state) {
                     case READY:
+                        if (new Date().getTime() - ControlKeysTimer.this.finish.getTime() < 250) {
+                            break;
+                        }
+
                         ControlKeysTimer.this.timerManager.startSolution();
 
                         ControlKeysTimer.this.start = new Date();
