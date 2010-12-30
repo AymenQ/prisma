@@ -18,6 +18,25 @@ public class SessionManager {
         this.solutions = new HashMap<UUID, Solution>();
     }
 
+    public Solution[] getSolutions() {
+        ArrayList<Solution> solutions =
+            new ArrayList<Solution>(this.solutions.values());
+
+        Collections.sort(solutions,new Comparator<Solution>() {
+            @Override
+            public int compare(Solution solution1, Solution solution2) {
+                Date start1 = solution1.getTiming().getStart();
+                Date start2 = solution2.getTiming().getStart();
+                return start2.compareTo(start1);
+            }
+        });
+
+        Solution[] solutionsArray = new Solution[solutions.size()];
+        solutions.toArray(solutionsArray);
+
+        return solutionsArray;
+    }
+
     public void addSolution(Solution solution) {
         this.solutions.put(solution.getSolutionId(), solution);
         notifyListeners();
