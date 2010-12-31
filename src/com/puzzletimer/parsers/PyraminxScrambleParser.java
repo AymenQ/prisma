@@ -8,34 +8,34 @@ public class PyraminxScrambleParser implements ScrambleParser {
         return "PYRAMINX";
     }
 
-	@Override
-	public String[] parse(String input) {
-		Parser parser = new Parser(input);
+    @Override
+    public String[] parse(String input) {
+        Parser parser = new Parser(input);
 
-		ArrayList<String> moves = new ArrayList<String>();
+        ArrayList<String> moves = new ArrayList<String>();
 
-		for (;;) {
-			parser.skipSpaces();
+        for (;;) {
+            parser.skipSpaces();
 
-			String move = "";
+            String move = "";
 
-			String face = parser.anyChar("bBlLrRuU");
-			if (face != null) {
-				move += face;
-			} else {
-				break;
-			}
+            String face = parser.anyChar("bBlLrRuU");
+            if (face != null) {
+                move += face;
+            } else {
+                break;
+            }
 
-			String suffix = parser.anyChar("\'");
-			if (suffix != null) {
-				move += suffix;
-			}
+            String suffix = parser.anyChar("\'");
+            if (suffix != null) {
+                move += suffix;
+            }
 
-			moves.add(move);
-		}
+            moves.add(move);
+        }
 
-		String[] movesArray = new String[moves.size()];
-		moves.toArray(movesArray);
-		return movesArray;
-	}
+        String[] movesArray = new String[moves.size()];
+        moves.toArray(movesArray);
+        return movesArray;
+    }
 }

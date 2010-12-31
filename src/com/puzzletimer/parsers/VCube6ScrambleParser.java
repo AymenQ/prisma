@@ -21,7 +21,7 @@ public class VCube6ScrambleParser implements ScrambleParser {
 
             String slice = parser.anyChar("23");
             if (slice != null) {
-                move +=  slice;
+                move += slice;
             }
 
             String face = parser.anyChar("BDFLRU");

@@ -8,47 +8,47 @@ public class MegaminxScrambleParser implements ScrambleParser {
         return "MEGAMINX";
     }
 
-	@Override
-	public String[] parse(String input) {
-		Parser parser = new Parser(input);
+    @Override
+    public String[] parse(String input) {
+        Parser parser = new Parser(input);
 
-		ArrayList<String> moves = new ArrayList<String>();
+        ArrayList<String> moves = new ArrayList<String>();
 
-		for (;;) {
-			parser.skipSpaces();
+        for (;;) {
+            parser.skipSpaces();
 
-			String move = "";
+            String move = "";
 
-			String face = parser.anyChar("UDR");
-			if (face != null) {
-				move += face;
-			} else {
-				break;
-			}
+            String face = parser.anyChar("UDR");
+            if (face != null) {
+                move += face;
+            } else {
+                break;
+            }
 
-			if (face.equals("U")) {
-				String prime = parser.anyChar("\'");
-				if (prime != null) {
-					move += prime;
-				}
-			} else {
-				String orientation = parser.string("++");
-				if (orientation == null) {
-					orientation = parser.string("--");
-				}
+            if (face.equals("U")) {
+                String prime = parser.anyChar("\'");
+                if (prime != null) {
+                    move += prime;
+                }
+            } else {
+                String orientation = parser.string("++");
+                if (orientation == null) {
+                    orientation = parser.string("--");
+                }
 
-				if (orientation != null) {
-					move += orientation;
-				} else {
-					break;
-				}
-			}
+                if (orientation != null) {
+                    move += orientation;
+                } else {
+                    break;
+                }
+            }
 
-			moves.add(move);
-		}
+            moves.add(move);
+        }
 
-		String[] movesArray = new String[moves.size()];
-		moves.toArray(movesArray);
-		return movesArray;
-	}
+        String[] movesArray = new String[moves.size()];
+        moves.toArray(movesArray);
+        return movesArray;
+    }
 }

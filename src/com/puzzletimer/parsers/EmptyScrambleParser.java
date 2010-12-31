@@ -7,7 +7,7 @@ public class EmptyScrambleParser implements ScrambleParser {
     }
 
     @Override
-	public String[] parse(String input) {
-		return new String[0];
-	}
+    public String[] parse(String input) {
+        return new String[0];
+    }
 }
