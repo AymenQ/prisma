@@ -1150,7 +1150,7 @@ public class MainFrame extends JFrame {
 
         // statistics panel
         this.statisticsPanel = new StatisticsPanel(this.sessionManager);
-        this.statisticsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
+        this.statisticsPanel.setBorder(BorderFactory.createTitledBorder("Session statistics"));
         panelMain.add(this.statisticsPanel, "2, 6");
 
         // scramble viewer panel
