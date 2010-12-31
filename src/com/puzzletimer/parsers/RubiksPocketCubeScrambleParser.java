@@ -29,6 +29,11 @@ public class RubiksPocketCubeScrambleParser implements ScrambleParser {
             String suffix = parser.anyChar("2\'");
             if (suffix != null) {
                 move += suffix;
+
+                if (suffix.equals("2")) {
+                    // ignore prime
+                    parser.string("\'");
+                }
             }
 
             moves.add(move);
