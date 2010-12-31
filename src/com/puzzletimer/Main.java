@@ -82,7 +82,7 @@ public class Main {
             JOptionPane.showMessageDialog(
                 frame,
                 "Couldn't load database driver",
-                "Puzzle Timer",
+                "Prisma Puzzle Timer",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
@@ -102,7 +102,7 @@ public class Main {
                 JOptionPane.showMessageDialog(
                     frame,
                     "Database error: " + e.getMessage(),
-                    "Puzzle Timer",
+                    "Prisma Puzzle Timer",
                     JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }
@@ -116,8 +116,8 @@ public class Main {
             JFrame frame = new JFrame();
             JOptionPane.showMessageDialog(
                 frame,
-                "Couldn't connect to database. Isn't Puzzle Timer already running?",
-                "Puzzle Timer",
+                "Couldn't connect to database. Isn't Prisma Puzzle Timer already running?",
+                "Prisma Puzzle Timer",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(0);
         }
@@ -153,7 +153,7 @@ public class Main {
                 JOptionPane.showMessageDialog(
                     frame,
                     "Database error: " + e.getMessage(),
-                    "Puzzle Timer",
+                    "Prisma Puzzle Timer",
                     JOptionPane.ERROR_MESSAGE);
                 System.exit(0);
             }

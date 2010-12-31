@@ -677,7 +677,7 @@ public class MainFrame extends JFrame {
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
-                setTitle("Puzzle Timer - " + currentCategory.getDescription());
+                setTitle("Prisma Puzzle Timer - " + currentCategory.getDescription());
             }
         });
 
