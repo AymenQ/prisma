@@ -143,6 +143,7 @@ public class SolutionEditingDialog extends JDialog {
         // textFieldStart
         this.textFieldStart = new JTextField();
         this.textFieldStart.setEditable(false);
+        this.textFieldStart.setFocusable(false);
         add(this.textFieldStart);
 
         // labelTime
@@ -165,6 +166,7 @@ public class SolutionEditingDialog extends JDialog {
         // textFieldScramble
         this.textFieldScramble = new JTextField();
         this.textFieldScramble.setEditable(false);
+        this.textFieldScramble.setFocusable(false);
         add(this.textFieldScramble);
 
         // buttonOk

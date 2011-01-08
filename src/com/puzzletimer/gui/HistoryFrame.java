@@ -366,6 +366,9 @@ public class HistoryFrame extends JFrame {
                 for (int i = 0; i < selectedRows.length; i++) {
                     solutionManager.removeSolution(solutions[selectedRows[i]]);
                 }
+
+                // request focus
+                HistoryFrame.this.buttonRemove.requestFocusInWindow();
             }
         });
 

@@ -125,6 +125,9 @@ public class ScrambleQueueFrame extends JFrame {
                 for (int selectedRow : selectedRows) {
                     table.addRowSelectionInterval(selectedRow - 1, selectedRow - 1);
                 }
+
+                // request focus
+                ScrambleQueueFrame.this.buttonUp.requestFocusInWindow();
             }
         });
 
@@ -143,6 +146,9 @@ public class ScrambleQueueFrame extends JFrame {
                 for (int selectedRow : selectedRows) {
                     table.addRowSelectionInterval(selectedRow + 1, selectedRow + 1);
                 }
+
+                // request focus
+                ScrambleQueueFrame.this.buttonDown.requestFocusInWindow();
             }
         });
 
@@ -150,8 +156,12 @@ public class ScrambleQueueFrame extends JFrame {
         this.buttonRemove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
+                // remove scrambles
                 scrambleManager.removeScrambles(
                     ScrambleQueueFrame.this.table.getSelectedRows());
+
+                // request focus
+                ScrambleQueueFrame.this.buttonRemove.requestFocusInWindow();
             }
         });
 
