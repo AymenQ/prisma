@@ -18,6 +18,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -348,6 +349,17 @@ public class HistoryFrame extends JFrame {
         this.buttonRemove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (HistoryFrame.this.table.getSelectedRows().length > 5) {
+                    int result = JOptionPane.showConfirmDialog(
+                        HistoryFrame.this,
+                        "The selected solutions will be removed. Proceed?",
+                        "Remove Solutions",
+                        JOptionPane.YES_NO_CANCEL_OPTION);
+                    if (result != JOptionPane.YES_OPTION) {
+                        return;
+                    }
+                }
+
                 Solution[] solutions = solutionManager.getSolutions();
 
                 int[] selectedRows = HistoryFrame.this.table.getSelectedRows();

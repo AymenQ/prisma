@@ -12,6 +12,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -321,6 +322,15 @@ public class CategoryManagerFrame extends JFrame {
         this.buttonRemove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
+                int result = JOptionPane.showConfirmDialog(
+                    CategoryManagerFrame.this,
+                    "The selected category and its solutions will be removed. Proceed?",
+                    "Remove Category",
+                    JOptionPane.YES_NO_CANCEL_OPTION);
+                if (result != JOptionPane.YES_OPTION) {
+                    return;
+                }
+
                 int selectedIndex = CategoryManagerFrame.this.table.getSelectedRow();
                 Category category = categoryManager.getCategories()[selectedIndex];
                 categoryManager.removeCategory(category);
