@@ -561,7 +561,7 @@ public class HistoryFrame extends JFrame {
 
         // buttonOk
         this.buttonOk = new JButton("OK");
-        add(this.buttonOk, "width 100, right, span");
+        add(this.buttonOk, "tag ok, span");
     }
 
     private void updateStatistics(Solution[] solutions, final int[] selectedRows) {

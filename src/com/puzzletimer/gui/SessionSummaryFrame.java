@@ -120,7 +120,7 @@ public class SessionSummaryFrame extends JFrame {
 
         // buttonOk
         this.buttonOk = new JButton("OK");
-        add(this.buttonOk, "width 100, right");
+        add(this.buttonOk, "tag ok");
     }
 
     private void updateSummary(Category currentCategory, Solution[] solutions) {

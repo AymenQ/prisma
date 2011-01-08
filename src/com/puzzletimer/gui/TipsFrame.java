@@ -113,6 +113,6 @@ public class TipsFrame extends JFrame {
 
         // buttonOk
         this.buttonOk = new JButton("OK");
-        add(this.buttonOk, "width 100, right");
+        add(this.buttonOk, "tag ok");
     }
 }

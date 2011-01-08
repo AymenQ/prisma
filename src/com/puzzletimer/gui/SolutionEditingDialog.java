@@ -169,10 +169,10 @@ public class SolutionEditingDialog extends JDialog {
 
         // buttonOk
         this.buttonOk = new JButton("OK");
-        add(this.buttonOk, "right, width 100, span 2, split");
+        add(this.buttonOk, "tag ok, span 2, split");
 
         // buttonCancel
         this.buttonCancel = new JButton("Cancel");
-        add(this.buttonCancel, "width 100");
+        add(this.buttonCancel, "tag cancel");
     }
 }

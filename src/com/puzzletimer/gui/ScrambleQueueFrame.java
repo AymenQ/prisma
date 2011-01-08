@@ -326,7 +326,7 @@ public class ScrambleQueueFrame extends JFrame {
 
         // buttonOK
         this.buttonOk = new JButton("OK");
-        add(this.buttonOk, "width 100!, span, right");
+        add(this.buttonOk, "tag ok, span");
     }
 
     private void updateTable(Scramble[] queue) {

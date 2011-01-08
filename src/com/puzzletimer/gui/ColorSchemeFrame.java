@@ -203,7 +203,7 @@ public class ColorSchemeFrame extends JFrame {
 
         // buttonOk
         this.buttonOk = new JButton("OK");
-        add(this.buttonOk, "width 100, right, span");
+        add(this.buttonOk, "tag ok, span");
     }
 
     private class ColorRenderer extends JLabel implements TableCellRenderer {
