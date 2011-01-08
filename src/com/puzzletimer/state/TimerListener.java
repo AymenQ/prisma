@@ -9,6 +9,8 @@ public class TimerListener {
     public void timerChanged(Timer timer) {
     }
 
+    public void timerReset() {
+    }
 
     // hands
 
@@ -23,7 +25,6 @@ public class TimerListener {
 
     public void rightHandReleased() {
     }
-
 
     // inspection
 

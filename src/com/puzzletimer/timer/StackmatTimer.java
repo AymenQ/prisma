@@ -308,6 +308,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
             case NOT_READY:
                 // timer initialized
                 if (data[0] == 'I') {
+                    this.timerManager.resetTimer();
+
                     this.state = this.inspectionEnabled ?
                         State.READY_FOR_INSPECTION : State.READY;
                 }

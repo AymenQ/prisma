@@ -156,6 +156,13 @@ public class MainFrame extends JFrame {
 
             timerManager.addTimerListener(new TimerListener() {
                 @Override
+                public void timerReset() {
+                    TimerPanel.this.labelTime.setForeground(Color.BLACK);
+                    TimerPanel.this.labelTime.setText(
+                        SolutionUtils.formatMinutes(0));
+                }
+
+                @Override
                 public void leftHandPressed() {
                     TimerPanel.this.labelLeftHand.setIcon(TimerPanel.this.iconLeftPressed);
                 }

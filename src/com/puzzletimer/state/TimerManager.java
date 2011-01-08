@@ -49,6 +49,11 @@ public class TimerManager {
         this.currentTimer.start();
     }
 
+    public void resetTimer() {
+        for (TimerListener listener : this.listeners) {
+            listener.timerReset();
+        }
+    }
 
     // hands
 
