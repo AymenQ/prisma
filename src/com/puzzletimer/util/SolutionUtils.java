@@ -46,6 +46,30 @@ public class SolutionUtils {
             (time % 6000) / 100.0);
     }
 
+    public static String format(long time) {
+        if (time < 60000) {
+            return formatSeconds(time);
+        }
+
+        if (time == Long.MAX_VALUE) {
+            return "DNF";
+        }
+
+        String sign = "";
+        if (time < 0) {
+            sign = "-";
+            time = -time;
+        }
+
+        time = (time + 5) / 10;
+
+        return sign + String.format(
+            Locale.ENGLISH,
+            "%d:%05.2f",
+            time / 6000,
+            (time % 6000) / 100.0);
+    }
+
     public static long parseTime(String input) {
         Scanner scanner = new Scanner(input.trim());
         scanner.useLocale(Locale.ENGLISH);

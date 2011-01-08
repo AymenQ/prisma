@@ -164,7 +164,7 @@ public class SessionSummaryFrame extends JFrame {
             for (int i = 0; i < statistics.length; i++) {
                 statistics[i].setSolutions(solutions);
 
-                String s = SolutionUtils.formatSeconds(statistics[i].getValue());
+                String s = SolutionUtils.format(statistics[i].getValue());
                 if (s.length() > maxStringLength) {
                     maxStringLength = s.length();
                 }
@@ -174,7 +174,7 @@ public class SessionSummaryFrame extends JFrame {
                 summary.append(String.format(
                     "%s %" + maxStringLength + "s",
                     labels[i],
-                    SolutionUtils.formatSeconds(statistics[i].getValue())));
+                    SolutionUtils.format(statistics[i].getValue())));
                 summary.append("\n");
             }
 
@@ -200,7 +200,7 @@ public class SessionSummaryFrame extends JFrame {
                 int windowPosition = statistics[i].getWindowPosition();
 
                 // value
-                summary.append(labels[i] + " " + SolutionUtils.formatSeconds(statistics[i].getValue()));
+                summary.append(labels[i] + " " + SolutionUtils.format(statistics[i].getValue()));
                 summary.append("\n");
 
                 // index range
@@ -229,9 +229,9 @@ public class SessionSummaryFrame extends JFrame {
                 String sTimes = "";
                 for (int j = windowSize - 1; j >= 0; j--) {
                     if (j == indexBest || j == indexWorst) {
-                        sTimes += "(" + SolutionUtils.formatSeconds(times[j]) + ") ";
+                        sTimes += "(" + SolutionUtils.format(times[j]) + ") ";
                     } else {
-                        sTimes += SolutionUtils.formatSeconds(times[j]) + " ";
+                        sTimes += SolutionUtils.format(times[j]) + " ";
                     }
                 }
 
@@ -248,7 +248,7 @@ public class SessionSummaryFrame extends JFrame {
 
         int maxStringLength = 0;
         for (int i = 0; i < realTimes.length; i++) {
-            sSolutions[i] = SolutionUtils.formatSeconds(realTimes[i]);
+            sSolutions[i] = SolutionUtils.format(realTimes[i]);
             if (sSolutions[i].length() > maxStringLength) {
                 maxStringLength = sSolutions[i].length();
             }
