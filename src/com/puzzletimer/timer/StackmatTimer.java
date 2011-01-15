@@ -189,7 +189,8 @@ class StackmatTimerReader implements Runnable {
 public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private enum State {
         NOT_READY,
-        READY_FOR_INSPECTION,
+        RESET_FOR_INSPECTION,
+        RESET,
         READY,
         RUNNING,
     };
@@ -220,15 +221,15 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.inspectionEnabled = inspectionEnabled;
 
         switch (this.state) {
-            case READY_FOR_INSPECTION:
+            case RESET_FOR_INSPECTION:
                 if (!inspectionEnabled) {
-                    this.state = State.READY;
+                    this.state = State.RESET;
                 }
                 break;
 
-            case READY:
+            case RESET:
                 if (inspectionEnabled) {
-                    this.state = State.READY_FOR_INSPECTION;
+                    this.state = State.RESET_FOR_INSPECTION;
                 }
                 break;
         }
@@ -275,19 +276,15 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     @Override
     public void dataReceived(byte[] data) {
         // hands status
-        if (data[0] == 'A' || data[0] == 'C' || data[0] == 'L') {
+        if (data[0] == 'A' || data[0] == 'L' || data[0] == 'C') {
             this.timerManager.pressLeftHand();
-        }
-
-        if (data[0] == ' ' || data[0] == 'I' || data[0] == 'R' || data[0] == 'S') {
+        } else {
             this.timerManager.releaseLeftHand();
         }
 
-        if (data[0] == 'A' || data[0] == 'C' || data[0] == 'R') {
+        if (data[0] == 'A' || data[0] == 'R' || data[0] == 'C') {
             this.timerManager.pressRightHand();
-        }
-
-        if (data[0] == ' ' || data[0] == 'I' || data[0] == 'L' || data[0] == 'S') {
+        } else {
             this.timerManager.releaseRightHand();
         }
 
@@ -307,26 +304,33 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         switch (this.state) {
             case NOT_READY:
                 // timer initialized
-                if (data[0] == 'I') {
+                if (time == 0) {
                     this.timerManager.resetTimer();
 
                     this.state = this.inspectionEnabled ?
-                        State.READY_FOR_INSPECTION : State.READY;
+                        State.RESET_FOR_INSPECTION : State.RESET;
                 }
                 break;
 
-            case READY_FOR_INSPECTION:
+            case RESET_FOR_INSPECTION:
                 // some pad pressed
-                if (data[0] == 'C' || data[0] == 'L' || data[0] == 'R') {
+                if (data[0] == 'L' || data[0] == 'R' || data[0] == 'C') {
                     this.timerManager.startInspection();
 
+                    this.state = State.RESET;
+                }
+                break;
+
+            case RESET:
+                // ready to start
+                if (data[0] == 'A') {
                     this.state = State.READY;
                 }
                 break;
 
             case READY:
                 // timing started
-                if (data[0] == ' ') {
+                if (time > 0) {
                     this.timerManager.startSolution();
 
                     this.state = State.RUNNING;
@@ -334,6 +338,11 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
                 break;
 
             case RUNNING:
+                // timer reset during solution
+                if (time == 0) {
+                    this.state = State.NOT_READY;
+                }
+
                 // timer stopped
                 if (data[0] == 'C' || data[0] == 'S') {
                     this.timerManager.finishSolution(timing);
