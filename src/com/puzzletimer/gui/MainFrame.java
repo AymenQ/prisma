@@ -1199,7 +1199,8 @@ public class MainFrame extends JFrame {
             this.scrambleParserProvider,
             this.categoryManager,
             this.scrambleManager,
-            this.solutionManager);
+            this.solutionManager,
+            this.sessionManager);
         this.historyFrame.setLocationRelativeTo(null);
         this.historyFrame.setIconImage(icon);
 

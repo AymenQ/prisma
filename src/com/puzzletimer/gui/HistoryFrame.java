@@ -42,6 +42,7 @@ import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleManager;
+import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.state.SolutionListener;
 import com.puzzletimer.state.SolutionManager;
 import com.puzzletimer.statistics.Average;
@@ -211,7 +212,8 @@ public class HistoryFrame extends JFrame {
     private JButton buttonAddSolutions;
     private JButton buttonEdit;
     private JButton buttonRemove;
-    private JButton buttonEnqueueScrambles;
+    private JButton buttonSelectSession;
+    private JButton buttonSelectNone;
     private JButton buttonOk;
 
     public HistoryFrame(
@@ -219,7 +221,8 @@ public class HistoryFrame extends JFrame {
             final ScrambleParserProvider scrambleParserProvider,
             final CategoryManager categoryManager,
             final ScrambleManager scrambleManager,
-            final SolutionManager solutionManager) {
+            final SolutionManager solutionManager,
+            final SessionManager sessionManager) {
         super();
 
         setMinimumSize(new Dimension(800, 600));
@@ -283,8 +286,6 @@ public class HistoryFrame extends JFrame {
                     HistoryFrame.this.buttonEdit.setEnabled(
                         HistoryFrame.this.table.getSelectedRowCount() == 1);
                     HistoryFrame.this.buttonRemove.setEnabled(
-                        HistoryFrame.this.table.getSelectedRowCount() > 0);
-                    HistoryFrame.this.buttonEnqueueScrambles.setEnabled(
                         HistoryFrame.this.table.getSelectedRowCount() > 0);
                 }
             });
@@ -372,19 +373,33 @@ public class HistoryFrame extends JFrame {
             }
         });
 
-        // enqueue scrambles button
-        this.buttonEnqueueScrambles.addActionListener(new ActionListener() {
+        // select session button
+        this.buttonSelectSession.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                HistoryFrame.this.table.removeRowSelectionInterval(
+                    0,
+                    HistoryFrame.this.table.getRowCount() - 1);
+
                 Solution[] solutions = solutionManager.getSolutions();
+                Solution[] sessionSolutions = sessionManager.getSolutions();
 
-                int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
-                Scramble[] selectedScrambles = new Scramble[selectedRows.length];
-                for (int i = 0; i < selectedScrambles.length; i++) {
-                    selectedScrambles[i] = solutions[selectedRows[i]].getScramble();
+                for (int i = 0, j = 0; i < solutions.length && j < sessionSolutions.length; i++) {
+                    if (solutions[i].getSolutionId().equals(sessionSolutions[j].getSolutionId())) {
+                        HistoryFrame.this.table.addRowSelectionInterval(i, i);
+                        j++;
+                    }
                 }
+            }
+        });
 
-                scrambleManager.addScrambles(selectedScrambles);
+        // select none button
+        this.buttonSelectNone.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                HistoryFrame.this.table.removeRowSelectionInterval(
+                    0,
+                    HistoryFrame.this.table.getRowCount() - 1);
             }
         });
 
@@ -545,7 +560,7 @@ public class HistoryFrame extends JFrame {
 
         // buttonAddSolutions
         this.buttonAddSolutions = new JButton("Add solutions...");
-        add(this.buttonAddSolutions, "growx, top, split 4, flowy");
+        add(this.buttonAddSolutions, "growx, top, split 5, flowy");
 
         // buttonEdit
         this.buttonEdit = new JButton("Edit...");
@@ -557,10 +572,13 @@ public class HistoryFrame extends JFrame {
         this.buttonRemove.setEnabled(false);
         add(this.buttonRemove, "growx, top");
 
-        // buttonEnqueueScrambles
-        this.buttonEnqueueScrambles = new JButton("Enqueue scrambles");
-        this.buttonEnqueueScrambles.setEnabled(false);
-        add(this.buttonEnqueueScrambles, "growx, top, gaptop 20, wrap");
+        // buttonSelectSession
+        this.buttonSelectSession = new JButton("Select session");
+        add(this.buttonSelectSession, "growx, top, gaptop 16");
+
+        // buttonSelectNone
+        this.buttonSelectNone = new JButton("Select none");
+        add(this.buttonSelectNone, "growx, top, wrap");
 
         // buttonOk
         this.buttonOk = new JButton("OK");
