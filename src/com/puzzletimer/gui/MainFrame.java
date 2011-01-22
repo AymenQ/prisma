@@ -761,12 +761,14 @@ public class MainFrame extends JFrame {
         this.categoryManager.addCategoryListener(new CategoryListener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
+                int menuShortcutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
                 MainFrame.this.menuCategory.removeAll();
 
                 // category manager
                 JMenuItem menuItemCategoryManager = new JMenuItem("Category manager...");
                 menuItemCategoryManager.setMnemonic(KeyEvent.VK_M);
-                menuItemCategoryManager.setAccelerator(KeyStroke.getKeyStroke("ctrl alt C"));
+                menuItemCategoryManager.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuShortcutKey | InputEvent.ALT_MASK));
                 menuItemCategoryManager.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent event) {
@@ -816,7 +818,7 @@ public class MainFrame extends JFrame {
                     JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(builtInCategory.category.getDescription());
                     menuItemCategory.setMnemonic(builtInCategory.mnemonic);
                     if (builtInCategory.accelerator != '\0') {
-                        menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(builtInCategory.accelerator, InputEvent.CTRL_MASK));
+                        menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(builtInCategory.accelerator, menuShortcutKey));
                     }
                     menuItemCategory.setSelected(builtInCategory.category == currentCategory);
                     menuItemCategory.addActionListener(new ActionListener() {
@@ -1009,6 +1011,8 @@ public class MainFrame extends JFrame {
     }
 
     private void createComponents() {
+        int menuShortcutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+
         // menuBar
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
@@ -1021,7 +1025,7 @@ public class MainFrame extends JFrame {
         // menuItemAddSolution
         this.menuItemAddSolution = new JMenuItem("Add solution...");
         this.menuItemAddSolution.setMnemonic(KeyEvent.VK_A);
-        this.menuItemAddSolution.setAccelerator(KeyStroke.getKeyStroke("ctrl A"));
+        this.menuItemAddSolution.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, menuShortcutKey));
         this.menuFile.add(this.menuItemAddSolution);
 
         this.menuFile.addSeparator();
@@ -1039,25 +1043,25 @@ public class MainFrame extends JFrame {
         // menuItemTips
         this.menuItemTips = new JMenuItem("Tips...");
         this.menuItemTips.setMnemonic(KeyEvent.VK_T);
-        this.menuItemTips.setAccelerator(KeyStroke.getKeyStroke("ctrl alt T"));
+        this.menuItemTips.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, menuShortcutKey | KeyEvent.ALT_MASK));
         menuView.add(this.menuItemTips);
 
         // menuItemScrambleQueue
         this.menuItemScrambleQueue = new JMenuItem("Scramble queue...");
         this.menuItemScrambleQueue.setMnemonic(KeyEvent.VK_Q);
-        this.menuItemScrambleQueue.setAccelerator(KeyStroke.getKeyStroke("ctrl alt Q"));
+        this.menuItemScrambleQueue.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuShortcutKey | KeyEvent.ALT_MASK));
         menuView.add(this.menuItemScrambleQueue);
 
         // menuItemHistory
         this.menuItemHistory = new JMenuItem("History...");
         this.menuItemHistory.setMnemonic(KeyEvent.VK_H);
-        this.menuItemHistory.setAccelerator(KeyStroke.getKeyStroke("ctrl alt H"));
+        this.menuItemHistory.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, menuShortcutKey | KeyEvent.ALT_MASK));
         menuView.add(this.menuItemHistory);
 
         // menuItemSessionSummary
         this.menuItemSessionSummary = new JMenuItem("Session summary...");
         this.menuItemSessionSummary.setMnemonic(KeyEvent.VK_S);
-        this.menuItemSessionSummary.setAccelerator(KeyStroke.getKeyStroke("ctrl alt S"));
+        this.menuItemSessionSummary.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKey | KeyEvent.ALT_MASK));
         menuView.add(this.menuItemSessionSummary);
 
         // menuCategory
@@ -1073,13 +1077,13 @@ public class MainFrame extends JFrame {
         // menuColorScheme
         this.menuItemColorScheme = new JMenuItem("Color scheme...");
         this.menuItemColorScheme.setMnemonic(KeyEvent.VK_C);
-        this.menuItemColorScheme.setAccelerator(KeyStroke.getKeyStroke("ctrl alt K"));
+        this.menuItemColorScheme.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, menuShortcutKey | KeyEvent.ALT_MASK));
         menuOptions.add(this.menuItemColorScheme);
 
         // menuItemInspectionTime
         this.menuItemInspectionTime = new JCheckBoxMenuItem("Inspection time");
         this.menuItemInspectionTime.setMnemonic(KeyEvent.VK_I);
-        this.menuItemInspectionTime.setAccelerator(KeyStroke.getKeyStroke("ctrl alt I"));
+        this.menuItemInspectionTime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuShortcutKey | KeyEvent.ALT_MASK));
         menuOptions.add(this.menuItemInspectionTime);
 
         // menuTimerTrigger
@@ -1091,21 +1095,21 @@ public class MainFrame extends JFrame {
         // menuItemCtrlKeys
         this.menuItemCtrlKeys = new JRadioButtonMenuItem("Ctrl keys");
         this.menuItemCtrlKeys.setMnemonic(KeyEvent.VK_C);
-        this.menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke("ctrl C"));
+        this.menuItemCtrlKeys.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuShortcutKey));
         menuTimerTrigger.add(this.menuItemCtrlKeys);
         timerTriggerGroup.add(this.menuItemCtrlKeys);
 
         // menuItemSpaceKey
         this.menuItemSpaceKey = new JRadioButtonMenuItem("Space key");
         this.menuItemSpaceKey.setMnemonic(KeyEvent.VK_S);
-        this.menuItemSpaceKey.setAccelerator(KeyStroke.getKeyStroke(' ', InputEvent.CTRL_MASK));
+        this.menuItemSpaceKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, menuShortcutKey));
         menuTimerTrigger.add(this.menuItemSpaceKey);
         timerTriggerGroup.add(this.menuItemSpaceKey);
 
         // menuItemStackmatTimer
         this.menuItemStackmatTimer = new JRadioButtonMenuItem("Stackmat timer");
         this.menuItemStackmatTimer.setMnemonic(KeyEvent.VK_T);
-        this.menuItemStackmatTimer.setAccelerator(KeyStroke.getKeyStroke("ctrl T"));
+        this.menuItemStackmatTimer.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, menuShortcutKey));
         menuTimerTrigger.add(this.menuItemStackmatTimer);
         timerTriggerGroup.add(this.menuItemStackmatTimer);
 
