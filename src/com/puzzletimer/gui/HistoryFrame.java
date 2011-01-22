@@ -377,9 +377,11 @@ public class HistoryFrame extends JFrame {
         this.buttonSelectSession.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HistoryFrame.this.table.removeRowSelectionInterval(
-                    0,
-                    HistoryFrame.this.table.getRowCount() - 1);
+                if (HistoryFrame.this.table.getRowCount() > 0) {
+                    HistoryFrame.this.table.removeRowSelectionInterval(
+                        0,
+                        HistoryFrame.this.table.getRowCount() - 1);
+                }
 
                 Solution[] solutions = solutionManager.getSolutions();
                 Solution[] sessionSolutions = sessionManager.getSolutions();
@@ -397,9 +399,11 @@ public class HistoryFrame extends JFrame {
         this.buttonSelectNone.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                HistoryFrame.this.table.removeRowSelectionInterval(
-                    0,
-                    HistoryFrame.this.table.getRowCount() - 1);
+                if (HistoryFrame.this.table.getRowCount() > 0) {
+                    HistoryFrame.this.table.removeRowSelectionInterval(
+                        0,
+                        HistoryFrame.this.table.getRowCount() - 1);
+                }
             }
         });
 
@@ -681,8 +685,11 @@ public class HistoryFrame extends JFrame {
                     labels[i].addMouseListener(new MouseAdapter() {
                         @Override
                         public void mouseClicked(MouseEvent e) {
-                            HistoryFrame.this.table.removeRowSelectionInterval(
-                                0,  HistoryFrame.this.table.getRowCount() - 1);
+                            if (HistoryFrame.this.table.getRowCount() > 0) {
+                                HistoryFrame.this.table.removeRowSelectionInterval(
+                                    0,
+                                    HistoryFrame.this.table.getRowCount() - 1);
+                            }
 
                             for (int i = 0; i < windowSize; i++) {
                                 HistoryFrame.this.table.addRowSelectionInterval(
