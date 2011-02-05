@@ -21,22 +21,47 @@ public class CategoryDAO {
         ArrayList<Category> categories = new ArrayList<Category>();
 
         try {
-            Statement statement = this.connection.createStatement();
+            // category
+            Statement categoryStatement = this.connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery(
+            ResultSet categoryResultSet = categoryStatement.executeQuery(
                 "SELECT CATEGORY_ID, SCRAMBLER_ID, DESCRIPTION, USER_DEFINED FROM CATEGORY " +
                 "ORDER BY \"ORDER\"");
 
-            while (resultSet.next()) {
-                UUID categoryId = UUID.fromString(resultSet.getString(1));
-                String scramblerId = resultSet.getString(2);
-                String description = resultSet.getString(3);
-                boolean isUserDefined = resultSet.getBoolean(4);
+            while (categoryResultSet.next()) {
+                UUID categoryId = UUID.fromString(categoryResultSet.getString(1));
+                String scramblerId = categoryResultSet.getString(2);
+                String description = categoryResultSet.getString(3);
+                boolean isUserDefined = categoryResultSet.getBoolean(4);
 
-                categories.add(new Category(categoryId, scramblerId, description, isUserDefined));
+                // tips
+                PreparedStatement tipsStatement = this.connection.prepareStatement(
+                    "SELECT TIP_ID FROM CATEGORY_TIPS " +
+                    "WHERE CATEGORY_ID = ? " +
+                    "ORDER BY \"ORDER\"");
+
+                tipsStatement.setString(1, categoryId.toString());
+
+                ResultSet tipsResultSet = tipsStatement.executeQuery();
+
+                ArrayList<String> tipIds = new ArrayList<String>();
+                while (tipsResultSet.next()) {
+                    tipIds.add(tipsResultSet.getString(1));
+                }
+
+                String[] tipIdsArray = new String[tipIds.size()];
+                tipIds.toArray(tipIdsArray);
+
+                categories.add(
+                    new Category(
+                        categoryId,
+                        scramblerId,
+                        description,
+                        isUserDefined,
+                        tipIdsArray));
             }
 
-            statement.close();
+            categoryStatement.close();
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -49,45 +74,124 @@ public class CategoryDAO {
 
     public void insert(Category category) {
         try {
-            PreparedStatement statement = this.connection.prepareStatement(
+            this.connection.setAutoCommit(false);
+
+            // category
+            PreparedStatement categoryStatement = this.connection.prepareStatement(
                 "INSERT INTO CATEGORY VALUES (?, ?, ?, ?, ?)");
 
-            statement.setInt(1, 0);
-            statement.setString(2, category.getCategoryId().toString());
-            statement.setString(3, category.getScramblerId().toString());
-            statement.setString(4, category.getDescription());
-            statement.setBoolean(5, category.isUserDefined());
+            categoryStatement.setInt(1, 0);
+            categoryStatement.setString(2, category.getCategoryId().toString());
+            categoryStatement.setString(3, category.getScramblerId().toString());
+            categoryStatement.setString(4, category.getDescription());
+            categoryStatement.setBoolean(5, category.isUserDefined());
 
-            statement.executeUpdate();
+            categoryStatement.executeUpdate();
 
-            statement.close();
+            categoryStatement.close();
+
+            // tips
+            PreparedStatement tipsStatement = this.connection.prepareStatement(
+                "INSERT INTO CATEGORY_TIPS VALUES (?, ?, ?)");
+
+            for (int i = 0; i < category.getTipIds().length; i++) {
+                tipsStatement.setInt(1, i);
+                tipsStatement.setString(2, category.getCategoryId().toString());
+                tipsStatement.setString(3, category.getTipIds()[i]);
+
+                tipsStatement.addBatch();
+            }
+
+            tipsStatement.executeBatch();
+
+            tipsStatement.close();
+
+            this.connection.commit();
         } catch (SQLException e) {
+            try {
+                this.connection.rollback();
+            } catch (SQLException e1) {
+                throw new DatabaseException(e1);
+            }
+
             throw new DatabaseException(e);
+        } finally {
+            try {
+                this.connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
         }
     }
 
     public void update(Category category) {
         try {
-            PreparedStatement statement = this.connection.prepareStatement(
-                "UPDATE CATEGORY SET SCRAMBLER_ID = ?, DESCRIPTION = ?, USER_DEFINED = ? WHERE CATEGORY_ID = ?");
+            this.connection.setAutoCommit(false);
 
-            statement.setString(1, category.getScramblerId().toString());
-            statement.setString(2, category.getDescription());
-            statement.setBoolean(3, category.isUserDefined());
-            statement.setString(4, category.getCategoryId().toString());
+            // category
+            PreparedStatement categoryStatement = this.connection.prepareStatement(
+                "UPDATE CATEGORY SET SCRAMBLER_ID = ?, DESCRIPTION = ?, USER_DEFINED = ? " +
+                "WHERE CATEGORY_ID = ?");
 
-            statement.executeUpdate();
+            categoryStatement.setString(1, category.getScramblerId().toString());
+            categoryStatement.setString(2, category.getDescription());
+            categoryStatement.setBoolean(3, category.isUserDefined());
+            categoryStatement.setString(4, category.getCategoryId().toString());
 
-            statement.close();
+            categoryStatement.executeUpdate();
+
+            categoryStatement.close();
+
+            // delete old tips
+            PreparedStatement deleteTipsStatement = this.connection.prepareStatement(
+                "DELETE FROM CATEGORY_TIPS " +
+                "WHERE CATEGORY_ID = ?");
+
+            deleteTipsStatement.setString(1, category.getCategoryId().toString());
+
+            deleteTipsStatement.executeUpdate();
+
+            deleteTipsStatement.close();
+
+            // tips
+            PreparedStatement tipsStatement = this.connection.prepareStatement(
+                "INSERT INTO CATEGORY_TIPS VALUES (?, ?, ?)");
+
+            for (int i = 0; i < category.getTipIds().length; i++) {
+                tipsStatement.setInt(1, i);
+                tipsStatement.setString(2, category.getCategoryId().toString());
+                tipsStatement.setString(3, category.getTipIds()[i]);
+
+                tipsStatement.addBatch();
+            }
+
+            tipsStatement.executeBatch();
+
+            tipsStatement.close();
+
+            this.connection.commit();
         } catch (SQLException e) {
+            try {
+                this.connection.rollback();
+            } catch (SQLException e1) {
+                throw new DatabaseException(e1);
+            }
+
             throw new DatabaseException(e);
+        } finally {
+            try {
+                this.connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
         }
     }
 
     public void delete(Category category) {
         try {
             PreparedStatement statement = this.connection.prepareStatement(
-                "DELETE FROM CATEGORY WHERE CATEGORY_ID = ?");
+                "DELETE FROM CATEGORY " +
+                "WHERE CATEGORY_ID = ?");
 
             statement.setString(1, category.getCategoryId().toString());
 

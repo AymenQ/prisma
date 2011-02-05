@@ -53,6 +53,7 @@ import com.puzzletimer.statistics.BestAverage;
 import com.puzzletimer.statistics.BestMean;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.timer.Timer;
+import com.puzzletimer.tips.TipProvider;
 import com.puzzletimer.util.SolutionUtils;
 
 public class Main {
@@ -68,6 +69,7 @@ public class Main {
     private ColorManager colorManager;
     private ScrambleParserProvider scrambleParserProvider;
     private ScramblerProvider scramblerProvider;
+    private TipProvider tipProvider;
     private CategoryManager categoryManager;
     private ScrambleManager scrambleManager;
     private SolutionManager solutionManager;
@@ -123,7 +125,7 @@ public class Main {
         }
 
         // update database if necessary
-        String[] versions = { "0.3", "0.4" };
+        String[] versions = { "0.3", "0.4", "0.5" };
 
         for (;;) {
             String currentVersion = "";
@@ -281,6 +283,10 @@ public class Main {
 
         // scrambler provider
         this.scramblerProvider = new ScramblerProvider();
+
+
+        // tip provider
+        this.tipProvider = new TipProvider();
 
         // category DAO
         this.categoryDAO = new CategoryDAO(connection);
@@ -443,6 +449,7 @@ public class Main {
                     main.colorManager,
                     main.scrambleParserProvider,
                     main.scramblerProvider,
+                    main.tipProvider,
                     main.categoryManager,
                     main.scrambleManager,
                     main.solutionManager,

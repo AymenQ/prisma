@@ -7,12 +7,14 @@ public class Category {
     private String scramblerId;
     private String description;
     private boolean isUserDefined;
+    private String[] tipIds;
 
-    public Category(UUID categoryId, String scramblerId, String description, boolean isUserDefined) {
+    public Category(UUID categoryId, String scramblerId, String description, boolean isUserDefined, String[] tipIds) {
         this.categoryId = categoryId;
         this.scramblerId = scramblerId;
         this.description = description;
         this.isUserDefined = isUserDefined;
+        this.tipIds = tipIds;
     }
 
     public UUID getCategoryId() {
@@ -28,7 +30,8 @@ public class Category {
             this.categoryId,
             scramblerId,
             this.description,
-            this.isUserDefined);
+            this.isUserDefined,
+            this.tipIds);
     }
 
     public String getDescription() {
@@ -40,10 +43,24 @@ public class Category {
             this.categoryId,
             this.scramblerId,
             description,
-            this.isUserDefined);
+            this.isUserDefined,
+            this.tipIds);
     }
 
     public boolean isUserDefined() {
         return this.isUserDefined;
+    }
+
+    public String[] getTipIds() {
+        return this.tipIds;
+    }
+
+    public Category setTipIds(String[] tipIds) {
+        return new Category(
+            this.categoryId,
+            this.scramblerId,
+            this.description,
+            this.isUserDefined,
+            tipIds);
     }
 }

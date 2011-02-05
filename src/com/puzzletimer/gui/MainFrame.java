@@ -81,7 +81,7 @@ import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.timer.ControlKeysTimer;
 import com.puzzletimer.timer.SpaceKeyTimer;
 import com.puzzletimer.timer.StackmatTimer;
-import com.puzzletimer.tips.TipperProvider;
+import com.puzzletimer.tips.TipProvider;
 import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
@@ -564,6 +564,7 @@ public class MainFrame extends JFrame {
     private ColorManager colorManager;
     private ScrambleParserProvider scrambleParserProvider;
     private ScramblerProvider scramblerProvider;
+    private TipProvider tipProvider;
     private CategoryManager categoryManager;
     private ScrambleManager scrambleManager;
     private SolutionManager solutionManager;
@@ -611,6 +612,7 @@ public class MainFrame extends JFrame {
             ColorManager colorManager,
             ScrambleParserProvider scrambleParserProvider,
             ScramblerProvider scramblerProvider,
+            TipProvider tipProvider,
             CategoryManager categoryManager,
             ScrambleManager scrambleManager,
             SolutionManager solutionManager,
@@ -619,6 +621,7 @@ public class MainFrame extends JFrame {
         this.puzzleProvider = puzzleProvider;
         this.scrambleParserProvider = scrambleParserProvider;
         this.scramblerProvider = scramblerProvider;
+        this.tipProvider = tipProvider;
         this.configurationManager = configurationManager;
         this.timerManager = timerManager;
         this.categoryManager = categoryManager;
@@ -1178,10 +1181,9 @@ public class MainFrame extends JFrame {
         Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puzzletimer/resources/icon.png"));
 
         // tips frame
-        TipperProvider tipperProvider = new TipperProvider();
         this.tipsFrame = new TipsFrame(
             this.puzzleProvider,
-            tipperProvider,
+            this.tipProvider,
             this.scramblerProvider,
             this.categoryManager,
             this.scrambleManager);
@@ -1219,7 +1221,8 @@ public class MainFrame extends JFrame {
         this.categoryManagerDialog = new CategoryManagerFrame(
             this.puzzleProvider,
             this.scramblerProvider,
-            this.categoryManager);
+            this.categoryManager,
+            this.tipProvider);
         this.categoryManagerDialog.setLocationRelativeTo(null);
         this.categoryManagerDialog.setIconImage(icon);
 

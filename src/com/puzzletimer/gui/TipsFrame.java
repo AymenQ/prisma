@@ -25,8 +25,7 @@ import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
-import com.puzzletimer.tips.Tipper;
-import com.puzzletimer.tips.TipperProvider;
+import com.puzzletimer.tips.TipProvider;
 
 @SuppressWarnings("serial")
 public class TipsFrame extends JFrame {
@@ -35,7 +34,7 @@ public class TipsFrame extends JFrame {
 
     public TipsFrame(
             final PuzzleProvider puzzleProvider,
-            final TipperProvider tipperProvider,
+            final TipProvider tipProvider,
             final ScramblerProvider scrambleProvider,
             final CategoryManager categoryManager,
             ScrambleManager scrambleManager) {
@@ -61,16 +60,15 @@ public class TipsFrame extends JFrame {
         scrambleManager.addScrambleListener(new ScrambleListener() {
             @Override
             public void scrambleChanged(Scramble scramble) {
-                Scrambler scrambler = scrambleProvider.get(scramble.getScramblerId());
-                Puzzle puzzle = puzzleProvider.get(scrambler.getScramblerInfo().getPuzzleId());
-                Tipper tipper = tipperProvider.get(puzzle.getPuzzleInfo().getPuzzleId());
+                Category category = categoryManager.getCurrentCategory();
 
-                String tips = "";
-                if (tipper != null) {
-                    tips = tipper.getTips(scramble);
+                StringBuilder contents = new StringBuilder();
+                for (String tipId : category.getTipIds()) {
+                    contents.append(tipProvider.get(tipId).getTip(scramble));
+                    contents.append("\n\n");
                 }
 
-                TipsFrame.this.textAreaTips.setText(tips);
+                TipsFrame.this.textAreaTips.setText(contents.toString().trim());
                 TipsFrame.this.textAreaTips.setCaretPosition(0);
             }
         });
