@@ -8,6 +8,7 @@ public class TipProvider {
         this.tips = new Tip[] {
             new RubiksCubeOptimalCross(),
             new RubiksCube3OPCycles(),
+            new RubiksCubeClassicPochmannEdges(),
             new Square1OptimalCubeShapeTip(),
         };
     }
