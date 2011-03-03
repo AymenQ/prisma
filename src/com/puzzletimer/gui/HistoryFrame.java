@@ -190,6 +190,7 @@ public class HistoryFrame extends JFrame {
     private HistogramPanel histogramPanel;
     private GraphPanel graphPanel;
 
+    private JLabel labelNumberOfSolutions;
     private JLabel labelMean;
     private JLabel labelBest;
     private JLabel labelMeanOf3;
@@ -460,95 +461,100 @@ public class HistoryFrame extends JFrame {
                 "[pref!]1[pref!]1[pref!]1[pref!]1[pref!]"));
         add(panelStatistics, "growx, span, wrap");
 
-        // labelMean
-        panelStatistics.add(new JLabel("Mean:"), "");
-        this.labelMean = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelMean, "");
+        // labelNumberOfSolutions
+        panelStatistics.add(new JLabel("Number of solutions:"), "");
+        this.labelNumberOfSolutions = new JLabel("");
+        panelStatistics.add(this.labelNumberOfSolutions, "right");
 
         // labelBest
         panelStatistics.add(new JLabel("Best:"), "");
         this.labelBest = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBest, "");
+        panelStatistics.add(this.labelBest, "right");
 
         // labelMeanOf3
         panelStatistics.add(new JLabel("Mean of 3:"), "");
         this.labelMeanOf3 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelMeanOf3, "");
+        panelStatistics.add(this.labelMeanOf3, "right");
 
         // labelBestMeanOf3
         panelStatistics.add(new JLabel("Best mean of 3:"), "");
         this.labelBestMeanOf3 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestMeanOf3, "wrap");
+        panelStatistics.add(this.labelBestMeanOf3, "right, wrap");
 
-        // labelInterquartileMean
-        panelStatistics.add(new JLabel("Interquartile mean:"), "");
-        this.labelInterquartileMean = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelInterquartileMean, "");
+        // labelMean
+        panelStatistics.add(new JLabel("Mean:"), "");
+        this.labelMean = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelMean, "right");
 
         // labelLowerQuartile
         panelStatistics.add(new JLabel("Lower quartile:"), "");
         this.labelLowerQuartile = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelLowerQuartile, "");
+        panelStatistics.add(this.labelLowerQuartile, "right");
 
         // labelMeanOf10
         panelStatistics.add(new JLabel("Mean of 10:"), "");
         this.labelMeanOf10 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelMeanOf10, "");
+        panelStatistics.add(this.labelMeanOf10, "right");
 
         // labelBestMeanOf10
         panelStatistics.add(new JLabel("Best mean of 10:"), "");
         this.labelBestMeanOf10 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestMeanOf10, "wrap");
+        panelStatistics.add(this.labelBestMeanOf10, "right, wrap");
 
-        // labelStandardDeviation
-        panelStatistics.add(new JLabel("Standard deviation:"), "");
-        this.labelStandardDeviation = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelStandardDeviation, "");
+        // labelInterquartileMean
+        panelStatistics.add(new JLabel("Interquartile mean:"), "");
+        this.labelInterquartileMean = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelInterquartileMean, "right");
 
         // labelMedian
         panelStatistics.add(new JLabel("Median:"), "");
         this.labelMedian = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelMedian, "");
+        panelStatistics.add(this.labelMedian, "right");
 
         // labelMeanOf100
         panelStatistics.add(new JLabel("Mean of 100:"), "");
         this.labelMeanOf100 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelMeanOf100, "");
+        panelStatistics.add(this.labelMeanOf100, "right");
 
         // labelBestMeanOf100
         panelStatistics.add(new JLabel("Best mean of 100:"), "");
         this.labelBestMeanOf100 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestMeanOf100, "wrap");
+        panelStatistics.add(this.labelBestMeanOf100, "right, wrap");
+
+        // labelStandardDeviation
+        panelStatistics.add(new JLabel("Standard deviation:"), "");
+        this.labelStandardDeviation = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelStandardDeviation, "right");
 
         // labelUpperQuartile
-        panelStatistics.add(new JLabel("Upper quartile:"), "skip 2");
+        panelStatistics.add(new JLabel("Upper quartile:"), "");
         this.labelUpperQuartile = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelUpperQuartile, "");
+        panelStatistics.add(this.labelUpperQuartile, "right");
 
         // labelAverageOf5
         panelStatistics.add(new JLabel("Average of 5:"), "");
         this.labelAverageOf5 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelAverageOf5, "");
+        panelStatistics.add(this.labelAverageOf5, "right");
 
         // labelBestAverageOf5
         panelStatistics.add(new JLabel("Best average of 5:"), "");
         this.labelBestAverageOf5 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestAverageOf5, "wrap");
+        panelStatistics.add(this.labelBestAverageOf5, "right, wrap");
 
         // labelWorst
         panelStatistics.add(new JLabel("Worst:"), "skip 2");
         this.labelWorst = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelWorst, "");
+        panelStatistics.add(this.labelWorst, "right");
 
         // labelAverageOf12
         panelStatistics.add(new JLabel("Average of 12:"), "");
         this.labelAverageOf12 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelAverageOf12, "");
+        panelStatistics.add(this.labelAverageOf12, "right");
 
         // labelBestAverageOf12
         panelStatistics.add(new JLabel("Best average of 12:"), "");
         this.labelBestAverageOf12 = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelBestAverageOf12, "");
+        panelStatistics.add(this.labelBestAverageOf12, "right");
 
         // labelSolutions
         JLabel labelTimes = new JLabel("Solutions");
@@ -590,6 +596,8 @@ public class HistoryFrame extends JFrame {
     }
 
     private void updateStatistics(Solution[] solutions, final int[] selectedRows) {
+        this.labelNumberOfSolutions.setText(Integer.toString(solutions.length));
+
         JLabel labels[] = {
             this.labelMean,
             this.labelBest,
