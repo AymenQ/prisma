@@ -68,6 +68,24 @@ public class ScramblerProvider {
                 new byte[] {  0, -1, -1,  3, -1, -1, -1, -1,  8, -1, 10, 11 },
                 new byte[] {  0, -1, -1,  0, -1, -1, -1, -1,  0, -1,  0,  0 });
 
+        // 3x3x3 CLL training
+        Scrambler rubiksCubeCLLTraining =
+            new RubiksCubeRandomScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-CLL-TRAINING", "RUBIKS-CUBE", "CLL training scrambler"),
+                new byte[] { -1, -1, -1, -1,  4,  5,  6,  7 },
+                new byte[] { -1, -1, -1, -1,  0,  0,  0,  0 },
+                new byte[] {  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11 },
+                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
+
+        // 3x3x3 ELL training
+        Scrambler rubiksCubeELLTraining =
+            new RubiksCubeRandomScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-ELL-TRAINING", "RUBIKS-CUBE", "ELL training scrambler"),
+                new byte[] {  0,  1,  2,  3,  4,  5,  6,  7 },
+                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0 },
+                new byte[] {  0,  1,  2,  3, -1, -1, -1, -1,  8,  9, 10, 11 },
+                new byte[] {  0,  0,  0,  0, -1, -1, -1, -1,  0,  0,  0,  0 });
+
         // 3x3x3 fridrich f2l training
         Scrambler rubiksCubeFridrichF2LTraining =
             new RubiksCubeRandomScrambler(
@@ -338,6 +356,8 @@ public class ScramblerProvider {
             rubiksCubeRandom,
             rubiksCubeLU,
             rubiksCubeRU,
+            rubiksCubeCLLTraining,
+            rubiksCubeELLTraining,
             rubiksCubeFridrichF2LTraining,
             rubiksCubeFridrichOLLTraining,
             rubiksCubeFridrichPLLTraining,

@@ -1,5 +1,12 @@
 BEGIN TRANSACTION;
 
+-- scramblers
+
+INSERT INTO SCRAMBLER VALUES
+    (0, 'RUBIKS-CUBE-CLL-TRAINING', 'RUBIKS-CUBE', 'CLL training scrambler', FALSE),
+    (0, 'RUBIKS-CUBE-ELL-TRAINING', 'RUBIKS-CUBE', 'ELL training scrambler', FALSE);
+
+
 -- tips
 
 CREATE TABLE TIP(
