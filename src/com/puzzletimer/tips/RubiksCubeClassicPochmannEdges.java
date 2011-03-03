@@ -51,11 +51,11 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
         };
 
         int cycleFirstPiece = 5;
-        int lastPermutation = 5;
-        int lastOrientation = 0;
+        int currentPermutation = 5;
+        int currentOrientation = 0;
         for (;;) {
-            int nextPermutation = state.edgesPermutation[lastPermutation];
-            int nextOrientation = (state.edgesOrientation[lastPermutation] + lastOrientation) % 2;
+            int nextPermutation = state.edgesPermutation[currentPermutation];
+            int nextOrientation = (2 - state.edgesOrientation[currentPermutation] + currentOrientation) % 2;
 
             // break into a new cycle
             if (nextPermutation == cycleFirstPiece) {
@@ -67,8 +67,8 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
                 for (int i = 0; i < 12; i++) {
                     if (!solved[i]) {
                         cycleFirstPiece = i;
-                        lastPermutation = i;
-                        lastOrientation = 0;
+                        currentPermutation = i;
+                        currentOrientation = 0;
 
                         nextPermutation = i;
                         nextOrientation = 0;
@@ -85,9 +85,9 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
 
             stickerSequence.add(stickerNames[nextPermutation][nextOrientation]);
 
-            lastPermutation = nextPermutation;
-            lastOrientation = nextOrientation;
-            solved[lastPermutation] = true;
+            currentPermutation = nextPermutation;
+            currentOrientation = nextOrientation;
+            solved[currentPermutation] = true;
         }
 
         // solution
@@ -128,7 +128,7 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
             tip.append("  (UR " + sticker + ")  " + solutions.get(sticker) + "\n");
         }
 
-        return tip.toString();
+        return tip.toString().trim();
     }
 
     @Override
