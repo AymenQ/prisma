@@ -185,6 +185,11 @@ public class ScramblerProvider {
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                 new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
 
+        // 3x3x3 bld single sticker cycle
+        Scrambler rubiksCubeBLDSingleStickerCycle =
+            new RubiksCubeSingleStickerCycleScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-BLD-SINGLE-STICKER-CYCLE", "RUBIKS-CUBE", "BLD - Single sticker cycle scrambler"));
+
         // 3x3x3 easy cross
         Scrambler rubiksCubeEasyCross =
             new RubiksCubeEasyCrossScrambler(
@@ -369,6 +374,7 @@ public class ScramblerProvider {
             rubiksCube3OPEdgesOrientationTraining,
             rubiksCube3OPOrientationTraining,
             rubiksCube3OPPermutationTraining,
+            rubiksCubeBLDSingleStickerCycle,
             rubiksCubeEasyCross,
             rubiksRevengeImporter,
             rubiksRevengeRandom,

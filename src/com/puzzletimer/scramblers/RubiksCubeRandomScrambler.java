@@ -48,8 +48,7 @@ public class RubiksCubeRandomScrambler implements Scrambler {
         return nInversions % 2 == 0 ? 1 : -1;
     }
 
-    @Override
-    public Scramble getNextScramble() {
+    public RubiksCubeSolver.State getRandomState() {
         byte[] cornersPermutation;
         byte[] cornersOrientation;
         byte[] edgesPermutation;
@@ -159,15 +158,18 @@ public class RubiksCubeRandomScrambler implements Scrambler {
             }
         } while (permutationSign(cornersPermutation) != permutationSign(edgesPermutation));
 
-        RubiksCubeSolver.State state = new RubiksCubeSolver.State(
+        return new RubiksCubeSolver.State(
             cornersPermutation,
             cornersOrientation,
             edgesPermutation,
             edgesOrientation);
+    }
 
+    @Override
+    public Scramble getNextScramble() {
         return new Scramble(
             getScramblerInfo().getScramblerId(),
-            RubiksCubeSolver.generate(state));
+            RubiksCubeSolver.generate(getRandomState()));
     }
 
     @Override

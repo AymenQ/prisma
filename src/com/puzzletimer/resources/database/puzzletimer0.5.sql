@@ -3,8 +3,9 @@ BEGIN TRANSACTION;
 -- scramblers
 
 INSERT INTO SCRAMBLER VALUES
-    (0, 'RUBIKS-CUBE-CLL-TRAINING', 'RUBIKS-CUBE', 'CLL training scrambler', FALSE),
-    (0, 'RUBIKS-CUBE-ELL-TRAINING', 'RUBIKS-CUBE', 'ELL training scrambler', FALSE);
+    (0, 'RUBIKS-CUBE-CLL-TRAINING',             'RUBIKS-CUBE', 'CLL training scrambler',               FALSE),
+    (0, 'RUBIKS-CUBE-ELL-TRAINING',             'RUBIKS-CUBE', 'ELL training scrambler',               FALSE),
+    (0, 'RUBIKS-CUBE-BLD-SINGLE-STICKER-CYCLE', 'RUBIKS-CUBE', 'BLD - Single sticker cycle scrambler', FALSE);
 
 
 -- tips
