@@ -29,13 +29,13 @@ public class RubiksRevengeRandomScrambler implements Scrambler {
 
         int i = 0;
         while (i < this.scrambleLength) {
-            int s = this.random.nextInt(12);
+            int s = this.random.nextInt(9);
             int p = this.random.nextInt(3);
 
             boolean ignore = false;
             for (int j = i - 1; j >= 0; j--) {
                 // if not in the same axis
-                if (s / 4 != slice[j] / 4) {
+                if (s / 3 != slice[j] / 3) {
                     break;
                 }
 
@@ -55,7 +55,7 @@ public class RubiksRevengeRandomScrambler implements Scrambler {
         i = 0;
         while (i < slice.length) {
             int len = 1;
-            while (i + len < slice.length && slice[i] / 4 == slice[i + len] / 4) {
+            while (i + len < slice.length && slice[i] / 3 == slice[i + len] / 3) {
                 len++;
             }
 
@@ -65,12 +65,9 @@ public class RubiksRevengeRandomScrambler implements Scrambler {
         }
 
         String[][] moves = {
-            { "U", "U2", "U'" }, { "Uw", "Uw2", "Uw'" },
-            { "Dw", "Dw2", "Dw'" }, { "D", "D2", "D'" },
-            { "L", "L2", "L'" }, { "Lw", "Lw2", "Lw'" },
-            { "Rw", "Rw2", "Rw'" }, { "R", "R2", "R'" },
-            { "F", "F2", "F'" }, { "Fw", "Fw2", "Fw'" },
-            { "Bw", "Bw2", "Bw'" }, { "B", "B2", "B'" },
+            { "U", "U2", "U'" }, { "Uw", "Uw2", "Uw'" }, { "D", "D2", "D'" },
+            { "L", "L2", "L'" }, { "Rw", "Rw2", "Rw'" }, { "R", "R2", "R'" },
+            { "F", "F2", "F'" }, { "Fw", "Fw2", "Fw'" }, { "B", "B2", "B'" },
         };
 
         String[] sequence = new String[this.scrambleLength];
