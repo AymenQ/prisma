@@ -100,6 +100,32 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
         tip.append("  [J2]  R' U2 R U R' U2 L U' R U L'\n");
         tip.append("\n");
 
+        HashMap<String, String> letteringScheme = new HashMap<String, String>();
+        letteringScheme.put("UB", "A");
+        letteringScheme.put("UR", "B");
+        letteringScheme.put("UF", "C");
+        letteringScheme.put("UL", "D");
+        letteringScheme.put("LU", "E");
+        letteringScheme.put("LF", "F");
+        letteringScheme.put("LD", "G");
+        letteringScheme.put("LB", "H");
+        letteringScheme.put("FU", "I");
+        letteringScheme.put("FR", "J");
+        letteringScheme.put("FD", "K");
+        letteringScheme.put("FL", "L");
+        letteringScheme.put("RU", "M");
+        letteringScheme.put("RB", "N");
+        letteringScheme.put("RD", "O");
+        letteringScheme.put("RF", "P");
+        letteringScheme.put("BU", "Q");
+        letteringScheme.put("BL", "R");
+        letteringScheme.put("BD", "S");
+        letteringScheme.put("BR", "T");
+        letteringScheme.put("DF", "U");
+        letteringScheme.put("DR", "V");
+        letteringScheme.put("DB", "W");
+        letteringScheme.put("DL", "X");
+
         HashMap<String, String> solutions = new HashMap<String, String>();
         solutions.put("UB", "[J2]");
         solutions.put("BU", "l [J1] l'");
@@ -125,7 +151,7 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
         solutions.put("LD", "L2 [T2] L2");
 
         for (String sticker : stickerSequence) {
-            tip.append("  (UR " + sticker + ")  " + solutions.get(sticker) + "\n");
+            tip.append("  (UR " + sticker + ") " + letteringScheme.get(sticker) + "  " + solutions.get(sticker) + "\n");
         }
 
         return tip.toString().trim();

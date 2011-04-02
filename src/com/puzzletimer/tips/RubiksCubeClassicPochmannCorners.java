@@ -93,6 +93,32 @@ public class RubiksCubeClassicPochmannCorners implements Tip {
         tip.append("  [Y]  R U' R' U' R U R' F' R U R' U' R' F R\n");
         tip.append("\n");
 
+        HashMap<String, String> letteringScheme = new HashMap<String, String>();
+        letteringScheme.put("ULB", "A");
+        letteringScheme.put("UBR", "B");
+        letteringScheme.put("URF", "C");
+        letteringScheme.put("UFL", "D");
+        letteringScheme.put("LBU", "E");
+        letteringScheme.put("LUF", "F");
+        letteringScheme.put("LFD", "G");
+        letteringScheme.put("LDB", "H");
+        letteringScheme.put("FLU", "I");
+        letteringScheme.put("FUR", "J");
+        letteringScheme.put("FRD", "K");
+        letteringScheme.put("FDL", "L");
+        letteringScheme.put("RFU", "M");
+        letteringScheme.put("RUB", "N");
+        letteringScheme.put("RBD", "O");
+        letteringScheme.put("RDF", "P");
+        letteringScheme.put("BRU", "Q");
+        letteringScheme.put("BUL", "R");
+        letteringScheme.put("BLD", "S");
+        letteringScheme.put("BDR", "T");
+        letteringScheme.put("DLF", "U");
+        letteringScheme.put("DFR", "V");
+        letteringScheme.put("DRB", "W");
+        letteringScheme.put("DBL", "X");
+
         HashMap<String, String> solutions = new HashMap<String, String>();
         solutions.put("UBR", "R2 [Y] R2");
         solutions.put("BRU", "R D' [Y] D R'");
@@ -117,7 +143,7 @@ public class RubiksCubeClassicPochmannCorners implements Tip {
         solutions.put("FDL", "F2 R' [Y] R F2");
 
         for (String sticker : stickerSequence) {
-            tip.append("  (LBU " + sticker + ")  " + solutions.get(sticker) + "\n");
+            tip.append("  (LBU " + sticker + ") " + letteringScheme.get(sticker) + "  " + solutions.get(sticker) + "\n");
         }
 
         return tip.toString().trim();
