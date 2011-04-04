@@ -10,6 +10,7 @@ public class TipProvider {
             new RubiksCube3OPCycles(),
             new RubiksCubeClassicPochmannEdges(),
             new RubiksCubeClassicPochmannCorners(),
+            new RubiksCubeM2Edges(),
             new Square1OptimalCubeShapeTip(),
         };
     }
