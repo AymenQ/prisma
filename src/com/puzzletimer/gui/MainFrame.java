@@ -203,7 +203,7 @@ public class MainFrame extends JFrame {
 
                     TimerPanel.this.labelTime.setForeground(color);
                     TimerPanel.this.labelTime.setText(
-                        SolutionUtils.formatSeconds(remainingTime));
+                        Long.toString((long)Math.ceil(remainingTime / 1000.0)));
                 }
 
                 @Override
