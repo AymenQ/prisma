@@ -1,21 +1,27 @@
 package com.puzzletimer.scramblers;
-import java.util.Random;
+import java.util.ArrayList;
 
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.ScramblerInfo;
-import com.puzzletimer.solvers.IndexMapping;
 import com.puzzletimer.solvers.RubiksCubeCrossSolver;
 import com.puzzletimer.solvers.RubiksCubeSolver;
+import com.puzzletimer.solvers.RubiksCubeSolver.State;
 
 public class RubiksCubeEasyCrossScrambler implements Scrambler {
     private ScramblerInfo scramblerInfo;
     private int maxDistance;
-    private Random random;
+    private RubiksCubeRandomScrambler rubiksCubeRandomScrambler;
 
     public RubiksCubeEasyCrossScrambler(ScramblerInfo scramblerInfo, int maxDistance) {
         this.scramblerInfo = scramblerInfo;
         this.maxDistance = maxDistance;
-        this.random = new Random();
+        this.rubiksCubeRandomScrambler =
+            new RubiksCubeRandomScrambler(
+                scramblerInfo,
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
+                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 });
     }
 
     @Override
@@ -25,39 +31,24 @@ public class RubiksCubeEasyCrossScrambler implements Scrambler {
 
     @Override
     public Scramble getNextScramble() {
-        RubiksCubeCrossSolver.State crossState;
-        for (;;) {
-            int combination = this.random.nextInt(RubiksCubeCrossSolver.N_COMBINATIONS);
-            int permutation = this.random.nextInt(RubiksCubeCrossSolver.N_PERMUTATIONS);
-            int orientation = this.random.nextInt(RubiksCubeCrossSolver.N_ORIENTATIONS);
+        State x = new State(
+            new byte[] { 3, 2, 6, 7, 0, 1, 5, 4 },
+            new byte[] { 2, 1, 2, 1, 1, 2, 1, 2 },
+            new byte[] { 7, 5, 9, 11, 6, 2, 10, 3, 4, 1, 8, 0 },
+            new byte[] { 0, 0, 0,  0, 1, 0,  1, 0, 1, 0, 1, 0 });
 
-            if (RubiksCubeCrossSolver.distance[combination][permutation][orientation] <= this.maxDistance) {
-                crossState =
-                    new RubiksCubeCrossSolver.State(
-                        IndexMapping.indexToCombination(combination, 4, 12),
-                        IndexMapping.indexToPermutation(permutation, 4),
-                        IndexMapping.indexToOrientation(orientation, 2, 4));
-                break;
+        for (;;) {
+            State state = this.rubiksCubeRandomScrambler.getRandomState();
+
+            ArrayList<String[]> solution =
+                RubiksCubeCrossSolver.solve(
+                    x.multiply(x).multiply(state).multiply(x).multiply(x));
+            if (solution.get(0).length <= this.maxDistance) {
+                return new Scramble(
+                    getScramblerInfo().getScramblerId(),
+                    RubiksCubeSolver.generate(state));
             }
         }
-
-        RubiksCubeSolver.State cubeState =
-            new RubiksCubeSolver.State(
-                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
-                new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
-                new byte[] { -1, -1, -1, -1,  4,  5,  6,  7, -1, -1, -1, -1 },
-                new byte[] { -1, -1, -1, -1,  0,  0,  0,  0, -1, -1, -1, -1 });
-        cubeState = cubeState.applySequence(RubiksCubeCrossSolver.generate(crossState));
-
-        RubiksCubeRandomScrambler scrambler =
-            new RubiksCubeRandomScrambler(
-                getScramblerInfo(),
-                cubeState.cornersPermutation,
-                cubeState.cornersOrientation,
-                cubeState.edgesPermutation,
-                cubeState.edgesOrientation);
-
-        return scrambler.getNextScramble();
     }
 
     @Override

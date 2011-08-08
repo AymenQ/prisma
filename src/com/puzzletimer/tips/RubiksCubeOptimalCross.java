@@ -1,12 +1,28 @@
 package com.puzzletimer.tips;
 
-import java.util.HashMap;
-
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.solvers.RubiksCubeCrossSolver;
+import com.puzzletimer.solvers.RubiksCubeSolver.State;
 import com.puzzletimer.util.StringUtils;
 
 public class RubiksCubeOptimalCross implements Tip {
+    private static State x;
+    private static State z;
+
+    static {
+        x = new State(
+            new byte[] { 3, 2, 6, 7, 0, 1, 5, 4 },
+            new byte[] { 2, 1, 2, 1, 1, 2, 1, 2 },
+            new byte[] { 7, 5, 9, 11, 6, 2, 10, 3, 4, 1, 8, 0 },
+            new byte[] { 0, 0, 0,  0, 1, 0,  1, 0, 1, 0, 1, 0 });
+
+        z = new State(
+            new byte[] { 4, 0, 3, 7, 5, 1, 2, 6 },
+            new byte[] { 1, 2, 1, 2, 2, 1, 2, 1 },
+            new byte[] { 8, 4, 6, 10, 0, 7, 3, 11, 1, 5, 2, 9 },
+            new byte[] { 1, 1, 1,  1, 1, 1, 1, 1,  1, 1, 1, 1 });
+    }
+
     @Override
     public String getTipId() {
         return "RUBIKS-CUBE-OPTIMAL-CROSS";
@@ -24,47 +40,64 @@ public class RubiksCubeOptimalCross implements Tip {
 
     @Override
     public String getTip(Scramble scramble) {
-        RubiksCubeCrossSolver.State crossState =
-            RubiksCubeCrossSolver.State.id.applySequence(scramble.getSequence());
+        State state = State.id.applySequence(scramble.getSequence());
 
         StringBuilder tip = new StringBuilder();
 
-        tip.append("Optimal cross:\n");
-        for (String[] solution : RubiksCubeCrossSolver.solve(crossState)) {
-            tip.append("  " + StringUtils.join(" ", applyX2(solution)) +  "\n");
+        // cross on U
+        State stateU =
+            x.multiply(x).multiply(state).multiply(x).multiply(x);
+        tip.append("Optimal cross on U:\n");
+        for (String[] solution : RubiksCubeCrossSolver.solve(stateU)) {
+            tip.append("  x2 " + StringUtils.join(" ", solution) + "\n");
         }
+        tip.append("\n");
+
+        // cross on D
+        State stateD = state;
+        tip.append("Optimal cross on D:\n");
+        for (String[] solution : RubiksCubeCrossSolver.solve(stateD)) {
+            tip.append("  " + StringUtils.join(" ", solution) + "\n");
+        }
+        tip.append("\n");
+
+        // cross on L
+        State stateL =
+            z.multiply(state).multiply(z).multiply(z).multiply(z);
+        tip.append("Optimal cross on L:\n");
+        for (String[] solution : RubiksCubeCrossSolver.solve(stateL)) {
+            tip.append("  z' " + StringUtils.join(" ", solution) + "\n");
+        }
+        tip.append("\n");
+
+        // cross on R
+        State stateR =
+            z.multiply(z).multiply(z).multiply(state).multiply(z);
+        tip.append("Optimal cross on R:\n");
+        for (String[] solution : RubiksCubeCrossSolver.solve(stateR)) {
+            tip.append("  z " + StringUtils.join(" ", solution) + "\n");
+        }
+        tip.append("\n");
+
+        // cross on F
+        State stateF =
+            x.multiply(state).multiply(x).multiply(x).multiply(x);
+        tip.append("Optimal cross on F:\n");
+        for (String[] solution : RubiksCubeCrossSolver.solve(stateF)) {
+            tip.append("  x' " + StringUtils.join(" ", solution) + "\n");
+        }
+        tip.append("\n");
+
+        // cross on B
+        State stateB =
+            x.multiply(x).multiply(x).multiply(state).multiply(x);
+        tip.append("Optimal cross on B:\n");
+        for (String[] solution : RubiksCubeCrossSolver.solve(stateB)) {
+            tip.append("  x " + StringUtils.join(" ", solution) + "\n");
+        }
+        tip.append("\n");
 
         return tip.toString().trim();
-    }
-
-    private String[] applyX2(String[] sequence) {
-        HashMap<String, String> table = new HashMap<String, String>();
-        table.put("U",  "D");
-        table.put("U2", "D2");
-        table.put("U'", "D'");
-        table.put("D",  "U");
-        table.put("D2", "U2");
-        table.put("D'", "U'");
-        table.put("L",  "L");
-        table.put("L2", "L2");
-        table.put("L'", "L'");
-        table.put("R",  "R");
-        table.put("R2", "R2");
-        table.put("R'", "R'");
-        table.put("F",  "B");
-        table.put("F2", "B2");
-        table.put("F'", "B'");
-        table.put("B",  "F");
-        table.put("B2", "F2");
-        table.put("B'", "F'");
-
-        String[] newSequence = new String[sequence.length + 1];
-        newSequence[0] = "x2";
-        for (int i = 1; i < newSequence.length; i++) {
-            newSequence[i] = table.get(sequence[i - 1]);
-        }
-
-        return newSequence;
     }
 
     @Override

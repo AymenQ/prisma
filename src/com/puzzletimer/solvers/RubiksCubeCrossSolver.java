@@ -1,263 +1,276 @@
 package com.puzzletimer.solvers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+
+import com.puzzletimer.solvers.RubiksCubeSolver.State;
 
 public class RubiksCubeCrossSolver {
-    public static class Move {
-        public byte[] permutation;
-        public byte[] orientation;
+    // moves
+    private static String[] moveNames;
+    private static State[] moves;
 
-        public Move(byte[] permutation, byte[] orientation) {
-            this.permutation = permutation;
-            this.orientation = orientation;
-        }
+    static {
+        moveNames = new String[] {
+            "U", "U2", "U'",
+            "D", "D2", "D'",
+            "L", "L2", "L'",
+            "R", "R2", "R'",
+            "F", "F2", "F'",
+            "B", "B2", "B'",
+        };
 
-        public Move multiply(Move move) {
-            byte[] permutation = new byte[12];
-            byte[] orientation = new byte[12];
-
-            for (int i = 0; i < 12; i++) {
-                permutation[i] = move.permutation[this.permutation[i]];
-                orientation[i] = (byte) ((move.orientation[this.permutation[i]] + this.orientation[i]) % 2);
-            }
-
-            return new Move(permutation, orientation);
-        }
-
-        public static HashMap<String, Move> moves;
-
-        static {
-            Move moveU = new Move(new byte[] { 1, 2, 3, 0, 4, 5, 6, 7, 8, 9, 10, 11 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            Move moveD = new Move(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            Move moveL = new Move(new byte[] { 0, 1, 2, 7, 3, 5, 6, 11, 8, 9, 10, 4 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            Move moveR = new Move(new byte[] { 0, 5, 2, 3, 4, 9, 1, 7, 8, 6, 10, 11 }, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
-            Move moveF = new Move(new byte[] { 0, 1, 6, 3, 4, 5, 10, 2, 8, 9, 7, 11 }, new byte[] { 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0 });
-            Move moveB = new Move(new byte[] { 4, 1, 2, 3, 8, 0, 6, 7, 5, 9, 10, 11 }, new byte[] { 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0 });
-
-            moves = new HashMap<String, Move>();
-            moves.put("U",  moveU);
-            moves.put("U2", moveU.multiply(moveU));
-            moves.put("U'", moveU.multiply(moveU).multiply(moveU));
-            moves.put("D",  moveD);
-            moves.put("D2", moveD.multiply(moveD));
-            moves.put("D'", moveD.multiply(moveD).multiply(moveD));
-            moves.put("L",  moveL);
-            moves.put("L2", moveL.multiply(moveL));
-            moves.put("L'", moveL.multiply(moveL).multiply(moveL));
-            moves.put("R",  moveR);
-            moves.put("R2", moveR.multiply(moveR));
-            moves.put("R'", moveR.multiply(moveR).multiply(moveR));
-            moves.put("F",  moveF);
-            moves.put("F2", moveF.multiply(moveF));
-            moves.put("F'", moveF.multiply(moveF).multiply(moveF));
-            moves.put("B",  moveB);
-            moves.put("B2", moveB.multiply(moveB));
-            moves.put("B'", moveB.multiply(moveB).multiply(moveB));
-        }
-    }
-
-    public static class State {
-        public boolean[] combination;
-        public byte[] permutation;
-        public byte[] orientation;
-
-        public State(boolean[] combination, byte[] permutation, byte[] orientation) {
-            this.combination = combination;
-            this.permutation = permutation;
-            this.orientation = orientation;
-        }
-
-        public State multiply(Move move) {
-            // edges position
-            byte[] position = new byte[this.permutation.length];
-            int next = 0;
-            for (int i = 0; i < this.combination.length; i++) {
-                if (this.combination[i]) {
-                    position[this.permutation[next++]] = (byte) i;
-                }
-            }
-
-            // apply move
-            byte[] resultPosition = new byte[this.permutation.length];
-            byte[] resultOrientation = new byte[this.orientation.length];
-            for (int i = 0; i < position.length; i++) {
-                resultPosition[i] = move.permutation[position[i]];
-                resultOrientation[i] = (byte) ((this.orientation[i] + move.orientation[position[i]]) % 2);
-            }
-
-            // retrieve result combination
-            boolean[] resultCombination = new boolean[this.combination.length];
-            for (int i = 0; i < resultPosition.length; i++) {
-                resultCombination[resultPosition[i]] = true;
-            }
-
-            // retrieve result permutation
-            byte[] resultPermutation = new byte[this.permutation.length];
-            next = 0;
-            for (int i = 0; i < resultCombination.length; i++) {
-                if (resultCombination[i]) {
-                    for (int j = 0; j < resultPosition.length; j++) {
-                        if (resultPosition[j] == i) {
-                            resultPermutation[next++] = (byte) j;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return new State(resultCombination, resultPermutation, resultOrientation);
-        }
-
-        public State applySequence(String[] sequence) {
-            State state = this;
-            for (String move : sequence) {
-                state = state.multiply(Move.moves.get(move));
-            }
-
-            return state;
-        }
-
-        public static State id;
-
-        static {
-            id = new State(
-                IndexMapping.indexToCombination(0, 4, 12),
-                IndexMapping.indexToPermutation(0, 4),
-                IndexMapping.indexToOrientation(0, 2, 4));
+        moves = new State[moveNames.length];
+        for (int i = 0; i < moves.length; i++) {
+            moves[i] = RubiksCubeSolver.State.moves.get(moveNames[i]);
         }
     }
 
     // constants
-    public static final int N_MOVES = 18;
-    public static final int N_COMBINATIONS = 495;
-    public static final int N_PERMUTATIONS = 24;
-    public static final int N_ORIENTATIONS = 16;
+    private static int N_EDGES_COMBINATIONS = 495;
+    private static int N_EDGES_PERMUTATIONS = 24;
+    private static int N_EDGES_ORIENTATIONS = 16;
 
-    // distance table
-    public static byte[][][] distance;
+    private static int goalEdgesPermutation;
+    private static int goalEdgesOrientation;
 
     static {
-        distance = new byte[N_COMBINATIONS][N_PERMUTATIONS][N_ORIENTATIONS];
+        int[] goalIndices =
+            stateToIndices(RubiksCubeSolver.State.id);
 
-        for (int i = 0; i < distance.length; i++) {
-            for (int j = 0; j < distance[i].length; j++) {
-                for (int k = 0; k < distance[i][j].length; k++) {
-                    distance[i][j][k] = -1;
+        goalEdgesPermutation =
+            goalIndices[0] * N_EDGES_PERMUTATIONS + goalIndices[1];
+        goalEdgesOrientation =
+            goalIndices[0] * N_EDGES_ORIENTATIONS + goalIndices[2];
+    }
+
+    // move tables
+    private static int[][] edgesPermutationMove;
+    private static int[][] edgesOrientationMove;
+
+    static {
+        // edges permutation
+        edgesPermutationMove = new int[N_EDGES_COMBINATIONS * N_EDGES_PERMUTATIONS][moves.length];
+        for (int i = 0; i < N_EDGES_COMBINATIONS; i++) {
+            for (int j = 0; j < N_EDGES_PERMUTATIONS; j++) {
+                State state = indicesToState(new int[] { i, j, 0 });
+                for (int k = 0; k < moves.length; k++) {
+                    int[] indices = stateToIndices(state.multiply(moves[k]));
+                    edgesPermutationMove[i * N_EDGES_PERMUTATIONS + j][k] =
+                        indices[0] * N_EDGES_PERMUTATIONS + indices[1];
                 }
             }
         }
-        distance[0][0][0] = 0;
 
-        Move[] moves = {
-            Move.moves.get("U"), Move.moves.get("U2"), Move.moves.get("U'"),
-            Move.moves.get("D"), Move.moves.get("D2"), Move.moves.get("D'"),
-            Move.moves.get("L"), Move.moves.get("L2"), Move.moves.get("L'"),
-            Move.moves.get("R"), Move.moves.get("R2"), Move.moves.get("R'"),
-            Move.moves.get("F"), Move.moves.get("F2"), Move.moves.get("F'"),
-            Move.moves.get("B"), Move.moves.get("B2"), Move.moves.get("B'"),
+        // edges orientation
+        edgesOrientationMove = new int[N_EDGES_COMBINATIONS * N_EDGES_ORIENTATIONS][moves.length];
+        for (int i = 0; i < N_EDGES_COMBINATIONS; i++) {
+            for (int j = 0; j < N_EDGES_ORIENTATIONS; j++) {
+                State state = indicesToState(new int[] { i, 0, j });
+                for (int k = 0; k < moves.length; k++) {
+                    int[] indices = stateToIndices(state.multiply(moves[k]));
+                    edgesOrientationMove[i * N_EDGES_ORIENTATIONS + j][k] =
+                        indices[0] * N_EDGES_ORIENTATIONS + indices[2];
+                }
+            }
+        }
+    }
+
+    private static int[] stateToIndices(State state) {
+        // edges
+        boolean[] selectedEdges = {
+            false, false, false, false,
+            false, false, false, false,
+            true,  true,  true,  true,
         };
 
-        int depth = 0;
+        byte[] edgesMapping = {
+           -1, -1, -1, -1,
+           -1, -1, -1, -1,
+            0,  1,  2,  3,
+        };
+
+        boolean[] edgesCombination = new boolean[state.edgesPermutation.length];
+        for (int i = 0; i < edgesCombination.length; i++) {
+            edgesCombination[i] = selectedEdges[state.edgesPermutation[i]];
+        }
+        int edgesCombinationIndex =
+            IndexMapping.combinationToIndex(edgesCombination, 4);
+
+        byte[] edgesPermutation = new byte[4];
+        byte[] edgesOrientation = new byte[4];
+        int next = 0;
+        for (int i = 0; i < state.edgesPermutation.length; i++) {
+            if (edgesCombination[i]) {
+                edgesPermutation[next] = edgesMapping[state.edgesPermutation[i]];
+                edgesOrientation[next] = state.edgesOrientation[i];
+                next++;
+            }
+        }
+        int edgesPermutationIndex =
+            IndexMapping.permutationToIndex(edgesPermutation);
+        int edgesOrientationIndex =
+            IndexMapping.orientationToIndex(edgesOrientation, 2);
+
+        return new int[] {
+            edgesCombinationIndex,
+            edgesPermutationIndex,
+            edgesOrientationIndex,
+        };
+    }
+
+    private static State indicesToState(int[] indices) {
+        boolean[] combination =
+            IndexMapping.indexToCombination(indices[0], 4, 12);
+        byte[] permutation =
+            IndexMapping.indexToPermutation(indices[1], 4);
+        byte[] orientation =
+            IndexMapping.indexToOrientation(indices[2], 2, 4);
+
+        byte[] selectedEdges = { 8, 9, 10, 11 };
+        int nextSelectedEdgeIndex = 0;
+        byte[] otherEdges = { 0, 1, 2, 3, 4, 5, 6, 7 };
+        int nextOtherEdgeIndex = 0;
+
+        byte[] edgesPermutation = new byte[12];
+        byte[] edgesOrientation = new byte[12];
+        for (int i = 0; i < edgesPermutation.length; i++) {
+            if (combination[i]) {
+                edgesPermutation[i] = selectedEdges[permutation[nextSelectedEdgeIndex]];
+                edgesOrientation[i] = orientation[nextSelectedEdgeIndex];
+                nextSelectedEdgeIndex++;
+            } else {
+                edgesPermutation[i] = otherEdges[nextOtherEdgeIndex];
+                edgesOrientation[i] = 0;
+                nextOtherEdgeIndex++;
+            }
+        }
+
+        return new State(
+            State.id.cornersPermutation,
+            State.id.cornersOrientation,
+            edgesPermutation,
+            edgesOrientation);
+    }
+
+    // distance tables
+    private static byte[] edgesPermutationDistance;
+    private static byte[] edgesOrientationDistance;
+
+    static {
+        // edges permutation
+        edgesPermutationDistance = new byte[N_EDGES_COMBINATIONS * N_EDGES_PERMUTATIONS];
+        for (int i = 0; i < edgesPermutationDistance.length; i++) {
+            edgesPermutationDistance[i] = -1;
+        }
+        edgesPermutationDistance[goalEdgesPermutation] = 0;
+
+        int distance = 0;
         int nVisited = 1;
-        while (nVisited < N_COMBINATIONS * N_PERMUTATIONS * N_ORIENTATIONS) {
-            for (int i = 0; i < N_COMBINATIONS; i++) {
-                boolean[] combination = IndexMapping.indexToCombination(i, 4, 12);
+        while (nVisited < N_EDGES_COMBINATIONS * N_EDGES_PERMUTATIONS) {
+            for (int i = 0; i < edgesPermutationDistance.length; i++) {
+                if (edgesPermutationDistance[i] != distance) {
+                    continue;
+                }
 
-                for (int j = 0; j < N_PERMUTATIONS; j++) {
-                    byte[] permutation = IndexMapping.indexToPermutation(j, 4);
-
-                    for (int k = 0; k < N_ORIENTATIONS; k++) {
-                        byte[] orientation = IndexMapping.indexToOrientation(k, 2, 4);
-
-                        if (distance[i][j][k] == depth) {
-                            State state = new State(combination, permutation, orientation);
-
-                            for (int m = 0; m < N_MOVES; m++) {
-                                State result = state.multiply(moves[m]);
-
-                                int combinationIndex = IndexMapping.combinationToIndex(result.combination, 4);
-                                int permutationIndex = IndexMapping.permutationToIndex(result.permutation);
-                                int orientationIndex = IndexMapping.orientationToIndex(result.orientation, 2);
-
-                                if (distance[combinationIndex][permutationIndex][orientationIndex] < 0) {
-                                    distance[combinationIndex][permutationIndex][orientationIndex] = (byte) (depth + 1);
-                                    nVisited++;
-                                }
-                            }
-                        }
+                for (int j = 0; j < edgesPermutationMove[i].length; j++) {
+                    int next = edgesPermutationMove[i][j];
+                    if (edgesPermutationDistance[next] < 0) {
+                        edgesPermutationDistance[next] = (byte) (distance + 1);
+                        nVisited++;
                     }
                 }
             }
 
-            depth++;
+            distance++;
+        }
+
+
+        // edges orientation
+        edgesOrientationDistance = new byte[N_EDGES_COMBINATIONS * N_EDGES_ORIENTATIONS];
+        for (int i = 0; i < edgesOrientationDistance.length; i++) {
+            edgesOrientationDistance[i] = -1;
+        }
+        edgesOrientationDistance[goalEdgesOrientation] = 0;
+
+        distance = 0;
+        nVisited = 1;
+        while (nVisited < N_EDGES_COMBINATIONS * N_EDGES_ORIENTATIONS) {
+            for (int i = 0; i < edgesOrientationDistance.length; i++) {
+                if (edgesOrientationDistance[i] != distance) {
+                    continue;
+                }
+
+                for (int j = 0; j < edgesOrientationMove[i].length; j++) {
+                    int next = edgesOrientationMove[i][j];
+                    if (edgesOrientationDistance[next] < 0) {
+                        edgesOrientationDistance[next] = (byte) (distance + 1);
+                        nVisited++;
+                    }
+                }
+            }
+
+            distance++;
         }
     }
 
-    public static String[][] solve(State state) {
-        int combination = IndexMapping.combinationToIndex(state.combination, 4);
-        int permutation = IndexMapping.permutationToIndex(state.permutation);
-        int orientation = IndexMapping.orientationToIndex(state.orientation, 2);
+    public static ArrayList<String[]> solve(State state) {
+        int[] indices = stateToIndices(state);
 
-        if (distance[combination][permutation][orientation] == 0) {
-            return new String[][] { new String[0] };
-        }
+        int edgesPermutationIndex =
+            indices[0] * N_EDGES_PERMUTATIONS + indices[1];
+        int edgesOrientationIndex =
+            indices[0] * N_EDGES_ORIENTATIONS + indices[2];
 
         ArrayList<String[]> solutions = new ArrayList<String[]>();
-        for (String moveName : Move.moves.keySet()) {
-            State result = state.multiply(Move.moves.get(moveName));
 
-            int resultCombination = IndexMapping.combinationToIndex(result.combination, 4);
-            int resultPermutation = IndexMapping.permutationToIndex(result.permutation);
-            int resultOrientation = IndexMapping.orientationToIndex(result.orientation, 2);
+        for (int depth = 0; ; depth++) {
+            int[] path = new int[depth];
 
-            if (distance[resultCombination][resultPermutation][resultOrientation] == distance[combination][permutation][orientation] - 1) {
-                for (String[] solution : solve(result)) {
-                    String[] sequence = new String[solution.length + 1];
-                    sequence[0] = moveName;
-                    for (int i = 1; i < sequence.length; i++) {
-                        sequence[i] = solution[i - 1];
-                    }
-                    solutions.add(sequence);
-                }
+            search(edgesPermutationIndex,
+                   edgesOrientationIndex,
+                   depth,
+                   path,
+                   solutions);
+
+            if (solutions.size() > 0) {
+                return solutions;
             }
         }
-
-        String[][] solutionsArray = new String[solutions.size()][];
-        solutions.toArray(solutionsArray);
-        return solutionsArray;
     }
 
-    public static String[] generate(State state) {
-        // pick a solution
-        String[] solution = solve(state)[0];
+    private static void search(
+            int edgesPermutation,
+            int edgesOrientation,
+            int depth,
+            int[] path,
+            ArrayList<String[]> solutions) {
+        if (depth == 0) {
+            if (edgesPermutation == goalEdgesPermutation &&
+                edgesOrientation == goalEdgesOrientation) {
+                String[] sequence = new String[path.length];
+                for (int i = 0; i < sequence.length; i++) {
+                    sequence[i] = moveNames[path[i]];
+                }
 
-        // invert it
-        HashMap<String, String> inverseMoveNames = new HashMap<String, String>();
-        inverseMoveNames.put("U",  "U'");
-        inverseMoveNames.put("U2", "U2");
-        inverseMoveNames.put("U'", "U");
-        inverseMoveNames.put("D",  "D'");
-        inverseMoveNames.put("D2", "D2");
-        inverseMoveNames.put("D'", "D");
-        inverseMoveNames.put("L",  "L'");
-        inverseMoveNames.put("L2", "L2");
-        inverseMoveNames.put("L'", "L");
-        inverseMoveNames.put("R",  "R'");
-        inverseMoveNames.put("R2", "R2");
-        inverseMoveNames.put("R'", "R");
-        inverseMoveNames.put("F",  "F'");
-        inverseMoveNames.put("F2", "F2");
-        inverseMoveNames.put("F'", "F");
-        inverseMoveNames.put("B",  "B'");
-        inverseMoveNames.put("B2", "B2");
-        inverseMoveNames.put("B'", "B");
+                solutions.add(sequence);
+            }
 
-        String[] sequence = new String[solution.length];
-        for (int i = 0; i < sequence.length; i++) {
-            sequence[i] = inverseMoveNames.get(solution[solution.length - 1 - i]);
+            return;
         }
 
-        return sequence;
+        if (edgesPermutationDistance[edgesPermutation] > depth ||
+            edgesOrientationDistance[edgesOrientation] > depth) {
+            return;
+        }
+
+        for (int i = 0; i < moves.length; i++) {
+            path[path.length - depth] = i;
+            search(
+                edgesPermutationMove[edgesPermutation][i],
+                edgesOrientationMove[edgesOrientation][i],
+                depth - 1,
+                path,
+                solutions);
+        }
     }
 }
