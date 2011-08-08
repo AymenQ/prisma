@@ -57,7 +57,7 @@ public class ScramblerProvider {
                 new byte[] { -1, -1, -1, -1, -1,  5,  6, -1 },
                 new byte[] { -1, -1, -1, -1, -1,  0,  0, -1 },
                 new byte[] { -1,  1,  2, -1, -1, -1, -1, -1,  8,  9, 10, -1 },
-                new byte[] { -1,  0,  0, -1, -1, -1, -1, -1,  0,  0,  0, -1 });
+                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
 
         // 3x3x3 <R, U>
         Scrambler rubiksCubeRU =
@@ -66,7 +66,7 @@ public class ScramblerProvider {
                 new byte[] { -1, -1, -1, -1,  4, -1, -1,  7 },
                 new byte[] { -1, -1, -1, -1,  0, -1, -1,  0 },
                 new byte[] {  0, -1, -1,  3, -1, -1, -1, -1,  8, -1, 10, 11 },
-                new byte[] {  0, -1, -1,  0, -1, -1, -1, -1,  0, -1,  0,  0 });
+                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
 
         // 3x3x3 CLL training
         Scrambler rubiksCubeCLLTraining =
