@@ -47,7 +47,7 @@ public class SolutionUtils {
     }
 
     public static String format(long time) {
-        if (time < 60000) {
+        if (-60000 < time && time < 60000) {
             return formatSeconds(time);
         }
 

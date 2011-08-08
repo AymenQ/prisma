@@ -116,7 +116,7 @@ public class GraphPanel extends JPanel {
         double vTickInterval = (this.solutionIntervalEnd - this.solutionIntervalStart) / nVerticalTicks;
         for (int i = 0; i < nVerticalTicks; i++) {
             long value = (long) (this.solutionIntervalStart + (i + 0.5) * vTickInterval);
-            String label = SolutionUtils.formatSeconds(value);
+            String label = SolutionUtils.format(value);
 
             FontMetrics fontMetrics = g2.getFontMetrics();
             int width = fontMetrics.stringWidth(label);
