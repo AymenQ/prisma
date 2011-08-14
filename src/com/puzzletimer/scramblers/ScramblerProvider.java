@@ -52,21 +52,13 @@ public class ScramblerProvider {
 
         // 3x3x3 <L, U>
         Scrambler rubiksCubeLU =
-            new RubiksCubeRandomScrambler(
-                new ScramblerInfo("RUBIKS-CUBE-LU", "RUBIKS-CUBE", "<L, U> scrambler"),
-                new byte[] { -1, -1, -1, -1, -1,  5,  6, -1 },
-                new byte[] { -1, -1, -1, -1, -1,  0,  0, -1 },
-                new byte[] { -1,  1,  2, -1, -1, -1, -1, -1,  8,  9, 10, -1 },
-                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
+            new RubiksCubeLUScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-LU", "RUBIKS-CUBE", "<L, U> scrambler"));
 
         // 3x3x3 <R, U>
         Scrambler rubiksCubeRU =
-            new RubiksCubeRandomScrambler(
-                new ScramblerInfo("RUBIKS-CUBE-RU", "RUBIKS-CUBE", "<R, U> scrambler"),
-                new byte[] { -1, -1, -1, -1,  4, -1, -1,  7 },
-                new byte[] { -1, -1, -1, -1,  0, -1, -1,  0 },
-                new byte[] {  0, -1, -1,  3, -1, -1, -1, -1,  8, -1, 10, 11 },
-                new byte[] {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0 });
+            new RubiksCubeRUScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-RU", "RUBIKS-CUBE", "<R, U> scrambler"));
 
         // 3x3x3 CLL training
         Scrambler rubiksCubeCLLTraining =
