@@ -811,9 +811,9 @@ public class MainFrame extends JFrame {
                 BuiltInCategory[] builtInCategories = {
                     new BuiltInCategory(categories[0], '2', '2'),
                     new BuiltInCategory(categories[1], 'R', '3'),
-                    new BuiltInCategory(categories[2], 'O', '\0'),
-                    new BuiltInCategory(categories[3], 'B', '\0'),
-                    new BuiltInCategory(categories[4], 'F', '\0'),
+                    new BuiltInCategory(categories[2], 'O', 'O'),
+                    new BuiltInCategory(categories[3], 'B', 'B'),
+                    new BuiltInCategory(categories[4], 'F', 'F'),
                     new BuiltInCategory(categories[5], '4', '4'),
                     new BuiltInCategory(categories[6], 'B', '\0'),
                     new BuiltInCategory(categories[7], '5', '5'),
