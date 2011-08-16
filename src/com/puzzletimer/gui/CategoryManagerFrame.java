@@ -396,13 +396,12 @@ public class CategoryManagerFrame extends JFrame {
                         CategoryManagerFrame.this.buttonRemove.setEnabled(false);
                     } else {
                         Category category = categoryManager.getCategories()[selectedIndex];
+                        Category currentCategory = categoryManager.getCurrentCategory();
 
-                        boolean enabled =
-                            category.isUserDefined() &&
-                            category != categoryManager.getCurrentCategory();
-
-                        CategoryManagerFrame.this.buttonEdit.setEnabled(enabled);
-                        CategoryManagerFrame.this.buttonRemove.setEnabled(enabled);
+                        CategoryManagerFrame.this.buttonEdit.setEnabled(
+                            category != currentCategory);
+                        CategoryManagerFrame.this.buttonRemove.setEnabled(
+                            category != currentCategory && category.isUserDefined());
                     }
                 }
             });
