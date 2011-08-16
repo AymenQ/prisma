@@ -352,6 +352,7 @@ public class MainFrame extends JFrame {
 
     private class StatisticsPanel extends JPanel {
         private JLabel labelMean;
+        private JLabel labelAverage;
         private JLabel labelBestTime;
         private JLabel labelMedian;
         private JLabel labelWorstTime;
@@ -368,6 +369,7 @@ public class MainFrame extends JFrame {
 
             final JLabel[] labels = {
                 this.labelMean,
+                this.labelAverage,
                 this.labelBestTime,
                 this.labelMedian,
                 this.labelWorstTime,
@@ -382,6 +384,7 @@ public class MainFrame extends JFrame {
 
             final StatisticalMeasure[] measures = {
                 new Mean(1, Integer.MAX_VALUE),
+                new Average(3, Integer.MAX_VALUE),
                 new Best(1, Integer.MAX_VALUE),
                 new Percentile(1, Integer.MAX_VALUE, 0.5),
                 new Worst(1, Integer.MAX_VALUE),
@@ -421,7 +424,7 @@ public class MainFrame extends JFrame {
                 new MigLayout(
                     "center",
                     "[pref!,right]8[pref!]",
-                    "1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]1"));
+                    "1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]1"));
 
             // labelMean
             JLabel labelMeanDescription = new JLabel("Mean:");
@@ -430,6 +433,14 @@ public class MainFrame extends JFrame {
 
             this.labelMean = new JLabel("XX:XX.XX");
             add(this.labelMean, "wrap");
+
+            // labelAverage
+            JLabel labelAverageDescription = new JLabel("Average:");
+            labelAverageDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelAverageDescription);
+
+            this.labelAverage= new JLabel("XX:XX.XX");
+            add(this.labelAverage, "wrap");
 
             // labelBestTime
             JLabel labelBestTimeDescription = new JLabel("Best Time:");
