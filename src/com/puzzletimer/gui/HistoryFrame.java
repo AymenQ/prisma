@@ -195,17 +195,18 @@ public class HistoryFrame extends JFrame {
     private JLabel labelBest;
     private JLabel labelMeanOf3;
     private JLabel labelBestMeanOf3;
-    private JLabel labelInterquartileMean;
+    private JLabel labelAverage;
     private JLabel labelLowerQuartile;
     private JLabel labelMeanOf10;
     private JLabel labelBestMeanOf10;
-    private JLabel labelStandardDeviation;
+    private JLabel labelInterquartileMean;
     private JLabel labelMedian;
     private JLabel labelMeanOf100;
     private JLabel labelBestMeanOf100;
     private JLabel labelUpperQuartile;
     private JLabel labelAverageOf5;
     private JLabel labelBestAverageOf5;
+    private JLabel labelStandardDeviation;
     private JLabel labelWorst;
     private JLabel labelAverageOf12;
     private JLabel labelBestAverageOf12;
@@ -501,10 +502,10 @@ public class HistoryFrame extends JFrame {
         this.labelBestMeanOf10 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelBestMeanOf10, "right, wrap");
 
-        // labelInterquartileMean
-        panelStatistics.add(new JLabel("Interquartile mean:"), "");
-        this.labelInterquartileMean = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelInterquartileMean, "right");
+        // labelAverage
+        panelStatistics.add(new JLabel("Average:"), "");
+        this.labelAverage = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelAverage, "right");
 
         // labelMedian
         panelStatistics.add(new JLabel("Median:"), "");
@@ -521,10 +522,10 @@ public class HistoryFrame extends JFrame {
         this.labelBestMeanOf100 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelBestMeanOf100, "right, wrap");
 
-        // labelStandardDeviation
-        panelStatistics.add(new JLabel("Standard deviation:"), "");
-        this.labelStandardDeviation = new JLabel("XX:XX.XX");
-        panelStatistics.add(this.labelStandardDeviation, "right");
+        // labelInterquartileMean
+        panelStatistics.add(new JLabel("Interquartile mean:"), "");
+        this.labelInterquartileMean = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelInterquartileMean, "right");
 
         // labelUpperQuartile
         panelStatistics.add(new JLabel("Upper quartile:"), "");
@@ -541,8 +542,13 @@ public class HistoryFrame extends JFrame {
         this.labelBestAverageOf5 = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelBestAverageOf5, "right, wrap");
 
+        // labelStandardDeviation
+        panelStatistics.add(new JLabel("Standard deviation:"), "");
+        this.labelStandardDeviation = new JLabel("XX:XX.XX");
+        panelStatistics.add(this.labelStandardDeviation, "right");
+
         // labelWorst
-        panelStatistics.add(new JLabel("Worst:"), "skip 2");
+        panelStatistics.add(new JLabel("Worst:"), "");
         this.labelWorst = new JLabel("XX:XX.XX");
         panelStatistics.add(this.labelWorst, "right");
 
@@ -599,63 +605,78 @@ public class HistoryFrame extends JFrame {
         this.labelNumberOfSolutions.setText(Integer.toString(solutions.length));
 
         JLabel labels[] = {
-            this.labelMean,
             this.labelBest,
             this.labelMeanOf3,
             this.labelBestMeanOf3,
-            this.labelInterquartileMean,
+
+            this.labelMean,
             this.labelLowerQuartile,
             this.labelMeanOf10,
             this.labelBestMeanOf10,
-            this.labelStandardDeviation,
+
+            this.labelAverage,
             this.labelMedian,
             this.labelMeanOf100,
             this.labelBestMeanOf100,
+
+            this.labelInterquartileMean,
             this.labelUpperQuartile,
             this.labelAverageOf5,
             this.labelBestAverageOf5,
+
+            this.labelStandardDeviation,
             this.labelWorst,
             this.labelAverageOf12,
             this.labelBestAverageOf12,
         };
 
         StatisticalMeasure[] measures = {
-            new Mean(1, Integer.MAX_VALUE),
             new Best(1, Integer.MAX_VALUE),
             new Mean(3, 3),
             new BestMean(3, Integer.MAX_VALUE),
-            new InterquartileMean(3, Integer.MAX_VALUE),
+
+            new Mean(1, Integer.MAX_VALUE),
             new Percentile(1, Integer.MAX_VALUE, 0.25),
             new Mean(10, 10),
             new BestMean(10, Integer.MAX_VALUE),
-            new StandardDeviation(1, Integer.MAX_VALUE),
+
+            new Average(3, Integer.MAX_VALUE),
             new Percentile(1, Integer.MAX_VALUE, 0.5),
             new Mean(100, 100),
             new BestMean(100, Integer.MAX_VALUE),
+
+            new InterquartileMean(3, Integer.MAX_VALUE),
             new Percentile(1, Integer.MAX_VALUE, 0.75),
             new Average(5, 5),
             new BestAverage(5, Integer.MAX_VALUE),
+
+            new StandardDeviation(1, Integer.MAX_VALUE),
             new Worst(1, Integer.MAX_VALUE),
             new Average(12, 12),
             new BestAverage(12, Integer.MAX_VALUE),
         };
 
         boolean[] clickable = {
-            false,
             true,
             true,
             true,
-            false,
-            false,
-            true,
-            true,
+
             false,
             false,
             true,
             true,
+
+            false,
             false,
             true,
             true,
+
+            false,
+            false,
+            true,
+            true,
+
+            false,
             true,
             true,
             true,
