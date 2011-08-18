@@ -33,10 +33,10 @@ public class Pyraminx implements Puzzle {
     @Override
     public Mesh getScrambledPuzzleMesh(ColorScheme colorScheme, String[] sequence) {
         Color[] colorArray = {
-            colorScheme.getFaceColor("FACE-U").getColor(),
-            colorScheme.getFaceColor("FACE-R").getColor(),
+            colorScheme.getFaceColor("FACE-D").getColor(),
             colorScheme.getFaceColor("FACE-L").getColor(),
-            colorScheme.getFaceColor("FACE-B").getColor(),
+            colorScheme.getFaceColor("FACE-R").getColor(),
+            colorScheme.getFaceColor("FACE-F").getColor(),
         };
 
         Mesh mesh = Mesh.tetrahedron(colorArray);
