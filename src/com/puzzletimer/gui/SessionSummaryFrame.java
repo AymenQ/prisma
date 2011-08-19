@@ -29,7 +29,6 @@ import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
-import com.puzzletimer.statistics.BestMean;
 import com.puzzletimer.statistics.Mean;
 import com.puzzletimer.statistics.Percentile;
 import com.puzzletimer.statistics.StandardDeviation;
@@ -196,15 +195,13 @@ public class SessionSummaryFrame extends JFrame {
             summary.append("\n");
         }
 
-        // best mean/average of X
+        // best average of X
         String[] labels = {
-            "Best mean of 3:",
             "Best average of 5:",
             "Best average of 12:",
         };
 
         StatisticalMeasure[] statistics = {
-            new BestMean(3, Integer.MAX_VALUE),
             new BestAverage(5, Integer.MAX_VALUE),
             new BestAverage(12, Integer.MAX_VALUE),
         };
