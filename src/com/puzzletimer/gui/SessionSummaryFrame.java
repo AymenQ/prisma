@@ -26,9 +26,12 @@ import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.SessionListener;
 import com.puzzletimer.state.SessionManager;
+import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
+import com.puzzletimer.statistics.BestMean;
 import com.puzzletimer.statistics.Mean;
+import com.puzzletimer.statistics.Percentile;
 import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
@@ -126,11 +129,11 @@ public class SessionSummaryFrame extends JFrame {
     private void updateSummary(Category currentCategory, Solution[] solutions) {
         StringBuilder summary = new StringBuilder();
 
-        // categoryName
-        summary.append(currentCategory.getDescription());
-        summary.append("\n");
-
         if (solutions.length >= 1) {
+            // categoryName
+            summary.append(currentCategory.getDescription());
+            summary.append("\n");
+
             // session interval
             Date start = solutions[solutions.length - 1].getTiming().getStart();
             Date end = solutions[0].getTiming().getEnd();
@@ -148,20 +151,28 @@ public class SessionSummaryFrame extends JFrame {
             // statistics
             String[] labels = {
                 "Mean:              ",
-                "Standard deviation:",
+                "Average:           ",
                 "Best Time:         ",
+                "Median:            ",
                 "Worst Time:        ",
+                "Standard deviation:",
             };
 
             StatisticalMeasure[] statistics = {
                 new Mean(1, Integer.MAX_VALUE),
-                new StandardDeviation(1, Integer.MAX_VALUE),
+                new Average(3, Integer.MAX_VALUE),
                 new Best(1, Integer.MAX_VALUE),
-                new Worst(1, Integer.MAX_VALUE)
+                new Percentile(1, Integer.MAX_VALUE, 0.5),
+                new Worst(1, Integer.MAX_VALUE),
+                new StandardDeviation(1, Integer.MAX_VALUE),
             };
 
             int maxStringLength = 0;
             for (int i = 0; i < statistics.length; i++) {
+                if (solutions.length < statistics[i].getMinimumWindowSize()) {
+                    continue;
+                }
+
                 statistics[i].setSolutions(solutions);
 
                 String s = SolutionUtils.format(statistics[i].getValue());
@@ -171,6 +182,10 @@ public class SessionSummaryFrame extends JFrame {
             }
 
             for (int i = 0; i < labels.length; i++) {
+                if (solutions.length < statistics[i].getMinimumWindowSize()) {
+                    continue;
+                }
+
                 summary.append(String.format(
                     "%s %" + maxStringLength + "s",
                     labels[i],
@@ -181,13 +196,15 @@ public class SessionSummaryFrame extends JFrame {
             summary.append("\n");
         }
 
-        // best average of X
+        // best mean/average of X
         String[] labels = {
+            "Best mean of 3:",
             "Best average of 5:",
             "Best average of 12:",
         };
 
         StatisticalMeasure[] statistics = {
+            new BestMean(3, Integer.MAX_VALUE),
             new BestAverage(5, Integer.MAX_VALUE),
             new BestAverage(12, Integer.MAX_VALUE),
         };
