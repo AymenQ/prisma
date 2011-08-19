@@ -326,6 +326,13 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
                 if (data[0] == 'A') {
                     this.state = State.READY;
                 }
+
+                // timing started
+                if (time > 0) {
+                    this.timerManager.startSolution();
+
+                    this.state = State.RUNNING;
+                }
                 break;
 
             case READY:
