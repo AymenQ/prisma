@@ -352,9 +352,10 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
                 // timer stopped
                 if (data[0] == 'C' || data[0] == 'S') {
-                    this.timerManager.finishSolution(timing);
-
                     this.state = State.NOT_READY;
+                    this.timerManager.updateSolutionTiming(timing);
+
+                    this.timerManager.finishSolution(timing);
                 }
                 break;
         }
