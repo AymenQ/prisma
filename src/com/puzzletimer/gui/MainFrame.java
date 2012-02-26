@@ -1,11 +1,8 @@
 package com.puzzletimer.gui;
 
-import info.clearthought.layout.TableLayout;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -105,7 +102,7 @@ public class MainFrame extends JFrame {
         }
 
         private void createComponents() {
-            setLayout(new FlowLayout(FlowLayout.CENTER, 10, 3));
+            setLayout(new WrapLayout(10, 3));
         }
 
         private void setScramble(final Scramble scramble) {
@@ -142,14 +139,9 @@ public class MainFrame extends JFrame {
     }
 
     private class TimerPanel extends JPanel {
-        private ImageIcon iconLeft;
-        private ImageIcon iconLeftPressed;
-        private ImageIcon iconRight;
-        private ImageIcon iconRightPressed;
-
-        private JLabel labelLeftHand;
-        private JLabel labelTime;
-        private JLabel labelRightHand;
+        private HandImage leftHand;
+        private TimeLabel timeLabel;
+        private HandImage rightHand;
 
         public TimerPanel(TimerManager timerManager) {
             createComponents();
@@ -157,29 +149,29 @@ public class MainFrame extends JFrame {
             timerManager.addTimerListener(new TimerListener() {
                 @Override
                 public void timerReset() {
-                    TimerPanel.this.labelTime.setForeground(Color.BLACK);
-                    TimerPanel.this.labelTime.setText(
+                    TimerPanel.this.timeLabel.setForeground(Color.BLACK);
+                    TimerPanel.this.timeLabel.setText(
                         SolutionUtils.formatMinutes(0));
                 }
 
                 @Override
                 public void leftHandPressed() {
-                    TimerPanel.this.labelLeftHand.setIcon(TimerPanel.this.iconLeftPressed);
+                    TimerPanel.this.leftHand.setPressed(true);
                 }
 
                 @Override
                 public void leftHandReleased() {
-                    TimerPanel.this.labelLeftHand.setIcon(TimerPanel.this.iconLeft);
+                    TimerPanel.this.leftHand.setPressed(false);
                 }
 
                 @Override
                 public void rightHandPressed() {
-                    TimerPanel.this.labelRightHand.setIcon(TimerPanel.this.iconRightPressed);
+                    TimerPanel.this.rightHand.setPressed(true);
                 }
 
                 @Override
                 public void rightHandReleased() {
-                    TimerPanel.this.labelRightHand.setIcon(TimerPanel.this.iconRight);
+                    TimerPanel.this.rightHand.setPressed(false);
                 }
 
                 @Override
@@ -201,52 +193,42 @@ public class MainFrame extends JFrame {
                         remainingTime = 0;
                     }
 
-                    TimerPanel.this.labelTime.setForeground(color);
-                    TimerPanel.this.labelTime.setText(
+                    TimerPanel.this.timeLabel.setForeground(color);
+                    TimerPanel.this.timeLabel.setText(
                         Long.toString((long)Math.ceil(remainingTime / 1000.0)));
                 }
 
                 @Override
                 public void solutionRunning(Timing timing) {
-                    TimerPanel.this.labelTime.setForeground(Color.BLACK);
-                    TimerPanel.this.labelTime.setText(
+                    TimerPanel.this.timeLabel.setForeground(Color.BLACK);
+                    TimerPanel.this.timeLabel.setText(
                         SolutionUtils.formatMinutes(timing.getElapsedTime()));
                 }
 
                 @Override
                 public void solutionFinished(Timing timing, String penalty) {
-                    TimerPanel.this.labelTime.setForeground(Color.BLACK);
-                    TimerPanel.this.labelTime.setText(
+                    TimerPanel.this.timeLabel.setForeground(Color.BLACK);
+                    TimerPanel.this.timeLabel.setText(
                         SolutionUtils.formatMinutes(timing.getElapsedTime()));
                 }
             });
         }
 
         private void createComponents() {
-            // icons
-            this.iconLeft =
-                new ImageIcon(getClass().getResource("/com/puzzletimer/resources/left.png"));
-            this.iconLeftPressed =
-                new ImageIcon(getClass().getResource("/com/puzzletimer/resources/leftPressed.png"));
-            this.iconRight =
-                new ImageIcon(getClass().getResource("/com/puzzletimer/resources/right.png"));
-            this.iconRightPressed =
-                new ImageIcon(getClass().getResource("/com/puzzletimer/resources/rightPressed.png"));
+            setLayout(new MigLayout("fill", "2%[19%]1%[56%]1%[19%]2%"));
 
-            setLayout(new MigLayout("fillx", "[fill][pref!][fill]"));
+            // leftHand
+            this.leftHand = new HandImage(false);
+            add(this.leftHand, "grow");
 
-            // labelLeftHand
-            this.labelLeftHand = new JLabel(this.iconLeft);
-            add(this.labelLeftHand);
+            // timeLabel
+            this.timeLabel = new TimeLabel("00:00.00");
+            this.timeLabel.setFont(new Font("Arial", Font.BOLD, 108));
+            add(this.timeLabel, "grow");
 
-            // labelTime
-            this.labelTime = new JLabel("00:00.00");
-            this.labelTime.setFont(new Font("Arial", Font.BOLD, 108));
-            add(this.labelTime);
-
-            // labelRightHand
-            this.labelRightHand = new JLabel(this.iconRight);
-            add(this.labelRightHand);
+            // rightHand
+            this.rightHand = new HandImage(true);
+            add(this.rightHand, "grow");
         }
     }
 
@@ -1144,10 +1126,11 @@ public class MainFrame extends JFrame {
         menuHelp.add(this.menuItemAbout);
 
         // panelMain
-        JPanel panelMain = new JPanel(new TableLayout(new double[][] {
-            { 3, 0.3, 0.4, 0.3, 3 },
-            { 3, TableLayout.PREFERRED, 10, 0.5, TableLayout.PREFERRED, 0.5, TableLayout.PREFERRED, 3 },
-        }));
+        JPanel panelMain = new JPanel(
+            new MigLayout(
+                "fill, hidemode 1, insets 2 3 2 3",
+                "[fill]",
+                "[pref!][pref!][fill, growprio 200][pref!]"));
         add(panelMain);
 
         // labelMessage
@@ -1157,26 +1140,26 @@ public class MainFrame extends JFrame {
         this.labelMessage.setHorizontalAlignment(JLabel.CENTER);
         this.labelMessage.setForeground(new Color(0xFF, 0xFF, 0xFF));
         this.labelMessage.setVisible(false);
-        panelMain.add(this.labelMessage, "1, 1, 3, 1");
+        panelMain.add(this.labelMessage, "wrap");
 
         // panelScramble
         this.scramblePanel = new ScramblePanel(this.scrambleManager);
-        panelMain.add(this.scramblePanel, "1, 3, 3, 3");
+        panelMain.add(this.scramblePanel, "wrap");
 
         // timer panel
         this.timerPanel = new TimerPanel(this.timerManager);
-        panelMain.add(this.timerPanel, "1, 4, 3, 4");
+        panelMain.add(this.timerPanel, "wrap");
 
         // times scroll pane
         this.timesScrollPane = new TimesScrollPane(this.solutionManager, this.sessionManager);
         this.timesScrollPane.setBorder(BorderFactory.createTitledBorder("Times"));
         this.timesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        panelMain.add(this.timesScrollPane, "1, 6");
+        panelMain.add(this.timesScrollPane, "w 30%, growy, gapright 0, split 3");
 
         // statistics panel
         this.statisticsPanel = new StatisticsPanel(this.sessionManager);
         this.statisticsPanel.setBorder(BorderFactory.createTitledBorder("Session statistics"));
-        panelMain.add(this.statisticsPanel, "2, 6");
+        panelMain.add(this.statisticsPanel, "w 40%, growy, gapright 0");
 
         // scramble viewer panel
         this.scrambleViewerPanel = new ScrambleViewerPanel(
@@ -1185,7 +1168,7 @@ public class MainFrame extends JFrame {
             this.scramblerProvider,
             this.scrambleManager);
         this.scrambleViewerPanel.setBorder(BorderFactory.createTitledBorder("Scramble"));
-        panelMain.add(this.scrambleViewerPanel, "3, 6");
+        panelMain.add(this.scrambleViewerPanel, "w 30%, growy");
 
         this.scramblePanel.setScrambleViewerPanel(this.scrambleViewerPanel);
 

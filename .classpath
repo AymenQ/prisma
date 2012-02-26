@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/TableLayout-bin-jdk1.5-2009-08-26.jar"/>
 	<classpathentry kind="lib" path="lib/miglayout-3.7.3.1-swing.jar"/>
 	<classpathentry kind="lib" path="lib/h2-1.2.137.jar"/>
 	<classpathentry kind="output" path="bin"/>
