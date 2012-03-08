@@ -13,7 +13,7 @@ import com.puzzletimer.models.PuzzleInfo;
 public class TowerCube implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("TOWER-CUBE", "Tower cube");
+        return new PuzzleInfo("TOWER-CUBE");
     }
 
     @Override

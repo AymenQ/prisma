@@ -1,19 +1,25 @@
 package com.puzzletimer.models;
 
+import static com.puzzletimer.Internationalization._;
+
 import java.awt.Color;
 
 public class ColorScheme {
     public static class FaceColor {
+        private String puzzleId;
         private String faceId;
-        private String faceDescription;
         private Color defaultColor;
         private Color color;
 
-        public FaceColor(String faceId, String faceDescription, Color defaultColor, Color color) {
+        public FaceColor(String puzzleId, String faceId, Color defaultColor, Color color) {
+            this.puzzleId = puzzleId;
             this.faceId = faceId;
-            this.faceDescription = faceDescription;
             this.defaultColor = defaultColor;
             this.color = color;
+        }
+
+        public String getPuzzleId() {
+            return this.puzzleId;
         }
 
         public String getFaceId() {
@@ -21,7 +27,7 @@ public class ColorScheme {
         }
 
         public String getFaceDescription() {
-            return this.faceDescription;
+            return _("face." + this.puzzleId + "." + this.faceId);
         }
 
         public Color getDefaultColor() {

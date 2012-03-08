@@ -1,5 +1,7 @@
 package com.puzzletimer.gui;
 
+import static com.puzzletimer.Internationalization._;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -48,7 +50,7 @@ public class ColorSchemeFrame extends JFrame {
         setMinimumSize(new Dimension(480, 600));
         setPreferredSize(getMinimumSize());
 
-        setTitle("Color Scheme");
+        setTitle(_("color_scheme.color_scheme"));
 
         createComponents();
 
@@ -100,7 +102,7 @@ public class ColorSchemeFrame extends JFrame {
 
                 Color color = JColorChooser.showDialog(
                     ColorSchemeFrame.this,
-                    faceColor.getFaceDescription() + " Color",
+                    String.format(_("color_scheme.face_color"), faceColor.getFaceDescription()),
                     faceColor.getColor());
                 if (color != null) {
                     faceColor.setColor(color);
@@ -168,7 +170,7 @@ public class ColorSchemeFrame extends JFrame {
                 "[pref!][pref!][pref!]12[pref!][]16[pref!]"));
 
         // labelPuzzle
-        add(new JLabel("Puzzle"), "growx, span, wrap");
+        add(new JLabel(_("color_scheme.puzzle")), "growx, span, wrap");
 
         // comboBoxPuzzle
         this.comboBoxPuzzle = new JComboBox();
@@ -182,7 +184,7 @@ public class ColorSchemeFrame extends JFrame {
         add(this.panel3D, "growx, span, wrap");
 
         // labelColors
-        add(new JLabel("Colors"), "growx, span, wrap");
+        add(new JLabel(_("color_scheme.colors")), "growx, span, wrap");
 
         // table
         this.table = new JTable();
@@ -194,15 +196,15 @@ public class ColorSchemeFrame extends JFrame {
         add(scrollPane, "grow");
 
         // buttonEdit
-        this.buttonEdit = new JButton("Edit...");
+        this.buttonEdit = new JButton(_("color_scheme.edit"));
         add(this.buttonEdit, "growx, top, split, flowy");
 
         // buttonDefault
-        this.buttonDefault = new JButton("Default");
+        this.buttonDefault = new JButton(_("color_scheme.default"));
         add(this.buttonDefault, "growx, top, wrap");
 
         // buttonOk
-        this.buttonOk = new JButton("OK");
+        this.buttonOk = new JButton(_("color_scheme.ok"));
         add(this.buttonOk, "tag ok, span");
     }
 
@@ -242,10 +244,8 @@ public class ColorSchemeFrame extends JFrame {
                 return false;
             }
         };
-
-        for (String column : new String[] { "Face", "Color" }) {
-            tableModel.addColumn(column);
-        }
+        tableModel.addColumn(_("color_scheme.face"));
+        tableModel.addColumn(_("color_scheme.color"));
 
         for (FaceColor faceColor : colorScheme.getFaceColors()) {
             tableModel.addRow(new Object[] {

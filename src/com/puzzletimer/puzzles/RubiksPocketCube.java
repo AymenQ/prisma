@@ -13,7 +13,7 @@ import com.puzzletimer.models.PuzzleInfo;
 public class RubiksPocketCube implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("2x2x2-CUBE", "2x2x2 cube");
+        return new PuzzleInfo("2x2x2-CUBE");
     }
 
     @Override

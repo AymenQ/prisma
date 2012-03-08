@@ -14,7 +14,7 @@ import com.puzzletimer.models.PuzzleInfo;
 public class Square1 implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("SQUARE-1", "Square-1");
+        return new PuzzleInfo("SQUARE-1");
     }
 
     @Override

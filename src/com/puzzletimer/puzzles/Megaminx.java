@@ -12,7 +12,7 @@ import com.puzzletimer.models.PuzzleInfo;
 public class Megaminx implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("MEGAMINX", "Megaminx");
+        return new PuzzleInfo("MEGAMINX");
     }
 
     @Override

@@ -16,7 +16,7 @@ import com.puzzletimer.solvers.RubiksClockSolver;
 public class RubiksClock implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("RUBIKS-CLOCK", "Rubik's clock");
+        return new PuzzleInfo("RUBIKS-CLOCK");
     }
 
     @Override

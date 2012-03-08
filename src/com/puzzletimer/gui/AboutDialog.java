@@ -1,5 +1,7 @@
 package com.puzzletimer.gui;
 
+import static com.puzzletimer.Internationalization._;
+
 import java.awt.Color;
 import java.awt.Font;
 
@@ -21,7 +23,7 @@ public class AboutDialog extends JDialog {
     public AboutDialog(JFrame owner, boolean modal) {
         super(owner, modal);
 
-        setTitle("Prisma Puzzle Timer 0.4");
+        setTitle(_("about.prisma_puzzle_timer_version"));
         setResizable(false);
 
         createComponents();
@@ -36,12 +38,12 @@ public class AboutDialog extends JDialog {
         panel3D.cameraPosition = new Vector3(0, 0, -4.5);
         Puzzle puzzle = new RubiksCube();
         FaceColor[] faceColors = {
-            new FaceColor("FACE-B", "", null, new Color(255, 255, 255)),
-            new FaceColor("FACE-D", "", null, new Color(255, 255, 255)),
-            new FaceColor("FACE-F", "", null, new Color(255, 255, 255)),
-            new FaceColor("FACE-L", "", null, new Color(255, 255, 255)),
-            new FaceColor("FACE-R", "", null, new Color(255, 255, 255)),
-            new FaceColor("FACE-U", "", null, new Color(255, 255, 255)),
+            new FaceColor("RUBIKS-CUBE", "FACE-B", null, new Color(255, 255, 255)),
+            new FaceColor("RUBIKS-CUBE", "FACE-D", null, new Color(255, 255, 255)),
+            new FaceColor("RUBIKS-CUBE", "FACE-F", null, new Color(255, 255, 255)),
+            new FaceColor("RUBIKS-CUBE", "FACE-L", null, new Color(255, 255, 255)),
+            new FaceColor("RUBIKS-CUBE", "FACE-R", null, new Color(255, 255, 255)),
+            new FaceColor("RUBIKS-CUBE", "FACE-U", null, new Color(255, 255, 255)),
         };
         panel3D.mesh = puzzle.getScrambledPuzzleMesh(
             new ColorScheme(null, faceColors),
@@ -49,16 +51,16 @@ public class AboutDialog extends JDialog {
         add(panel3D, "width 125, height 125, spany");
 
         // labelPrismaPuzzleTimer
-        JLabel labelPrismaPuzzleTimer = new JLabel("Prisma Puzzle Timer 0.4");
+        JLabel labelPrismaPuzzleTimer = new JLabel(_("about.prisma_puzzle_timer_version"));
         labelPrismaPuzzleTimer.setFont(new Font("Arial", Font.BOLD, 16));
         add(labelPrismaPuzzleTimer, "split 3, gapbottom 10, flowy");
 
         // labelURL
-        JLabel labelURL = new JLabel("http://www.prismapuzzletimer.com");
+        JLabel labelURL = new JLabel(_("about.prisma_puzzle_timer_address"));
         add(labelURL);
 
         // labelWalter
-        JLabel labelWalter = new JLabel("Walter Souza <walterprs@gmail.com>");
+        JLabel labelWalter = new JLabel(_("about.walters_email"));
         add(labelWalter);
     }
 }

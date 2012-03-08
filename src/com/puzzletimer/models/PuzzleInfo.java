@@ -1,12 +1,12 @@
 package com.puzzletimer.models;
 
+import static com.puzzletimer.Internationalization._;
+
 public class PuzzleInfo {
     private String puzzleId;
-    private String description;
 
-    public PuzzleInfo(String puzzleId, String description) {
+    public PuzzleInfo(String puzzleId) {
         this.puzzleId = puzzleId;
-        this.description = description;
     }
 
     public String getPuzzleId() {
@@ -14,11 +14,11 @@ public class PuzzleInfo {
     }
 
     public String getDescription() {
-        return this.description;
+        return _("puzzle." + this.puzzleId);
     }
 
     @Override
     public String toString() {
-        return this.description;
+        return getDescription();
     }
 }

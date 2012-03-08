@@ -13,7 +13,7 @@ import com.puzzletimer.models.PuzzleInfo;
 public class VCube6 implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("6x6x6-CUBE", "6x6x6 cube");
+        return new PuzzleInfo("6x6x6-CUBE");
     }
 
     @Override

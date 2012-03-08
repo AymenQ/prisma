@@ -1,5 +1,7 @@
 package com.puzzletimer.tips;
 
+import static com.puzzletimer.Internationalization._;
+
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.solvers.RubiksCubeCrossSolver;
 import com.puzzletimer.solvers.RubiksCubeSolver.State;
@@ -35,7 +37,7 @@ public class RubiksCubeOptimalCross implements Tip {
 
     @Override
     public String getTipDescription() {
-        return "Optimal cross";
+        return _("tip.RUBIKS-CUBE-OPTIMAL-CROSS");
     }
 
     @Override
@@ -47,7 +49,7 @@ public class RubiksCubeOptimalCross implements Tip {
         // cross on U
         State stateU =
             x.multiply(x).multiply(state).multiply(x).multiply(x);
-        tip.append("Optimal cross on U:\n");
+        tip.append(_("tip.RUBIKS-CUBE-OPTIMAL-CROSS.optimal_cross_on_u") + ":\n");
         for (String[] solution : RubiksCubeCrossSolver.solve(stateU)) {
             tip.append("  x2 " + StringUtils.join(" ", solution) + "\n");
         }
@@ -55,7 +57,7 @@ public class RubiksCubeOptimalCross implements Tip {
 
         // cross on D
         State stateD = state;
-        tip.append("Optimal cross on D:\n");
+        tip.append(_("tip.RUBIKS-CUBE-OPTIMAL-CROSS.optimal_cross_on_d") + ":\n");
         for (String[] solution : RubiksCubeCrossSolver.solve(stateD)) {
             tip.append("  " + StringUtils.join(" ", solution) + "\n");
         }
@@ -64,7 +66,7 @@ public class RubiksCubeOptimalCross implements Tip {
         // cross on L
         State stateL =
             z.multiply(state).multiply(z).multiply(z).multiply(z);
-        tip.append("Optimal cross on L:\n");
+        tip.append(_("tip.RUBIKS-CUBE-OPTIMAL-CROSS.optimal_cross_on_l") + ":\n");
         for (String[] solution : RubiksCubeCrossSolver.solve(stateL)) {
             tip.append("  z' " + StringUtils.join(" ", solution) + "\n");
         }
@@ -73,7 +75,7 @@ public class RubiksCubeOptimalCross implements Tip {
         // cross on R
         State stateR =
             z.multiply(z).multiply(z).multiply(state).multiply(z);
-        tip.append("Optimal cross on R:\n");
+        tip.append(_("tip.RUBIKS-CUBE-OPTIMAL-CROSS.optimal_cross_on_r") + ":\n");
         for (String[] solution : RubiksCubeCrossSolver.solve(stateR)) {
             tip.append("  z " + StringUtils.join(" ", solution) + "\n");
         }
@@ -82,7 +84,7 @@ public class RubiksCubeOptimalCross implements Tip {
         // cross on F
         State stateF =
             x.multiply(state).multiply(x).multiply(x).multiply(x);
-        tip.append("Optimal cross on F:\n");
+        tip.append(_("tip.RUBIKS-CUBE-OPTIMAL-CROSS.optimal_cross_on_f") + ":\n");
         for (String[] solution : RubiksCubeCrossSolver.solve(stateF)) {
             tip.append("  x' " + StringUtils.join(" ", solution) + "\n");
         }
@@ -91,7 +93,7 @@ public class RubiksCubeOptimalCross implements Tip {
         // cross on B
         State stateB =
             x.multiply(x).multiply(x).multiply(state).multiply(x);
-        tip.append("Optimal cross on B:\n");
+        tip.append(_("tip.RUBIKS-CUBE-OPTIMAL-CROSS.optimal_cross_on_b") + ":\n");
         for (String[] solution : RubiksCubeCrossSolver.solve(stateB)) {
             tip.append("  x " + StringUtils.join(" ", solution) + "\n");
         }

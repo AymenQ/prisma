@@ -26,19 +26,18 @@ public class ColorDAO {
             Statement statement = this.connection.createStatement();
 
             ResultSet resultSet = statement.executeQuery(
-                "SELECT PUZZLE_ID, FACE_ID, FACE_DESCRIPTION, DEFAULT_R, DEFAULT_G, DEFAULT_B, R, G, B FROM COLOR " +
+                "SELECT PUZZLE_ID, FACE_ID, DEFAULT_R, DEFAULT_G, DEFAULT_B, R, G, B FROM COLOR " +
                 "ORDER BY \"ORDER\"");
 
             while (resultSet.next()) {
                 String puzzleId = resultSet.getString(1);
                 String faceId = resultSet.getString(2);
-                String faceDescription = resultSet.getString(3);
-                int defaultR = resultSet.getInt(4);
-                int defaultG = resultSet.getInt(5);
-                int defaultB = resultSet.getInt(6);
-                int r = resultSet.getInt(7);
-                int g = resultSet.getInt(8);
-                int b = resultSet.getInt(9);
+                int defaultR = resultSet.getInt(3);
+                int defaultG = resultSet.getInt(4);
+                int defaultB = resultSet.getInt(5);
+                int r = resultSet.getInt(6);
+                int g = resultSet.getInt(7);
+                int b = resultSet.getInt(8);
 
                 if (!faceColorMap.containsKey(puzzleId)) {
                     faceColorMap.put(puzzleId, new ArrayList<FaceColor>());
@@ -46,8 +45,8 @@ public class ColorDAO {
 
                 faceColorMap.get(puzzleId).add(
                     new FaceColor(
+                        puzzleId,
                         faceId,
-                        faceDescription,
                         new Color(defaultR, defaultG, defaultB),
                         new Color(r, g, b)));
             }

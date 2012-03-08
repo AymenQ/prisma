@@ -1,5 +1,7 @@
 package com.puzzletimer.gui;
 
+import static com.puzzletimer.Internationalization._;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -74,7 +76,10 @@ public class ScrambleQueueFrame extends JFrame {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 // title
-                setTitle("Scramble Queue - " + currentCategory.getDescription());
+                setTitle(
+                    String.format(
+                        _("scramble_queue.scramble_queue-category"),
+                        currentCategory.getDescription()));
 
                 // scrambler combobox
                 ScrambleQueueFrame.this.comboBoxScrambler.removeAllItems();
@@ -170,7 +175,7 @@ public class ScrambleQueueFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setFileFilter(new FileNameExtensionFilter("Scramble files (*.txt)", "txt"));
+                fileChooser.setFileFilter(new FileNameExtensionFilter(_("scramble_queue.scramble_file_description"), "txt"));
                 int action = fileChooser.showOpenDialog(ScrambleQueueFrame.this);
                 if (action != JFileChooser.APPROVE_OPTION) {
                     return;
@@ -190,8 +195,10 @@ public class ScrambleQueueFrame extends JFrame {
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(
                         ScrambleQueueFrame.this,
-                        "Error opening file \"" + fileChooser.getSelectedFile().getAbsolutePath() + "\".",
-                        "Error",
+                        String.format(
+                            _("scramble_queue.file_opening_error"),
+                            fileChooser.getSelectedFile().getAbsolutePath()),
+                        _("scramble_queue.error"),
                         JOptionPane.ERROR_MESSAGE);
                     return;
                 }
@@ -205,8 +212,8 @@ public class ScrambleQueueFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setSelectedFile(new File("scrambles.txt"));
-                fileChooser.setFileFilter(new FileNameExtensionFilter("Scramble files (*.txt)", "txt"));
+                fileChooser.setSelectedFile(new File(_("scramble_queue.default_file_name")));
+                fileChooser.setFileFilter(new FileNameExtensionFilter(_("scramble_queue.scramble_file_description"), "txt"));
                 int action = fileChooser.showSaveDialog(ScrambleQueueFrame.this);
                 if (action != JFileChooser.APPROVE_OPTION) {
                     return;
@@ -232,9 +239,12 @@ public class ScrambleQueueFrame extends JFrame {
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(
                         ScrambleQueueFrame.this,
-                        "Error opening file \"" + fileChooser.getSelectedFile().getAbsolutePath() + "\".",
-                        "Error",
+                        String.format(
+                            _("scramble_queue.file_opening_error"),
+                            fileChooser.getSelectedFile().getAbsolutePath()),
+                        _("scramble_queue.error"),
                         JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
             }
         });
@@ -285,7 +295,7 @@ public class ScrambleQueueFrame extends JFrame {
                 "[pref!][]12[pref!][pref!]16[pref!]"));
 
         // labelQueue
-        add(new JLabel("Queue"), "span, wrap");
+        add(new JLabel(_("scramble_queue.queue")), "span, wrap");
 
         // table
         this.table = new JTable();
@@ -296,31 +306,31 @@ public class ScrambleQueueFrame extends JFrame {
         add(scrollPane, "grow");
 
         // buttonUp
-        this.buttonUp = new JButton("Up");
+        this.buttonUp = new JButton(_("scramble_queue.up"));
         this.buttonUp.setEnabled(false);
         add(this.buttonUp, "top, growx, split 5, flowy");
 
         // buttonDown
-        this.buttonDown = new JButton("Down");
+        this.buttonDown = new JButton(_("scramble_queue.down"));
         this.buttonDown.setEnabled(false);
         add(this.buttonDown, "top, growx");
 
         // buttonRemove
-        this.buttonRemove = new JButton("Remove");
+        this.buttonRemove = new JButton(_("scramble_queue.remove"));
         this.buttonRemove.setEnabled(false);
         add(this.buttonRemove, "top, growx");
 
         // buttonImportFromFile
-        this.buttonImportFromFile = new JButton("Import...");
+        this.buttonImportFromFile = new JButton(_("scramble_queue.import_from_file"));
         add(this.buttonImportFromFile, "gaptop 20, top, growx");
 
         // buttonExport
-        this.buttonExport = new JButton("Export...");
+        this.buttonExport = new JButton(_("scramble_queue.export_to_file"));
         this.buttonExport.setEnabled(false);
         add(this.buttonExport, "top, growx, wrap");
 
         // labelImportFromScrambler
-        add(new JLabel("Import from scrambler"), "span, wrap");
+        add(new JLabel(_("scramble_queue.import_from_scrambler")), "span, wrap");
 
         // comboBoxScrambler
         this.comboBoxScrambler = new JComboBox();
@@ -331,11 +341,11 @@ public class ScrambleQueueFrame extends JFrame {
         add(this.spinnerNumberOfScrambles, "");
 
         // buttonImportFromScrambler
-        this.buttonImportFromScrambler = new JButton("Import");
+        this.buttonImportFromScrambler = new JButton(_("scramble_queue.import"));
         add(this.buttonImportFromScrambler, "wrap");
 
         // buttonOK
-        this.buttonOk = new JButton("OK");
+        this.buttonOk = new JButton(_("scramble_queue.ok"));
         add(this.buttonOk, "tag ok, span");
     }
 
@@ -346,9 +356,8 @@ public class ScrambleQueueFrame extends JFrame {
                 return false;
             }
         };
-        for (String column : new String[] { "#", "Scramble" }) {
-            tableModel.addColumn(column);
-        }
+        tableModel.addColumn(_("scramble_queue.#"));
+        tableModel.addColumn(_("scramble_queue.scramble"));
 
         this.table.setModel(tableModel);
 

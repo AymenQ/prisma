@@ -13,7 +13,7 @@ import com.puzzletimer.models.PuzzleInfo;
 public class FloppyCube implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("FLOPPY-CUBE", "Floppy cube");
+        return new PuzzleInfo("FLOPPY-CUBE");
     }
 
     @Override

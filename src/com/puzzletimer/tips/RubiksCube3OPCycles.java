@@ -1,5 +1,7 @@
 package com.puzzletimer.tips;
 
+import static com.puzzletimer.Internationalization._;
+
 import java.util.ArrayList;
 
 import com.puzzletimer.models.Scramble;
@@ -18,14 +20,14 @@ public class RubiksCube3OPCycles implements Tip {
 
     @Override
     public String getTipDescription() {
-        return "3OP cycles";
+        return _("tip.RUBIKS-CUBE-3OP-CYCLES");
     }
 
     @Override
     public String getTip(Scramble scramble) {
         StringBuilder tip = new StringBuilder();
 
-        tip.append("3OP cycles:\n  ");
+        tip.append(_("tip.RUBIKS-CUBE-3OP-CYCLES") + ":\n  ");
 
         RubiksCubeSolver.State cubeState =
             RubiksCubeSolver.State.id.applySequence(scramble.getSequence());

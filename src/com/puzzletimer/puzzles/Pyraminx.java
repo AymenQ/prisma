@@ -12,7 +12,7 @@ import com.puzzletimer.models.PuzzleInfo;
 public class Pyraminx implements Puzzle {
     @Override
     public PuzzleInfo getPuzzleInfo() {
-        return new PuzzleInfo("PYRAMINX", "Pyraminx");
+        return new PuzzleInfo("PYRAMINX");
     }
 
     @Override
