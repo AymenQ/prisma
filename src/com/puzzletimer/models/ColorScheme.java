@@ -6,10 +6,10 @@ import java.awt.Color;
 
 public class ColorScheme {
     public static class FaceColor {
-        private String puzzleId;
-        private String faceId;
-        private Color defaultColor;
-        private Color color;
+        private final String puzzleId;
+        private final String faceId;
+        private final Color defaultColor;
+        private final Color color;
 
         public FaceColor(String puzzleId, String faceId, Color defaultColor, Color color) {
             this.puzzleId = puzzleId;
@@ -34,17 +34,29 @@ public class ColorScheme {
             return this.defaultColor;
         }
 
+        public FaceColor setColorToDefault() {
+            return new FaceColor(
+                this.puzzleId,
+                this.faceId,
+                this.defaultColor,
+                this.defaultColor);
+        }
+
         public Color getColor() {
             return this.color;
         }
 
-        public void setColor(Color color) {
-            this.color = color;
+        public FaceColor setColor(Color color) {
+            return new FaceColor(
+                this.puzzleId,
+                this.faceId,
+                this.defaultColor,
+                color);
         }
     }
 
-    private String puzzleId;
-    private FaceColor[] faceColors;
+    private final String puzzleId;
+    private final FaceColor[] faceColors;
 
     public ColorScheme(String puzzleId, FaceColor[] faceColors) {
         this.puzzleId = puzzleId;
@@ -67,5 +79,17 @@ public class ColorScheme {
         }
 
         return null;
+    }
+
+    public ColorScheme setFaceColor(FaceColor faceColor) {
+        FaceColor[] faceColors = new FaceColor[this.faceColors.length];
+        for (int i = 0; i < faceColors.length; i++) {
+            faceColors[i] = this.faceColors[i];
+            if (this.faceColors[i].getFaceId().equals(faceColor.getFaceId())) {
+                faceColors[i] = faceColor;
+            }
+        }
+
+        return new ColorScheme(this.puzzleId, faceColors);
     }
 }

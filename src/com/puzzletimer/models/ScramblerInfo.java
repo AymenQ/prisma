@@ -1,9 +1,9 @@
 package com.puzzletimer.models;
 
 public class ScramblerInfo {
-    private String scramblerId;
-    private String puzzleId;
-    private String description;
+    private final String scramblerId;
+    private final String puzzleId;
+    private final String description;
 
     public ScramblerInfo(String scramblerId, String puzzleId, String description) {
         this.scramblerId = scramblerId;

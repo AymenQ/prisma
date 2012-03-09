@@ -3,8 +3,8 @@ package com.puzzletimer.models;
 import java.util.Date;
 
 public class Timing {
-    private Date start;
-    private Date end;
+    private final Date start;
+    private final Date end;
 
     public Timing(Date start, Date end) {
         this.start = start;

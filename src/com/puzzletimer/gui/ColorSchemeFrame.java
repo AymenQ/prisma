@@ -105,8 +105,9 @@ public class ColorSchemeFrame extends JFrame {
                     String.format(_("color_scheme.face_color"), faceColor.getFaceDescription()),
                     faceColor.getColor());
                 if (color != null) {
-                    faceColor.setColor(color);
-                    colorManager.setColorScheme(colorScheme);
+                    colorManager.setColorScheme(
+                        colorScheme.setFaceColor(
+                            faceColor.setColor(color)));
                 }
             }
         });
@@ -121,7 +122,7 @@ public class ColorSchemeFrame extends JFrame {
 
                 for (int index : ColorSchemeFrame.this.table.getSelectedRows()) {
                     FaceColor faceColor = colorScheme.getFaceColors()[index];
-                    faceColor.setColor(faceColor.getDefaultColor());
+                    colorScheme = colorScheme.setFaceColor(faceColor.setColorToDefault());
                 }
 
                 colorManager.setColorScheme(colorScheme);

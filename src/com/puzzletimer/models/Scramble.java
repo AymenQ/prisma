@@ -1,8 +1,8 @@
 package com.puzzletimer.models;
 
 public class Scramble {
-    private String scramblerId;
-    private String[] sequence;
+    private final String scramblerId;
+    private final String[] sequence;
 
     public Scramble(String scramblerId, String[] sequence) {
         this.scramblerId = scramblerId;

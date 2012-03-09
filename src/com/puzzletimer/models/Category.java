@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class Category {
-    private UUID categoryId;
-    private String scramblerId;
-    private String description;
-    private boolean isUserDefined;
-    private String[] tipIds;
+    private final UUID categoryId;
+    private final String scramblerId;
+    private final String description;
+    private final boolean isUserDefined;
+    private final String[] tipIds;
 
     public Category(UUID categoryId, String scramblerId, String description, boolean isUserDefined, String[] tipIds) {
         this.categoryId = categoryId;

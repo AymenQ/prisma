@@ -3,11 +3,11 @@ package com.puzzletimer.models;
 import java.util.UUID;
 
 public class Solution {
-    private UUID solutionId;
-    private UUID categoryId;
-    private Scramble scramble;
-    private Timing timing;
-    private String penalty;
+    private final UUID solutionId;
+    private final UUID categoryId;
+    private final Scramble scramble;
+    private final Timing timing;
+    private final String penalty;
 
     public Solution(UUID solutionId, UUID categoryId, Scramble scramble, Timing timing, String penalty) {
         this.solutionId = solutionId;

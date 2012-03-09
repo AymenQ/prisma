@@ -1,8 +1,8 @@
 package com.puzzletimer.models;
 
 public class ConfigurationEntry {
-    private String key;
-    private String value;
+    private final String key;
+    private final String value;
 
     public ConfigurationEntry(String key, String value) {
         this.key = key;

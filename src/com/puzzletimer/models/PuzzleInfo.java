@@ -3,7 +3,7 @@ package com.puzzletimer.models;
 import static com.puzzletimer.Internationalization._;
 
 public class PuzzleInfo {
-    private String puzzleId;
+    private final String puzzleId;
 
     public PuzzleInfo(String puzzleId) {
         this.puzzleId = puzzleId;
