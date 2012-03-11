@@ -24,9 +24,7 @@ import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Solution;
-import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
-import com.puzzletimer.state.SessionListener;
 import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
@@ -54,7 +52,7 @@ public class SessionSummaryFrame extends JFrame {
         createComponents();
 
         // title
-        categoryManager.addCategoryListener(new CategoryListener() {
+        categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 setTitle(
@@ -66,7 +64,7 @@ public class SessionSummaryFrame extends JFrame {
         categoryManager.notifyListeners();
 
         // summary
-        sessionManager.addSessionListener(new SessionListener() {
+        sessionManager.addListener(new SessionManager.Listener() {
             @Override
             public void solutionsUpdated(Solution[] solutions) {
                 updateSummary(categoryManager.getCurrentCategory(), solutions);

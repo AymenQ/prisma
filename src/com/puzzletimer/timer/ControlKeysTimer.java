@@ -9,7 +9,6 @@ import java.util.TimerTask;
 import javax.swing.JFrame;
 
 import com.puzzletimer.models.Timing;
-import com.puzzletimer.state.TimerListener;
 import com.puzzletimer.state.TimerManager;
 
 public class ControlKeysTimer implements Timer {
@@ -27,7 +26,7 @@ public class ControlKeysTimer implements Timer {
     private boolean leftPressed;
     private boolean rightPressed;
     private KeyListener keyListener;
-    private TimerListener timerListener;
+    private TimerManager.Listener timerListener;
     private java.util.Timer repeater;
     private Date start;
     private Date finish;
@@ -176,14 +175,14 @@ public class ControlKeysTimer implements Timer {
         };
         this.frame.addKeyListener(this.keyListener);
 
-        this.timerListener = new TimerListener() {
+        this.timerListener = new TimerManager.Listener() {
             @Override
             public void inspectionFinished() {
                 ControlKeysTimer.this.state = ControlKeysTimer.this.inspectionEnabled ?
                     State.READY_FOR_INSPECTION : State.NOT_READY;
             }
         };
-        this.timerManager.addTimerListener(this.timerListener);
+        this.timerManager.addListener(this.timerListener);
     }
 
     @Override
@@ -193,6 +192,6 @@ public class ControlKeysTimer implements Timer {
         }
 
         this.frame.removeKeyListener(this.keyListener);
-        this.timerManager.removeTimerListener(this.timerListener);
+        this.timerManager.removeListener(this.timerListener);
     }
 }

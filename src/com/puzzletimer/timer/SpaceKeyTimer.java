@@ -9,7 +9,6 @@ import java.util.TimerTask;
 import javax.swing.JFrame;
 
 import com.puzzletimer.models.Timing;
-import com.puzzletimer.state.TimerListener;
 import com.puzzletimer.state.TimerManager;
 
 public class SpaceKeyTimer implements Timer {
@@ -24,7 +23,7 @@ public class SpaceKeyTimer implements Timer {
     private TimerManager timerManager;
     private boolean inspectionEnabled;
     private KeyListener keyListener;
-    private TimerListener timerListener;
+    private TimerManager.Listener timerListener;
     private java.util.Timer repeater;
     private Date start;
     private Date finish;
@@ -143,14 +142,14 @@ public class SpaceKeyTimer implements Timer {
         };
         this.frame.addKeyListener(this.keyListener);
 
-        this.timerListener = new TimerListener() {
+        this.timerListener = new TimerManager.Listener() {
             @Override
             public void inspectionFinished() {
                 SpaceKeyTimer.this.state = SpaceKeyTimer.this.inspectionEnabled ?
                         State.READY_FOR_INSPECTION : State.READY;
             }
         };
-        this.timerManager.addTimerListener(this.timerListener);
+        this.timerManager.addListener(this.timerListener);
     }
 
     @Override
@@ -160,6 +159,6 @@ public class SpaceKeyTimer implements Timer {
         }
 
         this.frame.removeKeyListener(this.keyListener);
-        this.timerManager.removeTimerListener(this.timerListener);
+        this.timerManager.removeListener(this.timerListener);
     }
 }

@@ -23,9 +23,7 @@ import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
-import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.tips.TipProvider;
 
@@ -48,7 +46,7 @@ public class TipsFrame extends JFrame {
         createComponents();
 
         // title
-        categoryManager.addCategoryListener(new CategoryListener() {
+        categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 Scrambler scrambler = scrambleProvider.get(currentCategory.getScramblerId());
@@ -62,7 +60,7 @@ public class TipsFrame extends JFrame {
         categoryManager.notifyListeners();
 
         // tips
-        scrambleManager.addScrambleListener(new ScrambleListener() {
+        scrambleManager.addListener(new ScrambleManager.Listener() {
             @Override
             public void scrambleChanged(Scramble scramble) {
                 Category category = categoryManager.getCurrentCategory();

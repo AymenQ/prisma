@@ -8,7 +8,30 @@ import com.puzzletimer.models.Timing;
 import com.puzzletimer.timer.Timer;
 
 public class TimerManager {
-    private ArrayList<TimerListener> listeners;
+    public static class Listener {
+        // timer
+        public void timerChanged(Timer timer) { }
+        public void timerReset() { }
+
+        // hands
+        public void leftHandPressed() { }
+        public void leftHandReleased() { }
+        public void rightHandPressed() { }
+        public void rightHandReleased() { }
+
+        // inspection
+        public void inspectionEnabledSet(boolean inspectionEnabled) { }
+        public void inspectionStarted() { }
+        public void inspectionRunning(long remainingTime) { }
+        public void inspectionFinished() { }
+
+        // solution
+        public void solutionStarted() { }
+        public void solutionRunning(Timing timing) { }
+        public void solutionFinished(Timing timing, String penalty) { }
+    }
+
+    private ArrayList<Listener> listeners;
     private Timer currentTimer;
     private boolean inspectionEnabled;
     private java.util.Timer repeater;
@@ -16,7 +39,7 @@ public class TimerManager {
     private String penalty;
 
     public TimerManager() {
-        this.listeners = new ArrayList<TimerListener>();
+        this.listeners = new ArrayList<Listener>();
         this.currentTimer = null;
         this.inspectionEnabled = false;
         this.repeater = null;
@@ -42,7 +65,7 @@ public class TimerManager {
         this.currentTimer = timer;
         this.currentTimer.setInspectionEnabled(this.inspectionEnabled);
 
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.timerChanged(timer);
         }
 
@@ -50,7 +73,7 @@ public class TimerManager {
     }
 
     public void resetTimer() {
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.timerReset();
         }
     }
@@ -58,25 +81,25 @@ public class TimerManager {
     // hands
 
     public void pressLeftHand() {
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.leftHandPressed();
         }
     }
 
     public void releaseLeftHand() {
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.leftHandReleased();
         }
     }
 
     public void pressRightHand() {
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.rightHandPressed();
         }
     }
 
     public void releaseRightHand() {
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.rightHandReleased();
         }
     }
@@ -95,13 +118,13 @@ public class TimerManager {
             this.currentTimer.setInspectionEnabled(inspectionEnabled);
         }
 
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.inspectionEnabledSet(inspectionEnabled);
         }
     }
 
     public void startInspection() {
-        for (TimerListener listener : TimerManager.this.listeners) {
+        for (Listener listener : TimerManager.this.listeners) {
             listener.inspectionStarted();
         }
 
@@ -114,14 +137,14 @@ public class TimerManager {
                 long start = TimerManager.this.inspectionStart.getTime();
                 long now = new Date().getTime();
 
-                for (TimerListener listener : TimerManager.this.listeners) {
+                for (Listener listener : TimerManager.this.listeners) {
                     listener.inspectionRunning(15000 - (now - start));
                 }
 
                 if (now - start > 17000) {
                     TimerManager.this.repeater.cancel();
 
-                    for (TimerListener listener : TimerManager.this.listeners) {
+                    for (Listener listener : TimerManager.this.listeners) {
                         listener.inspectionFinished();
                     }
 
@@ -147,24 +170,24 @@ public class TimerManager {
             this.repeater.cancel();
             this.inspectionStart = null;
 
-            for (TimerListener listener : TimerManager.this.listeners) {
+            for (Listener listener : TimerManager.this.listeners) {
                 listener.inspectionFinished();
             }
         }
 
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionStarted();
         }
     }
 
     public void updateSolutionTiming(Timing timing) {
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionRunning(timing);
         }
     }
 
     public void finishSolution(Timing timing) {
-        for (TimerListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionFinished(timing, this.penalty);
         }
 
@@ -174,11 +197,11 @@ public class TimerManager {
 
     // listeners
 
-    public void addTimerListener(TimerListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeTimerListener(TimerListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

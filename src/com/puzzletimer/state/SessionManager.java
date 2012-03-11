@@ -10,11 +10,15 @@ import java.util.UUID;
 import com.puzzletimer.models.Solution;
 
 public class SessionManager {
-    private ArrayList<SessionListener> listeners;
+    public static class Listener {
+        public void solutionsUpdated(Solution[] solutions) { }
+    }
+
+    private ArrayList<Listener> listeners;
     private HashMap<UUID, Solution> solutions;
 
     public SessionManager() {
-        this.listeners = new ArrayList<SessionListener>();
+        this.listeners = new ArrayList<Listener>();
         this.solutions = new HashMap<UUID, Solution>();
     }
 
@@ -75,16 +79,16 @@ public class SessionManager {
         Solution[] solutionsArray = new Solution[solutions.size()];
         solutions.toArray(solutionsArray);
 
-        for (SessionListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionsUpdated(solutionsArray);
         }
     }
 
-    public void addSessionListener(SessionListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeSessionListener(SessionListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

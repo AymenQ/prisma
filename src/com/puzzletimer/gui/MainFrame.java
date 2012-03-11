@@ -54,18 +54,13 @@ import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ColorManager;
 import com.puzzletimer.state.ConfigurationManager;
-import com.puzzletimer.state.MessageListener;
 import com.puzzletimer.state.MessageManager;
-import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
-import com.puzzletimer.state.SessionListener;
 import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.state.SolutionManager;
-import com.puzzletimer.state.TimerListener;
 import com.puzzletimer.state.TimerManager;
 import com.puzzletimer.state.MessageManager.MessageType;
 import com.puzzletimer.statistics.Average;
@@ -92,7 +87,7 @@ public class MainFrame extends JFrame {
         public ScramblePanel(ScrambleManager scrambleManager) {
             createComponents();
 
-            scrambleManager.addScrambleListener(new ScrambleListener() {
+            scrambleManager.addListener(new ScrambleManager.Listener() {
                 @Override
                 public void scrambleChanged(Scramble scramble) {
                     setScramble(scramble);
@@ -149,7 +144,7 @@ public class MainFrame extends JFrame {
         public TimerPanel(TimerManager timerManager) {
             createComponents();
 
-            timerManager.addTimerListener(new TimerListener() {
+            timerManager.addListener(new TimerManager.Listener() {
                 @Override
                 public void timerReset() {
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
@@ -245,7 +240,7 @@ public class MainFrame extends JFrame {
 
             createComponents();
 
-            sessionManager.addSessionListener(new SessionListener() {
+            sessionManager.addListener(new SessionManager.Listener() {
                 @Override
                 public void solutionsUpdated(Solution[] solutions) {
                     setSolutions(solutions);
@@ -382,7 +377,7 @@ public class MainFrame extends JFrame {
                 new BestAverage(12, Integer.MAX_VALUE),
             };
 
-            sessionManager.addSessionListener(new SessionListener() {
+            sessionManager.addListener(new SessionManager.Listener() {
                 @Override
                 public void solutionsUpdated(Solution[] solutions) {
                     for (int i = 0; i < labels.length; i++) {
@@ -527,7 +522,7 @@ public class MainFrame extends JFrame {
 
             createComponents();
 
-            scrambleManager.addScrambleListener(new ScrambleListener() {
+            scrambleManager.addListener(new ScrambleManager.Listener() {
                 @Override
                 public void scrambleChanged(Scramble scramble) {
                     setScramble(scramble);
@@ -658,7 +653,7 @@ public class MainFrame extends JFrame {
                         MainFrame.class.getResourceAsStream("/com/puzzletimer/resources/inspection/" + fileNames[i])));
             }
 
-            this.timerManager.addTimerListener(new TimerListener() {
+            this.timerManager.addListener(new TimerManager.Listener() {
                 private int next;
 
                 @Override
@@ -680,7 +675,7 @@ public class MainFrame extends JFrame {
         }
 
         // title
-        this.categoryManager.addCategoryListener(new CategoryListener() {
+        this.categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 setTitle(
@@ -760,7 +755,7 @@ public class MainFrame extends JFrame {
         });
 
         // menuCategory
-        this.categoryManager.addCategoryListener(new CategoryListener() {
+        this.categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 int menuShortcutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -950,9 +945,9 @@ public class MainFrame extends JFrame {
         });
 
         // labelMessage
-        this.messageManager.addMessageListener(new MessageListener() {
+        this.messageManager.addListener(new MessageManager.Listener() {
             @Override
-            public void clear() {
+            public void messagesCleared() {
                 MainFrame.this.labelMessage.setPreferredSize(new Dimension());
                 MainFrame.this.labelMessage.setVisible(false);
             }

@@ -36,7 +36,6 @@ import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.tips.Tip;
 import com.puzzletimer.tips.TipProvider;
@@ -355,7 +354,7 @@ public class CategoryManagerFrame extends JFrame {
 
         createComponents();
 
-        categoryManager.addCategoryListener(new CategoryListener() {
+        categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 // set table data

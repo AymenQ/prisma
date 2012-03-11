@@ -8,14 +8,21 @@ import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
 
 public class ScrambleManager {
-    private ArrayList<ScrambleListener> listeners;
+    public static class Listener {
+        public void scramblesAdded(Scramble[] scrambles) { }
+        public void scramblesRemoved(Scramble[] scrambles) { }
+        public void scrambleQueueUpdated(Scramble[] queue) { }
+        public void scrambleChanged(Scramble scramble) { }
+    }
+
+    private ArrayList<Listener> listeners;
     private ScramblerProvider scramblerProvider;
     private Scrambler currentScrambler;
     private ArrayList<Scramble> queue;
     private Scramble currentScramble;
 
     public ScrambleManager(ScramblerProvider scramblerProvider, Scrambler scrambler) {
-        this.listeners = new ArrayList<ScrambleListener>();
+        this.listeners = new ArrayList<Listener>();
         this.scramblerProvider = scramblerProvider;
         this.currentScrambler = scrambler;
         this.queue = new ArrayList<Scramble>();
@@ -40,7 +47,7 @@ public class ScrambleManager {
             this.queue.add(scramble);
         }
 
-        for (ScrambleListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.scramblesAdded(scrambles);
         }
 
@@ -57,7 +64,7 @@ public class ScrambleManager {
             this.queue.remove(scrambles[i]);
         }
 
-        for (ScrambleListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.scramblesRemoved(scrambles);
         }
 
@@ -96,7 +103,7 @@ public class ScrambleManager {
             this.currentScramble = this.currentScrambler.getNextScramble();
         }
 
-        for (ScrambleListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.scrambleChanged(this.currentScramble);
         }
     }
@@ -104,16 +111,16 @@ public class ScrambleManager {
     private void notifyListeners() {
         Scramble[] queueArray = new Scramble[this.queue.size()];
         this.queue.toArray(queueArray);
-        for (ScrambleListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.scrambleQueueUpdated(queueArray);
         }
     }
 
-    public void addScrambleListener(ScrambleListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeScrambleListener(ScrambleListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

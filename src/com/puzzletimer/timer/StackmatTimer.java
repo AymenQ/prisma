@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import javax.sound.sampled.TargetDataLine;
 
 import com.puzzletimer.models.Timing;
-import com.puzzletimer.state.TimerListener;
 import com.puzzletimer.state.TimerManager;
 
 interface StackmatTimerReaderListener {
@@ -198,7 +197,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private StackmatTimerReader stackmatTimerReader;
     private TimerManager timerManager;
     private boolean inspectionEnabled;
-    private TimerListener timerListener;
+    private TimerManager.Listener timerListener;
     private java.util.Timer repeater;
     private Date start;
     private State state;
@@ -237,13 +236,13 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
     @Override
     public void start() {
-        this.timerListener = new TimerListener() {
+        this.timerListener = new TimerManager.Listener() {
             @Override
             public void inspectionFinished() {
                 StackmatTimer.this.state = State.NOT_READY;
             }
         };
-        this.timerManager.addTimerListener(this.timerListener);
+        this.timerManager.addListener(this.timerListener);
 
         this.stackmatTimerReader.addEventListener(this);
         Thread readerThread = new Thread(this.stackmatTimerReader);
@@ -265,7 +264,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
     @Override
     public void stop() {
-        this.timerManager.removeTimerListener(this.timerListener);
+        this.timerManager.removeListener(this.timerListener);
 
         this.stackmatTimerReader.removeEventListener(this);
         this.stackmatTimerReader.stop();

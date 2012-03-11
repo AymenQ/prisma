@@ -6,12 +6,20 @@ import java.util.Arrays;
 import com.puzzletimer.models.Category;
 
 public class CategoryManager {
-    private ArrayList<CategoryListener> listeners;
+    public static class Listener {
+        public void categoryAdded(Category category) { }
+        public void categoryRemoved(Category category) { }
+        public void categoryUpdated(Category category) { }
+        public void currentCategoryChanged(Category category) { }
+        public void categoriesUpdated(Category[] categories, Category currentCategory) { }
+    }
+
+    private ArrayList<Listener> listeners;
     private ArrayList<Category> categories;
     private Category currentCategory;
 
     public CategoryManager(Category[] categories, Category currentCategory) {
-        this.listeners = new ArrayList<CategoryListener>();
+        this.listeners = new ArrayList<Listener>();
         this.categories = new ArrayList<Category>(Arrays.asList(categories));
         this.currentCategory = currentCategory;
     }
@@ -23,7 +31,7 @@ public class CategoryManager {
     public void addCategory(Category category) {
         this.categories.add(category);
 
-        for (CategoryListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.categoryAdded(category);
         }
 
@@ -33,7 +41,7 @@ public class CategoryManager {
     public void removeCategory(Category category) {
         this.categories.remove(category);
 
-        for (CategoryListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.categoryRemoved(category);
         }
 
@@ -48,7 +56,7 @@ public class CategoryManager {
             }
         }
 
-        for (CategoryListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.categoryUpdated(category);
         }
 
@@ -62,7 +70,7 @@ public class CategoryManager {
     public void setCurrentCategory(Category category) {
         this.currentCategory = category;
 
-        for (CategoryListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.currentCategoryChanged(this.currentCategory);
         }
 
@@ -71,16 +79,16 @@ public class CategoryManager {
 
     public void notifyListeners() {
         Category[] categories = getCategories();
-        for (CategoryListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.categoriesUpdated(categories, this.currentCategory);
         }
     }
 
-    public void addCategoryListener(CategoryListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeCategoryListener(CategoryListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

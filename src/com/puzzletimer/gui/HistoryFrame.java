@@ -41,11 +41,9 @@ import com.puzzletimer.parsers.ScrambleParser;
 import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SessionManager;
-import com.puzzletimer.state.SolutionListener;
 import com.puzzletimer.state.SolutionManager;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
@@ -233,7 +231,7 @@ public class HistoryFrame extends JFrame {
         createComponents();
 
         // title
-        categoryManager.addCategoryListener(new CategoryListener() {
+        categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 setTitle(
@@ -245,7 +243,7 @@ public class HistoryFrame extends JFrame {
         categoryManager.notifyListeners();
 
         // statistics, table
-        solutionManager.addSolutionListener(new SolutionListener() {
+        solutionManager.addListener(new SolutionManager.Listener() {
             @Override
             public void solutionsUpdated(Solution[] solutions) {
                 int[] selectedRows = new int[solutions.length];

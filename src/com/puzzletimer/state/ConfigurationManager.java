@@ -6,11 +6,15 @@ import java.util.HashMap;
 import com.puzzletimer.models.ConfigurationEntry;
 
 public class ConfigurationManager {
-    private ArrayList<ConfigurationListener> listeners;
+    public static class Listener {
+        public void configurationEntryUpdated(String key, String value) { }
+    }
+
+    private ArrayList<Listener> listeners;
     private HashMap<String, ConfigurationEntry> entryMap;
 
     public ConfigurationManager(ConfigurationEntry[] entries) {
-        this.listeners = new ArrayList<ConfigurationListener>();
+        this.listeners = new ArrayList<Listener>();
 
         this.entryMap = new HashMap<String, ConfigurationEntry>();
         for (ConfigurationEntry entry : entries) {
@@ -24,16 +28,16 @@ public class ConfigurationManager {
 
     public void setConfiguration(String key, String value) {
         this.entryMap.put(key, new ConfigurationEntry(key, value));
-        for (ConfigurationListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.configurationEntryUpdated(key, value);
         }
     }
 
-    public void addConfigurationListener(ConfigurationListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeConfigurationListener(ConfigurationListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

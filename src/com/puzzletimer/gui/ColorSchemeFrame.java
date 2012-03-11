@@ -32,7 +32,6 @@ import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.ColorScheme.FaceColor;
 import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.puzzles.PuzzleProvider;
-import com.puzzletimer.state.ColorListener;
 import com.puzzletimer.state.ColorManager;
 
 @SuppressWarnings("serial")
@@ -139,7 +138,7 @@ public class ColorSchemeFrame extends JFrame {
         });
 
         // update on colors updated events
-        colorManager.addColorListener(new ColorListener() {
+        colorManager.addListener(new ColorManager.Listener() {
             @Override
             public void colorSchemeUpdated(ColorScheme colorScheme) {
                 Puzzle puzzle =

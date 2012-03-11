@@ -10,11 +10,19 @@ import java.util.UUID;
 import com.puzzletimer.models.Solution;
 
 public class SolutionManager {
-    private ArrayList<SolutionListener> listeners;
+    public static class Listener {
+        public void solutionAdded(Solution solution) { }
+        public void solutionsAdded(Solution[] solutions) { }
+        public void solutionRemoved(Solution solution) { }
+        public void solutionUpdated(Solution solution) { }
+        public void solutionsUpdated(Solution[] solutions) { }
+    }
+
+    private ArrayList<Listener> listeners;
     private HashMap<UUID, Solution> solutions;
 
     public SolutionManager() {
-        this.listeners = new ArrayList<SolutionListener>();
+        this.listeners = new ArrayList<Listener>();
         this.solutions = new HashMap<UUID, Solution>();
     }
 
@@ -49,7 +57,7 @@ public class SolutionManager {
     public void addSolution(Solution solution) {
         this.solutions.put(solution.getSolutionId(), solution);
 
-        for (SolutionListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionAdded(solution);
         }
 
@@ -61,7 +69,7 @@ public class SolutionManager {
             this.solutions.put(solution.getSolutionId(), solution);
         }
 
-        for (SolutionListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionsAdded(solutions);
         }
 
@@ -71,7 +79,7 @@ public class SolutionManager {
     public void removeSolution(Solution solution) {
         this.solutions.remove(solution.getSolutionId());
 
-        for (SolutionListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionRemoved(solution);
         }
 
@@ -81,7 +89,7 @@ public class SolutionManager {
     public void updateSolution(Solution solution) {
         this.solutions.put(solution.getSolutionId(), solution);
 
-        for (SolutionListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionUpdated(solution);
         }
 
@@ -91,16 +99,16 @@ public class SolutionManager {
     public void notifyListeners() {
         Solution[] solutions = getSolutions();
 
-        for (SolutionListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.solutionsUpdated(solutions);
         }
     }
 
-    public void addSolutionListener(SolutionListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeSolutionListener(SolutionListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

@@ -6,6 +6,11 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MessageManager {
+    public static class Listener {
+        public void messagesCleared() { }
+        public void messageReceived(MessageType messageType, String message) { }
+    }
+
     public enum MessageType {
         INFORMATION,
         ERROR,
@@ -13,12 +18,12 @@ public class MessageManager {
 
     private ArrayList<String> messageQueue;
     private ArrayList<MessageType> messageTypeQueue;
-    private ArrayList<MessageListener> listeners;
+    private ArrayList<Listener> listeners;
 
     public MessageManager() {
         this.messageQueue = new ArrayList<String>();
         this.messageTypeQueue = new ArrayList<MessageType>();
-        this.listeners = new ArrayList<MessageListener>();
+        this.listeners = new ArrayList<Listener>();
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -31,8 +36,8 @@ public class MessageManager {
 
                 if (now.getTime() > this.nextUpdate.getTime()) {
                     if (!this.clear) {
-                        for (MessageListener listener : MessageManager.this.listeners) {
-                            listener.clear();
+                        for (Listener listener : MessageManager.this.listeners) {
+                            listener.messagesCleared();
                         }
 
                         this.clear = true;
@@ -46,7 +51,7 @@ public class MessageManager {
                             String message =
                                 MessageManager.this.messageQueue.remove(0);
 
-                            for (MessageListener listener : MessageManager.this.listeners) {
+                            for (Listener listener : MessageManager.this.listeners) {
                                 listener.messageReceived(messageType, message);
                             }
 
@@ -66,11 +71,11 @@ public class MessageManager {
         }
     }
 
-    public void addMessageListener(MessageListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeMessageListener(MessageListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

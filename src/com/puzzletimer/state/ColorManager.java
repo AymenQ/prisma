@@ -7,11 +7,15 @@ import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.ColorScheme.FaceColor;
 
 public class ColorManager {
-    private ArrayList<ColorListener> listeners;
+    public static class Listener {
+        public void colorSchemeUpdated(ColorScheme colorScheme) { }
+    }
+
+    private ArrayList<Listener> listeners;
     private HashMap<String, ColorScheme> colorSchemeMap;
 
     public ColorManager(ColorScheme[] colorSchemes) {
-        this.listeners = new ArrayList<ColorListener>();
+        this.listeners = new ArrayList<Listener>();
 
         this.colorSchemeMap = new HashMap<String, ColorScheme>();
         for (ColorScheme colorScheme : colorSchemes) {
@@ -29,16 +33,16 @@ public class ColorManager {
 
     public void setColorScheme(ColorScheme colorScheme) {
         this.colorSchemeMap.put(colorScheme.getPuzzleId(), colorScheme);
-        for (ColorListener listener : this.listeners) {
+        for (Listener listener : this.listeners) {
             listener.colorSchemeUpdated(colorScheme);
         }
     }
 
-    public void addColorListener(ColorListener listener) {
+    public void addListener(Listener listener) {
         this.listeners.add(listener);
     }
 
-    public void removeColorListener(ColorListener listener) {
+    public void removeListener(Listener listener) {
         this.listeners.remove(listener);
     }
 }

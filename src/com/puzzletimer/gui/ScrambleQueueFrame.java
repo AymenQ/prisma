@@ -40,9 +40,7 @@ import com.puzzletimer.parsers.ScrambleParser;
 import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
-import com.puzzletimer.state.ScrambleListener;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.util.StringUtils;
 
@@ -72,7 +70,7 @@ public class ScrambleQueueFrame extends JFrame {
         createComponents();
 
         // on category change
-        categoryManager.addCategoryListener(new CategoryListener() {
+        categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void categoriesUpdated(Category[] categories, Category currentCategory) {
                 // title
@@ -98,7 +96,7 @@ public class ScrambleQueueFrame extends JFrame {
         categoryManager.notifyListeners();
 
         // on queue update
-        scrambleManager.addScrambleListener(new ScrambleListener() {
+        scrambleManager.addListener(new ScrambleManager.Listener() {
             @Override
             public void scrambleQueueUpdated(Scramble[] queue) {
                 updateTable(queue);

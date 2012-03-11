@@ -36,18 +36,13 @@ import com.puzzletimer.models.Timing;
 import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.state.CategoryListener;
 import com.puzzletimer.state.CategoryManager;
-import com.puzzletimer.state.ColorListener;
 import com.puzzletimer.state.ColorManager;
-import com.puzzletimer.state.ConfigurationListener;
 import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.state.MessageManager;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SessionManager;
-import com.puzzletimer.state.SolutionListener;
 import com.puzzletimer.state.SolutionManager;
-import com.puzzletimer.state.TimerListener;
 import com.puzzletimer.state.TimerManager;
 import com.puzzletimer.state.MessageManager.MessageType;
 import com.puzzletimer.statistics.Best;
@@ -171,7 +166,7 @@ public class Main {
 
         // configuration manager
         this.configurationManager = new ConfigurationManager(this.configurationDAO.getAll());
-        this.configurationManager.addConfigurationListener(new ConfigurationListener() {
+        this.configurationManager.addListener(new ConfigurationManager.Listener() {
             @Override
             public void configurationEntryUpdated(String key, String value) {
                 try {
@@ -189,7 +184,7 @@ public class Main {
         this.timerManager = new TimerManager();
         this.timerManager.setInspectionEnabled(
             this.configurationManager.getConfiguration("INSPECTION-TIME-ENABLED").equals("TRUE"));
-        this.timerManager.addTimerListener(new TimerListener() {
+        this.timerManager.addListener(new TimerManager.Listener() {
             @Override
             public void solutionFinished(Timing timing, String penalty) {
                 // add solution
@@ -267,7 +262,7 @@ public class Main {
 
         // color manager
         this.colorManager = new ColorManager(this.colorDAO.getAll());
-        this.colorManager.addColorListener(new ColorListener() {
+        this.colorManager.addListener(new ColorManager.Listener() {
             @Override
             public void colorSchemeUpdated(ColorScheme colorScheme) {
                 try {
@@ -306,7 +301,7 @@ public class Main {
         }
 
         this.categoryManager = new CategoryManager(categories, currentCategory);
-        this.categoryManager.addCategoryListener(new CategoryListener() {
+        this.categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void currentCategoryChanged(Category category) {
                 Main.this.configurationManager.setConfiguration(
@@ -362,7 +357,7 @@ public class Main {
         this.scrambleManager = new ScrambleManager(
             this.scramblerProvider,
             this.scramblerProvider.get(currentCategory.getScramblerId()));
-        this.categoryManager.addCategoryListener(new CategoryListener() {
+        this.categoryManager.addListener(new CategoryManager.Listener() {
             @Override
             public void currentCategoryChanged(Category category) {
                 Main.this.scrambleManager.setCategory(category);
@@ -374,7 +369,7 @@ public class Main {
 
         // solution manager
         this.solutionManager = new SolutionManager();
-        this.solutionManager.addSolutionListener(new SolutionListener() {
+        this.solutionManager.addListener(new SolutionManager.Listener() {
             @Override
             public void solutionAdded(Solution solution) {
                 Main.this.sessionManager.addSolution(solution);
