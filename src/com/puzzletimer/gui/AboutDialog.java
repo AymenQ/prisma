@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.graphics.Panel3D;
-import com.puzzletimer.graphics.algebra.Vector3;
+import com.puzzletimer.graphics.Vector3;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.ColorScheme.FaceColor;
 import com.puzzletimer.puzzles.Puzzle;
@@ -34,20 +34,22 @@ public class AboutDialog extends JDialog {
         setLayout(new MigLayout("", "", ""));
 
         // panel3D
-        Panel3D panel3D = new Panel3D();
-        panel3D.cameraPosition = new Vector3(0, 0, -4.5);
         Puzzle puzzle = new RubiksCube();
-        FaceColor[] faceColors = {
-            new FaceColor("RUBIKS-CUBE", "FACE-B", null, new Color(255, 255, 255)),
-            new FaceColor("RUBIKS-CUBE", "FACE-D", null, new Color(255, 255, 255)),
-            new FaceColor("RUBIKS-CUBE", "FACE-F", null, new Color(255, 255, 255)),
-            new FaceColor("RUBIKS-CUBE", "FACE-L", null, new Color(255, 255, 255)),
-            new FaceColor("RUBIKS-CUBE", "FACE-R", null, new Color(255, 255, 255)),
-            new FaceColor("RUBIKS-CUBE", "FACE-U", null, new Color(255, 255, 255)),
-        };
-        panel3D.mesh = puzzle.getScrambledPuzzleMesh(
-            new ColorScheme(null, faceColors),
-            new String[] { });
+        ColorScheme colorScheme =
+            new ColorScheme(
+                "RUBIKS-CUBE",
+                new FaceColor[] {
+                    new FaceColor("RUBIKS-CUBE", "FACE-B", null, new Color(255, 255, 255)),
+                    new FaceColor("RUBIKS-CUBE", "FACE-D", null, new Color(255, 255, 255)),
+                    new FaceColor("RUBIKS-CUBE", "FACE-F", null, new Color(255, 255, 255)),
+                    new FaceColor("RUBIKS-CUBE", "FACE-L", null, new Color(255, 255, 255)),
+                    new FaceColor("RUBIKS-CUBE", "FACE-R", null, new Color(255, 255, 255)),
+                    new FaceColor("RUBIKS-CUBE", "FACE-U", null, new Color(255, 255, 255)),
+                });
+
+        Panel3D panel3D = new Panel3D();
+        panel3D.setCameraPosition(new Vector3(0, 0, -4.5));
+        panel3D.setMesh(puzzle.getScrambledPuzzleMesh(colorScheme, new String[] { }));
         add(panel3D, "width 125, height 125, spany");
 
         // labelPrismaPuzzleTimer

@@ -1,14 +1,13 @@
 package com.puzzletimer.puzzles;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.puzzletimer.graphics.Face;
+import com.puzzletimer.graphics.Matrix44;
 import com.puzzletimer.graphics.Mesh;
-import com.puzzletimer.graphics.algebra.Matrix44;
-import com.puzzletimer.graphics.algebra.Vector3;
+import com.puzzletimer.graphics.Vector3;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 import com.puzzletimer.solvers.RubiksClockSolver;
@@ -102,47 +101,43 @@ public class RubiksClock implements Puzzle {
     }
 
     private Mesh circle(double radius, int nVertices, Color color) {
-        ArrayList<Vector3> vertices = new ArrayList<Vector3>();
-        for (int i = 0; i < nVertices; i++) {
+        Vector3[] vertices = new Vector3[nVertices];
+        for (int i = 0; i < vertices.length; i++) {
             double x = radius * Math.cos(-2 * Math.PI * i / nVertices);
             double y = radius * Math.sin(-2 * Math.PI * i / nVertices);
-            vertices.add(new Vector3(x, y, 0));
+            vertices[i] = new Vector3(x, y, 0);
         }
 
-        ArrayList<Integer> vertexIndices = new ArrayList<Integer>();
-        for (int i = 0; i < nVertices; i++) {
-            vertexIndices.add(i);
-        }
+        Face[] faces = {
+            new Face(vertices, color),
+        };
 
-        ArrayList<Face> faces = new ArrayList<Face>();
-        faces.add(new Face(vertexIndices, color));
-
-        return new Mesh(vertices, faces);
+        return new Mesh(faces);
     }
 
     private Mesh hand(double radius1, int nVertices1, double radius2, int nVertices2, double height, Color color) {
-        ArrayList<Vector3> vertices = new ArrayList<Vector3>();
+        Vector3[] vertices = new Vector3[nVertices1 + nVertices2];
+        int next = 0;
+
         for (int i = 0; i < nVertices1; i++) {
             double x = radius1 * Math.cos(-Math.PI * i / (nVertices1 - 1));
             double y = radius1 * Math.sin(-Math.PI * i / (nVertices1 - 1));
-            vertices.add(new Vector3(x, y, 0));
+            vertices[next] = new Vector3(x, y, 0);
+            next++;
         }
 
         for (int i = 0; i < nVertices2; i++) {
             double x = radius2 * Math.cos(Math.PI - Math.PI * i / (nVertices2 - 1));
             double y = radius2 * Math.sin(Math.PI - Math.PI * i / (nVertices2 - 1));
-            vertices.add(new Vector3(x, y + height, 0));
+            vertices[next] = new Vector3(x, y + height, 0);
+            next++;
         }
 
-        ArrayList<Integer> vertexIndices = new ArrayList<Integer>();
-        for (int i = 0; i < nVertices1 + nVertices2; i++) {
-            vertexIndices.add(i);
-        }
+        Face[] faces = {
+            new Face(vertices, color),
+        };
 
-        ArrayList<Face> faces = new ArrayList<Face>();
-        faces.add(new Face(vertexIndices, color));
-
-        return new Mesh(vertices, faces);
+        return new Mesh(faces);
     }
 
     @Override
@@ -161,7 +156,7 @@ public class RubiksClock implements Puzzle {
             handBackground.union(handForeground);
 
         // front
-        Mesh front = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
+        Mesh front = new Mesh(new Face[0]);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -192,7 +187,7 @@ public class RubiksClock implements Puzzle {
         }
 
         // back
-        Mesh back = new Mesh(new ArrayList<Vector3>(), new ArrayList<Face>());
+        Mesh back = new Mesh(new Face[0]);
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {

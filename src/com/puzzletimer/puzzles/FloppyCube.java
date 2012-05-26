@@ -3,10 +3,10 @@ package com.puzzletimer.puzzles;
 import java.awt.Color;
 import java.util.HashMap;
 
+import com.puzzletimer.graphics.Matrix44;
 import com.puzzletimer.graphics.Mesh;
-import com.puzzletimer.graphics.algebra.Matrix44;
-import com.puzzletimer.graphics.algebra.Vector3;
-import com.puzzletimer.graphics.geometry.Plane;
+import com.puzzletimer.graphics.Plane;
+import com.puzzletimer.graphics.Vector3;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 
@@ -66,16 +66,14 @@ public class FloppyCube implements Puzzle {
             .softenFaces(0.005);
 
         HashMap<String, Twist> twists = new HashMap<String, Twist>();
-        twists.put("L",  new Twist(planeL,  Math.PI));
-        twists.put("R",  new Twist(planeR,  Math.PI));
-        twists.put("D",  new Twist(planeD,  Math.PI));
-        twists.put("U",  new Twist(planeU,  Math.PI));
+        twists.put("L", new Twist(planeL, Math.PI));
+        twists.put("R", new Twist(planeR, Math.PI));
+        twists.put("D", new Twist(planeD, Math.PI));
+        twists.put("U", new Twist(planeU, Math.PI));
 
         for (String move : sequence) {
             Twist t = twists.get(move);
-            mesh = mesh.transformHalfspace(
-                Matrix44.rotation(t.plane.n, t.angle),
-                t.plane);
+            mesh = mesh.rotateHalfspace(t.plane, t.angle);
         }
 
         return mesh

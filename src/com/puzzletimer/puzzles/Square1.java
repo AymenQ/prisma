@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.puzzletimer.graphics.Matrix44;
 import com.puzzletimer.graphics.Mesh;
-import com.puzzletimer.graphics.algebra.Matrix44;
-import com.puzzletimer.graphics.algebra.Vector3;
-import com.puzzletimer.graphics.geometry.Plane;
+import com.puzzletimer.graphics.Plane;
+import com.puzzletimer.graphics.Vector3;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 
@@ -94,22 +94,16 @@ public class Square1 implements Puzzle {
         Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
         for (String m : sequence) {
             if (m.equals("/")) {
-                cube = cube.transformHalfspace(
-                    Matrix44.rotation(planeR.n, Math.PI),
-                    planeR);
+                cube = cube.rotateHalfspace(planeR, Math.PI);
             } else {
                 Matcher matcher = p.matcher(m.toString());
                 matcher.find();
 
                 int top = Integer.parseInt(matcher.group(1));
-                cube = cube.transformHalfspace(
-                    Matrix44.rotation(planeU.n, top * Math.PI / 6),
-                    planeU);
+                cube = cube.rotateHalfspace(planeU, top * Math.PI / 6);
 
                 int bottom = Integer.parseInt(matcher.group(2));
-                cube = cube.transformHalfspace(
-                        Matrix44.rotation(planeD.n, bottom * Math.PI / 6),
-                        planeD);
+                cube = cube.rotateHalfspace(planeD, bottom * Math.PI / 6);
             }
         }
 

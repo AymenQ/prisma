@@ -3,10 +3,10 @@ package com.puzzletimer.puzzles;
 import java.awt.Color;
 import java.util.HashMap;
 
+import com.puzzletimer.graphics.Matrix44;
 import com.puzzletimer.graphics.Mesh;
-import com.puzzletimer.graphics.algebra.Matrix44;
-import com.puzzletimer.graphics.algebra.Vector3;
-import com.puzzletimer.graphics.geometry.Plane;
+import com.puzzletimer.graphics.Plane;
+import com.puzzletimer.graphics.Vector3;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.PuzzleInfo;
 
@@ -60,30 +60,28 @@ public class RubiksPocketCube implements Puzzle {
             .softenFaces(0.01);
 
         HashMap<String, Twist> twists = new HashMap<String, Twist>();
-        twists.put("L",   new Twist(planeL,   Math.PI / 2));
-        twists.put("L2",  new Twist(planeL,   Math.PI));
-        twists.put("L'",  new Twist(planeL,  -Math.PI / 2));
-        twists.put("R",   new Twist(planeR,   Math.PI / 2));
-        twists.put("R2",  new Twist(planeR,   Math.PI));
-        twists.put("R'",  new Twist(planeR,  -Math.PI / 2));
-        twists.put("D",   new Twist(planeD,   Math.PI / 2));
-        twists.put("D2",  new Twist(planeD,   Math.PI));
-        twists.put("D'",  new Twist(planeD,  -Math.PI / 2));
-        twists.put("U",   new Twist(planeU,   Math.PI / 2));
-        twists.put("U2",  new Twist(planeU,   Math.PI));
-        twists.put("U'",  new Twist(planeU,  -Math.PI / 2));
-        twists.put("F",   new Twist(planeF,   Math.PI / 2));
-        twists.put("F2",  new Twist(planeF,   Math.PI));
-        twists.put("F'",  new Twist(planeF,  -Math.PI / 2));
-        twists.put("B",   new Twist(planeB,   Math.PI / 2));
-        twists.put("B2",  new Twist(planeB,   Math.PI));
-        twists.put("B'",  new Twist(planeB,  -Math.PI / 2));
+        twists.put("L",  new Twist(planeL,  Math.PI / 2));
+        twists.put("L2", new Twist(planeL,  Math.PI));
+        twists.put("L'", new Twist(planeL, -Math.PI / 2));
+        twists.put("R",  new Twist(planeR,  Math.PI / 2));
+        twists.put("R2", new Twist(planeR,  Math.PI));
+        twists.put("R'", new Twist(planeR, -Math.PI / 2));
+        twists.put("D",  new Twist(planeD,  Math.PI / 2));
+        twists.put("D2", new Twist(planeD,  Math.PI));
+        twists.put("D'", new Twist(planeD, -Math.PI / 2));
+        twists.put("U",  new Twist(planeU,  Math.PI / 2));
+        twists.put("U2", new Twist(planeU,  Math.PI));
+        twists.put("U'", new Twist(planeU, -Math.PI / 2));
+        twists.put("F",  new Twist(planeF,  Math.PI / 2));
+        twists.put("F2", new Twist(planeF,  Math.PI));
+        twists.put("F'", new Twist(planeF, -Math.PI / 2));
+        twists.put("B",  new Twist(planeB,  Math.PI / 2));
+        twists.put("B2", new Twist(planeB,  Math.PI));
+        twists.put("B'", new Twist(planeB, -Math.PI / 2));
 
         for (String move : sequence) {
             Twist t = twists.get(move);
-            mesh = mesh.transformHalfspace(
-                Matrix44.rotation(t.plane.n, t.angle),
-                t.plane);
+            mesh = mesh.rotateHalfspace(t.plane, t.angle);
         }
 
         return mesh

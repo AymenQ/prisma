@@ -27,7 +27,7 @@ import javax.swing.table.TableCellRenderer;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.graphics.Panel3D;
-import com.puzzletimer.graphics.algebra.Vector3;
+import com.puzzletimer.graphics.Vector3;
 import com.puzzletimer.models.ColorScheme;
 import com.puzzletimer.models.ColorScheme.FaceColor;
 import com.puzzletimer.puzzles.Puzzle;
@@ -180,7 +180,7 @@ public class ColorSchemeFrame extends JFrame {
         this.panel3D = new Panel3D();
         this.panel3D.setMinimumSize(new Dimension(300, 300));
         this.panel3D.setPreferredSize(this.panel3D.getMinimumSize());
-        this.panel3D.cameraPosition = new Vector3(0d, 0d, -2d);
+        this.panel3D.setCameraPosition(new Vector3(0d, 0d, -2d));
         add(this.panel3D, "growx, span, wrap");
 
         // labelColors
@@ -189,7 +189,6 @@ public class ColorSchemeFrame extends JFrame {
         // table
         this.table = new JTable();
         this.table.setShowVerticalLines(false);
-        //this.table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         JScrollPane scrollPane = new JScrollPane(this.table);
         this.table.setFillsViewportHeight(true);
@@ -227,8 +226,7 @@ public class ColorSchemeFrame extends JFrame {
 
     private void update(Puzzle puzzle, ColorScheme colorScheme) {
         // puzzle viewer
-        this.panel3D.mesh = puzzle.getScrambledPuzzleMesh(colorScheme, new String[] { });
-        this.panel3D.repaint();
+        this.panel3D.setMesh(puzzle.getScrambledPuzzleMesh(colorScheme, new String[] { }));
 
         // color table
         this.table.setDefaultRenderer(Color.class, new ColorRenderer());

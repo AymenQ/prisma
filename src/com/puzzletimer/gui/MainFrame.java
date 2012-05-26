@@ -543,8 +543,7 @@ public class MainFrame extends JFrame {
             Scrambler scrambler = this.scramblerProvider.get(scramble.getScramblerId());
             Puzzle puzzle = this.puzzleProvider.get(scrambler.getScramblerInfo().getPuzzleId());
             ColorScheme colorScheme = this.colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
-            this.panel3D.mesh = puzzle.getScrambledPuzzleMesh(colorScheme, scramble.getSequence());
-            this.panel3D.repaint();
+            this.panel3D.setMesh(puzzle.getScrambledPuzzleMesh(colorScheme, scramble.getSequence()));
         }
     }
 
