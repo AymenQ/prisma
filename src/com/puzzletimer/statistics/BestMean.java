@@ -1,6 +1,7 @@
 package com.puzzletimer.statistics;
 
 import com.puzzletimer.models.Solution;
+import com.puzzletimer.util.SolutionUtils;
 
 public class BestMean implements StatisticalMeasure {
     private int minimumWindowSize;
@@ -35,18 +36,28 @@ public class BestMean implements StatisticalMeasure {
 
     @Override
     public void setSolutions(Solution[] solutions) {
-        Mean mean = new Mean(this.minimumWindowSize, this.minimumWindowSize);
+        long[] times = SolutionUtils.realTimes(solutions, false);
 
         long bestMean = Long.MAX_VALUE;
-        for (int i = 0; i < solutions.length - this.minimumWindowSize + 1; i++) {
-            Solution[] window = new Solution[this.minimumWindowSize];
+        for (int i = 0; i < times.length - this.minimumWindowSize + 1; i++) {
+            long sum = 0;
             for (int j = 0; j < this.minimumWindowSize; j++) {
-                window[j] = solutions[i + j];
+                if (times[i + j] == Long.MAX_VALUE) {
+                    sum = Long.MAX_VALUE;
+                    break;
+                }
+
+                sum += times[i + j];
             }
 
-            mean.setSolutions(window);
-            if (mean.getValue() < bestMean) {
-                bestMean = mean.getValue();
+            if (sum == Long.MAX_VALUE) {
+                continue;
+            }
+
+            long mean = sum / this.minimumWindowSize;
+
+            if (mean < bestMean) {
+                bestMean = mean;
                 this.windowPosition = i;
             }
         }
