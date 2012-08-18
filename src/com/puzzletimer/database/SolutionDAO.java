@@ -17,7 +17,6 @@ import com.puzzletimer.parsers.ScrambleParser;
 import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.util.StringUtils;
 
 public class SolutionDAO {
     private Connection connection;
@@ -89,7 +88,7 @@ public class SolutionDAO {
                 statement.setString(1, solution.getSolutionId().toString());
                 statement.setString(2, solution.getCategoryId().toString());
                 statement.setString(3, solution.getScramble().getScramblerId());
-                statement.setString(4, StringUtils.join(" ", solution.getScramble().getSequence()));
+                statement.setString(4, solution.getScramble().getRawSequence());
                 statement.setTimestamp(5, new Timestamp(solution.getTiming().getStart().getTime()));
                 statement.setTimestamp(6, new Timestamp(solution.getTiming().getEnd().getTime()));
                 statement.setString(7, solution.getPenalty());

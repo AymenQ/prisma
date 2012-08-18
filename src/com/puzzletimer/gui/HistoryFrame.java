@@ -56,7 +56,6 @@ import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.util.SolutionUtils;
-import com.puzzletimer.util.StringUtils;
 
 @SuppressWarnings("serial")
 public class HistoryFrame extends JFrame {
@@ -769,7 +768,7 @@ public class HistoryFrame extends JFrame {
                 sStart,
                 sTime,
                 solutions[i].getPenalty(),
-                StringUtils.join(" ", solutions[i].getScramble().getSequence()),
+                solutions[i].getScramble().getRawSequence(),
             });
         }
     }

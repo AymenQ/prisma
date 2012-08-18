@@ -42,7 +42,6 @@ import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ScrambleManager;
-import com.puzzletimer.util.StringUtils;
 
 @SuppressWarnings("serial")
 public class ScrambleQueueFrame extends JFrame {
@@ -370,7 +369,7 @@ public class ScrambleQueueFrame extends JFrame {
         for (int i = 0; i < queue.length; i++) {
             tableModel.addRow(new Object[] {
                 i + 1,
-                StringUtils.join(" ", queue[i].getSequence()),
+                queue[i].getRawSequence(),
             });
         }
     }
@@ -420,7 +419,7 @@ public class ScrambleQueueFrame extends JFrame {
         OutputStreamWriter writer = new OutputStreamWriter(fileOutputStream, "UTF-8");
 
         for (Scramble scramble : scrambles) {
-            writer.append(StringUtils.join(" ", scramble.getSequence()));
+            writer.append(scramble.getRawSequence());
             writer.append("\r\n");
         }
 

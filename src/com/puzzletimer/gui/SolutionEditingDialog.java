@@ -25,7 +25,6 @@ import net.miginfocom.swing.MigLayout;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
 import com.puzzletimer.util.SolutionUtils;
-import com.puzzletimer.util.StringUtils;
 
 @SuppressWarnings("serial")
 public class SolutionEditingDialog extends JDialog {
@@ -82,7 +81,7 @@ public class SolutionEditingDialog extends JDialog {
         this.comboBoxPenalty.setSelectedItem(solution.getPenalty());
 
         // scramble
-        this.textFieldScramble.setText(StringUtils.join(" ", solution.getScramble().getSequence()));
+        this.textFieldScramble.setText(solution.getScramble().getRawSequence());
         this.textFieldScramble.setCaretPosition(0);
 
         // ok button
