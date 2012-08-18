@@ -755,9 +755,10 @@ public class HistoryFrame extends JFrame {
             indexColumn.setPreferredWidth(columnsWidth[i]);
         }
 
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+
         for (int i = 0; i < solutions.length; i++) {
             // start
-            DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
             String sStart = dateFormat.format(solutions[i].getTiming().getStart());
 
             // time
