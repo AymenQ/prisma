@@ -20,10 +20,12 @@ public class SolutionUtils {
 
         time = (time + 5) / 10;
 
-        return sign + String.format(
-            Locale.ENGLISH,
-            "%.2f",
-            time / 100.0);
+        long seconds = time / 100;
+        long centiseconds = time % 100;
+
+        return sign +
+               seconds + "." +
+               (centiseconds < 10 ? "0" + centiseconds : centiseconds);
     }
 
     public static String formatMinutes(long time) {
@@ -39,11 +41,14 @@ public class SolutionUtils {
 
         time = (time + 5) / 10;
 
-        return sign + String.format(
-            Locale.ENGLISH,
-            "%02d:%05.2f",
-            time / 6000,
-            (time % 6000) / 100.0);
+        long minutes = time / 6000;
+        long seconds = (time / 100) % 60;
+        long centiseconds = time % 100;
+
+        return sign +
+               (minutes < 10 ? "0" + minutes : minutes) + ":" +
+               (seconds < 10 ? "0" + seconds : seconds) + "." +
+               (centiseconds < 10 ? "0" + centiseconds : centiseconds);
     }
 
     public static String format(long time) {
@@ -63,11 +68,14 @@ public class SolutionUtils {
 
         time = (time + 5) / 10;
 
-        return sign + String.format(
-            Locale.ENGLISH,
-            "%d:%05.2f",
-            time / 6000,
-            (time % 6000) / 100.0);
+        long minutes = time / 6000;
+        long seconds = (time / 100) % 60;
+        long centiseconds = time % 100;
+
+        return sign +
+               minutes + ":" +
+               (seconds < 10 ? "0" + seconds : seconds) + "." +
+               (centiseconds < 10 ? "0" + centiseconds : centiseconds);
     }
 
     public static long parseTime(String input) {
