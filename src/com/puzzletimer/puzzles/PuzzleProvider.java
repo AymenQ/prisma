@@ -14,6 +14,8 @@ public class PuzzleProvider {
             new ProfessorsCube(),
             new VCube6(),
             new VCube7(),
+            new SS8(),
+            new SS9(),
             new RubiksClock(),
             new Megaminx(),
             new Pyraminx(),

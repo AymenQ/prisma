@@ -802,12 +802,14 @@ public class MainFrame extends JFrame {
                     new BuiltInCategory(categories[8], 'B', '\0'),
                     new BuiltInCategory(categories[9], '6', '6'),
                     new BuiltInCategory(categories[10], '7', '7'),
-                    new BuiltInCategory(categories[11], 'C', 'K'),
-                    new BuiltInCategory(categories[12], 'M', 'M'),
-                    new BuiltInCategory(categories[13], 'P', 'P'),
-                    new BuiltInCategory(categories[14], 'S', '1'),
-                    new BuiltInCategory(categories[15], 'M', 'G'),
-                    new BuiltInCategory(categories[16], 'M', 'A'),
+                    new BuiltInCategory(categories[11], '8', '8'),
+                    new BuiltInCategory(categories[12], '9', '9'),
+                    new BuiltInCategory(categories[13], 'C', 'K'),
+                    new BuiltInCategory(categories[14], 'M', 'M'),
+                    new BuiltInCategory(categories[15], 'P', 'P'),
+                    new BuiltInCategory(categories[16], 'S', '1'),
+                    new BuiltInCategory(categories[17], 'M', 'G'),
+                    new BuiltInCategory(categories[18], 'M', 'A')
                 };
 
                 for (final BuiltInCategory builtInCategory : builtInCategories) {
