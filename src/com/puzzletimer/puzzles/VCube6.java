@@ -89,71 +89,54 @@ public class VCube6 implements Puzzle {
         twists.put("L",   new Twist(planeL,   Math.PI / 2));
         twists.put("2L",  new Twist(planeL2,  Math.PI / 2));
         twists.put("3L",  new Twist(planeL3,  Math.PI / 2));
-        
         twists.put("L2",  new Twist(planeL,   Math.PI));
         twists.put("2L2", new Twist(planeL2,  Math.PI));
         twists.put("3L2", new Twist(planeL3,  Math.PI));
-        
         twists.put("L'",  new Twist(planeL,  -Math.PI / 2));
         twists.put("2L'", new Twist(planeL2, -Math.PI / 2));
         twists.put("3L'", new Twist(planeL3, -Math.PI / 2));
-        
         twists.put("R",   new Twist(planeR,   Math.PI / 2));
         twists.put("2R",  new Twist(planeR2,  Math.PI / 2));
         twists.put("3R",  new Twist(planeR3,  Math.PI / 2));
-        
         twists.put("R2",  new Twist(planeR,   Math.PI));
         twists.put("2R2", new Twist(planeR2,  Math.PI));
         twists.put("3R2", new Twist(planeR3,  Math.PI));
-        
         twists.put("R'",  new Twist(planeR,  -Math.PI / 2));
         twists.put("2R'", new Twist(planeR2, -Math.PI / 2));
         twists.put("3R'", new Twist(planeR3, -Math.PI / 2));
-        
         twists.put("D",   new Twist(planeD,   Math.PI / 2));
         twists.put("2D",  new Twist(planeD2,  Math.PI / 2));
         twists.put("3D",  new Twist(planeD3,  Math.PI / 2));
-        
         twists.put("D2",  new Twist(planeD,   Math.PI));
         twists.put("2D2", new Twist(planeD2,  Math.PI));
         twists.put("3D2", new Twist(planeD3,  Math.PI));
-        
         twists.put("D'",  new Twist(planeD,  -Math.PI / 2));
         twists.put("2D'", new Twist(planeD2, -Math.PI / 2));
         twists.put("3D'", new Twist(planeD3, -Math.PI / 2));
-        
         twists.put("U",   new Twist(planeU,   Math.PI / 2));
         twists.put("2U",  new Twist(planeU2,  Math.PI / 2));
         twists.put("3U",  new Twist(planeU3,  Math.PI / 2));
-        
         twists.put("U2",  new Twist(planeU,   Math.PI));
         twists.put("2U2", new Twist(planeU2,  Math.PI));
         twists.put("3U2", new Twist(planeU3,  Math.PI));
-        
         twists.put("U'",  new Twist(planeU,  -Math.PI / 2));
         twists.put("2U'", new Twist(planeU2, -Math.PI / 2));
         twists.put("3U'", new Twist(planeU3, -Math.PI / 2));
-        
         twists.put("F",   new Twist(planeF,   Math.PI / 2));
         twists.put("2F",  new Twist(planeF2,  Math.PI / 2));
         twists.put("3F",  new Twist(planeF3,  Math.PI / 2));
-        
         twists.put("F2",  new Twist(planeF,   Math.PI));
         twists.put("2F2", new Twist(planeF2,  Math.PI));
         twists.put("3F2", new Twist(planeF3,  Math.PI));
-        
         twists.put("F'",  new Twist(planeF,  -Math.PI / 2));
         twists.put("2F'", new Twist(planeF2, -Math.PI / 2));
         twists.put("3F'", new Twist(planeF3, -Math.PI / 2));
-        
         twists.put("B",   new Twist(planeB,   Math.PI / 2));
         twists.put("2B",  new Twist(planeB2,  Math.PI / 2));
         twists.put("3B",  new Twist(planeB3,  Math.PI / 2));
-        
         twists.put("B2",  new Twist(planeB,   Math.PI));
         twists.put("2B2", new Twist(planeB2,  Math.PI));
         twists.put("3B2", new Twist(planeB3,  Math.PI));
-        
         twists.put("B'",  new Twist(planeB,  -Math.PI / 2));
         twists.put("2B'", new Twist(planeB2, -Math.PI / 2));
         twists.put("3B'", new Twist(planeB3, -Math.PI / 2));
