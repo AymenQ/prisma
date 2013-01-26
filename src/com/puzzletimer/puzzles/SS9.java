@@ -3,7 +3,6 @@ package com.puzzletimer.puzzles;
 import java.awt.Color;
 import java.util.HashMap;
 
-import com.puzzletimer.graphics.Face;
 import com.puzzletimer.graphics.Matrix44;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.Plane;
@@ -45,30 +44,30 @@ public class SS9 implements Puzzle {
 
         Mesh mesh = Mesh.cube(colorArray);
 
-        Plane planeL  = new Plane(new Vector3(-0.470, 0, 0), new Vector3(-1, 0, 0));
-        Plane planeL2 = new Plane(new Vector3(-0.335, 0, 0), new Vector3(-1, 0, 0));
-        Plane planeL3 = new Plane(new Vector3(-0.200, 0, 0), new Vector3(-1, 0, 0));
-        Plane planeL4 = new Plane(new Vector3(-0.065, 0, 0), new Vector3(-1, 0, 0));
-        Plane planeR4 = new Plane(new Vector3( 0.065, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR3 = new Plane(new Vector3( 0.200, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR2 = new Plane(new Vector3( 0.335, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR  = new Plane(new Vector3( 0.470, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeD  = new Plane(new Vector3(0, -0.470, 0), new Vector3(0, -1, 0));
-        Plane planeD2 = new Plane(new Vector3(0, -0.335, 0), new Vector3(0, -1, 0));
-        Plane planeD3 = new Plane(new Vector3(0, -0.200, 0), new Vector3(0, -1, 0));
-        Plane planeD4 = new Plane(new Vector3(0, -0.065, 0), new Vector3(0, -1, 0));
-        Plane planeU4 = new Plane(new Vector3(0,  0.065, 0), new Vector3(0,  1, 0));
-        Plane planeU3 = new Plane(new Vector3(0,  0.200, 0), new Vector3(0,  1, 0));
-        Plane planeU2 = new Plane(new Vector3(0,  0.335, 0), new Vector3(0,  1, 0));
-        Plane planeU  = new Plane(new Vector3(0,  0.470, 0), new Vector3(0,  1, 0));
-        Plane planeF  = new Plane(new Vector3(0, 0, -0.470), new Vector3(0, 0, -1));
-        Plane planeF2 = new Plane(new Vector3(0, 0, -0.335), new Vector3(0, 0, -1));
-        Plane planeF3 = new Plane(new Vector3(0, 0, -0.200), new Vector3(0, 0, -1));
-        Plane planeF4 = new Plane(new Vector3(0, 0, -0.065), new Vector3(0, 0, -1));
-        Plane planeB4 = new Plane(new Vector3(0, 0,  0.065), new Vector3(0, 0,  1));
-        Plane planeB3 = new Plane(new Vector3(0, 0,  0.200), new Vector3(0, 0,  1));
-        Plane planeB2 = new Plane(new Vector3(0, 0,  0.335), new Vector3(0, 0,  1));
-        Plane planeB  = new Plane(new Vector3(0, 0,  0.470), new Vector3(0, 0,  1));
+        Plane planeL  = new Plane(new Vector3(-0.3888888889, 0, 0), new Vector3(-1, 0, 0));
+        Plane planeL2 = new Plane(new Vector3(-0.2777777778, 0, 0), new Vector3(-1, 0, 0));
+        Plane planeL3 = new Plane(new Vector3(-0.1666666667, 0, 0), new Vector3(-1, 0, 0));
+        Plane planeL4 = new Plane(new Vector3(-0.0555555556, 0, 0), new Vector3(-1, 0, 0));
+        Plane planeR4 = new Plane(new Vector3( 0.0555555556, 0, 0), new Vector3( 1, 0, 0));
+        Plane planeR3 = new Plane(new Vector3( 0.1666666667, 0, 0), new Vector3( 1, 0, 0));
+        Plane planeR2 = new Plane(new Vector3( 0.2777777778, 0, 0), new Vector3( 1, 0, 0));
+        Plane planeR  = new Plane(new Vector3( 0.3888888889, 0, 0), new Vector3( 1, 0, 0));
+        Plane planeD  = new Plane(new Vector3(0, -0.3888888889, 0), new Vector3(0, -1, 0));
+        Plane planeD2 = new Plane(new Vector3(0, -0.2777777778, 0), new Vector3(0, -1, 0));
+        Plane planeD3 = new Plane(new Vector3(0, -0.1666666667, 0), new Vector3(0, -1, 0));
+        Plane planeD4 = new Plane(new Vector3(0, -0.0555555556, 0), new Vector3(0, -1, 0));
+        Plane planeU4 = new Plane(new Vector3(0,  0.0555555556, 0), new Vector3(0,  1, 0));
+        Plane planeU3 = new Plane(new Vector3(0,  0.1666666667, 0), new Vector3(0,  1, 0));
+        Plane planeU2 = new Plane(new Vector3(0,  0.2777777778, 0), new Vector3(0,  1, 0));
+        Plane planeU  = new Plane(new Vector3(0,  0.3888888889, 0), new Vector3(0,  1, 0));
+        Plane planeF  = new Plane(new Vector3(0, 0, -0.3888888889), new Vector3(0, 0, -1));
+        Plane planeF2 = new Plane(new Vector3(0, 0, -0.2777777778), new Vector3(0, 0, -1));
+        Plane planeF3 = new Plane(new Vector3(0, 0, -0.1666666667), new Vector3(0, 0, -1));
+        Plane planeF4 = new Plane(new Vector3(0, 0, -0.0555555556), new Vector3(0, 0, -1));
+        Plane planeB4 = new Plane(new Vector3(0, 0,  0.0555555556), new Vector3(0, 0,  1));
+        Plane planeB3 = new Plane(new Vector3(0, 0,  0.1666666667), new Vector3(0, 0,  1));
+        Plane planeB2 = new Plane(new Vector3(0, 0,  0.2777777778), new Vector3(0, 0,  1));
+        Plane planeB  = new Plane(new Vector3(0, 0,  0.3888888889), new Vector3(0, 0,  1));
 
         mesh = mesh
             .cut(planeL,  0)
@@ -143,7 +142,7 @@ public class SS9 implements Puzzle {
         twists.put("U2",  new Twist(planeU,   Math.PI));
         twists.put("2U2", new Twist(planeU2,  Math.PI));
         twists.put("3U2", new Twist(planeU3,  Math.PI));
-        twists.put("4D2", new Twist(planeU4,  Math.PI));
+        twists.put("4U2", new Twist(planeU4,  Math.PI));
         twists.put("U'",  new Twist(planeU,  -Math.PI / 2));
         twists.put("2U'", new Twist(planeU2, -Math.PI / 2));
         twists.put("3U'", new Twist(planeU3, -Math.PI / 2));

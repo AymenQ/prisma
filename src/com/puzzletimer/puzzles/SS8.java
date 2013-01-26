@@ -3,7 +3,6 @@ package com.puzzletimer.puzzles;
 import java.awt.Color;
 import java.util.HashMap;
 
-import com.puzzletimer.graphics.Face;
 import com.puzzletimer.graphics.Matrix44;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.Plane;
@@ -45,55 +44,50 @@ public class SS8 implements Puzzle {
 
         Mesh mesh = Mesh.cube(colorArray);
 
-        Plane planeL  = new Plane(new Vector3(-0.2500, 0, 0), new Vector3(-1, 0, 0));
-        Plane planeL2 = new Plane(new Vector3(-0.1666, 0, 0), new Vector3(-1, 0, 0));
-        Plane planeL3 = new Plane(new Vector3(-0.0833, 0, 0), new Vector3(-1, 0, 0));
+        Plane planeL  = new Plane(new Vector3(-0.3750, 0, 0), new Vector3(-1, 0, 0));
+        Plane planeL2 = new Plane(new Vector3(-0.2500, 0, 0), new Vector3(-1, 0, 0));
+        Plane planeL3 = new Plane(new Vector3(-0.1250, 0, 0), new Vector3(-1, 0, 0));
         Plane planeL4 = new Plane(new Vector3(-0.0000, 0, 0), new Vector3(-1, 0, 0));
         Plane planeR4 = new Plane(new Vector3( 0.0000, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR3 = new Plane(new Vector3( 0.0833, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR2 = new Plane(new Vector3( 0.1666, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR  = new Plane(new Vector3( 0.2500, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeD  = new Plane(new Vector3(0, -0.2500, 0), new Vector3(0, -1, 0));
-        Plane planeD2 = new Plane(new Vector3(0, -0.1666, 0), new Vector3(0, -1, 0));
-        Plane planeD3 = new Plane(new Vector3(0, -0.0833, 0), new Vector3(0, -1, 0));
+        Plane planeR3 = new Plane(new Vector3( 0.1250, 0, 0), new Vector3( 1, 0, 0));
+        Plane planeR2 = new Plane(new Vector3( 0.2500, 0, 0), new Vector3( 1, 0, 0));
+        Plane planeR  = new Plane(new Vector3( 0.3750, 0, 0), new Vector3( 1, 0, 0));
+        Plane planeD  = new Plane(new Vector3(0, -0.3750, 0), new Vector3(0, -1, 0));
+        Plane planeD2 = new Plane(new Vector3(0, -0.2500, 0), new Vector3(0, -1, 0));
+        Plane planeD3 = new Plane(new Vector3(0, -0.1250, 0), new Vector3(0, -1, 0));
         Plane planeD4 = new Plane(new Vector3(0, -0.0000, 0), new Vector3(0, -1, 0));
         Plane planeU4 = new Plane(new Vector3(0,  0.0000, 0), new Vector3(0,  1, 0));
-        Plane planeU3 = new Plane(new Vector3(0,  0.0833, 0), new Vector3(0,  1, 0));
-        Plane planeU2 = new Plane(new Vector3(0,  0.1666, 0), new Vector3(0,  1, 0));
-        Plane planeU  = new Plane(new Vector3(0,  0.2500, 0), new Vector3(0,  1, 0));
-        Plane planeF  = new Plane(new Vector3(0, 0, -0.2500), new Vector3(0, 0, -1));
-        Plane planeF2 = new Plane(new Vector3(0, 0, -0.1666), new Vector3(0, 0, -1));
-        Plane planeF3 = new Plane(new Vector3(0, 0, -0.0833), new Vector3(0, 0, -1));
+        Plane planeU3 = new Plane(new Vector3(0,  0.1250, 0), new Vector3(0,  1, 0));
+        Plane planeU2 = new Plane(new Vector3(0,  0.2500, 0), new Vector3(0,  1, 0));
+        Plane planeU  = new Plane(new Vector3(0,  0.3750, 0), new Vector3(0,  1, 0));
+        Plane planeF  = new Plane(new Vector3(0, 0, -0.3750), new Vector3(0, 0, -1));
+        Plane planeF2 = new Plane(new Vector3(0, 0, -0.2500), new Vector3(0, 0, -1));
+        Plane planeF3 = new Plane(new Vector3(0, 0, -0.1250), new Vector3(0, 0, -1));
         Plane planeF4 = new Plane(new Vector3(0, 0, -0.0000), new Vector3(0, 0, -1));
         Plane planeB4 = new Plane(new Vector3(0, 0,  0.0000), new Vector3(0, 0,  1));
-        Plane planeB3 = new Plane(new Vector3(0, 0,  0.0833), new Vector3(0, 0,  1));
-        Plane planeB2 = new Plane(new Vector3(0, 0,  0.1666), new Vector3(0, 0,  1));
-        Plane planeB  = new Plane(new Vector3(0, 0,  0.2500), new Vector3(0, 0,  1));
+        Plane planeB3 = new Plane(new Vector3(0, 0,  0.1250), new Vector3(0, 0,  1));
+        Plane planeB2 = new Plane(new Vector3(0, 0,  0.2500), new Vector3(0, 0,  1));
+        Plane planeB  = new Plane(new Vector3(0, 0,  0.3750), new Vector3(0, 0,  1));
 
         mesh = mesh
             .cut(planeL,  0)
             .cut(planeL2, 0)
             .cut(planeL3, 0)
             .cut(planeL4, 0)
-            
             .cut(planeR3, 0)
             .cut(planeR2, 0)
             .cut(planeR,  0)
-            
             .cut(planeD,  0)
             .cut(planeD2, 0)
             .cut(planeD3, 0)
             .cut(planeD4, 0)
-            
             .cut(planeU3, 0)
             .cut(planeU2, 0)
             .cut(planeU,  0)
-            
             .cut(planeF,  0)
             .cut(planeF2, 0)
             .cut(planeF3, 0)
             .cut(planeF4, 0)
-            
             .cut(planeB3, 0)
             .cut(planeB2, 0)
             .cut(planeB,  0)
