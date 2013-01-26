@@ -47,11 +47,11 @@ interface CategoryEditorListener {
 @SuppressWarnings("serial")
 class CategoryEditorDialog extends JDialog {
     private JTextField textFieldDescription;
-    private JComboBox<PuzzleInfo> comboBoxPuzzle;
-    private JComboBox<ScramblerInfo> comboBoxScrambler;
-    private JComboBox<Tip> comboBoxTips;
+    private JComboBox comboBoxPuzzle;
+    private JComboBox comboBoxScrambler;
+    private JComboBox comboBoxTips;
     private JButton buttonAdd;
-    private JList<Object> listTips;
+    private JList listTips;
     private JButton buttonUp;
     private JButton buttonDown;
     private JButton buttonRemove;
