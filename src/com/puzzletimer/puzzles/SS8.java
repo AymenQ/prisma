@@ -75,26 +75,29 @@ public class SS8 implements Puzzle {
             .cut(planeL2, 0)
             .cut(planeL3, 0)
             .cut(planeL4, 0)
-            //.cut(planeR4, 0)
+            
             .cut(planeR3, 0)
             .cut(planeR2, 0)
             .cut(planeR,  0)
+            
             .cut(planeD,  0)
             .cut(planeD2, 0)
             .cut(planeD3, 0)
-            //.cut(planeD4, 0)
-            .cut(planeU4, 0)
+            .cut(planeD4, 0)
+            
             .cut(planeU3, 0)
             .cut(planeU2, 0)
             .cut(planeU,  0)
+            
             .cut(planeF,  0)
             .cut(planeF2, 0)
             .cut(planeF3, 0)
             .cut(planeF4, 0)
-            //.cut(planeB4, 0)
+            
             .cut(planeB3, 0)
             .cut(planeB2, 0)
             .cut(planeB,  0)
+            
             .shortenFaces(0.0175)
             .softenFaces(0.01)
             .softenFaces(0.005);
@@ -143,7 +146,7 @@ public class SS8 implements Puzzle {
         twists.put("U2",  new Twist(planeU,   Math.PI));
         twists.put("2U2", new Twist(planeU2,  Math.PI));
         twists.put("3U2", new Twist(planeU3,  Math.PI));
-        twists.put("4D2", new Twist(planeU4,  Math.PI));
+        twists.put("4U2", new Twist(planeU4,  Math.PI));
         twists.put("U'",  new Twist(planeU,  -Math.PI / 2));
         twists.put("2U'", new Twist(planeU2, -Math.PI / 2));
         twists.put("3U'", new Twist(planeU3, -Math.PI / 2));
@@ -174,9 +177,11 @@ public class SS8 implements Puzzle {
         twists.put("4B'", new Twist(planeB4, -Math.PI / 2));
 
         for (String move : sequence) {
-            Twist t = twists.get(move);
+        	Twist t = twists.get(move);
             mesh = mesh.rotateHalfspace(t.plane, t.angle);
         }
+        
+        System.out.println("\n");
 
         return mesh
             .transform(Matrix44.rotationY(-Math.PI / 6))

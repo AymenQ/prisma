@@ -69,18 +69,24 @@ public class VCube6 implements Puzzle {
             .cut(planeL,  0)
             .cut(planeL2, 0)
             .cut(planeL3, 0)
+            
             .cut(planeR2, 0)
             .cut(planeR,  0)
+            
             .cut(planeD,  0)
             .cut(planeD2, 0)
             .cut(planeD3, 0)
+            
             .cut(planeU2, 0)
             .cut(planeU,  0)
+            
             .cut(planeF,  0)
             .cut(planeF2, 0)
             .cut(planeF3, 0)
+            
             .cut(planeB2, 0)
             .cut(planeB,  0)
+            
             .shortenFaces(0.0175)
             .softenFaces(0.01)
             .softenFaces(0.005);
