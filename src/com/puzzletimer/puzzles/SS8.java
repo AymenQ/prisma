@@ -91,7 +91,6 @@ public class SS8 implements Puzzle {
             .cut(planeB3, 0)
             .cut(planeB2, 0)
             .cut(planeB,  0)
-            
             .shortenFaces(0.0175)
             .softenFaces(0.01)
             .softenFaces(0.005);

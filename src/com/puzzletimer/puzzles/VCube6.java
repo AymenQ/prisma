@@ -49,15 +49,13 @@ public class VCube6 implements Puzzle {
         Plane planeL3 = new Plane(new Vector3(-0.0000, 0, 0), new Vector3(-1, 0, 0));
         Plane planeR3 = new Plane(new Vector3( 0.0000, 0, 0), new Vector3( 1, 0, 0));
         Plane planeR2 = new Plane(new Vector3( 0.1666, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR  = new Plane(new Vector3( 0.3333, 0, 0), new Vector3( 1, 0, 0));
-        
+        Plane planeR  = new Plane(new Vector3( 0.3333, 0, 0), new Vector3( 1, 0, 0));  
         Plane planeD  = new Plane(new Vector3(0, -0.3333, 0), new Vector3(0, -1, 0));
         Plane planeD2 = new Plane(new Vector3(0, -0.1666, 0), new Vector3(0, -1, 0));
         Plane planeD3 = new Plane(new Vector3(0, -0.0000, 0), new Vector3(0, -1, 0));
         Plane planeU3 = new Plane(new Vector3(0,  0.0000, 0), new Vector3(0,  1, 0));
         Plane planeU2 = new Plane(new Vector3(0,  0.1666, 0), new Vector3(0,  1, 0));
         Plane planeU  = new Plane(new Vector3(0,  0.3333, 0), new Vector3(0,  1, 0));
-        
         Plane planeF  = new Plane(new Vector3(0, 0, -0.3333), new Vector3(0, 0, -1));
         Plane planeF2 = new Plane(new Vector3(0, 0, -0.1666), new Vector3(0, 0, -1));
         Plane planeF3 = new Plane(new Vector3(0, 0, -0.0000), new Vector3(0, 0, -1));
@@ -69,24 +67,18 @@ public class VCube6 implements Puzzle {
             .cut(planeL,  0)
             .cut(planeL2, 0)
             .cut(planeL3, 0)
-            
             .cut(planeR2, 0)
             .cut(planeR,  0)
-            
             .cut(planeD,  0)
             .cut(planeD2, 0)
             .cut(planeD3, 0)
-            
             .cut(planeU2, 0)
             .cut(planeU,  0)
-            
             .cut(planeF,  0)
             .cut(planeF2, 0)
             .cut(planeF3, 0)
-            
             .cut(planeB2, 0)
             .cut(planeB,  0)
-            
             .shortenFaces(0.0175)
             .softenFaces(0.01)
             .softenFaces(0.005);
