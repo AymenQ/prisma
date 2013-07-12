@@ -49,7 +49,15 @@ public class ConfigurationDAO {
             statement.setString(1, entry.getValue());
             statement.setString(2, entry.getKey());
 
-            statement.executeUpdate();
+            if (0 == statement.executeUpdate()) {
+                statement.close();
+                statement = this.connection.prepareStatement(
+                    "INSERT INTO CONFIGURATION VALUES (?,?)");
+
+                statement.setString(2, entry.getValue());
+                statement.setString(1, entry.getKey());
+                statement.executeUpdate();
+            }
 
             statement.close();
         } catch (SQLException e) {
