@@ -39,6 +39,9 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -575,6 +578,10 @@ public class MainFrame extends JFrame {
     private JRadioButtonMenuItem menuItemCtrlKeys;
     private JRadioButtonMenuItem menuItemSpaceKey;
     private JRadioButtonMenuItem menuItemStackmatTimer;
+    private JMenu menuLookAndFeel;
+    private ButtonGroup lookAndFeelGroup;
+    private JRadioButtonMenuItem menuItemDefaultLnF;
+    
     private JMenuItem menuItemAbout;
     private JLabel labelMessage;
     private ScramblePanel scramblePanel;
@@ -933,6 +940,30 @@ public class MainFrame extends JFrame {
             }
         }
 
+        this.menuItemDefaultLnF.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changeLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
+        });
+        
+        for (final LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
+            JRadioButtonMenuItem lafMenuItem = new JRadioButtonMenuItem(lafInfo.getName());
+            this.menuLookAndFeel.add(lafMenuItem);
+            this.lookAndFeelGroup.add(lafMenuItem);
+            
+            if (UIManager.getLookAndFeel().getName().equals(lafInfo.getName())) {
+                lafMenuItem.setSelected(true);
+            }
+            
+            lafMenuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    changeLookAndFeel(lafInfo.getClassName());
+                }
+            });
+        }
+
         // menuItemAbout
         this.menuItemAbout.addActionListener(new ActionListener() {
             @Override
@@ -965,6 +996,11 @@ public class MainFrame extends JFrame {
         });
     }
 
+    private void changeLookAndFeel(String className) {
+        this.configurationManager.setConfiguration("LOOK-AND-FEEL", className);
+        this.messageManager.enqueueMessage(MessageType.INFORMATION, _("main.laf_restart_required"));
+    }
+    
     private void setTimerTrigger(String timerTriggerId) {
         if (timerTriggerId.equals("KEYBOARD-TIMER-CONTROL")) {
             this.menuItemCtrlKeys.setSelected(true);
@@ -1115,6 +1151,19 @@ public class MainFrame extends JFrame {
         menuOptions.add(this.stackmatTimerInputDevice);
         this.stackmatTimerInputDeviceGroup = new ButtonGroup();
 
+        // menuLookAndFeel
+        this.menuLookAndFeel = new JMenu(_("main.look_and_feel"));
+        this.menuLookAndFeel.setMnemonic(KeyEvent.VK_L);
+        menuOptions.add(this.menuLookAndFeel);
+        this.lookAndFeelGroup = new ButtonGroup();
+        
+        // menuItemDefaultLaF
+        this.menuItemDefaultLnF = new JRadioButtonMenuItem(_("main.laf_system_default"));
+        this.menuItemDefaultLnF.setMnemonic(KeyEvent.VK_D);
+        this.menuItemDefaultLnF.setSelected(true);
+        this.menuLookAndFeel.add(this.menuItemDefaultLnF);
+        this.lookAndFeelGroup.add(this.menuItemDefaultLnF);
+        
         //menuHelp
         JMenu menuHelp = new JMenu(_("main.help"));
         menuHelp.setMnemonic(KeyEvent.VK_H);

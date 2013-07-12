@@ -428,12 +428,15 @@ public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+                Main main = new Main();
+                
+                String laf = main.configurationManager.getConfiguration("LOOK-AND-FEEL");
+                if (laf == null)
+                    laf = UIManager.getSystemLookAndFeelClassName();
                 try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    UIManager.setLookAndFeel(laf);
                 } catch (Exception e){
                 }
-
-                Main main = new Main();
 
                 Image icon = Toolkit.getDefaultToolkit().getImage(getClass().getResource("/com/puzzletimer/resources/icon.png"));
 
