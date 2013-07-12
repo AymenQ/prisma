@@ -23,7 +23,11 @@ public class ConfigurationManager {
     }
 
     public String getConfiguration(String key) {
-        return this.entryMap.get(key).getValue();
+        ConfigurationEntry configurationEntry = this.entryMap.get(key);
+        if (configurationEntry == null)
+            return null;
+        
+        return configurationEntry.getValue();
     }
 
     public void setConfiguration(String key, String value) {
