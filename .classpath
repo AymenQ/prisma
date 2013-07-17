@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/miglayout-3.7.3.1-swing.jar"/>
-	<classpathentry kind="lib" path="lib/h2-1.2.137.jar"/>
-	<classpathentry kind="lib" path="lib/prisma-graphics.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/miglayout-3.7.3.1-swing.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/h2-1.2.137.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/prisma-graphics.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
