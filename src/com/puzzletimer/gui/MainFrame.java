@@ -4,6 +4,7 @@ import static com.puzzletimer.Internationalization._;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -14,6 +15,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -21,11 +23,11 @@ import java.util.UUID;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine.Info;
 import javax.sound.sampled.Line;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
-import javax.sound.sampled.DataLine.Info;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -41,7 +43,6 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import net.miginfocom.swing.MigLayout;
 
@@ -61,11 +62,11 @@ import com.puzzletimer.state.CategoryManager;
 import com.puzzletimer.state.ColorManager;
 import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.state.MessageManager;
+import com.puzzletimer.state.MessageManager.MessageType;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.state.SolutionManager;
 import com.puzzletimer.state.TimerManager;
-import com.puzzletimer.state.MessageManager.MessageType;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
@@ -80,7 +81,6 @@ import com.puzzletimer.timer.SpaceKeyTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.tips.TipProvider;
 import com.puzzletimer.util.SolutionUtils;
-
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -583,6 +583,7 @@ public class MainFrame extends JFrame {
     private JRadioButtonMenuItem menuItemDefaultLnF;
     
     private JMenuItem menuItemAbout;
+    private JMenuItem menuItemFeedback;
     private JLabel labelMessage;
     private ScramblePanel scramblePanel;
     private TimerPanel timerPanel;
@@ -966,6 +967,18 @@ public class MainFrame extends JFrame {
             });
         }
 
+        // menuItemFeedback
+        this.menuItemFeedback.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Desktop.getDesktop().browse(new URI("https://bitbucket.org/wurfkeks/puzzle-timer/issues/new"));
+                } catch (Exception ex) {
+                    MainFrame.this.messageManager.enqueueMessage(MessageType.ERROR, "Failed to open feedback page: "+ex.getLocalizedMessage());
+                }
+            }
+        });
+        
         // menuItemAbout
         this.menuItemAbout.addActionListener(new ActionListener() {
             @Override
@@ -1171,11 +1184,16 @@ public class MainFrame extends JFrame {
         menuHelp.setMnemonic(KeyEvent.VK_H);
         menuBar.add(menuHelp);
 
+        // menuItemFeedback
+        this.menuItemFeedback = new JMenuItem(_("main.feedback"));
+        this.menuItemFeedback.setMnemonic(KeyEvent.VK_F);
+        menuHelp.add(this.menuItemFeedback);
+        
         // menuItemAbout
         this.menuItemAbout = new JMenuItem(_("main.about"));
         this.menuItemAbout.setMnemonic(KeyEvent.VK_A);
         menuHelp.add(this.menuItemAbout);
-
+        
         // panelMain
         JPanel panelMain = new JPanel(
             new MigLayout(
