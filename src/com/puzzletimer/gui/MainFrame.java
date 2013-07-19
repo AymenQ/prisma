@@ -14,6 +14,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedInputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -655,8 +656,9 @@ public class MainFrame extends JFrame {
             for (int i = 0; i < inspectionClips.length; i++) {
                 inspectionClips[i] = AudioSystem.getClip();
                 inspectionClips[i].open(
-                    AudioSystem.getAudioInputStream(
-                        MainFrame.class.getResourceAsStream("/com/puzzletimer/resources/inspection/" + fileNames[i])));
+                    AudioSystem.getAudioInputStream(new BufferedInputStream(
+                        MainFrame.class.getResourceAsStream("/com/puzzletimer/resources/inspection/" + fileNames[i])
+                    )));
             }
 
             this.timerManager.addListener(new TimerManager.Listener() {
