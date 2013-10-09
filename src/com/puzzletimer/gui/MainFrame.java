@@ -42,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 
@@ -948,7 +949,7 @@ public class MainFrame extends JFrame {
         this.menuItemDefaultLnF.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                changeLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                changeLookAndFeel(UIManager.getSystemLookAndFeelClassName(), MainFrame.this);
             }
         });
         
@@ -964,7 +965,7 @@ public class MainFrame extends JFrame {
             lafMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    changeLookAndFeel(lafInfo.getClassName());
+                    changeLookAndFeel(lafInfo.getClassName(), MainFrame.this);
                 }
             });
         }
@@ -1013,9 +1014,13 @@ public class MainFrame extends JFrame {
         });
     }
 
-    private void changeLookAndFeel(String className) {
+    private void changeLookAndFeel(String className, MainFrame mainFrame) {
         this.configurationManager.setConfiguration("LOOK-AND-FEEL", className);
-        this.messageManager.enqueueMessage(MessageType.INFORMATION, _("main.laf_restart_required"));
+        try {
+            UIManager.setLookAndFeel(className);
+        } catch (Exception e) {}
+        SwingUtilities.updateComponentTreeUI(mainFrame);
+        mainFrame.pack();
     }
     
     private void setTimerTrigger(String timerTriggerId) {
