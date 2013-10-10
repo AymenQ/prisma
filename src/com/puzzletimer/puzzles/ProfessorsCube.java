@@ -48,12 +48,10 @@ public class ProfessorsCube implements Puzzle {
         Plane planeLw = new Plane(new Vector3(-0.1, 0, 0), new Vector3(-1, 0, 0));
         Plane planeR  = new Plane(new Vector3( 0.3, 0, 0), new Vector3( 1, 0, 0));
         Plane planeRw = new Plane(new Vector3( 0.1, 0, 0), new Vector3( 1, 0, 0));
-        
         Plane planeD  = new Plane(new Vector3(0, -0.3, 0), new Vector3(0, -1, 0));
         Plane planeDw = new Plane(new Vector3(0, -0.1, 0), new Vector3(0, -1, 0));
         Plane planeU  = new Plane(new Vector3(0,  0.3, 0), new Vector3(0,  1, 0));
         Plane planeUw = new Plane(new Vector3(0,  0.1, 0), new Vector3(0,  1, 0));
-        
         Plane planeF  = new Plane(new Vector3(0, 0, -0.3), new Vector3(0, 0, -1));
         Plane planeFw = new Plane(new Vector3(0, 0, -0.1), new Vector3(0, 0, -1));
         Plane planeB  = new Plane(new Vector3(0, 0,  0.3), new Vector3(0, 0,  1));

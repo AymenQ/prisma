@@ -49,7 +49,7 @@ public class VCube6 implements Puzzle {
         Plane planeL3 = new Plane(new Vector3(-0.0000, 0, 0), new Vector3(-1, 0, 0));
         Plane planeR3 = new Plane(new Vector3( 0.0000, 0, 0), new Vector3( 1, 0, 0));
         Plane planeR2 = new Plane(new Vector3( 0.1666, 0, 0), new Vector3( 1, 0, 0));
-        Plane planeR  = new Plane(new Vector3( 0.3333, 0, 0), new Vector3( 1, 0, 0));  
+        Plane planeR  = new Plane(new Vector3( 0.3333, 0, 0), new Vector3( 1, 0, 0));
         Plane planeD  = new Plane(new Vector3(0, -0.3333, 0), new Vector3(0, -1, 0));
         Plane planeD2 = new Plane(new Vector3(0, -0.1666, 0), new Vector3(0, -1, 0));
         Plane planeD3 = new Plane(new Vector3(0, -0.0000, 0), new Vector3(0, -1, 0));
