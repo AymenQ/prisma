@@ -25,7 +25,6 @@ INSERT INTO SCRAMBLER VALUES
     (-1, '9x9x9-CUBE-IMPORTER',                          '9x9x9-CUBE',   'Importer scrambler',                            TRUE),
     ( 0, '9x9x9-CUBE-RANDOM',                            '9x9x9-CUBE',   'Random scrambler',                             FALSE);
 
-
 -- colors
 
 INSERT INTO COLOR VALUES
@@ -41,12 +40,13 @@ INSERT INTO COLOR VALUES
 	('9x9x9-CUBE',    3, 'FACE-R',          'Face R',          212,  17,  17, 212,  17,  17),
 	('9x9x9-CUBE',    4, 'FACE-F',          'Face F',            0, 153,   0,   0, 153,   0),
 	('9x9x9-CUBE',    5, 'FACE-B',          'Face B',            0,  13, 153,   0,  13, 153);
-    
+
 -- categories
+
 INSERT INTO CATEGORY VALUES
-    (  -8, 'FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF', '8x8x8-CUBE-RANDOM',                 '8x8x8 cube',                 FALSE),
-    (  -7, 'EEEEEEEE-EEEE-EEEE-EEEE-EEEEEEEEEEEE', '9x9x9-CUBE-RANDOM',                 '9x9x9 cube',                 FALSE);
-	
+    (  -8, '08831818-6d8c-41fb-859e-a29b507f49fa', '8x8x8-CUBE-RANDOM',                 '8x8x8 cube',                 FALSE),
+    (  -7, '2fe5cacf-55df-4f5c-b811-f64c54959c44', '9x9x9-CUBE-RANDOM',                 '9x9x9 cube',                 FALSE);
+
 UPDATE CATEGORY SET "ORDER" = -19 WHERE CATEGORY_ID = '64b9c16d-dc36-44b4-9605-c93933cdd311';
 UPDATE CATEGORY SET "ORDER" = -18 WHERE CATEGORY_ID = '90dea358-e525-4b6c-8b2d-abfa61f02a9d';
 UPDATE CATEGORY SET "ORDER" = -17 WHERE CATEGORY_ID = '3282c6bc-3a7b-4b16-aeae-45ae75b17e47';
@@ -58,10 +58,9 @@ UPDATE CATEGORY SET "ORDER" = -12 WHERE CATEGORY_ID = 'e3894e40-fb85-497b-a592-c
 UPDATE CATEGORY SET "ORDER" = -11 WHERE CATEGORY_ID = '0701c98c-a275-4e51-888c-59dc9de9de1a';
 UPDATE CATEGORY SET "ORDER" = -10 WHERE CATEGORY_ID = '86227762-6249-4417-840b-3c8ba7b0bd33';
 UPDATE CATEGORY SET "ORDER" =  -9 WHERE CATEGORY_ID = 'b9375ece-5a31-4dc4-b58e-ecb8a638e102';
-    
+
 -- version
 
 UPDATE CONFIGURATION SET VALUE = '0.6' WHERE KEY = 'VERSION';
 
 COMMIT;
-
