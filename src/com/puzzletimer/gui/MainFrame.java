@@ -712,6 +712,48 @@ public class MainFrame extends JFrame {
                         @Override
                         public void solutionEdited(Solution solution) {
                             MainFrame.this.solutionManager.addSolution(solution);
+                            
+                            // check for personal records
+                            StatisticalMeasure[] measures = {
+                                new Best(1, Integer.MAX_VALUE),
+                                new BestMean(3, 3),
+                                new BestMean(100, 100),
+                                new BestAverage(5, 5),
+                                new BestAverage(12, 12),
+                            };
+
+                            String[] descriptions = {
+                                _("main.single"),
+                                _("main.mean_of_3"),
+                                _("main.mean_of_100"),
+                                _("main.average_of_5"),
+                                _("main.average_of_12"),
+                            };
+
+                            Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
+                            Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
+
+                            for (int i = 0; i < measures.length; i++) {
+                                if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
+                                    continue;
+                                }
+
+                                measures[i].setSolutions(solutions);
+                                long allTimeBest = measures[i].getValue();
+
+                                measures[i].setSolutions(sessionSolutions);
+                                long sessionBest = measures[i].getValue();
+
+                                if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {
+                                    MainFrame.this.messageManager.enqueueMessage(
+                                        MessageType.INFORMATION,
+                                        String.format(_("main.personal_record_message"),
+                                            MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
+                                            SolutionUtils.formatMinutes(measures[i].getValue()),
+                                            descriptions[i]));
+                                }
+                            }
+                            
                             MainFrame.this.scrambleManager.changeScramble();
                         }
                     };
