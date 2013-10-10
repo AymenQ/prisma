@@ -51,8 +51,8 @@ public class Category {
         descriptions.put(UUID.fromString("0701c98c-a275-4e51-888c-59dc9de9de1a"), _("category.5x5x5_cube_blindfolded"));
         descriptions.put(UUID.fromString("86227762-6249-4417-840b-3c8ba7b0bd33"), _("category.6x6x6_cube"));
         descriptions.put(UUID.fromString("b9375ece-5a31-4dc4-b58e-ecb8a638e102"), _("category.7x7x7_cube"));
-        descriptions.put(UUID.fromString("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF"), _("category.8x8x8_cube"));
-        descriptions.put(UUID.fromString("EEEEEEEE-EEEE-EEEE-EEEE-EEEEEEEEEEEE"), _("category.9x9x9_cube"));
+        descriptions.put(UUID.fromString("08831818-6d8c-41fb-859e-a29b507f49fa"), _("category.8x8x8_cube"));
+        descriptions.put(UUID.fromString("2fe5cacf-55df-4f5c-b811-f64c54959c44"), _("category.9x9x9_cube"));
         descriptions.put(UUID.fromString("7f244648-0e14-44cd-8399-b41ccdb6d7db"), _("category.rubiks_clock"));
         descriptions.put(UUID.fromString("c50f60c8-99d2-48f4-8502-d110a0ef2fc9"), _("category.megaminx"));
         descriptions.put(UUID.fromString("6750cbfd-542d-42b7-9cf4-56265549dd88"), _("category.pyraminx"));
