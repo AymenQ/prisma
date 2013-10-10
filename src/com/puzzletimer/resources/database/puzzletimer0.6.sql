@@ -28,18 +28,18 @@ INSERT INTO SCRAMBLER VALUES
 -- colors
 
 INSERT INTO COLOR VALUES
-	('8x8x8-CUBE',    0, 'FACE-U',          'Face U',          255, 255, 255, 255, 255, 255),
-	('8x8x8-CUBE',    1, 'FACE-D',          'Face D',          255, 234,   0, 255, 234,   0),
-	('8x8x8-CUBE',    2, 'FACE-L',          'Face L',          255,  85,   0, 255,  85,   0),
-	('8x8x8-CUBE',    3, 'FACE-R',          'Face R',          212,  17,  17, 212,  17,  17),
-	('8x8x8-CUBE',    4, 'FACE-F',          'Face F',            0, 153,   0,   0, 153,   0),
-	('8x8x8-CUBE',    5, 'FACE-B',          'Face B',            0,  13, 153,   0,  13, 153),
-	('9x9x9-CUBE',    0, 'FACE-U',          'Face U',          255, 255, 255, 255, 255, 255),
-	('9x9x9-CUBE',    1, 'FACE-D',          'Face D',          255, 234,   0, 255, 234,   0),
-	('9x9x9-CUBE',    2, 'FACE-L',          'Face L',          255,  85,   0, 255,  85,   0),
-	('9x9x9-CUBE',    3, 'FACE-R',          'Face R',          212,  17,  17, 212,  17,  17),
-	('9x9x9-CUBE',    4, 'FACE-F',          'Face F',            0, 153,   0,   0, 153,   0),
-	('9x9x9-CUBE',    5, 'FACE-B',          'Face B',            0,  13, 153,   0,  13, 153);
+    ('8x8x8-CUBE',    0, 'FACE-U',          'Face U',          255, 255, 255, 255, 255, 255),
+    ('8x8x8-CUBE',    1, 'FACE-D',          'Face D',          255, 234,   0, 255, 234,   0),
+    ('8x8x8-CUBE',    2, 'FACE-L',          'Face L',          255,  85,   0, 255,  85,   0),
+    ('8x8x8-CUBE',    3, 'FACE-R',          'Face R',          212,  17,  17, 212,  17,  17),
+    ('8x8x8-CUBE',    4, 'FACE-F',          'Face F',            0, 153,   0,   0, 153,   0),
+    ('8x8x8-CUBE',    5, 'FACE-B',          'Face B',            0,  13, 153,   0,  13, 153),
+    ('9x9x9-CUBE',    0, 'FACE-U',          'Face U',          255, 255, 255, 255, 255, 255),
+    ('9x9x9-CUBE',    1, 'FACE-D',          'Face D',          255, 234,   0, 255, 234,   0),
+    ('9x9x9-CUBE',    2, 'FACE-L',          'Face L',          255,  85,   0, 255,  85,   0),
+    ('9x9x9-CUBE',    3, 'FACE-R',          'Face R',          212,  17,  17, 212,  17,  17),
+    ('9x9x9-CUBE',    4, 'FACE-F',          'Face F',            0, 153,   0,   0, 153,   0),
+    ('9x9x9-CUBE',    5, 'FACE-B',          'Face B',            0,  13, 153,   0,  13, 153);
 
 -- categories
 

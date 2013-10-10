@@ -41,6 +41,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -79,6 +80,7 @@ import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
 import com.puzzletimer.timer.ControlKeysTimer;
+import com.puzzletimer.timer.ManualInputTimer;
 import com.puzzletimer.timer.SpaceKeyTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.tips.TipProvider;
@@ -143,8 +145,11 @@ public class MainFrame extends JFrame {
 
     private class TimerPanel extends JPanel {
         private HandImage leftHand;
+        private JPanel timePanel;
         private TimeLabel timeLabel;
+        private JTextField textFieldTime;
         private HandImage rightHand;
+        private boolean currentManualInput;
 
         public TimerPanel(TimerManager timerManager) {
             createComponents();
@@ -223,15 +228,54 @@ public class MainFrame extends JFrame {
             // leftHand
             this.leftHand = new HandImage(false);
             add(this.leftHand, "grow");
+            
+            // timePanel
+            this.timePanel = new JPanel();
+            this.timePanel.setLayout(new MigLayout("fill", "fill"));
 
             // timeLabel
             this.timeLabel = new TimeLabel("00:00.00");
             this.timeLabel.setFont(new Font("Arial", Font.BOLD, 108));
             add(this.timeLabel, "grow");
+            
+            // textFieldTime
+            this.textFieldTime = new JTextField();
+            this.textFieldTime.setHorizontalAlignment(JTextField.CENTER);
+            this.textFieldTime.setFont(new Font("Arial", Font.BOLD, 108));
+            
+            if(MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER").equals("MANUAL-INPUT")) {
+                this.timePanel.add(this.textFieldTime, "growx");
+                this.currentManualInput = true;
+            } else {
+                this.timePanel.add(this.timeLabel, "grow");
+                this.currentManualInput = false;
+            }
+            
+            add(this.timePanel, "grow");
 
             // rightHand
             this.rightHand = new HandImage(true);
             add(this.rightHand, "grow");
+        }
+        
+        private void updateTimer(boolean manualInput) {
+            if(this.currentManualInput == true && manualInput == false) {
+                this.timePanel.remove(this.textFieldTime);
+                this.leftHand.setVisible(true);
+                this.rightHand.setVisible(true);
+                this.timePanel.add(this.timeLabel, "grow");
+                MainFrame.this.requestFocusInWindow();
+                this.updateUI();
+                this.currentManualInput = false;
+            } else if(this.currentManualInput == false && manualInput == true) {
+                this.timePanel.remove(this.timeLabel);
+                this.leftHand.setVisible(false);
+                this.rightHand.setVisible(false);
+                this.timePanel.add(this.textFieldTime, "growx");
+                this.textFieldTime.requestFocusInWindow();
+                this.updateUI();
+                this.currentManualInput = true;
+            }
         }
     }
 
@@ -577,6 +621,7 @@ public class MainFrame extends JFrame {
     private JCheckBoxMenuItem menuItemInspectionTime;
     private JMenu stackmatTimerInputDevice;
     private ButtonGroup stackmatTimerInputDeviceGroup;
+    private JRadioButtonMenuItem menuItemManualInput;
     private JRadioButtonMenuItem menuItemCtrlKeys;
     private JRadioButtonMenuItem menuItemSpaceKey;
     private JRadioButtonMenuItem menuItemStackmatTimer;
@@ -919,6 +964,14 @@ public class MainFrame extends JFrame {
                     MainFrame.this.menuItemInspectionTime.isSelected());
             }
         });
+        
+        // menuItemManualInput
+        this.menuItemManualInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTimerTrigger("MANUAL-INPUT");
+            }
+        });
 
         // menuItemCtrlKeys
         this.menuItemCtrlKeys.addActionListener(new ActionListener() {
@@ -1066,12 +1119,19 @@ public class MainFrame extends JFrame {
     }
     
     private void setTimerTrigger(String timerTriggerId) {
-        if (timerTriggerId.equals("KEYBOARD-TIMER-CONTROL")) {
+        if (timerTriggerId.equals("MANUAL-INPUT")) {
+            this.menuItemManualInput.setSelected(true);
+            this.timerPanel.updateTimer(true);
+            this.timerManager.setTimer(
+                new ManualInputTimer(this.timerManager, this.timerPanel.textFieldTime));
+        } else if (timerTriggerId.equals("KEYBOARD-TIMER-CONTROL")) {
             this.menuItemCtrlKeys.setSelected(true);
+            this.timerPanel.updateTimer(false);
             this.timerManager.setTimer(
                 new ControlKeysTimer(this, this.timerManager));
         } else if (timerTriggerId.equals("KEYBOARD-TIMER-SPACE")) {
             this.menuItemSpaceKey.setSelected(true);
+            this.timerPanel.updateTimer(false);
             this.timerManager.setTimer(
                 new SpaceKeyTimer(this, this.timerManager));
         } else if (timerTriggerId.equals("STACKMAT-TIMER")) {
@@ -1081,11 +1141,13 @@ public class MainFrame extends JFrame {
                     targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
                     targetDataLine.open(MainFrame.this.audioFormat);
                     this.menuItemStackmatTimer.setSelected(true);
+                    this.timerPanel.updateTimer(false);
                     this.timerManager.setTimer(
                         new StackmatTimer(targetDataLine, this.timerManager));
                 } catch (LineUnavailableException e) {
                     // select the default timer
                     this.menuItemSpaceKey.setSelected(true);
+                    this.timerPanel.updateTimer(false);
                     this.timerManager.setTimer(
                         new SpaceKeyTimer(this, this.timerManager));
 
@@ -1096,6 +1158,7 @@ public class MainFrame extends JFrame {
             } else {
                 // select the default timer
                 this.menuItemSpaceKey.setSelected(true);
+                this.timerPanel.updateTimer(false);
                 this.timerManager.setTimer(
                     new SpaceKeyTimer(this, this.timerManager));
 
@@ -1187,6 +1250,13 @@ public class MainFrame extends JFrame {
         menuTimerTrigger.setMnemonic(KeyEvent.VK_T);
         menuOptions.add(menuTimerTrigger);
         ButtonGroup timerTriggerGroup = new ButtonGroup();
+        
+        // menuItemManualInput
+        this.menuItemManualInput = new JRadioButtonMenuItem(_("main.manual_input"));
+        this.menuItemManualInput.setMnemonic(KeyEvent.VK_N);
+        this.menuItemManualInput.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuShortcutKey));
+        menuTimerTrigger.add(this.menuItemManualInput);
+        timerTriggerGroup.add(this.menuItemManualInput);
 
         // menuItemCtrlKeys
         this.menuItemCtrlKeys = new JRadioButtonMenuItem(_("main.ctrl_keys"));

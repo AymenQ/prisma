@@ -3,7 +3,7 @@ package com.puzzletimer.scramblers;
 import com.puzzletimer.models.ScramblerInfo;
 
 public class VCube6RandomScrambler extends BigCubeRandomScrambler {
-	
+    
     public VCube6RandomScrambler(ScramblerInfo scramblerInfo, int scrambleLength) {
         super(scramblerInfo, scrambleLength);
     }

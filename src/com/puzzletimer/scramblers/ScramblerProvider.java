@@ -236,25 +236,25 @@ public class ScramblerProvider {
         
         // 8x8x8 importer
         Scrambler ss8Importer =
-        	new EmptyScrambler(
-        		new ScramblerInfo("8x8x8-CUBE-IMPORTER", "8x8x8-CUBE", ""));
+            new EmptyScrambler(
+                new ScramblerInfo("8x8x8-CUBE-IMPORTER", "8x8x8-CUBE", ""));
         
         // 8x8x8 random
         Scrambler ss8Random =
-        	new SS8RandomScrambler(
-        		new ScramblerInfo("8x8x8-CUBE-RANDOM", "8x8x8-CUBE", _("scrambler.8x8x8-CUBE-RANDOM")),
-        		120);
+            new SS8RandomScrambler(
+                new ScramblerInfo("8x8x8-CUBE-RANDOM", "8x8x8-CUBE", _("scrambler.8x8x8-CUBE-RANDOM")),
+                120);
 
         // 9x9x9 importer
         Scrambler ss9Importer =
-        	new EmptyScrambler(
-        		new ScramblerInfo("9x9x9-CUBE-IMPORTER", "9x9x9-CUBE", ""));
+            new EmptyScrambler(
+                new ScramblerInfo("9x9x9-CUBE-IMPORTER", "9x9x9-CUBE", ""));
         
         // 9x9x9 random
         Scrambler ss9Random =
-        	new SS9RandomScrambler(
-        		new ScramblerInfo("9x9x9-CUBE-RANDOM", "9x9x9-CUBE", _("scrambler.9x9x9-CUBE-RANDOM")),
-        		140);
+            new SS9RandomScrambler(
+                new ScramblerInfo("9x9x9-CUBE-RANDOM", "9x9x9-CUBE", _("scrambler.9x9x9-CUBE-RANDOM")),
+                140);
         
         // rubiks clock importer
         Scrambler rubiksClockImporter =

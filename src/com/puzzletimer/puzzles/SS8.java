@@ -170,7 +170,7 @@ public class SS8 implements Puzzle {
         twists.put("4B'", new Twist(planeB4, -Math.PI / 2));
 
         for (String move : sequence) {
-        	Twist t = twists.get(move);
+            Twist t = twists.get(move);
             mesh = mesh.rotateHalfspace(t.plane, t.angle);
         }
 
