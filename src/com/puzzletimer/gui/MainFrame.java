@@ -975,7 +975,7 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Desktop.getDesktop().browse(new URI("https://bitbucket.org/wurfkeks/puzzle-timer/issues/new"));
+                    Desktop.getDesktop().browse(new URI("https://bitbucket.org/Methuselah96/puzzle-timer/issues/new"));
                 } catch (Exception ex) {
                     MainFrame.this.messageManager.enqueueMessage(MessageType.ERROR, "Failed to open feedback page: "+ex.getLocalizedMessage());
                 }
