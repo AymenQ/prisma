@@ -173,8 +173,6 @@ public class SS8 implements Puzzle {
         	Twist t = twists.get(move);
             mesh = mesh.rotateHalfspace(t.plane, t.angle);
         }
-        
-        System.out.println("\n");
 
         return mesh
             .transform(Matrix44.rotationY(-Math.PI / 6))

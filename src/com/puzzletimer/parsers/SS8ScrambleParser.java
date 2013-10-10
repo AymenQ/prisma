@@ -19,7 +19,7 @@ public class SS8ScrambleParser implements ScrambleParser {
 
             String move = "";
 
-            String slice = parser.anyChar("23");
+            String slice = parser.anyChar("234");
             if (slice != null) {
                 move += slice;
             }

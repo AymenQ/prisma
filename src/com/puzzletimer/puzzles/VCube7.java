@@ -148,19 +148,6 @@ public class VCube7 implements Puzzle {
             mesh = mesh.rotateHalfspace(t.plane, t.angle);
         }
 
-        Face[] faces = new Face[mesh.faces.length];
-        for (int i = 0; i < faces.length; i++) {
-            Vector3[] vertices = new Vector3[mesh.faces[i].vertices.length];
-            for (int j = 0; j < vertices.length; j++) {
-                Vector3 v = mesh.faces[i].vertices[j];
-                vertices[j] = v.mul(0.9 * Math.pow(v.dot(v), -0.15));
-            }
-
-            faces[i] = mesh.faces[i].setVertices(vertices);
-        }
-
-        mesh = new Mesh(faces);
-
         return mesh
             .transform(Matrix44.rotationY(-Math.PI / 6))
             .transform(Matrix44.rotationX(Math.PI / 7));
