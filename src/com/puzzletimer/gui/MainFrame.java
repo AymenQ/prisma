@@ -236,31 +236,30 @@ public class MainFrame extends JFrame {
             // timeLabel
             this.timeLabel = new TimeLabel("00:00.00");
             this.timeLabel.setFont(new Font("Arial", Font.BOLD, 108));
-            add(this.timeLabel, "grow");
             
             // textFieldTime
             this.textFieldTime = new JTextField();
             this.textFieldTime.setHorizontalAlignment(JTextField.CENTER);
             this.textFieldTime.setFont(new Font("Arial", Font.BOLD, 108));
             
-            if(MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER").equals("MANUAL-INPUT")) {
-                this.timePanel.add(this.textFieldTime, "growx");
-                this.currentManualInput = true;
-            } else {
-                this.timePanel.add(this.timeLabel, "grow");
-                this.currentManualInput = false;
-            }
+            // rightHand
+            this.rightHand = new HandImage(true);
+            
+            this.currentManualInput = !(MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER").equals("MANUAL-INPUT"));
+            
+            this.updateTimer(MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER").equals("MANUAL-INPUT"));
             
             add(this.timePanel, "grow");
 
             // rightHand
-            this.rightHand = new HandImage(true);
             add(this.rightHand, "grow");
         }
         
         private void updateTimer(boolean manualInput) {
             if(this.currentManualInput == true && manualInput == false) {
-                this.timePanel.remove(this.textFieldTime);
+                if(this.textFieldTime != null) {
+                    this.timePanel.remove(this.textFieldTime);
+                }
                 this.leftHand.setVisible(true);
                 this.rightHand.setVisible(true);
                 this.timePanel.add(this.timeLabel, "grow");
@@ -268,7 +267,9 @@ public class MainFrame extends JFrame {
                 this.updateUI();
                 this.currentManualInput = false;
             } else if(this.currentManualInput == false && manualInput == true) {
-                this.timePanel.remove(this.timeLabel);
+                if(this.timeLabel != null) {
+                    this.timePanel.remove(this.timeLabel);
+                }
                 this.leftHand.setVisible(false);
                 this.rightHand.setVisible(false);
                 this.timePanel.add(this.textFieldTime, "growx");
