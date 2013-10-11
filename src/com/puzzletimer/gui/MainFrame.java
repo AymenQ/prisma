@@ -145,7 +145,6 @@ public class MainFrame extends JFrame {
 
     private class TimerPanel extends JPanel {
         private HandImage leftHand;
-        private JPanel timePanel;
         private TimeLabel timeLabel;
         private JTextField textFieldTime;
         private HandImage rightHand;
@@ -224,18 +223,15 @@ public class MainFrame extends JFrame {
 
         private void createComponents() {
             setLayout(new MigLayout("fill", "2%[19%]1%[56%]1%[19%]2%"));
-
+        	
             // leftHand
             this.leftHand = new HandImage(false);
             add(this.leftHand, "grow");
-            
-            // timePanel
-            this.timePanel = new JPanel();
-            this.timePanel.setLayout(new MigLayout("fill", "fill"));
 
             // timeLabel
             this.timeLabel = new TimeLabel("00:00.00");
             this.timeLabel.setFont(new Font("Arial", Font.BOLD, 108));
+            add(this.timeLabel, "grow");
             
             // textFieldTime
             this.textFieldTime = new JTextField();
@@ -244,35 +240,29 @@ public class MainFrame extends JFrame {
             
             // rightHand
             this.rightHand = new HandImage(true);
+            add(this.rightHand, "grow");
             
-            this.currentManualInput = !(MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER").equals("MANUAL-INPUT"));
+            this.currentManualInput = false;
             
             this.updateTimer(MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER").equals("MANUAL-INPUT"));
-            
-            add(this.timePanel, "grow");
-
-            // rightHand
-            add(this.rightHand, "grow");
         }
         
         private void updateTimer(boolean manualInput) {
             if(this.currentManualInput == true && manualInput == false) {
-                if(this.textFieldTime != null) {
-                    this.timePanel.remove(this.textFieldTime);
-                }
-                this.leftHand.setVisible(true);
-                this.rightHand.setVisible(true);
-                this.timePanel.add(this.timeLabel, "grow");
+                remove(this.textFieldTime);
+                setLayout(new MigLayout("fill", "2%[19%]1%[56%]1%[19%]2%"));
+                add(this.leftHand, "grow");
+                add(this.timeLabel, "grow");
+                add(this.rightHand, "grow");
                 MainFrame.this.requestFocusInWindow();
                 this.updateUI();
                 this.currentManualInput = false;
             } else if(this.currentManualInput == false && manualInput == true) {
-                if(this.timeLabel != null) {
-                    this.timePanel.remove(this.timeLabel);
-                }
-                this.leftHand.setVisible(false);
-                this.rightHand.setVisible(false);
-                this.timePanel.add(this.textFieldTime, "growx");
+                remove(this.timeLabel);
+                remove(this.leftHand);
+                remove(this.rightHand);
+                setLayout(new MigLayout("fill", "12%[76%]12%"));
+                add(this.textFieldTime, "growx");
                 this.textFieldTime.requestFocusInWindow();
                 this.updateUI();
                 this.currentManualInput = true;
