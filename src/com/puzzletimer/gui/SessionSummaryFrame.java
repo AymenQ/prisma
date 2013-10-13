@@ -46,9 +46,9 @@ public class SessionSummaryFrame extends JFrame {
         super();
 
         setMinimumSize(new Dimension(640, 480));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         // title
         categoryManager.addListener(new CategoryManager.Listener() {
@@ -116,6 +116,7 @@ public class SessionSummaryFrame extends JFrame {
         // textAreaContents
         this.textAreaSummary = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(this.textAreaSummary);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow, wrap");
 
         // button copy to clipboard

@@ -49,9 +49,9 @@ public class SolutionEditingDialog extends JDialog {
 
         setTitle(_("solution_editing.solution_editor"));
         setMinimumSize(new Dimension(480, 200));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         // start
         DateFormat dateFormat =

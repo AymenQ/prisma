@@ -64,9 +64,9 @@ public class ScrambleQueueFrame extends JFrame {
         super();
 
         setMinimumSize(new Dimension(640, 480));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         // on category change
         categoryManager.addListener(new CategoryManager.Listener() {
@@ -300,6 +300,7 @@ public class ScrambleQueueFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(this.table);
         this.table.setFillsViewportHeight(true);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow");
 
         // buttonUp

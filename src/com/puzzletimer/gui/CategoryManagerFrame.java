@@ -71,9 +71,9 @@ class CategoryEditorDialog extends JDialog {
 
         setTitle(_("category_editor.category_editor"));
         setMinimumSize(new Dimension(480, 300));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         // set category description
         this.textFieldDescription.setText(category.getDescription());
@@ -311,6 +311,7 @@ class CategoryEditorDialog extends JDialog {
         this.listTips = new JList(new DefaultListModel());
         this.listTips.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane scrollPane = new JScrollPane(this.listTips);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow, skip");
 
         // buttonUp
@@ -350,9 +351,9 @@ public class CategoryManagerFrame extends JFrame {
             final TipProvider tipProvider) {
         setTitle(_("category_manager.category_manager"));
         setMinimumSize(new Dimension(640, 480));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         categoryManager.addListener(new CategoryManager.Listener() {
             @Override
@@ -520,6 +521,7 @@ public class CategoryManagerFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(this.table);
         this.table.setFillsViewportHeight(true);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow");
 
         // buttonAdd

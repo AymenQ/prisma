@@ -41,9 +41,9 @@ public class TipsFrame extends JFrame {
         super();
 
         setMinimumSize(new Dimension(480, 320));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         // title
         categoryManager.addListener(new CategoryManager.Listener() {
@@ -110,6 +110,7 @@ public class TipsFrame extends JFrame {
         // textAreaContents
         this.textAreaTips = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(this.textAreaTips);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow, wrap");
 
         // buttonOk

@@ -47,11 +47,11 @@ public class ColorSchemeFrame extends JFrame {
         super();
 
         setMinimumSize(new Dimension(480, 600));
-        setPreferredSize(getMinimumSize());
 
         setTitle(_("color_scheme.color_scheme"));
 
         createComponents();
+        pack();
 
         // combo box
         Puzzle defaultPuzzle = null;
@@ -192,6 +192,7 @@ public class ColorSchemeFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(this.table);
         this.table.setFillsViewportHeight(true);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow");
 
         // buttonEdit

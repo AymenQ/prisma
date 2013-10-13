@@ -80,9 +80,9 @@ public class HistoryFrame extends JFrame {
 
             setTitle(_("solution_importer.solution_importer"));
             setMinimumSize(new Dimension(640, 480));
-            setPreferredSize(getMinimumSize());
 
             createComponents();
+            pack();
 
             // ok button
             this.buttonOk.addActionListener(new ActionListener() {
@@ -172,6 +172,7 @@ public class HistoryFrame extends JFrame {
             // textAreaContents
             this.textAreaContents = new JTextArea(_("solution_importer.default_contents"));
             JScrollPane scrollPane = new JScrollPane(this.textAreaContents);
+            scrollPane.setPreferredSize(new Dimension(0, 0));
             add(scrollPane, "growx, wrap");
 
             // buttonOk
@@ -225,9 +226,9 @@ public class HistoryFrame extends JFrame {
         super();
 
         setMinimumSize(new Dimension(800, 600));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         // title
         categoryManager.addListener(new CategoryManager.Listener() {
@@ -572,6 +573,7 @@ public class HistoryFrame extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(this.table);
         this.table.setFillsViewportHeight(true);
+        scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow");
 
         // buttonAddSolutions

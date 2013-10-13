@@ -667,9 +667,9 @@ public class MainFrame extends JFrame {
         this.colorManager = colorManager;
 
         setMinimumSize(new Dimension(800, 600));
-        setPreferredSize(getMinimumSize());
 
         createComponents();
+        pack();
 
         // timer configuration
         this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
@@ -1105,8 +1105,20 @@ public class MainFrame extends JFrame {
         try {
             UIManager.setLookAndFeel(className);
         } catch (Exception e) {}
-        SwingUtilities.updateComponentTreeUI(mainFrame);
-        mainFrame.pack();
+        SwingUtilities.updateComponentTreeUI(this);
+        SwingUtilities.updateComponentTreeUI(this.tipsFrame);
+        SwingUtilities.updateComponentTreeUI(this.scrambleQueueFrame);
+        SwingUtilities.updateComponentTreeUI(this.historyFrame);
+        SwingUtilities.updateComponentTreeUI(this.sessionSummaryFrame);
+        SwingUtilities.updateComponentTreeUI(this.categoryManagerDialog);
+        SwingUtilities.updateComponentTreeUI(this.colorSchemeFrame);
+        this.pack();
+        this.tipsFrame.pack();
+        this.scrambleQueueFrame.pack();
+        this.historyFrame.pack();
+        this.sessionSummaryFrame.pack();
+        this.categoryManagerDialog.pack();
+        this.colorSchemeFrame.pack();
     }
     
     private void setTimerTrigger(String timerTriggerId) {
