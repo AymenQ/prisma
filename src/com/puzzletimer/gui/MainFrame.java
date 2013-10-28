@@ -223,7 +223,7 @@ public class MainFrame extends JFrame {
 
         private void createComponents() {
             setLayout(new MigLayout("fill", "2%[19%]1%[56%]1%[19%]2%"));
-        	
+
             // leftHand
             this.leftHand = new HandImage(false);
             add(this.leftHand, "grow");
@@ -607,6 +607,7 @@ public class MainFrame extends JFrame {
     private JMenuItem menuItemScrambleQueue;
     private JMenuItem menuItemHistory;
     private JMenuItem menuItemSessionSummary;
+    private JMenuItem menuItemStackmatDeveloper;
     private JMenu menuCategory;
     private JMenuItem menuItemColorScheme;
     private JCheckBoxMenuItem menuItemInspectionTime;
@@ -633,6 +634,7 @@ public class MainFrame extends JFrame {
     private ScrambleQueueFrame scrambleQueueFrame;
     private HistoryFrame historyFrame;
     private SessionSummaryFrame sessionSummaryFrame;
+    private StackmatDeveloperFrame stackmatDeveloperFrame;
     private CategoryManagerFrame categoryManagerDialog;
     private ColorSchemeFrame colorSchemeFrame;
 
@@ -839,6 +841,22 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.sessionSummaryFrame.setVisible(true);
+            }
+        });
+        
+        // menuItemStackmatDeveloper
+        this.menuItemStackmatDeveloper.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TargetDataLine targetDataLine = null;
+                if (MainFrame.this.mixerInfo != null) {
+        	        try {
+        	            targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
+        	            targetDataLine.open(MainFrame.this.audioFormat);
+        	        } catch (LineUnavailableException e1) {}
+                }
+                MainFrame.this.stackmatDeveloperFrame.setVisible(true);
+                MainFrame.this.stackmatDeveloperFrame.updateSummary(targetDataLine);
             }
         });
 
@@ -1110,6 +1128,7 @@ public class MainFrame extends JFrame {
         SwingUtilities.updateComponentTreeUI(this.scrambleQueueFrame);
         SwingUtilities.updateComponentTreeUI(this.historyFrame);
         SwingUtilities.updateComponentTreeUI(this.sessionSummaryFrame);
+        SwingUtilities.updateComponentTreeUI(this.stackmatDeveloperFrame);
         SwingUtilities.updateComponentTreeUI(this.categoryManagerDialog);
         SwingUtilities.updateComponentTreeUI(this.colorSchemeFrame);
         this.pack();
@@ -1117,6 +1136,7 @@ public class MainFrame extends JFrame {
         this.scrambleQueueFrame.pack();
         this.historyFrame.pack();
         this.sessionSummaryFrame.pack();
+        this.stackmatDeveloperFrame.pack();
         this.categoryManagerDialog.pack();
         this.colorSchemeFrame.pack();
     }
@@ -1225,6 +1245,12 @@ public class MainFrame extends JFrame {
         this.menuItemSessionSummary.setMnemonic(KeyEvent.VK_S);
         this.menuItemSessionSummary.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKey | KeyEvent.ALT_MASK));
         menuView.add(this.menuItemSessionSummary);
+        
+        // menuItemStackmatDeveloper
+        this.menuItemStackmatDeveloper = new JMenuItem(_("main.stackmat_developer"));
+        this.menuItemStackmatDeveloper.setMnemonic(KeyEvent.VK_E);
+        this.menuItemStackmatDeveloper.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuShortcutKey | KeyEvent.ALT_MASK));
+        menuView.add(this.menuItemStackmatDeveloper);
 
         // menuCategory
         this.menuCategory = new JMenu(_("main.category"));
@@ -1401,6 +1427,11 @@ public class MainFrame extends JFrame {
             this.sessionManager);
         this.sessionSummaryFrame.setLocationRelativeTo(null);
         this.sessionSummaryFrame.setIconImage(icon);
+        
+        // stackmat developer frame
+        this.stackmatDeveloperFrame = new StackmatDeveloperFrame();
+        this.stackmatDeveloperFrame.setLocationRelativeTo(null);
+        this.stackmatDeveloperFrame.setIconImage(icon);
 
         // category manager dialog
         this.categoryManagerDialog = new CategoryManagerFrame(
