@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Date;
 
-import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import com.puzzletimer.models.Timing;

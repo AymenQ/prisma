@@ -848,15 +848,20 @@ public class MainFrame extends JFrame {
         this.menuItemStackmatDeveloper.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                TargetDataLine targetDataLine = null;
-                if (MainFrame.this.mixerInfo != null) {
-        	        try {
-        	            targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
-        	            targetDataLine.open(MainFrame.this.audioFormat);
-        	        } catch (LineUnavailableException e1) {}
-                }
+                String timerTrigger = MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
                 MainFrame.this.stackmatDeveloperFrame.setVisible(true);
-                MainFrame.this.stackmatDeveloperFrame.updateSummary(targetDataLine);
+                if (timerTrigger.equals("STACKMAT-TIMER")) {
+                    MainFrame.this.stackmatDeveloperFrame.updateSummary();
+                } else {
+                    TargetDataLine targetDataLine = null;
+                    if (MainFrame.this.mixerInfo != null) {
+                        try {
+                            targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
+                            targetDataLine.open(MainFrame.this.audioFormat);
+                        } catch (LineUnavailableException e1) {}
+                    }
+                    MainFrame.this.stackmatDeveloperFrame.updateSummary(targetDataLine);
+                }
             }
         });
 
@@ -1166,7 +1171,7 @@ public class MainFrame extends JFrame {
                     this.menuItemStackmatTimer.setSelected(true);
                     this.timerPanel.updateTimer(false);
                     this.timerManager.setTimer(
-                        new StackmatTimer(targetDataLine, this.timerManager));
+                        new StackmatTimer(targetDataLine, this.timerManager, this.stackmatDeveloperFrame));
                 } catch (LineUnavailableException e) {
                     // select the default timer
                     this.menuItemSpaceKey.setSelected(true);
@@ -1429,7 +1434,7 @@ public class MainFrame extends JFrame {
         this.sessionSummaryFrame.setIconImage(icon);
         
         // stackmat developer frame
-        this.stackmatDeveloperFrame = new StackmatDeveloperFrame();
+        this.stackmatDeveloperFrame = new StackmatDeveloperFrame(this.configurationManager);
         this.stackmatDeveloperFrame.setLocationRelativeTo(null);
         this.stackmatDeveloperFrame.setIconImage(icon);
 

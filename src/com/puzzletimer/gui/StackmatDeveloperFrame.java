@@ -10,6 +10,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -19,23 +23,60 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
+import com.puzzletimer.state.ConfigurationManager;
+
 import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
 public class StackmatDeveloperFrame extends JFrame {
+    private ConfigurationManager configurationManager;
+    private AudioFormat audioFormat;
+    private Mixer.Info mixerInfo;
     private JTextArea textAreaSummary;
+    private JButton buttonUpdate;
     private JButton buttonCopyToClipboard;
     private JButton buttonOk;
-    private TargetDataLine targetDataLine;
+    public byte[] data;
 
-    public StackmatDeveloperFrame() {
+    public StackmatDeveloperFrame(ConfigurationManager configurationManager) {
         super();
         
         setMinimumSize(new Dimension(640, 480));
+        this.configurationManager = configurationManager;
 
         createComponents();
         pack();
         setTitle(_("stackmat_developer.title"));
+        
+        // update
+        this.buttonUpdate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                String timerTrigger = StackmatDeveloperFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
+                if (timerTrigger.equals("STACKMAT-TIMER")) {
+                    StackmatDeveloperFrame.this.updateSummary();
+                } else {
+                    TargetDataLine targetDataLine = null;
+                    StackmatDeveloperFrame.this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
+                    StackmatDeveloperFrame.this.mixerInfo = null;
+                    String stackmatTimerInputDeviceName = StackmatDeveloperFrame.this.configurationManager.getConfiguration("STACKMAT-TIMER-INPUT-DEVICE");
+                    
+                    for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
+                        if (stackmatTimerInputDeviceName.equals(mixerInfo.getName())) {
+                            StackmatDeveloperFrame.this.mixerInfo = mixerInfo;
+                            break;
+                        }
+                    }
+                    if (StackmatDeveloperFrame.this.mixerInfo != null) {
+                        try {
+                            targetDataLine = AudioSystem.getTargetDataLine(StackmatDeveloperFrame.this.audioFormat, StackmatDeveloperFrame.this.mixerInfo);
+                            targetDataLine.open(StackmatDeveloperFrame.this.audioFormat);
+                        } catch (LineUnavailableException e1) {}
+                    }
+                    StackmatDeveloperFrame.this.updateSummary(targetDataLine);
+                }
+            }
+        });
 
         // copy to clipboard
         this.buttonCopyToClipboard.addActionListener(new ActionListener() {
@@ -86,6 +127,10 @@ public class StackmatDeveloperFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(this.textAreaSummary);
         scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow, wrap");
+        
+        // button update
+        this.buttonUpdate = new JButton(_("stackmat_developer.update"));
+        add(this.buttonUpdate, "split, grow");
 
         // button copy to clipboard
         this.buttonCopyToClipboard = new JButton(_("stackmat_developer.copy_to_clipboard"));
@@ -96,17 +141,20 @@ public class StackmatDeveloperFrame extends JFrame {
         add(this.buttonOk, "tag ok");
     }
 
-    public void updateSummary(TargetDataLine targetDataLine) {
-    	this.targetDataLine = targetDataLine;
-        this.targetDataLine.start();
+    public void updateSummary() {
         String text = "";
-        double sampleRate = this.targetDataLine.getFormat().getFrameRate();
-        byte[] buffer = new byte[(int) (sampleRate)];
-        this.targetDataLine.read(buffer, 0, buffer.length);
-        for(int i = 0; i < buffer.length; i++) {
-        	text = text + buffer[i] + " ";
+        for(int i = 0; i < this.data.length; i++) {
+            text = text + this.data[i] + " ";
         }
         this.textAreaSummary.setText(text);
-        this.targetDataLine.close();
+    }
+    
+    public void updateSummary(TargetDataLine targetDataLine) {
+        targetDataLine.start();
+        double sampleRate = targetDataLine.getFormat().getFrameRate();
+        this.data = new byte[(int) (sampleRate / 8)];
+        targetDataLine.read(this.data, 0, this.data.length);
+        targetDataLine.close();
+        this.updateSummary();
     }
 }

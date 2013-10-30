@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import javax.sound.sampled.TargetDataLine;
 
+import com.puzzletimer.gui.StackmatDeveloperFrame;
 import com.puzzletimer.models.Timing;
 import com.puzzletimer.state.TimerManager;
 
@@ -23,13 +24,15 @@ class StackmatTimerReader implements Runnable {
     private TargetDataLine targetDataLine;
     private ArrayList<StackmatTimerReaderListener> listeners;
     private boolean running;
+    private StackmatDeveloperFrame stackmatDeveloperFrame;
 
-    StackmatTimerReader(TargetDataLine targetDataLine) {
+    StackmatTimerReader(TargetDataLine targetDataLine, StackmatDeveloperFrame stackmatDeveloperFrame) {
         this.sampleRate = targetDataLine.getFormat().getFrameRate();
         this.period = this.sampleRate / 1200d;
         this.targetDataLine = targetDataLine;
         this.listeners = new ArrayList<StackmatTimerReaderListener>();
         this.running = false;
+        this.stackmatDeveloperFrame = stackmatDeveloperFrame;
     }
 
     private byte[] readPacket(byte[] samples, int offset, byte bitThreshold, boolean isInverted) {
@@ -87,6 +90,7 @@ class StackmatTimerReader implements Runnable {
         this.targetDataLine.start();
 
         byte[] buffer = new byte[(int) (this.sampleRate / 8)];
+        this.stackmatDeveloperFrame.data = buffer;
         int offset = buffer.length;
 
         while (this.running) {
@@ -202,8 +206,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private Date start;
     private State state;
 
-    public StackmatTimer(TargetDataLine targetDataLine, TimerManager timerManager) {
-        this.stackmatTimerReader = new StackmatTimerReader(targetDataLine);
+    public StackmatTimer(TargetDataLine targetDataLine, TimerManager timerManager, StackmatDeveloperFrame stackmatDeveloperFrame) {
+        this.stackmatTimerReader = new StackmatTimerReader(targetDataLine, stackmatDeveloperFrame);
         this.timerManager = timerManager;
         this.inspectionEnabled = false;
         this.start = null;

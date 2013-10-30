@@ -3,7 +3,6 @@ package com.puzzletimer.puzzles;
 import java.awt.Color;
 import java.util.HashMap;
 
-import com.puzzletimer.graphics.Face;
 import com.puzzletimer.graphics.Matrix44;
 import com.puzzletimer.graphics.Mesh;
 import com.puzzletimer.graphics.Plane;
