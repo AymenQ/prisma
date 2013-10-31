@@ -24,9 +24,6 @@ public class Timing {
             new Date().getTime() - this.start.getTime() :
             this.end.getTime() - this.start.getTime();
 
-        // truncate to centiseconds
-        elapsedTime = 10 * (elapsedTime / 10);
-
         return elapsedTime;
     }
 }

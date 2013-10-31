@@ -18,14 +18,12 @@ public class SolutionUtils {
             time = -time;
         }
 
-        time = (time + 5) / 10;
-
-        long seconds = time / 100;
-        long centiseconds = time % 100;
+        long seconds = time / 1000;
+        long milliseconds = time % 1000;
 
         return sign +
                seconds + "." +
-               (centiseconds < 10 ? "0" + centiseconds : centiseconds);
+               (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
     }
 
     public static String formatMinutes(long time) {
@@ -39,16 +37,14 @@ public class SolutionUtils {
             time = -time;
         }
 
-        time = (time + 5) / 10;
-
-        long minutes = time / 6000;
-        long seconds = (time / 100) % 60;
-        long centiseconds = time % 100;
+        long minutes = time / 60000;
+        long seconds = (time / 1000) % 60;
+        long milliseconds = time % 1000;
 
         return sign +
                (minutes < 10 ? "0" + minutes : minutes) + ":" +
                (seconds < 10 ? "0" + seconds : seconds) + "." +
-               (centiseconds < 10 ? "0" + centiseconds : centiseconds);
+               (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
     }
 
     public static String format(long time) {
@@ -66,16 +62,14 @@ public class SolutionUtils {
             time = -time;
         }
 
-        time = (time + 5) / 10;
-
-        long minutes = time / 6000;
-        long seconds = (time / 100) % 60;
-        long centiseconds = time % 100;
+        long minutes = time / 60000;
+        long seconds = (time / 1000) % 60;
+        long milliseconds = time % 1000;
 
         return sign +
                minutes + ":" +
                (seconds < 10 ? "0" + seconds : seconds) + "." +
-               (centiseconds < 10 ? "0" + centiseconds : centiseconds);
+               (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
     }
 
     public static long parseTime(String input) {
@@ -123,7 +117,7 @@ public class SolutionUtils {
             time = (long) (1000 * seconds);
         }
 
-        return 10 * ((time + 5) / 10);
+        return time;
     }
 
     public static long realTime(Solution solution) {
