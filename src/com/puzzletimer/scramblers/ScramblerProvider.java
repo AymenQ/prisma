@@ -233,12 +233,12 @@ public class ScramblerProvider {
             new VCube7RandomScrambler(
                 new ScramblerInfo("7x7x7-CUBE-RANDOM", "7x7x7-CUBE", _("scrambler.7x7x7-CUBE-RANDOM")),
                 100);
-        
+
         // 8x8x8 importer
         Scrambler ss8Importer =
             new EmptyScrambler(
                 new ScramblerInfo("8x8x8-CUBE-IMPORTER", "8x8x8-CUBE", ""));
-        
+
         // 8x8x8 random
         Scrambler ss8Random =
             new SS8RandomScrambler(
@@ -249,13 +249,13 @@ public class ScramblerProvider {
         Scrambler ss9Importer =
             new EmptyScrambler(
                 new ScramblerInfo("9x9x9-CUBE-IMPORTER", "9x9x9-CUBE", ""));
-        
+
         // 9x9x9 random
         Scrambler ss9Random =
             new SS9RandomScrambler(
                 new ScramblerInfo("9x9x9-CUBE-RANDOM", "9x9x9-CUBE", _("scrambler.9x9x9-CUBE-RANDOM")),
                 140);
-        
+
         // rubiks clock importer
         Scrambler rubiksClockImporter =
             new EmptyScrambler(

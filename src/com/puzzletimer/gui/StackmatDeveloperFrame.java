@@ -40,14 +40,14 @@ public class StackmatDeveloperFrame extends JFrame {
 
     public StackmatDeveloperFrame(ConfigurationManager configurationManager) {
         super();
-        
+
         setMinimumSize(new Dimension(640, 480));
         this.configurationManager = configurationManager;
 
         createComponents();
         pack();
         setTitle(_("stackmat_developer.title"));
-        
+
         // update
         this.buttonUpdate.addActionListener(new ActionListener() {
             @Override
@@ -60,7 +60,7 @@ public class StackmatDeveloperFrame extends JFrame {
                     StackmatDeveloperFrame.this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
                     StackmatDeveloperFrame.this.mixerInfo = null;
                     String stackmatTimerInputDeviceName = StackmatDeveloperFrame.this.configurationManager.getConfiguration("STACKMAT-TIMER-INPUT-DEVICE");
-                    
+
                     for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
                         if (stackmatTimerInputDeviceName.equals(mixerInfo.getName())) {
                             StackmatDeveloperFrame.this.mixerInfo = mixerInfo;
@@ -127,7 +127,7 @@ public class StackmatDeveloperFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(this.textAreaSummary);
         scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow, wrap");
-        
+
         // button update
         this.buttonUpdate = new JButton(_("stackmat_developer.update"));
         add(this.buttonUpdate, "split, grow");
@@ -148,7 +148,7 @@ public class StackmatDeveloperFrame extends JFrame {
         }
         this.textAreaSummary.setText(text);
     }
-    
+
     public void updateSummary(TargetDataLine targetDataLine) {
         targetDataLine.start();
         double sampleRate = targetDataLine.getFormat().getFrameRate();

@@ -232,21 +232,21 @@ public class MainFrame extends JFrame {
             this.timeLabel = new TimeLabel("00:00.00");
             this.timeLabel.setFont(new Font("Arial", Font.BOLD, 108));
             add(this.timeLabel, "grow");
-            
+
             // textFieldTime
             this.textFieldTime = new JTextField();
             this.textFieldTime.setHorizontalAlignment(JTextField.CENTER);
             this.textFieldTime.setFont(new Font("Arial", Font.BOLD, 108));
-            
+
             // rightHand
             this.rightHand = new HandImage(true);
             add(this.rightHand, "grow");
-            
+
             this.currentManualInput = false;
-            
+
             this.updateTimer(MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER").equals("MANUAL-INPUT"));
         }
-        
+
         private void updateTimer(boolean manualInput) {
             if(this.currentManualInput == true && manualInput == false) {
                 remove(this.textFieldTime);
@@ -620,7 +620,7 @@ public class MainFrame extends JFrame {
     private JMenu menuLookAndFeel;
     private ButtonGroup lookAndFeelGroup;
     private JRadioButtonMenuItem menuItemDefaultLnF;
-    
+
     private JMenuItem menuItemAbout;
     private JMenuItem menuItemFeedback;
     private JLabel labelMessage;
@@ -750,7 +750,7 @@ public class MainFrame extends JFrame {
                         @Override
                         public void solutionEdited(Solution solution) {
                             MainFrame.this.solutionManager.addSolution(solution);
-                            
+
                             // check for personal records
                             StatisticalMeasure[] measures = {
                                 new Best(1, Integer.MAX_VALUE),
@@ -791,7 +791,7 @@ public class MainFrame extends JFrame {
                                             descriptions[i]));
                                 }
                             }
-                            
+
                             MainFrame.this.scrambleManager.changeScramble();
                         }
                     };
@@ -843,7 +843,7 @@ public class MainFrame extends JFrame {
                 MainFrame.this.sessionSummaryFrame.setVisible(true);
             }
         });
-        
+
         // menuItemStackmatDeveloper
         this.menuItemStackmatDeveloper.addActionListener(new ActionListener() {
             @Override
@@ -978,7 +978,7 @@ public class MainFrame extends JFrame {
                     MainFrame.this.menuItemInspectionTime.isSelected());
             }
         });
-        
+
         // menuItemManualInput
         this.menuItemManualInput.addActionListener(new ActionListener() {
             @Override
@@ -1061,16 +1061,16 @@ public class MainFrame extends JFrame {
                 changeLookAndFeel(UIManager.getSystemLookAndFeelClassName(), MainFrame.this);
             }
         });
-        
+
         for (final LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
             JRadioButtonMenuItem lafMenuItem = new JRadioButtonMenuItem(lafInfo.getName());
             this.menuLookAndFeel.add(lafMenuItem);
             this.lookAndFeelGroup.add(lafMenuItem);
-            
+
             if (UIManager.getLookAndFeel().getName().equals(lafInfo.getName())) {
                 lafMenuItem.setSelected(true);
             }
-            
+
             lafMenuItem.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -1090,7 +1090,7 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
+
         // menuItemAbout
         this.menuItemAbout.addActionListener(new ActionListener() {
             @Override
@@ -1145,7 +1145,7 @@ public class MainFrame extends JFrame {
         this.categoryManagerDialog.pack();
         this.colorSchemeFrame.pack();
     }
-    
+
     private void setTimerTrigger(String timerTriggerId) {
         if (timerTriggerId.equals("MANUAL-INPUT")) {
             this.menuItemManualInput.setSelected(true);
@@ -1250,7 +1250,7 @@ public class MainFrame extends JFrame {
         this.menuItemSessionSummary.setMnemonic(KeyEvent.VK_S);
         this.menuItemSessionSummary.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKey | KeyEvent.ALT_MASK));
         menuView.add(this.menuItemSessionSummary);
-        
+
         // menuItemStackmatDeveloper
         this.menuItemStackmatDeveloper = new JMenuItem(_("main.stackmat_developer"));
         this.menuItemStackmatDeveloper.setMnemonic(KeyEvent.VK_E);
@@ -1284,7 +1284,7 @@ public class MainFrame extends JFrame {
         menuTimerTrigger.setMnemonic(KeyEvent.VK_T);
         menuOptions.add(menuTimerTrigger);
         ButtonGroup timerTriggerGroup = new ButtonGroup();
-        
+
         // menuItemManualInput
         this.menuItemManualInput = new JRadioButtonMenuItem(_("main.manual_input"));
         this.menuItemManualInput.setMnemonic(KeyEvent.VK_N);
@@ -1324,14 +1324,14 @@ public class MainFrame extends JFrame {
         this.menuLookAndFeel.setMnemonic(KeyEvent.VK_L);
         menuOptions.add(this.menuLookAndFeel);
         this.lookAndFeelGroup = new ButtonGroup();
-        
+
         // menuItemDefaultLaF
         this.menuItemDefaultLnF = new JRadioButtonMenuItem(_("main.laf_system_default"));
         this.menuItemDefaultLnF.setMnemonic(KeyEvent.VK_D);
         this.menuItemDefaultLnF.setSelected(true);
         this.menuLookAndFeel.add(this.menuItemDefaultLnF);
         this.lookAndFeelGroup.add(this.menuItemDefaultLnF);
-        
+
         //menuHelp
         JMenu menuHelp = new JMenu(_("main.help"));
         menuHelp.setMnemonic(KeyEvent.VK_H);
@@ -1341,7 +1341,7 @@ public class MainFrame extends JFrame {
         this.menuItemFeedback = new JMenuItem(_("main.feedback"));
         this.menuItemFeedback.setMnemonic(KeyEvent.VK_F);
         menuHelp.add(this.menuItemFeedback);
-        
+
         // menuItemAbout
         this.menuItemAbout = new JMenuItem(_("main.about"));
         this.menuItemAbout.setMnemonic(KeyEvent.VK_A);
@@ -1432,7 +1432,7 @@ public class MainFrame extends JFrame {
             this.sessionManager);
         this.sessionSummaryFrame.setLocationRelativeTo(null);
         this.sessionSummaryFrame.setIconImage(icon);
-        
+
         // stackmat developer frame
         this.stackmatDeveloperFrame = new StackmatDeveloperFrame(this.configurationManager);
         this.stackmatDeveloperFrame.setLocationRelativeTo(null);
