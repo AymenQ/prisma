@@ -26,7 +26,7 @@ public class ConfigurationManager {
         ConfigurationEntry configurationEntry = this.entryMap.get(key);
         if (configurationEntry == null)
             return null;
-        
+
         return configurationEntry.getValue();
     }
 

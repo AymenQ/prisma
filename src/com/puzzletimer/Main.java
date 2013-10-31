@@ -429,7 +429,7 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 Main main = new Main();
-                
+
                 String laf = main.configurationManager.getConfiguration("LOOK-AND-FEEL");
                 if (laf == null)
                     laf = UIManager.getSystemLookAndFeelClassName();

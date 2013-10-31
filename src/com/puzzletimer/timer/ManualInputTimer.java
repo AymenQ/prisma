@@ -50,7 +50,7 @@ public class ManualInputTimer implements Timer {
                 ManualInputTimer.this.textFieldTime.setText(null);
             }
         };
-        
+
         this.textFieldTime.addKeyListener(this.keyListener);
     }
 
