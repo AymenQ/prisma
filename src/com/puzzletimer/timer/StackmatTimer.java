@@ -15,7 +15,7 @@ import com.puzzletimer.models.Timing;
 import com.puzzletimer.state.TimerManager;
 
 interface StackmatTimerReaderListener {
-    void dataReceived(byte[] data);
+    void dataReceived(byte[] data, boolean hasSixDigits);
 }
 
 class StackmatTimerReader implements Runnable {
@@ -247,7 +247,7 @@ class StackmatTimerReader implements Runnable {
 
             // notify listeners
             for (StackmatTimerReaderListener listener : this.listeners) {
-                listener.dataReceived(data);
+                listener.dataReceived(data, this.hasSixDigits);
             }
 
             // skip read packet
@@ -360,7 +360,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     }
 
     @Override
-    public void dataReceived(byte[] data) {
+    public void dataReceived(byte[] data, boolean hasSixDigits) {
         // hands status
         if (data[0] == 'A' || data[0] == 'L' || data[0] == 'C') {
             this.timerManager.pressLeftHand();
@@ -377,9 +377,16 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         // time
         int minutes = data[1] - '0';
         int seconds = 10 * (data[2] - '0') + data[3] - '0';
-        int centiseconds = 10 * (data[4] - '0') + data[5] - '0';
+        long time;
+        if(hasSixDigits) {
+        	int milliseconds = 100 * (data[4] - '0') + 10 * (data[5] - '0') + data[6] - '0';
+            time = 60000 * minutes + 1000 * seconds + milliseconds;
+        } else {
+        	System.out.println("here");
+            int centiseconds = 10 * (data[4] - '0') + data[5] - '0';
+            time = 60000 * minutes + 1000 * seconds + 10 * centiseconds;
+        }
 
-        long time = 60000 * minutes + 1000 * seconds + 10 * centiseconds;
         Date end = new Date();
         Date start = new Date(end.getTime() - time);
         Timing timing = new Timing(start, end);
