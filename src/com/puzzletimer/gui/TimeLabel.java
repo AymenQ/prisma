@@ -28,7 +28,7 @@ public class TimeLabel extends JComponent {
         g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int textWidth = g2.getFontMetrics().stringWidth("00:00.00");
+        int textWidth = g2.getFontMetrics().stringWidth("00:00.000");
         int fontSize = getFont().getSize() * getWidth() / textWidth;
         g2.setFont(getFont().deriveFont((float) Math.min(fontSize, getHeight())));
 
