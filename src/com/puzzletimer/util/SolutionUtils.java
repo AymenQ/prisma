@@ -7,7 +7,9 @@ import java.util.Scanner;
 import com.puzzletimer.models.Solution;
 
 public class SolutionUtils {
-    public static String formatSeconds(long time) {
+    public static String formatSeconds(long time, String timerPrecisionId) {
+    	String result = "";
+    	
         if (time == Long.MAX_VALUE) {
             return "DNF";
         }
@@ -18,15 +20,28 @@ public class SolutionUtils {
             time = -time;
         }
 
-        long seconds = time / 1000;
-        long milliseconds = time % 1000;
+        if(timerPrecisionId.equals("CENTISECONDS")) {
+        	time = (time + 5) / 10;
+        	
+            long seconds = time / 100;
+            long centiseconds = time % 100;
+            result = sign +
+                    seconds + "." +
+                    (centiseconds < 10 ? "0" + centiseconds : centiseconds);
+        } else if(timerPrecisionId.equals("MILLISECONDS")) {
+            long seconds = time / 1000;
+            long milliseconds = time % 1000;
+            result = sign +
+                    seconds + "." +
+                    (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
+        }
 
-        return sign +
-               seconds + "." +
-               (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
+        return result;
     }
 
-    public static String formatMinutes(long time) {
+    public static String formatMinutes(long time, String timerPrecisionId) {
+    	String result = "";
+    	
         if (time == Long.MAX_VALUE) {
             return "DNF";
         }
@@ -36,21 +51,37 @@ public class SolutionUtils {
             sign = "-";
             time = -time;
         }
+        
+        if(timerPrecisionId.equals("CENTISECONDS")) {
+        	time = (time + 5) / 10;
+        	
+            long minutes = time / 6000;
+        	long seconds = (time / 100) % 60;
+            long centiseconds = time % 100;
+            result = sign +
+                    (minutes < 10 ? "0" + minutes : minutes) + ":" +
+                    (seconds < 10 ? "0" + seconds : seconds) + "." +
+                    (centiseconds < 10 ? "0" + centiseconds : centiseconds);
+        } else if(timerPrecisionId.equals("MILLISECONDS")) {
+            long minutes = time / 60000;
+            long seconds = (time / 1000) % 60;
+            long milliseconds = time % 1000;
 
-        long minutes = time / 60000;
-        long seconds = (time / 1000) % 60;
-        long milliseconds = time % 1000;
-
-        return sign +
-               (minutes < 10 ? "0" + minutes : minutes) + ":" +
-               (seconds < 10 ? "0" + seconds : seconds) + "." +
-               (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
+            result =  sign +
+                    (minutes < 10 ? "0" + minutes : minutes) + ":" +
+                    (seconds < 10 ? "0" + seconds : seconds) + "." +
+                    (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
+        }
+        
+        return result;
     }
 
-    public static String format(long time) {
+    public static String format(long time, String timerPrecisionId) {
         if (-60000 < time && time < 60000) {
-            return formatSeconds(time);
+            return formatSeconds(time, timerPrecisionId);
         }
+        
+    	String result = "";
 
         if (time == Long.MAX_VALUE) {
             return "DNF";
@@ -61,15 +92,29 @@ public class SolutionUtils {
             sign = "-";
             time = -time;
         }
+        
+        if(timerPrecisionId.equals("CENTISECONDS")) {
+        	time = (time + 5) / 10;
+        	
+            long minutes = time / 6000;
+        	long seconds = (time / 100) % 60;
+            long centiseconds = time % 100;
+            result = sign +
+                    minutes + ":" +
+                    (seconds < 10 ? "0" + seconds : seconds) + "." +
+                    (centiseconds < 10 ? "0" + centiseconds : centiseconds);
+        } else if(timerPrecisionId.equals("MILLISECONDS")) {
+            long minutes = time / 60000;
+            long seconds = (time / 1000) % 60;
+            long milliseconds = time % 1000;
 
-        long minutes = time / 60000;
-        long seconds = (time / 1000) % 60;
-        long milliseconds = time % 1000;
-
-        return sign +
-               minutes + ":" +
-               (seconds < 10 ? "0" + seconds : seconds) + "." +
-               (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
+            result = sign +
+                   minutes + ":" +
+                   (seconds < 10 ? "0" + seconds : seconds) + "." +
+                   (milliseconds < 10 ? "00" + milliseconds : (milliseconds < 100 ? "0" + milliseconds : milliseconds));
+        }
+        
+        return result;
     }
 
     public static long parseTime(String input) {
@@ -78,7 +123,7 @@ public class SolutionUtils {
 
         long time;
 
-        // 00:00.00
+        // 00:00.000
         if (input.contains(":")) {
             scanner.useDelimiter(":");
 
@@ -103,7 +148,7 @@ public class SolutionUtils {
             time = (long) (60000 * minutes + 1000 * seconds);
         }
 
-        // 00.00
+        // 00.000
         else {
             if (!scanner.hasNextDouble()) {
                 return 0;

@@ -25,7 +25,9 @@ import net.miginfocom.swing.MigLayout;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.CategoryManager;
+import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.state.SessionManager;
+import com.puzzletimer.state.TimerManager;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
@@ -41,10 +43,15 @@ public class SessionSummaryFrame extends JFrame {
     private JTextArea textAreaSummary;
     private JButton buttonCopyToClipboard;
     private JButton buttonOk;
+    private ConfigurationManager configurationManager;
+    private SessionManager sessionManager;
 
-    public SessionSummaryFrame(final CategoryManager categoryManager, SessionManager sessionManager) {
+    public SessionSummaryFrame(final CategoryManager categoryManager, SessionManager sessionManager, ConfigurationManager configurationManager, TimerManager timerManager) {
         super();
 
+        this.configurationManager = configurationManager;
+        this.sessionManager = sessionManager;
+        
         setMinimumSize(new Dimension(640, 480));
 
         createComponents();
@@ -61,6 +68,13 @@ public class SessionSummaryFrame extends JFrame {
             }
         });
         categoryManager.notifyListeners();
+        
+        timerManager.addListener(new TimerManager.Listener() {
+            @Override
+            public void precisionChanged(String timerPrecisionId) {
+                updateSummary(categoryManager.getCurrentCategory(), SessionSummaryFrame.this.sessionManager.getSolutions());
+            }
+        });
 
         // summary
         sessionManager.addListener(new SessionManager.Listener() {
@@ -184,7 +198,7 @@ public class SessionSummaryFrame extends JFrame {
 
                 statistics[i].setSolutions(solutions);
 
-                String s = SolutionUtils.format(statistics[i].getValue());
+                String s = SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"));
                 if (s.length() > maxStringLength) {
                     maxStringLength = s.length();
                 }
@@ -198,7 +212,7 @@ public class SessionSummaryFrame extends JFrame {
                 summary.append(String.format(
                     "%-" + maxLabelLength + "s %" + maxStringLength + "s",
                     labels[i],
-                    SolutionUtils.format(statistics[i].getValue())));
+                    SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"))));
                 summary.append("\n");
             }
 
@@ -224,7 +238,7 @@ public class SessionSummaryFrame extends JFrame {
                 int windowPosition = statistics[i].getWindowPosition();
 
                 // value
-                summary.append(labels[i] + " " + SolutionUtils.format(statistics[i].getValue()));
+                summary.append(labels[i] + " " + SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION")));
                 summary.append("\n");
 
                 // index range
@@ -253,9 +267,9 @@ public class SessionSummaryFrame extends JFrame {
                 String sTimes = "";
                 for (int j = windowSize - 1; j >= 0; j--) {
                     if (j == indexBest || j == indexWorst) {
-                        sTimes += "(" + SolutionUtils.format(times[j]) + ") ";
+                        sTimes += "(" + SolutionUtils.format(times[j], this.configurationManager.getConfiguration("TIMER-PRECISION")) + ") ";
                     } else {
-                        sTimes += SolutionUtils.format(times[j]) + " ";
+                        sTimes += SolutionUtils.format(times[j], this.configurationManager.getConfiguration("TIMER-PRECISION")) + " ";
                     }
                 }
 
@@ -272,7 +286,7 @@ public class SessionSummaryFrame extends JFrame {
 
         int maxStringLength = 0;
         for (int i = 0; i < realTimes.length; i++) {
-            sSolutions[i] = SolutionUtils.format(realTimes[i]);
+            sSolutions[i] = SolutionUtils.format(realTimes[i], this.configurationManager.getConfiguration("TIMER-PRECISION"));
             if (sSolutions[i].length() > maxStringLength) {
                 maxStringLength = sSolutions[i].length();
             }
