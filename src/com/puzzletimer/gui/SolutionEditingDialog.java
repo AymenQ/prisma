@@ -24,6 +24,7 @@ import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.models.Timing;
+import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
@@ -44,7 +45,8 @@ public class SolutionEditingDialog extends JDialog {
             JFrame owner,
             boolean modal,
             final Solution solution,
-            final SolutionEditingDialogListener listener) {
+            final SolutionEditingDialogListener listener,
+            final ConfigurationManager configurationManager) {
         super(owner, modal);
 
         setTitle(_("solution_editing.solution_editor"));
@@ -61,7 +63,7 @@ public class SolutionEditingDialog extends JDialog {
 
         // time
         this.textFieldTime.setText(
-            SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime()));
+            SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime(), configurationManager.getConfiguration("TIMER-PRECISION")));
         this.addWindowFocusListener(new WindowAdapter() {
             @Override
             public void windowGainedFocus(WindowEvent e) {

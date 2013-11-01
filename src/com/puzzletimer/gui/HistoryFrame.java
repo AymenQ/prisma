@@ -42,9 +42,11 @@ import com.puzzletimer.parsers.ScrambleParserProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
 import com.puzzletimer.state.CategoryManager;
+import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.state.ScrambleManager;
 import com.puzzletimer.state.SessionManager;
 import com.puzzletimer.state.SolutionManager;
+import com.puzzletimer.state.TimerManager;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
 import com.puzzletimer.statistics.BestAverage;
@@ -215,6 +217,8 @@ public class HistoryFrame extends JFrame {
     private JButton buttonSelectSession;
     private JButton buttonSelectNone;
     private JButton buttonOk;
+    private String nullTime;
+    private ConfigurationManager configurationManager;
 
     public HistoryFrame(
             final ScramblerProvider scramblerProvider,
@@ -222,8 +226,14 @@ public class HistoryFrame extends JFrame {
             final CategoryManager categoryManager,
             final ScrambleManager scrambleManager,
             final SolutionManager solutionManager,
-            final SessionManager sessionManager) {
+            final SessionManager sessionManager,
+            final TimerManager timerManager,
+            ConfigurationManager configurationManager) {
         super();
+
+        this.configurationManager = configurationManager;
+        
+        this.nullTime = "XX:XX.XX";
 
         setMinimumSize(new Dimension(800, 600));
 
@@ -241,6 +251,24 @@ public class HistoryFrame extends JFrame {
             }
         });
         categoryManager.notifyListeners();
+        
+        timerManager.addListener(new TimerManager.Listener() {
+        	@Override
+        	public void precisionChanged(String timerPrecisionId) {
+    			Solution[] solutions = solutionManager.getSolutions();
+                int[] selectedRows = new int[solutions.length];
+                for (int i = 0; i < selectedRows.length; i++) {
+                    selectedRows[i] = i;
+                }
+        		if(timerPrecisionId.equals("CENTISECONDS")) {
+        			HistoryFrame.this.nullTime = "XX:XX.XX";
+        		} else if(timerPrecisionId.equals("MILLISECONDS")) {
+        			HistoryFrame.this.nullTime = "XX:XX.XXX";
+        		}
+    			HistoryFrame.this.updateStatistics(solutions, selectedRows);
+    			HistoryFrame.this.updateTable(solutions);
+        	}
+        });
 
         // statistics, table
         solutionManager.addListener(new SolutionManager.Listener() {
@@ -343,7 +371,8 @@ public class HistoryFrame extends JFrame {
                         HistoryFrame.this,
                         true,
                         solution,
-                        listener);
+                        listener,
+                        HistoryFrame.this.configurationManager);
                 solutionEditingDialog.setLocationRelativeTo(null);
                 solutionEditingDialog.setVisible(true);
             }
@@ -442,14 +471,14 @@ public class HistoryFrame extends JFrame {
         add(new JLabel(_("history.histogram")), "span, wrap");
 
         // histogram
-        this.histogramPanel = new HistogramPanel(new Solution[0], 17);
+        this.histogramPanel = new HistogramPanel(new Solution[0], 17, this.configurationManager);
         add(this.histogramPanel, "growx, height 90, span, wrap");
 
         // labelGraph
         add(new JLabel(_("history.graph")), "span, wrap");
 
         // Graph
-        this.graphPanel = new GraphPanel(new Solution[0]);
+        this.graphPanel = new GraphPanel(new Solution[0], this.configurationManager);
         add(this.graphPanel, "growx, height 90, span, wrap");
 
         // labelStatistics
@@ -470,97 +499,97 @@ public class HistoryFrame extends JFrame {
 
         // labelBest
         panelStatistics.add(new JLabel(_("history.best")), "");
-        this.labelBest = new JLabel("XX:XX.XXX");
+        this.labelBest = new JLabel(this.nullTime);
         panelStatistics.add(this.labelBest, "right");
 
         // labelMeanOf3
         panelStatistics.add(new JLabel(_("history.mean_of_3")), "");
-        this.labelMeanOf3 = new JLabel("XX:XX.XXX");
+        this.labelMeanOf3 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelMeanOf3, "right");
 
         // labelBestMeanOf3
         panelStatistics.add(new JLabel(_("history.best_mean_of_3")), "");
-        this.labelBestMeanOf3 = new JLabel("XX:XX.XXX");
+        this.labelBestMeanOf3 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelBestMeanOf3, "right, wrap");
 
         // labelMean
         panelStatistics.add(new JLabel(_("history.mean")), "");
-        this.labelMean = new JLabel("XX:XX.XXX");
+        this.labelMean = new JLabel(this.nullTime);
         panelStatistics.add(this.labelMean, "right");
 
         // labelLowerQuartile
         panelStatistics.add(new JLabel(_("history.lower_quartile")), "");
-        this.labelLowerQuartile = new JLabel("XX:XX.XXX");
+        this.labelLowerQuartile = new JLabel(this.nullTime);
         panelStatistics.add(this.labelLowerQuartile, "right");
 
         // labelMeanOf10
         panelStatistics.add(new JLabel(_("history.mean_of_10")), "");
-        this.labelMeanOf10 = new JLabel("XX:XX.XXX");
+        this.labelMeanOf10 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelMeanOf10, "right");
 
         // labelBestMeanOf10
         panelStatistics.add(new JLabel(_("history.best_mean_of_10")), "");
-        this.labelBestMeanOf10 = new JLabel("XX:XX.XXX");
+        this.labelBestMeanOf10 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelBestMeanOf10, "right, wrap");
 
         // labelAverage
         panelStatistics.add(new JLabel(_("history.average")), "");
-        this.labelAverage = new JLabel("XX:XX.XXX");
+        this.labelAverage = new JLabel(this.nullTime);
         panelStatistics.add(this.labelAverage, "right");
 
         // labelMedian
         panelStatistics.add(new JLabel(_("history.median")), "");
-        this.labelMedian = new JLabel("XX:XX.XXX");
+        this.labelMedian = new JLabel(this.nullTime);
         panelStatistics.add(this.labelMedian, "right");
 
         // labelMeanOf100
         panelStatistics.add(new JLabel(_("history.mean_of_100")), "");
-        this.labelMeanOf100 = new JLabel("XX:XX.XXX");
+        this.labelMeanOf100 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelMeanOf100, "right");
 
         // labelBestMeanOf100
         panelStatistics.add(new JLabel(_("history.best_mean_of_100")), "");
-        this.labelBestMeanOf100 = new JLabel("XX:XX.XXX");
+        this.labelBestMeanOf100 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelBestMeanOf100, "right, wrap");
 
         // labelInterquartileMean
         panelStatistics.add(new JLabel(_("history.interquartile_mean")), "");
-        this.labelInterquartileMean = new JLabel("XX:XX.XXX");
+        this.labelInterquartileMean = new JLabel(this.nullTime);
         panelStatistics.add(this.labelInterquartileMean, "right");
 
         // labelUpperQuartile
         panelStatistics.add(new JLabel(_("history.upper_quartile")), "");
-        this.labelUpperQuartile = new JLabel("XX:XX.XXX");
+        this.labelUpperQuartile = new JLabel(this.nullTime);
         panelStatistics.add(this.labelUpperQuartile, "right");
 
         // labelAverageOf5
         panelStatistics.add(new JLabel(_("history.average_of_5")), "");
-        this.labelAverageOf5 = new JLabel("XX:XX.XXX");
+        this.labelAverageOf5 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelAverageOf5, "right");
 
         // labelBestAverageOf5
         panelStatistics.add(new JLabel(_("history.best_average_of_5")), "");
-        this.labelBestAverageOf5 = new JLabel("XX:XX.XXX");
+        this.labelBestAverageOf5 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelBestAverageOf5, "right, wrap");
 
         // labelStandardDeviation
         panelStatistics.add(new JLabel(_("history.standard_deviation")), "");
-        this.labelStandardDeviation = new JLabel("XX:XX.XXX");
+        this.labelStandardDeviation = new JLabel(this.nullTime);
         panelStatistics.add(this.labelStandardDeviation, "right");
 
         // labelWorst
         panelStatistics.add(new JLabel(_("history.worst")), "");
-        this.labelWorst = new JLabel("XX:XX.XXX");
+        this.labelWorst = new JLabel(this.nullTime);
         panelStatistics.add(this.labelWorst, "right");
 
         // labelAverageOf12
         panelStatistics.add(new JLabel(_("history.average_of_12")), "");
-        this.labelAverageOf12 = new JLabel("XX:XX.XXX");
+        this.labelAverageOf12 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelAverageOf12, "right");
 
         // labelBestAverageOf12
         panelStatistics.add(new JLabel(_("history.best_average_of_12")), "");
-        this.labelBestAverageOf12 = new JLabel("XX:XX.XXX");
+        this.labelBestAverageOf12 = new JLabel(this.nullTime);
         panelStatistics.add(this.labelBestAverageOf12, "right");
 
         // labelSolutions
@@ -694,9 +723,9 @@ public class HistoryFrame extends JFrame {
                 }
 
                 measures[i].setSolutions(window);
-                labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue()));
+                labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION")));
             } else {
-                labels[i].setText("XX:XX.XXX");
+                labels[i].setText(this.nullTime);
             }
 
             if (clickable[i]) {
@@ -764,7 +793,7 @@ public class HistoryFrame extends JFrame {
             String sStart = dateFormat.format(solutions[i].getTiming().getStart());
 
             // time
-            String sTime = SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime());
+            String sTime = SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime(), this.configurationManager.getConfiguration("TIMER-PRECISION"));
 
             tableModel.addRow(new Object[] {
                 solutions.length - i,

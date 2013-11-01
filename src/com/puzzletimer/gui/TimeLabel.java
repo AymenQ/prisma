@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 @SuppressWarnings("serial")
 public class TimeLabel extends JComponent {
     private String text;
+    private String timerPrecisionId;
 
     public TimeLabel(String text) {
         this.text = text;
@@ -18,6 +19,11 @@ public class TimeLabel extends JComponent {
     public void setText(String text) {
         this.text = text;
         repaint();
+    }
+    
+    public void setText(String text, String timerPrecisionId) {
+    	this.timerPrecisionId = timerPrecisionId;
+    	setText(text);
     }
 
     @Override
@@ -28,7 +34,12 @@ public class TimeLabel extends JComponent {
         g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int textWidth = g2.getFontMetrics().stringWidth("00:00.000");
+    	int textWidth = g2.getFontMetrics().stringWidth("00:00.00");
+        if(this.timerPrecisionId.equals("CENTISECONDS")) {
+        	textWidth = g2.getFontMetrics().stringWidth("00:00.00");
+        } else if(this.timerPrecisionId.equals("MILLISECONDS")) {
+        	textWidth = g2.getFontMetrics().stringWidth("00:00.000");
+        }
         int fontSize = getFont().getSize() * getWidth() / textWidth;
         g2.setFont(getFont().deriveFont((float) Math.min(fontSize, getHeight())));
 

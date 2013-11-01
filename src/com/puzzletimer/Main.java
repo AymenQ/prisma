@@ -122,7 +122,7 @@ public class Main {
         }
 
         // update database if necessary
-        String[] versions = { "0.3", "0.4", "0.5", "0.6" };
+        String[] versions = { "0.3", "0.4", "0.5", "0.6", "0.7" };
 
         for (;;) {
             String currentVersion = "";
@@ -232,7 +232,7 @@ public class Main {
                             MessageType.INFORMATION,
                             String.format(_("main.personal_record_message"),
                                 Main.this.categoryManager.getCurrentCategory().getDescription(),
-                                SolutionUtils.formatMinutes(measures[i].getValue()),
+                                SolutionUtils.formatMinutes(measures[i].getValue(), Main.this.configurationManager.getConfiguration("TIMER-PRECISION")),
                                 descriptions[i]));
                     }
                 }
@@ -251,6 +251,11 @@ public class Main {
             public void inspectionEnabledSet(boolean inspectionEnabled) {
                 Main.this.configurationManager.setConfiguration(
                     "INSPECTION-TIME-ENABLED", inspectionEnabled ? "TRUE" : "FALSE");
+            }
+            
+            @Override
+            public void precisionChanged(String timerPrecisionId) {
+            	Main.this.configurationManager.setConfiguration("TIMER-PRECISION", timerPrecisionId);
             }
         });
 

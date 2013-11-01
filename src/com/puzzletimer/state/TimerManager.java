@@ -12,6 +12,7 @@ public class TimerManager {
         // timer
         public void timerChanged(Timer timer) { }
         public void timerReset() { }
+        public void precisionChanged(String timerPrecisionId) { }
 
         // hands
         public void leftHandPressed() { }
@@ -75,6 +76,12 @@ public class TimerManager {
     public void resetTimer() {
         for (Listener listener : this.listeners) {
             listener.timerReset();
+        }
+    }
+    
+    public void precisionChanged(String timerPrecisionId) {
+        for (Listener listener : this.listeners) {
+            listener.precisionChanged(timerPrecisionId);
         }
     }
 

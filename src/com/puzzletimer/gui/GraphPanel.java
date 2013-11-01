@@ -13,6 +13,7 @@ import java.util.Date;
 import javax.swing.JPanel;
 
 import com.puzzletimer.models.Solution;
+import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
@@ -23,8 +24,10 @@ public class GraphPanel extends JPanel {
     ArrayList<Long> startTimes;
     long startIntervalStart;
     long startIntervalEnd;
+    private ConfigurationManager configurationManager;
 
-    public GraphPanel(Solution[] solutions) {
+    public GraphPanel(Solution[] solutions, ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
         setBackground(Color.WHITE);
         setSolutions(solutions);
     }
@@ -116,7 +119,7 @@ public class GraphPanel extends JPanel {
         double vTickInterval = (this.solutionIntervalEnd - this.solutionIntervalStart) / nVerticalTicks;
         for (int i = 0; i < nVerticalTicks; i++) {
             long value = (long) (this.solutionIntervalStart + (i + 0.5) * vTickInterval);
-            String label = SolutionUtils.format(value);
+            String label = SolutionUtils.format(value, this.configurationManager.getConfiguration("TIMER-PRECISION"));
 
             FontMetrics fontMetrics = g2.getFontMetrics();
             int width = fontMetrics.stringWidth(label);

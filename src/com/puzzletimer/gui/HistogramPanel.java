@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import javax.swing.JPanel;
 
 import com.puzzletimer.models.Solution;
+import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.util.SolutionUtils;
 
 @SuppressWarnings("serial")
@@ -17,9 +18,11 @@ public class HistogramPanel extends JPanel {
     private long[] bins;
     private long intervalStart;
     private long intervalEnd;
+    private ConfigurationManager configurationManager;
 
-    public HistogramPanel(Solution[] solutions, int nBins) {
-        setBackground(Color.WHITE);
+    public HistogramPanel(Solution[] solutions, int nBins, ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
+    	setBackground(Color.WHITE);
 
         this.bins = new long[nBins];
         setSolutions(solutions);
@@ -96,7 +99,7 @@ public class HistogramPanel extends JPanel {
         double binInterval = (double) (this.intervalEnd - this.intervalStart) / this.bins.length;
         for (int i = 0; i < this.bins.length + 1; i++) {
             long value = (long) (this.intervalStart + i * binInterval);
-            String label = SolutionUtils.format(value);
+            String label = SolutionUtils.format(value, this.configurationManager.getConfiguration("TIMER-PRECISION"));
 
             FontMetrics fontMetrics = g2.getFontMetrics();
             int width = fontMetrics.stringWidth(label);

@@ -158,7 +158,7 @@ public class MainFrame extends JFrame {
                 public void timerReset() {
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
-                        SolutionUtils.formatMinutes(0));
+                        SolutionUtils.formatMinutes(0, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
                 }
 
                 @Override
@@ -209,14 +209,21 @@ public class MainFrame extends JFrame {
                 public void solutionRunning(Timing timing) {
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
-                        SolutionUtils.formatMinutes(timing.getElapsedTime()));
+                        SolutionUtils.formatMinutes(timing.getElapsedTime(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
                 }
 
                 @Override
                 public void solutionFinished(Timing timing, String penalty) {
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
-                        SolutionUtils.formatMinutes(timing.getElapsedTime()));
+                        SolutionUtils.formatMinutes(timing.getElapsedTime(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                }
+                
+                @Override
+                public void precisionChanged(String timerPrecisionId) {
+                    TimerPanel.this.timeLabel.setForeground(Color.BLACK);
+                    TimerPanel.this.timeLabel.setText(
+                        SolutionUtils.formatMinutes(0, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")), timerPrecisionId);
                 }
             });
         }
@@ -229,7 +236,7 @@ public class MainFrame extends JFrame {
             add(this.leftHand, "grow");
 
             // timeLabel
-            this.timeLabel = new TimeLabel("00:00.000");
+            this.timeLabel = new TimeLabel(SolutionUtils.formatMinutes(0, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
             this.timeLabel.setFont(new Font("Arial", Font.BOLD, 108));
             add(this.timeLabel, "grow");
 
@@ -279,6 +286,14 @@ public class MainFrame extends JFrame {
             this.solutionManager = solutionManager;
 
             createComponents();
+            
+            timerManager.addListener(new TimerManager.Listener() {
+            	@Override
+            	public void precisionChanged(String timerPrecisionId) {
+        			Solution[] solutions = MainFrame.this.sessionManager.getSolutions();
+        			setSolutions(solutions);
+            	}
+            });
 
             sessionManager.addListener(new SessionManager.Listener() {
                 @Override
@@ -310,7 +325,7 @@ public class MainFrame extends JFrame {
                 labelIndex.setFont(new Font("Tahoma", Font.BOLD, 13));
                 this.panel.add(labelIndex);
 
-                JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime()));
+                JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
                 labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                 this.panel.add(labelTime);
 
@@ -383,8 +398,11 @@ public class MainFrame extends JFrame {
         private JLabel labelBestAverageOf5;
         private JLabel labelAverageOf12;
         private JLabel labelBestAverageOf12;
+        private String nullTime;
 
         private StatisticsPanel(SessionManager sessionManager) {
+            this.nullTime = "XX:XX.XX";
+        	
             createComponents();
 
             final JLabel[] labels = {
@@ -416,6 +434,33 @@ public class MainFrame extends JFrame {
                 new Average(12, 12),
                 new BestAverage(12, Integer.MAX_VALUE),
             };
+            
+            timerManager.addListener(new TimerManager.Listener() {
+            	@Override
+            	public void precisionChanged(String timerPrecisionId) {
+        			Solution[] solutions = MainFrame.this.sessionManager.getSolutions();
+            		if(timerPrecisionId.equals("CENTISECONDS")) {
+            			StatisticsPanel.this.nullTime = "XX:XX.XX";
+            		} else if(timerPrecisionId.equals("MILLISECONDS")) {
+            			StatisticsPanel.this.nullTime = "XX:XX.XXX";
+            		}
+                    for (int i = 0; i < labels.length; i++) {
+                        if (solutions.length >= measures[i].getMinimumWindowSize()) {
+                            int size = Math.min(solutions.length, measures[i].getMaximumWindowSize());
+
+                            Solution[] window = new Solution[size];
+                            for (int j = 0; j < size; j++) {
+                                window[j] = solutions[j];
+                            }
+
+                            measures[i].setSolutions(window);
+                            labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                        } else {
+                            labels[i].setText(StatisticsPanel.this.nullTime);
+                        }
+                    }
+            	}
+            });
 
             sessionManager.addListener(new SessionManager.Listener() {
                 @Override
@@ -430,9 +475,9 @@ public class MainFrame extends JFrame {
                             }
 
                             measures[i].setSolutions(window);
-                            labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue()));
+                            labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
                         } else {
-                            labels[i].setText("XX:XX.XXX");
+                            labels[i].setText(StatisticsPanel.this.nullTime);
                         }
                     }
                 }
@@ -451,7 +496,7 @@ public class MainFrame extends JFrame {
             labelMeanDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelMeanDescription);
 
-            this.labelMean = new JLabel("XX:XX.XXX");
+            this.labelMean = new JLabel(this.nullTime);
             add(this.labelMean, "wrap");
 
             // labelAverage
@@ -459,7 +504,7 @@ public class MainFrame extends JFrame {
             labelAverageDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelAverageDescription);
 
-            this.labelAverage= new JLabel("XX:XX.XXX");
+            this.labelAverage= new JLabel(this.nullTime);
             add(this.labelAverage, "wrap");
 
             // labelBestTime
@@ -467,7 +512,7 @@ public class MainFrame extends JFrame {
             labelBestTimeDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelBestTimeDescription);
 
-            this.labelBestTime = new JLabel("XX:XX.XXX");
+            this.labelBestTime = new JLabel(this.nullTime);
             add(this.labelBestTime, "wrap");
 
             // labelMedian
@@ -475,7 +520,7 @@ public class MainFrame extends JFrame {
             labelMedianDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelMedianDescription);
 
-            this.labelMedian = new JLabel("XX:XX.XXX");
+            this.labelMedian = new JLabel(this.nullTime);
             add(this.labelMedian, "wrap");
 
             // labelWorstTime
@@ -483,7 +528,7 @@ public class MainFrame extends JFrame {
             labelWorstTimeDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelWorstTimeDescription);
 
-            this.labelWorstTime = new JLabel("XX:XX.XXX");
+            this.labelWorstTime = new JLabel(this.nullTime);
             add(this.labelWorstTime, "wrap");
 
             // labelStandardDeviation
@@ -491,7 +536,7 @@ public class MainFrame extends JFrame {
             labelStandardDeviationDescription.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelStandardDeviationDescription);
 
-            this.labelStandardDeviation = new JLabel("XX:XX.XXX");
+            this.labelStandardDeviation = new JLabel(this.nullTime);
             add(this.labelStandardDeviation, "wrap");
 
             // labelMeanOf3
@@ -499,7 +544,7 @@ public class MainFrame extends JFrame {
             labelMeanOf3Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelMeanOf3Description);
 
-            this.labelMeanOf3 = new JLabel("XX:XX.XXX");
+            this.labelMeanOf3 = new JLabel(this.nullTime);
             add(this.labelMeanOf3, "wrap");
 
             // labelBestMeanOf3
@@ -507,7 +552,7 @@ public class MainFrame extends JFrame {
             labelBestMeanOf3Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelBestMeanOf3Description);
 
-            this.labelBestMeanOf3 = new JLabel("XX:XX.XXX");
+            this.labelBestMeanOf3 = new JLabel(this.nullTime);
             add(this.labelBestMeanOf3, "wrap");
 
             // labelAverageOf5
@@ -515,7 +560,7 @@ public class MainFrame extends JFrame {
             labelAverageOf5Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelAverageOf5Description);
 
-            this.labelAverageOf5 = new JLabel("XX:XX.XXX");
+            this.labelAverageOf5 = new JLabel(this.nullTime);
             add(this.labelAverageOf5, "wrap");
 
             // labelBestAverageOf5
@@ -523,7 +568,7 @@ public class MainFrame extends JFrame {
             labelBestAverageOf5Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelBestAverageOf5Description);
 
-            this.labelBestAverageOf5 = new JLabel("XX:XX.XXX");
+            this.labelBestAverageOf5 = new JLabel(this.nullTime);
             add(this.labelBestAverageOf5, "wrap");
 
             // labelAverageOf12
@@ -531,7 +576,7 @@ public class MainFrame extends JFrame {
             labelAverageOf12Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelAverageOf12Description);
 
-            this.labelAverageOf12 = new JLabel("XX:XX.XXX");
+            this.labelAverageOf12 = new JLabel(this.nullTime);
             add(this.labelAverageOf12, "wrap");
 
             // labelBestAverageOf12
@@ -539,7 +584,7 @@ public class MainFrame extends JFrame {
             labelBestAverageOf12Description.setFont(new Font("Tahoma", Font.BOLD, 11));
             add(labelBestAverageOf12Description);
 
-            this.labelBestAverageOf12 = new JLabel("XX:XX.XXX");
+            this.labelBestAverageOf12 = new JLabel(this.nullTime);
             add(this.labelBestAverageOf12, "wrap");
         }
     }
@@ -617,6 +662,8 @@ public class MainFrame extends JFrame {
     private JRadioButtonMenuItem menuItemCtrlKeys;
     private JRadioButtonMenuItem menuItemSpaceKey;
     private JRadioButtonMenuItem menuItemStackmatTimer;
+    private JRadioButtonMenuItem menuItemCentiseconds;
+    private JRadioButtonMenuItem menuItemMilliseconds;
     private JMenu menuLookAndFeel;
     private ButtonGroup lookAndFeelGroup;
     private JRadioButtonMenuItem menuItemDefaultLnF;
@@ -687,6 +734,7 @@ public class MainFrame extends JFrame {
         }
 
         setTimerTrigger(this.configurationManager.getConfiguration("TIMER-TRIGGER"));
+        setTimerPrecision(this.configurationManager.getConfiguration("TIMER-PRECISION"));
 
         // inspection time sounds
         try {
@@ -787,7 +835,7 @@ public class MainFrame extends JFrame {
                                         MessageType.INFORMATION,
                                         String.format(_("main.personal_record_message"),
                                             MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
-                                            SolutionUtils.formatMinutes(measures[i].getValue()),
+                                            SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")),
                                             descriptions[i]));
                                 }
                             }
@@ -797,7 +845,7 @@ public class MainFrame extends JFrame {
                     };
 
                 SolutionEditingDialog solutionEditingDialog =
-                    new SolutionEditingDialog(MainFrame.this, true, solution, listener);
+                    new SolutionEditingDialog(MainFrame.this, true, solution, listener, MainFrame.this.configurationManager);
                 solutionEditingDialog.setTitle(_("main.add_solution_title"));
                 solutionEditingDialog.setLocationRelativeTo(null);
                 solutionEditingDialog.setVisible(true);
@@ -1078,6 +1126,22 @@ public class MainFrame extends JFrame {
                 }
             });
         }
+        
+        // menuItemCentiseconds
+        this.menuItemCentiseconds.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTimerPrecision("CENTISECONDS");
+            }
+        });
+
+        // menuItemMilliseconds
+        this.menuItemMilliseconds.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTimerPrecision("MILLISECONDS");
+            }
+        });
 
         // menuItemFeedback
         this.menuItemFeedback.addActionListener(new ActionListener() {
@@ -1195,6 +1259,16 @@ public class MainFrame extends JFrame {
                     _("main.stackmat_timer_error_message"));
             }
         }
+
+    }
+
+    private void setTimerPrecision(String timerPrecisionId) {
+        if (timerPrecisionId.equals("CENTISECONDS")) {
+            this.menuItemCentiseconds.setSelected(true);
+        } else if (timerPrecisionId.equals("MILLISECONDS")) {
+            this.menuItemMilliseconds.setSelected(true);
+        }
+        this.timerManager.precisionChanged(timerPrecisionId);
     }
 
     private void createComponents() {
@@ -1331,6 +1405,26 @@ public class MainFrame extends JFrame {
         this.menuItemDefaultLnF.setSelected(true);
         this.menuLookAndFeel.add(this.menuItemDefaultLnF);
         this.lookAndFeelGroup.add(this.menuItemDefaultLnF);
+        
+        // menuTimerPrecision
+        JMenu menuTimerPrecision = new JMenu(_("main.timer_precision"));
+        menuTimerPrecision.setMnemonic(KeyEvent.VK_P);
+        menuOptions.add(menuTimerPrecision);
+        ButtonGroup timerPrecisionGroup = new ButtonGroup();
+
+        // menuItemCentiseconds
+        this.menuItemCentiseconds = new JRadioButtonMenuItem(_("main.centiseconds"));
+        this.menuItemCentiseconds.setMnemonic(KeyEvent.VK_C);
+        this.menuItemCentiseconds.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuShortcutKey));
+        menuTimerPrecision.add(this.menuItemCentiseconds);
+        timerPrecisionGroup.add(this.menuItemCentiseconds);
+
+        // menuItemMilliseconds
+        this.menuItemMilliseconds = new JRadioButtonMenuItem(_("main.milliseconds"));
+        this.menuItemMilliseconds.setMnemonic(KeyEvent.VK_M);
+        this.menuItemMilliseconds.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuShortcutKey));
+        menuTimerPrecision.add(this.menuItemMilliseconds);
+        timerPrecisionGroup.add(this.menuItemMilliseconds);
 
         //menuHelp
         JMenu menuHelp = new JMenu(_("main.help"));
@@ -1422,14 +1516,18 @@ public class MainFrame extends JFrame {
             this.categoryManager,
             this.scrambleManager,
             this.solutionManager,
-            this.sessionManager);
+            this.sessionManager,
+            this.timerManager,
+            this.configurationManager);
         this.historyFrame.setLocationRelativeTo(null);
         this.historyFrame.setIconImage(icon);
 
         // session summary frame
         this.sessionSummaryFrame = new SessionSummaryFrame(
             this.categoryManager,
-            this.sessionManager);
+            this.sessionManager,
+            this.configurationManager,
+            this.timerManager);
         this.sessionSummaryFrame.setLocationRelativeTo(null);
         this.sessionSummaryFrame.setIconImage(icon);
 
