@@ -33,6 +33,11 @@ public class BestAverage implements StatisticalMeasure {
     public long getValue() {
         return this.value;
     }
+    
+    @Override
+    public boolean getRound() {
+    	return true;
+    }
 
     @Override
     public void setSolutions(Solution[] solutions) {

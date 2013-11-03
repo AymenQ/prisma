@@ -7,5 +7,6 @@ public interface StatisticalMeasure {
     int getMaximumWindowSize();
     int getWindowPosition();
     long getValue();
+    boolean getRound();
     void setSolutions(Solution[] solutions);
 }

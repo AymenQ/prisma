@@ -33,6 +33,11 @@ public class Worst implements StatisticalMeasure {
     public long getValue() {
         return this.value;
     }
+    
+    @Override
+    public boolean getRound() {
+    	return false;
+    }
 
     @Override
     public void setSolutions(Solution[] solutions) {

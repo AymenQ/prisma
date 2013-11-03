@@ -63,7 +63,7 @@ public class SolutionEditingDialog extends JDialog {
 
         // time
         this.textFieldTime.setText(
-            SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime(), configurationManager.getConfiguration("TIMER-PRECISION")));
+            SolutionUtils.formatMinutes(solution.getTiming().getElapsedTime(), configurationManager.getConfiguration("TIMER-PRECISION"), false));
         this.addWindowFocusListener(new WindowAdapter() {
             @Override
             public void windowGainedFocus(WindowEvent e) {

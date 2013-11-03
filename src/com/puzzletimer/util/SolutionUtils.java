@@ -7,7 +7,7 @@ import java.util.Scanner;
 import com.puzzletimer.models.Solution;
 
 public class SolutionUtils {
-    public static String formatSeconds(long time, String timerPrecisionId) {
+    public static String formatSeconds(long time, String timerPrecisionId, boolean round) {
     	String result = "";
     	
         if (time == Long.MAX_VALUE) {
@@ -21,7 +21,10 @@ public class SolutionUtils {
         }
 
         if(timerPrecisionId.equals("CENTISECONDS")) {
-        	time = (time + 5) / 10;
+        	if(round) {
+            	time = time + 5;
+        	}
+        	time = time / 10;
         	
             long seconds = time / 100;
             long centiseconds = time % 100;
@@ -39,7 +42,7 @@ public class SolutionUtils {
         return result;
     }
 
-    public static String formatMinutes(long time, String timerPrecisionId) {
+    public static String formatMinutes(long time, String timerPrecisionId, boolean round) {
     	String result = "";
     	
         if (time == Long.MAX_VALUE) {
@@ -53,7 +56,10 @@ public class SolutionUtils {
         }
         
         if(timerPrecisionId.equals("CENTISECONDS")) {
-        	time = (time + 5) / 10;
+        	if(round) {
+            	time = time + 5;
+        	}
+        	time = time / 10;
         	
             long minutes = time / 6000;
         	long seconds = (time / 100) % 60;
@@ -76,9 +82,9 @@ public class SolutionUtils {
         return result;
     }
 
-    public static String format(long time, String timerPrecisionId) {
+    public static String format(long time, String timerPrecisionId, boolean round) {
         if (-60000 < time && time < 60000) {
-            return formatSeconds(time, timerPrecisionId);
+            return formatSeconds(time, timerPrecisionId, round);
         }
         
     	String result = "";
@@ -94,7 +100,10 @@ public class SolutionUtils {
         }
         
         if(timerPrecisionId.equals("CENTISECONDS")) {
-        	time = (time + 5) / 10;
+        	if(round) {
+            	time = time + 5;
+        	}
+        	time = time / 10;
         	
             long minutes = time / 6000;
         	long seconds = (time / 100) % 60;
