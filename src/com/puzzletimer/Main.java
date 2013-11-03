@@ -221,10 +221,10 @@ public class Main {
                         continue;
                     }
 
-                    measures[i].setSolutions(solutions);
+                    measures[i].setSolutions(solutions, Main.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                     long allTimeBest = measures[i].getValue();
 
-                    measures[i].setSolutions(sessionSolutions);
+                    measures[i].setSolutions(sessionSolutions, Main.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                     long sessionBest = measures[i].getValue();
 
                     if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {

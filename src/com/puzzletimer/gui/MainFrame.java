@@ -49,6 +49,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import net.miginfocom.swing.MigLayout;
 
+import com.puzzletimer.Main;
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.gui.SolutionEditingDialog.SolutionEditingDialogListener;
 import com.puzzletimer.models.Category;
@@ -464,7 +465,7 @@ public class MainFrame extends JFrame {
                                 window[j] = solutions[j];
                             }
 
-                            measures[i].setSolutions(window);
+                            measures[i].setSolutions(window, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                             labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
                         } else {
                             labels[i].setText(StatisticsPanel.this.nullTime);
@@ -485,7 +486,7 @@ public class MainFrame extends JFrame {
                                 window[j] = solutions[j];
                             }
 
-                            measures[i].setSolutions(window);
+                            measures[i].setSolutions(window, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                             labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
                         } else {
                             labels[i].setText(StatisticsPanel.this.nullTime);
@@ -835,10 +836,10 @@ public class MainFrame extends JFrame {
                                     continue;
                                 }
 
-                                measures[i].setSolutions(solutions);
+                                measures[i].setSolutions(solutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                                 long allTimeBest = measures[i].getValue();
 
-                                measures[i].setSolutions(sessionSolutions);
+                                measures[i].setSolutions(sessionSolutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                                 long sessionBest = measures[i].getValue();
 
                                 if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {

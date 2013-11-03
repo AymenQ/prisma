@@ -43,8 +43,8 @@ public class Percentile implements StatisticalMeasure {
     }
 
     @Override
-    public void setSolutions(Solution[] solutions) {
-        long[] times = SolutionUtils.realTimes(solutions, false);
+    public void setSolutions(Solution[] solutions, boolean round) {
+        long[] times = SolutionUtils.realTimes(solutions, false, round);
         Arrays.sort(times);
 
         double position = this.p * (solutions.length + 1);

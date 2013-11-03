@@ -39,8 +39,8 @@ public class Mean implements StatisticalMeasure {
     }
 
     @Override
-    public void setSolutions(Solution[] solutions) {
-        long[] times = SolutionUtils.realTimes(solutions, false);
+    public void setSolutions(Solution[] solutions, boolean round) {
+        long[] times = SolutionUtils.realTimes(solutions, false, round);
 
         long sum = 0L;
         for (long time : times) {

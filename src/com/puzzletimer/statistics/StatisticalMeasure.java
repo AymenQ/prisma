@@ -8,5 +8,5 @@ public interface StatisticalMeasure {
     int getWindowPosition();
     long getValue();
     boolean getRound();
-    void setSolutions(Solution[] solutions);
+    void setSolutions(Solution[] solutions, boolean round);
 }
