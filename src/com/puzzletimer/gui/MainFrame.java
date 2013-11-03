@@ -149,6 +149,8 @@ public class MainFrame extends JFrame {
         private JTextField textFieldTime;
         private HandImage rightHand;
         private boolean currentManualInput;
+        private boolean isInspectionRunning;
+        private long time;
 
         public TimerPanel(TimerManager timerManager) {
             createComponents();
@@ -156,9 +158,11 @@ public class MainFrame extends JFrame {
             timerManager.addListener(new TimerManager.Listener() {
                 @Override
                 public void timerReset() {
+                    TimerPanel.this.isInspectionRunning = false;
+                    TimerPanel.this.time = 0;
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
-                        SolutionUtils.formatMinutes(0, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                        SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
                 }
 
                 @Override
@@ -183,6 +187,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 public void inspectionRunning(long remainingTime) {
+                    TimerPanel.this.isInspectionRunning = true;
                     Color startColor = Color.BLACK;
                     Color endColor = new Color(0xD4, 0x11, 0x11);
 
@@ -207,23 +212,29 @@ public class MainFrame extends JFrame {
 
                 @Override
                 public void solutionRunning(Timing timing) {
+                    TimerPanel.this.isInspectionRunning = false;
+                    TimerPanel.this.time = timing.getElapsedTime();
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
-                        SolutionUtils.formatMinutes(timing.getElapsedTime(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                        SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
                 }
 
                 @Override
                 public void solutionFinished(Timing timing, String penalty) {
+                    TimerPanel.this.isInspectionRunning = false;
+                    TimerPanel.this.time = timing.getElapsedTime();
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
-                        SolutionUtils.formatMinutes(timing.getElapsedTime(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                        SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
                 }
                 
                 @Override
                 public void precisionChanged(String timerPrecisionId) {
-                    TimerPanel.this.timeLabel.setForeground(Color.BLACK);
-                    TimerPanel.this.timeLabel.setText(
-                        SolutionUtils.formatMinutes(0, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")), timerPrecisionId);
+                	TimerPanel.this.timeLabel.setTimerPrecision(timerPrecisionId);
+                	if(!isInspectionRunning) {
+	                    TimerPanel.this.timeLabel.setForeground(Color.BLACK);
+	                    TimerPanel.this.timeLabel.setText(SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
+                	}
                 }
             });
         }
@@ -236,7 +247,7 @@ public class MainFrame extends JFrame {
             add(this.leftHand, "grow");
 
             // timeLabel
-            this.timeLabel = new TimeLabel(SolutionUtils.formatMinutes(0, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+            this.timeLabel = new TimeLabel(SolutionUtils.formatMinutes(0, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
             this.timeLabel.setFont(new Font("Arial", Font.BOLD, 108));
             add(this.timeLabel, "grow");
 
@@ -325,7 +336,7 @@ public class MainFrame extends JFrame {
                 labelIndex.setFont(new Font("Tahoma", Font.BOLD, 13));
                 this.panel.add(labelIndex);
 
-                JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                JLabel labelTime = new JLabel(SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
                 labelTime.setFont(new Font("Tahoma", Font.PLAIN, 13));
                 this.panel.add(labelTime);
 
@@ -454,7 +465,7 @@ public class MainFrame extends JFrame {
                             }
 
                             measures[i].setSolutions(window);
-                            labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                            labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
                         } else {
                             labels[i].setText(StatisticsPanel.this.nullTime);
                         }
@@ -475,7 +486,7 @@ public class MainFrame extends JFrame {
                             }
 
                             measures[i].setSolutions(window);
-                            labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                            labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
                         } else {
                             labels[i].setText(StatisticsPanel.this.nullTime);
                         }
@@ -835,7 +846,7 @@ public class MainFrame extends JFrame {
                                         MessageType.INFORMATION,
                                         String.format(_("main.personal_record_message"),
                                             MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
-                                            SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION")),
+                                            SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()),
                                             descriptions[i]));
                                 }
                             }
@@ -1268,7 +1279,7 @@ public class MainFrame extends JFrame {
         } else if (timerPrecisionId.equals("MILLISECONDS")) {
             this.menuItemMilliseconds.setSelected(true);
         }
-        this.timerManager.precisionChanged(timerPrecisionId);
+        this.timerManager.setPrecision(timerPrecisionId);
     }
 
     private void createComponents() {

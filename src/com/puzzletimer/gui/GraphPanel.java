@@ -119,7 +119,7 @@ public class GraphPanel extends JPanel {
         double vTickInterval = (this.solutionIntervalEnd - this.solutionIntervalStart) / nVerticalTicks;
         for (int i = 0; i < nVerticalTicks; i++) {
             long value = (long) (this.solutionIntervalStart + (i + 0.5) * vTickInterval);
-            String label = SolutionUtils.format(value, this.configurationManager.getConfiguration("TIMER-PRECISION"));
+            String label = SolutionUtils.format(value, this.configurationManager.getConfiguration("TIMER-PRECISION"), false);
 
             FontMetrics fontMetrics = g2.getFontMetrics();
             int width = fontMetrics.stringWidth(label);

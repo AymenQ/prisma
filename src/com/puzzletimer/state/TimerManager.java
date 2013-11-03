@@ -79,7 +79,7 @@ public class TimerManager {
         }
     }
     
-    public void precisionChanged(String timerPrecisionId) {
+    public void setPrecision(String timerPrecisionId) {
         for (Listener listener : this.listeners) {
             listener.precisionChanged(timerPrecisionId);
         }

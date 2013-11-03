@@ -21,9 +21,8 @@ public class TimeLabel extends JComponent {
         repaint();
     }
     
-    public void setText(String text, String timerPrecisionId) {
+    public void setTimerPrecision(String timerPrecisionId) {
     	this.timerPrecisionId = timerPrecisionId;
-    	setText(text);
     }
 
     @Override

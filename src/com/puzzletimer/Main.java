@@ -232,7 +232,7 @@ public class Main {
                             MessageType.INFORMATION,
                             String.format(_("main.personal_record_message"),
                                 Main.this.categoryManager.getCurrentCategory().getDescription(),
-                                SolutionUtils.formatMinutes(measures[i].getValue(), Main.this.configurationManager.getConfiguration("TIMER-PRECISION")),
+                                SolutionUtils.formatMinutes(measures[i].getValue(), Main.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()),
                                 descriptions[i]));
                     }
                 }

@@ -99,7 +99,7 @@ public class HistogramPanel extends JPanel {
         double binInterval = (double) (this.intervalEnd - this.intervalStart) / this.bins.length;
         for (int i = 0; i < this.bins.length + 1; i++) {
             long value = (long) (this.intervalStart + i * binInterval);
-            String label = SolutionUtils.format(value, this.configurationManager.getConfiguration("TIMER-PRECISION"));
+            String label = SolutionUtils.format(value, this.configurationManager.getConfiguration("TIMER-PRECISION"), false);
 
             FontMetrics fontMetrics = g2.getFontMetrics();
             int width = fontMetrics.stringWidth(label);

@@ -198,7 +198,7 @@ public class SessionSummaryFrame extends JFrame {
 
                 statistics[i].setSolutions(solutions);
 
-                String s = SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"));
+                String s = SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), statistics[i].getRound());
                 if (s.length() > maxStringLength) {
                     maxStringLength = s.length();
                 }
@@ -212,7 +212,7 @@ public class SessionSummaryFrame extends JFrame {
                 summary.append(String.format(
                     "%-" + maxLabelLength + "s %" + maxStringLength + "s",
                     labels[i],
-                    SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"))));
+                    SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), statistics[i].getRound())));
                 summary.append("\n");
             }
 
@@ -238,7 +238,7 @@ public class SessionSummaryFrame extends JFrame {
                 int windowPosition = statistics[i].getWindowPosition();
 
                 // value
-                summary.append(labels[i] + " " + SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                summary.append(labels[i] + " " + SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), statistics[i].getRound()));
                 summary.append("\n");
 
                 // index range
@@ -267,9 +267,9 @@ public class SessionSummaryFrame extends JFrame {
                 String sTimes = "";
                 for (int j = windowSize - 1; j >= 0; j--) {
                     if (j == indexBest || j == indexWorst) {
-                        sTimes += "(" + SolutionUtils.format(times[j], this.configurationManager.getConfiguration("TIMER-PRECISION")) + ") ";
+                        sTimes += "(" + SolutionUtils.format(times[j], this.configurationManager.getConfiguration("TIMER-PRECISION"), false) + ") ";
                     } else {
-                        sTimes += SolutionUtils.format(times[j], this.configurationManager.getConfiguration("TIMER-PRECISION")) + " ";
+                        sTimes += SolutionUtils.format(times[j], this.configurationManager.getConfiguration("TIMER-PRECISION"), false) + " ";
                     }
                 }
 
@@ -286,7 +286,7 @@ public class SessionSummaryFrame extends JFrame {
 
         int maxStringLength = 0;
         for (int i = 0; i < realTimes.length; i++) {
-            sSolutions[i] = SolutionUtils.format(realTimes[i], this.configurationManager.getConfiguration("TIMER-PRECISION"));
+            sSolutions[i] = SolutionUtils.format(realTimes[i], this.configurationManager.getConfiguration("TIMER-PRECISION"), false);
             if (sSolutions[i].length() > maxStringLength) {
                 maxStringLength = sSolutions[i].length();
             }

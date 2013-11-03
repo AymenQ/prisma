@@ -723,7 +723,7 @@ public class HistoryFrame extends JFrame {
                 }
 
                 measures[i].setSolutions(window);
-                labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION")));
+                labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
             } else {
                 labels[i].setText(this.nullTime);
             }
@@ -793,7 +793,7 @@ public class HistoryFrame extends JFrame {
             String sStart = dateFormat.format(solutions[i].getTiming().getStart());
 
             // time
-            String sTime = SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime(), this.configurationManager.getConfiguration("TIMER-PRECISION"));
+            String sTime = SolutionUtils.formatMinutes(solutions[i].getTiming().getElapsedTime(), this.configurationManager.getConfiguration("TIMER-PRECISION"), false);
 
             tableModel.addRow(new Object[] {
                 solutions.length - i,
