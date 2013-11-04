@@ -42,10 +42,16 @@ public class ScrambleManager {
         return queueArray;
     }
 
-    public void addScrambles(Scramble[] scrambles) {
-        for (Scramble scramble : scrambles) {
-            this.queue.add(scramble);
-        }
+    public void addScrambles(Scramble[] scrambles, boolean priority) {
+    	if(priority) {
+            for (Scramble scramble : scrambles) {
+                this.queue.add(0, scramble);
+            }
+    	} else {
+	        for (Scramble scramble : scrambles) {
+	            this.queue.add(scramble);
+	        }
+    	}
 
         for (Listener listener : this.listeners) {
             listener.scramblesAdded(scrambles);

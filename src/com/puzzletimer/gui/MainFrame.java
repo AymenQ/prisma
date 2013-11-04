@@ -323,7 +323,7 @@ public class MainFrame extends JFrame {
             this.panel = new JPanel(
                 new MigLayout(
                     "center",
-                    "0[right]8[pref!]16[pref!]8[pref!]16[pref!]0",
+                    "0[right]4[pref!]8[pref!]4[pref!]8[pref!]4[pref!]4[pref!]0",
                     ""));
         }
 
@@ -380,6 +380,87 @@ public class MainFrame extends JFrame {
                     }
                 });
                 this.panel.add(labelDNF);
+                
+                JLabel labelRetry = new JLabel();
+                labelRetry.setIcon(new ImageIcon(getClass().getResource("/com/puzzletimer/resources/retry.png")));
+                labelRetry.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                labelRetry.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                    	MainFrame.this.scrambleManager.addScrambles(new Scramble[] {solution.getScramble()}, true);
+                        TimesScrollPane.this.solutionManager.removeSolution(solution);
+                        MainFrame.this.scrambleManager.changeScramble();
+                    }
+                });
+                this.panel.add(labelRetry);
+                
+                JLabel labelEdit = new JLabel();
+                labelEdit.setIcon(new ImageIcon(getClass().getResource("/com/puzzletimer/resources/edit.png")));
+                labelEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                labelEdit.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        SolutionEditingDialog.SolutionEditingDialogListener listener =
+                            new SolutionEditingDialog.SolutionEditingDialogListener() {
+                                @Override
+                                public void solutionEdited(Solution solution) {
+                                    solutionManager.updateSolution(solution);
+                                    
+                                    // check for personal records
+                                    StatisticalMeasure[] measures = {
+                                        new Best(1, Integer.MAX_VALUE),
+                                        new BestMean(3, 3),
+                                        new BestMean(100, 100),
+                                        new BestAverage(5, 5),
+                                        new BestAverage(12, 12),
+                                    };
+
+                                    String[] descriptions = {
+                                        _("main.single"),
+                                        _("main.mean_of_3"),
+                                        _("main.mean_of_100"),
+                                        _("main.average_of_5"),
+                                        _("main.average_of_12"),
+                                    };
+
+                                    Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
+                                    Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
+
+                                    for (int i = 0; i < measures.length; i++) {
+                                        if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
+                                            continue;
+                                        }
+
+                                        measures[i].setSolutions(solutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
+                                        long allTimeBest = measures[i].getValue();
+
+                                        measures[i].setSolutions(sessionSolutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
+                                        long sessionBest = measures[i].getValue();
+
+                                        if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {
+                                            MainFrame.this.messageManager.enqueueMessage(
+                                                MessageType.INFORMATION,
+                                                String.format(_("main.personal_record_message"),
+                                                    MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
+                                                    SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()),
+                                                    descriptions[i]));
+                                        }
+                                    }
+                                }
+                            };
+
+                        SolutionEditingDialog solutionEditingDialog =
+                            new SolutionEditingDialog(
+                                MainFrame.this,
+                                true,
+                                solution,
+                                listener,
+                                MainFrame.this.configurationManager);
+                        solutionEditingDialog.setLocationRelativeTo(null);
+                        solutionEditingDialog.setVisible(true);
+                    }
+                });
+                this.panel.add(labelEdit);
 
                 JLabel labelX = new JLabel();
                 labelX.setIcon(new ImageIcon(getClass().getResource("/com/puzzletimer/resources/x.png")));
