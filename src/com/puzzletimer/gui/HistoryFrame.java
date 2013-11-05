@@ -33,6 +33,7 @@ import javax.swing.table.TableColumn;
 
 import net.miginfocom.swing.MigLayout;
 
+import com.puzzletimer.Main;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
@@ -722,7 +723,7 @@ public class HistoryFrame extends JFrame {
                     window[j] = solutions[j];
                 }
 
-                measures[i].setSolutions(window);
+                measures[i].setSolutions(window, this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                 labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
             } else {
                 labels[i].setText(this.nullTime);

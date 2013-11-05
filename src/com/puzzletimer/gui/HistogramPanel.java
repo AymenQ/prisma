@@ -9,6 +9,7 @@ import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
+import com.puzzletimer.Main;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.util.SolutionUtils;
@@ -30,7 +31,7 @@ public class HistogramPanel extends JPanel {
 
     public void setSolutions(Solution[] solutions) {
         // apply +2, filter DNF
-        long[] times = SolutionUtils.realTimes(solutions, true);
+        long[] times = SolutionUtils.realTimes(solutions, true, this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
 
         // define interval size
         if (times.length == 0) {

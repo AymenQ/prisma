@@ -12,6 +12,7 @@ import java.util.Date;
 
 import javax.swing.JPanel;
 
+import com.puzzletimer.Main;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.util.SolutionUtils;
@@ -37,7 +38,7 @@ public class GraphPanel extends JPanel {
         this.solutionTimes = new ArrayList<Long>();
         this.startTimes = new ArrayList<Long>();
         for (Solution solution : solutions) {
-            long time = SolutionUtils.realTime(solution);
+            long time = SolutionUtils.realTime(solution, this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
             if (time != Long.MAX_VALUE) {
                 this.solutionTimes.add(time);
                 this.startTimes.add(solution.getTiming().getStart().getTime());

@@ -39,16 +39,16 @@ public class InterquartileMean implements StatisticalMeasure {
     }
 
     @Override
-    public void setSolutions(Solution[] solutions) {
-        long[] times = SolutionUtils.realTimes(solutions, false);
+    public void setSolutions(Solution[] solutions, boolean round) {
+        long[] times = SolutionUtils.realTimes(solutions, false, round);
 
         Percentile lowerQuartile =
             new Percentile(1, Integer.MAX_VALUE, 0.25);
-        lowerQuartile.setSolutions(solutions);
+        lowerQuartile.setSolutions(solutions, round);
 
         Percentile upperQuartile =
             new Percentile(1, Integer.MAX_VALUE, 0.75);
-        upperQuartile.setSolutions(solutions);
+        upperQuartile.setSolutions(solutions, round);
 
         long sum = 0L;
         int nTimes = 0;

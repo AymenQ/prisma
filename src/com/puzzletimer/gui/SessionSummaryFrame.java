@@ -22,6 +22,7 @@ import javax.swing.KeyStroke;
 
 import net.miginfocom.swing.MigLayout;
 
+import com.puzzletimer.Main;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.CategoryManager;
@@ -196,7 +197,7 @@ public class SessionSummaryFrame extends JFrame {
                     continue;
                 }
 
-                statistics[i].setSolutions(solutions);
+                statistics[i].setSolutions(solutions, this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
 
                 String s = SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), statistics[i].getRound());
                 if (s.length() > maxStringLength) {
@@ -234,7 +235,7 @@ public class SessionSummaryFrame extends JFrame {
             int windowSize = statistics[i].getMinimumWindowSize();
 
             if (solutions.length >= windowSize) {
-                statistics[i].setSolutions(solutions);
+                statistics[i].setSolutions(solutions, this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                 int windowPosition = statistics[i].getWindowPosition();
 
                 // value
@@ -252,7 +253,7 @@ public class SessionSummaryFrame extends JFrame {
                 int indexWorst = 0;
                 long[] times = new long[windowSize];
                 for (int j = 0; j < windowSize; j++) {
-                    times[j] = SolutionUtils.realTime(solutions[windowPosition + j]);
+                    times[j] = SolutionUtils.realTime(solutions[windowPosition + j], this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
 
                     if (times[j] < times[indexBest]) {
                         indexBest = j;
@@ -282,7 +283,7 @@ public class SessionSummaryFrame extends JFrame {
 
         // solutions
         String[] sSolutions = new String[solutions.length];
-        long[] realTimes = SolutionUtils.realTimes(solutions, false);
+        long[] realTimes = SolutionUtils.realTimes(solutions, false, this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
 
         int maxStringLength = 0;
         for (int i = 0; i < realTimes.length; i++) {

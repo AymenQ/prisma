@@ -40,8 +40,8 @@ public class BestMean implements StatisticalMeasure {
     }
 
     @Override
-    public void setSolutions(Solution[] solutions) {
-        long[] times = SolutionUtils.realTimes(solutions, false);
+    public void setSolutions(Solution[] solutions, boolean round) {
+        long[] times = SolutionUtils.realTimes(solutions, false, round);
 
         long bestMean = Long.MAX_VALUE;
         for (int i = 0; i < times.length - this.minimumWindowSize + 1; i++) {

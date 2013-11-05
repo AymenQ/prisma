@@ -174,22 +174,30 @@ public class SolutionUtils {
         return time;
     }
 
-    public static long realTime(Solution solution) {
+    public static long realTime(Solution solution, boolean round) {
         if (solution.getPenalty().equals("DNF")) {
             return Long.MAX_VALUE;
+        }
+        
+        if (solution.getPenalty().equals("+2") && round) {
+            return (((solution.getTiming().getElapsedTime() + 2000) / 10) * 10);
         }
 
         if (solution.getPenalty().equals("+2")) {
             return solution.getTiming().getElapsedTime() + 2000;
         }
+        
+        if (round) {
+            return ((solution.getTiming().getElapsedTime() / 10) * 10);
+        }
 
         return solution.getTiming().getElapsedTime();
     }
 
-    public static long[] realTimes(Solution[] solutions, boolean filterDNF) {
+    public static long[] realTimes(Solution[] solutions, boolean filterDNF, boolean round) {
         ArrayList<Long> realTimes = new ArrayList<Long>();
         for (int i = 0; i < solutions.length; i++) {
-            long actualTime = realTime(solutions[i]);
+            long actualTime = realTime(solutions[i], round);
             if (!filterDNF || actualTime != Long.MAX_VALUE) {
                 realTimes.add(actualTime);
             }

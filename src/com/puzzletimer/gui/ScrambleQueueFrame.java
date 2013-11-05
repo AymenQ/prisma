@@ -200,7 +200,7 @@ public class ScrambleQueueFrame extends JFrame {
                     return;
                 }
 
-                scrambleManager.addScrambles(scrambles);
+                scrambleManager.addScrambles(scrambles, false);
             }
         });
 
@@ -259,7 +259,7 @@ public class ScrambleQueueFrame extends JFrame {
                     scrambles[i] = scrambler.getNextScramble();
                 }
 
-                scrambleManager.addScrambles(scrambles);
+                scrambleManager.addScrambles(scrambles, false);
             }
         });
 
