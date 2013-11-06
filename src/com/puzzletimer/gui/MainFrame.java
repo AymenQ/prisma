@@ -323,7 +323,7 @@ public class MainFrame extends JFrame {
             this.panel = new JPanel(
                 new MigLayout(
                     "center",
-                    "0[right]4[pref!]8[pref!]4[pref!]8[pref!]4[pref!]4[pref!]0",
+                    "0[right]8[pref!]16[pref!]8[pref!]16[pref!]8[pref!]8[pref!]0",
                     ""));
         }
 
@@ -1558,17 +1558,17 @@ public class MainFrame extends JFrame {
         // timer panel
         this.timerPanel = new TimerPanel(this.timerManager);
         panelMain.add(this.timerPanel, "wrap");
+        
+        // statistics panel
+        this.statisticsPanel = new StatisticsPanel(this.sessionManager);
+        this.statisticsPanel.setBorder(BorderFactory.createTitledBorder(_("main.session_statistics")));
+        panelMain.add(this.statisticsPanel, "w 30%, growy, gapright 0, split 3");
 
         // times scroll pane
         this.timesScrollPane = new TimesScrollPane(this.solutionManager, this.sessionManager);
         this.timesScrollPane.setBorder(BorderFactory.createTitledBorder(_("main.times")));
         this.timesScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        panelMain.add(this.timesScrollPane, "w 30%, growy, gapright 0, split 3");
-
-        // statistics panel
-        this.statisticsPanel = new StatisticsPanel(this.sessionManager);
-        this.statisticsPanel.setBorder(BorderFactory.createTitledBorder(_("main.session_statistics")));
-        panelMain.add(this.statisticsPanel, "w 40%, growy, gapright 0");
+        panelMain.add(this.timesScrollPane, "w 40%, growy, gapright 0");
 
         // scramble viewer panel
         this.scrambleViewerPanel = new ScrambleViewerPanel(
