@@ -33,7 +33,6 @@ import javax.swing.table.TableColumn;
 
 import net.miginfocom.swing.MigLayout;
 
-import com.puzzletimer.Main;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
 import com.puzzletimer.models.Solution;
@@ -422,6 +421,7 @@ public class HistoryFrame extends JFrame {
                 for (int i = 0, j = 0; i < solutions.length && j < sessionSolutions.length; i++) {
                     if (solutions[i].getSolutionId().equals(sessionSolutions[j].getSolutionId())) {
                         HistoryFrame.this.table.addRowSelectionInterval(i, i);
+                        HistoryFrame.this.table.scrollRectToVisible(HistoryFrame.this.table.getCellRect(i, 0, true));
                         j++;
                     }
                 }
@@ -756,6 +756,7 @@ public class HistoryFrame extends JFrame {
                                 HistoryFrame.this.table.addRowSelectionInterval(
                                     selectedRows[windowPosition + i],
                                     selectedRows[windowPosition + i]);
+                                HistoryFrame.this.table.scrollRectToVisible(HistoryFrame.this.table.getCellRect(selectedRows[windowPosition + i], 0, true));
                             }
                         }
                     });
