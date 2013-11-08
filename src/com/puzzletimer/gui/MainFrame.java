@@ -32,6 +32,7 @@ import javax.sound.sampled.DataLine.Info;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -686,6 +687,7 @@ public class MainFrame extends JFrame {
         private PuzzleProvider puzzleProvider;
         private ColorManager colorManager;
         private ScramblerProvider scramblerProvider;
+        private JCheckBox hide;
 
         private Panel3D panel3D;
 
@@ -706,14 +708,27 @@ public class MainFrame extends JFrame {
                     setScramble(scramble);
                 }
             });
+            
+            this.hide.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if(ScrambleViewerPanel.this.hide.isSelected()) {
+                    	ScrambleViewerPanel.this.panel3D.setVisible(false);
+                    } else {
+                    	ScrambleViewerPanel.this.panel3D.setVisible(true);
+                    }
+                }
+            });
         }
 
         private void createComponents() {
-            setLayout(new MigLayout("fill", "0[fill]0", "0[fill]0"));
+            setLayout(new MigLayout("fill", "0[fill]0", "0[pref!]0[fill]0"));
 
             // panel 3d
             this.panel3D = new Panel3D();
             this.panel3D.setFocusable(false);
+            this.hide = new JCheckBox(_("main.hide"));
+            add(this.hide, "wrap");
             add(this.panel3D);
         }
 
