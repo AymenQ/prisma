@@ -22,7 +22,6 @@ import javax.swing.KeyStroke;
 
 import net.miginfocom.swing.MigLayout;
 
-import com.puzzletimer.Main;
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.CategoryManager;
