@@ -294,7 +294,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.inspectionEnabled = false;
         this.start = null;
         this.state = State.NOT_READY;
-        this.previousTime = 0;
+        this.previousTime = -1;
     }
 
     @Override
@@ -401,13 +401,6 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
                     this.state = this.inspectionEnabled ?
                         State.RESET_FOR_INSPECTION : State.RESET;
-                }
-                
-                // timing started
-                if (time > 0 && previousTime == 0) {
-                    this.timerManager.startSolution();
-
-                    this.state = State.RUNNING;
                 }
                 break;
 
