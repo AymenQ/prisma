@@ -382,7 +382,6 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         	int milliseconds = 100 * (data[4] - '0') + 10 * (data[5] - '0') + data[6] - '0';
             time = 60000 * minutes + 1000 * seconds + milliseconds;
         } else {
-        	System.out.println("here");
             int centiseconds = 10 * (data[4] - '0') + data[5] - '0';
             time = 60000 * minutes + 1000 * seconds + 10 * centiseconds;
         }
@@ -402,6 +401,13 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
                     this.state = this.inspectionEnabled ?
                         State.RESET_FOR_INSPECTION : State.RESET;
+                }
+                
+                // timing started
+                if (time > 0) {
+                    this.timerManager.startSolution();
+
+                    this.state = State.RUNNING;
                 }
                 break;
 
