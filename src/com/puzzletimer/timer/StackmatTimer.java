@@ -404,7 +404,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
                 }
                 
                 // timing started
-                if (time > 0) {
+                if (time > 0 && previousTime == 0) {
                     this.timerManager.startSolution();
 
                     this.state = State.RUNNING;
