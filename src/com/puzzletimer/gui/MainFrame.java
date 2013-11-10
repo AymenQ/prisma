@@ -728,6 +728,7 @@ public class MainFrame extends JFrame {
             this.panel3D = new Panel3D();
             this.panel3D.setFocusable(false);
             this.hide = new JCheckBox(_("main.hide"));
+            this.hide.setFocusable(false);
             add(this.hide, "wrap");
             add(this.panel3D);
         }
@@ -1283,7 +1284,7 @@ public class MainFrame extends JFrame {
 
             @Override
             public void messageReceived(MessageType messageType, String message) {
-                MainFrame.this.labelMessage.setPreferredSize(new Dimension(10000, 30));
+                MainFrame.this.labelMessage.setPreferredSize(new Dimension(MainFrame.this.getWidth(), 30));
                 if (messageType == MessageType.INFORMATION) {
                     MainFrame.this.labelMessage.setBackground(new Color(0x45, 0x73, 0xD5));
                 } else if (messageType == MessageType.ERROR) {
