@@ -1556,6 +1556,7 @@ public class MainFrame extends JFrame {
                 "fill, hidemode 1, insets 2 3 2 3",
                 "[fill]",
                 "[pref!][pref!][fill, growprio 200][pref!]"));
+        panelMain.setPreferredSize(new Dimension(0, 0));
         add(panelMain);
 
         // labelMessage
