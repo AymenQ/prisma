@@ -283,7 +283,6 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private TimerManager timerManager;
     private boolean inspectionEnabled;
     private TimerManager.Listener timerListener;
-    private java.util.Timer repeater;
     private Date start;
     private State state;
     private long previousTime;
@@ -334,19 +333,6 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.stackmatTimerReader.addEventListener(this);
         Thread readerThread = new Thread(this.stackmatTimerReader);
         readerThread.start();
-
-        this.repeater = new java.util.Timer();
-        this.repeater.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                switch (StackmatTimer.this.state) {
-                    case RUNNING:
-                        StackmatTimer.this.timerManager.updateSolutionTiming(
-                            new Timing(StackmatTimer.this.start, new Date()));
-                        break;
-                }
-            }
-        }, 0, 5);
     }
 
     @Override
@@ -355,8 +341,6 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
         this.stackmatTimerReader.removeEventListener(this);
         this.stackmatTimerReader.stop();
-
-        this.repeater.cancel();
     }
 
     @Override
@@ -395,6 +379,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         // state transitions
         switch (this.state) {
             case NOT_READY:
+                this.timerManager.updateSolutionTiming(timing);
+            
                 // timer initialized
                 if (time == 0) {
                     this.timerManager.resetTimer();
@@ -414,6 +400,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
                 break;
 
             case RESET:
+                if(!this.inspectionEnabled)this.timerManager.updateSolutionTiming(timing);
+            	
                 // ready to start
                 if (data[0] == 'A') {
                     this.state = State.READY;
@@ -428,6 +416,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
                 break;
 
             case READY:
+                this.timerManager.updateSolutionTiming(timing);
+            	
                 // timing started
                 if (time > 0) {
                     this.timerManager.startSolution();
@@ -437,6 +427,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
                 break;
 
             case RUNNING:
+                this.timerManager.updateSolutionTiming(timing);
+                
                 // timer reset during solution
                 if (time == 0) {
                     this.state = State.NOT_READY;
@@ -445,7 +437,6 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
                 // timer stopped
                 if (data[0] == 'S' || time == previousTime) {
                     this.state = State.NOT_READY;
-                    this.timerManager.updateSolutionTiming(timing);
 
                     this.timerManager.finishSolution(timing);
                 }
