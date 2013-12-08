@@ -5,7 +5,6 @@ package com.puzzletimer.timer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TimerTask;
 import java.util.Map.Entry;
 
 import javax.sound.sampled.TargetDataLine;
@@ -28,9 +27,9 @@ class StackmatTimerReader implements Runnable {
     private ArrayList<StackmatTimerReaderListener> listeners;
     private boolean running;
     private boolean hasSixDigits;
-    private StackmatDeveloperFrame stackmatDeveloperFrame;
+    private TimerManager timerManager;
 
-    StackmatTimerReader(TargetDataLine targetDataLine, StackmatDeveloperFrame stackmatDeveloperFrame) {
+    StackmatTimerReader(TargetDataLine targetDataLine, TimerManager timerManager) {
         this.sampleRate = targetDataLine.getFormat().getFrameRate();
         this.baudRateOffset = 0;
         this.previousBaudRate = 1200;
@@ -40,7 +39,7 @@ class StackmatTimerReader implements Runnable {
         this.listeners = new ArrayList<StackmatTimerReaderListener>();
         this.running = false;
         this.hasSixDigits = false;
-        this.stackmatDeveloperFrame = stackmatDeveloperFrame;
+        this.timerManager = timerManager;;
     }
 
     private byte[] readPacket(byte[] samples, int offset, byte bitThreshold, boolean isInverted) {
@@ -135,7 +134,6 @@ class StackmatTimerReader implements Runnable {
         this.targetDataLine.start();
 
         byte[] buffer = new byte[(int) (this.sampleRate / 4)];
-        this.stackmatDeveloperFrame.data = buffer;
         int offset = buffer.length;
 
         while (this.running) {
@@ -144,6 +142,9 @@ class StackmatTimerReader implements Runnable {
                 buffer[i - offset] = buffer[i];
             }
             this.targetDataLine.read(buffer, buffer.length - offset, offset);
+            //System.out.println(buffer.length);
+            //System.out.println(offset);
+            //System.out.println();
 
             boolean isPacketStart = false;
             boolean isSignalInverted = false;
@@ -174,6 +175,8 @@ class StackmatTimerReader implements Runnable {
             }
 
             if (!isPacketStart) {
+                this.timerManager.dataNotReceived(buffer);
+                System.out.println(false);
                 continue;
             }
 
@@ -244,6 +247,8 @@ class StackmatTimerReader implements Runnable {
             for (int i = 0; i < (hasSixDigits ? 7 : 6); i++) {
                 data[i] = (byte) (packet >> 8 * i);
             }
+            
+            this.timerManager.dataNotReceived(buffer);
 
             // notify listeners
             for (StackmatTimerReaderListener listener : this.listeners) {
@@ -288,7 +293,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private long previousTime;
 
     public StackmatTimer(TargetDataLine targetDataLine, TimerManager timerManager, StackmatDeveloperFrame stackmatDeveloperFrame) {
-        this.stackmatTimerReader = new StackmatTimerReader(targetDataLine, stackmatDeveloperFrame);
+        this.stackmatTimerReader = new StackmatTimerReader(targetDataLine, timerManager);
         this.timerManager = timerManager;
         this.inspectionEnabled = false;
         this.start = null;

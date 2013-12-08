@@ -30,6 +30,10 @@ public class TimerManager {
         public void solutionStarted() { }
         public void solutionRunning(Timing timing) { }
         public void solutionFinished(Timing timing, String penalty) { }
+        
+        // stackmat
+        public void dataReceived(byte[] data, int offset, double period, byte[] decodedBits, byte[] decodedBytes) { }
+        public void dataNotReceived(byte[] data) { }
     }
 
     private ArrayList<Listener> listeners;
@@ -199,6 +203,18 @@ public class TimerManager {
         }
 
         this.penalty = "";
+    }
+    
+    public void dataReceived(byte[] data, int offset, double period, byte[] decodedBits, byte[] decodedBytes) {
+        for (Listener listener : this.listeners) {
+            listener.dataReceived(data, offset, period, decodedBits, decodedBytes);
+        }
+    }
+    
+    public void dataNotReceived(byte[] data) {
+        for (Listener listener : this.listeners) {
+            listener.dataNotReceived(data);
+        }
     }
 
 

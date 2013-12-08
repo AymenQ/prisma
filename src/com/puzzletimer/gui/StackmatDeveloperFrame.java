@@ -2,6 +2,7 @@ package com.puzzletimer.gui;
 
 import static com.puzzletimer.Internationalization._;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -10,11 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.TargetDataLine;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -23,58 +19,40 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
-import com.puzzletimer.state.ConfigurationManager;
+import com.puzzletimer.state.TimerManager;
+import com.puzzletimer.util.SolutionUtils;
 
 import net.miginfocom.swing.MigLayout;
 
 @SuppressWarnings("serial")
 public class StackmatDeveloperFrame extends JFrame {
-    private ConfigurationManager configurationManager;
-    private AudioFormat audioFormat;
-    private Mixer.Info mixerInfo;
     private JTextArea textAreaSummary;
     private JButton buttonUpdate;
     private JButton buttonCopyToClipboard;
     private JButton buttonOk;
-    public byte[] data;
+    private StackmatGraphPanel graphPanel;
 
-    public StackmatDeveloperFrame(ConfigurationManager configurationManager) {
+    public StackmatDeveloperFrame(TimerManager timerManager) {
         super();
 
-        setMinimumSize(new Dimension(640, 480));
-        this.configurationManager = configurationManager;
+        setMinimumSize(new Dimension(800, 600));
 
         createComponents();
         pack();
         setTitle(_("stackmat_developer.title"));
+        
+        timerManager.addListener(new TimerManager.Listener() {
+            @Override
+            public void dataNotReceived(byte[] data) {
+                updateSummary(data);
+            }
+        });
 
         // update
         this.buttonUpdate.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
-                String timerTrigger = StackmatDeveloperFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
-                if (timerTrigger.equals("STACKMAT-TIMER")) {
-                    StackmatDeveloperFrame.this.updateSummary();
-                } else {
-                    TargetDataLine targetDataLine = null;
-                    StackmatDeveloperFrame.this.audioFormat = new AudioFormat(8000, 8, 1, true, false);
-                    StackmatDeveloperFrame.this.mixerInfo = null;
-                    String stackmatTimerInputDeviceName = StackmatDeveloperFrame.this.configurationManager.getConfiguration("STACKMAT-TIMER-INPUT-DEVICE");
-
-                    for (Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
-                        if (stackmatTimerInputDeviceName.equals(mixerInfo.getName())) {
-                            StackmatDeveloperFrame.this.mixerInfo = mixerInfo;
-                            break;
-                        }
-                    }
-                    if (StackmatDeveloperFrame.this.mixerInfo != null) {
-                        try {
-                            targetDataLine = AudioSystem.getTargetDataLine(StackmatDeveloperFrame.this.audioFormat, StackmatDeveloperFrame.this.mixerInfo);
-                            targetDataLine.open(StackmatDeveloperFrame.this.audioFormat);
-                        } catch (LineUnavailableException e1) {}
-                    }
-                    StackmatDeveloperFrame.this.updateSummary(targetDataLine);
-                }
+                //StackmatDeveloperFrame.this.updateSummary();
             }
         });
 
@@ -116,7 +94,14 @@ public class StackmatDeveloperFrame extends JFrame {
             new MigLayout(
                 "fill",
                 "",
-                "[pref!][][pref!]16[pref!]"));
+                "[pref!][pref!]16[pref!][][pref!]16[pref!]"));
+        
+        // labelGraph
+        add(new JLabel(_("stackmat_developer.graph")), "span, wrap");
+
+        // Graph
+        this.graphPanel = new StackmatGraphPanel();
+        add(this.graphPanel, "growx, height 90, span, wrap");
 
         // labelRawData
         add(new JLabel(_("stackmat_developer.raw_data")), "wrap");
@@ -141,20 +126,16 @@ public class StackmatDeveloperFrame extends JFrame {
         add(this.buttonOk, "tag ok");
     }
 
-    public void updateSummary() {
+    public void updateSummary(byte[] data) {
         String text = "";
-        for(int i = 0; i < this.data.length; i++) {
-            text = text + this.data[i] + " ";
+        if(data != null){
+	        for(int i = 0; i < data.length; i++) {
+	            text = text + data[i] + " ";
+	        }
+	        this.graphPanel.setData(data);
+	        this.textAreaSummary.setText(text);
+        } else {
+        	this.textAreaSummary.setText(_("stackmat_developer.error"));
         }
-        this.textAreaSummary.setText(text);
-    }
-
-    public void updateSummary(TargetDataLine targetDataLine) {
-        targetDataLine.start();
-        double sampleRate = targetDataLine.getFormat().getFrameRate();
-        this.data = new byte[(int) (sampleRate / 4)];
-        targetDataLine.read(this.data, 0, this.data.length);
-        targetDataLine.close();
-        this.updateSummary();
     }
 }
