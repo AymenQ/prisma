@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TimerTask;
 
 import javax.sound.sampled.TargetDataLine;
 
@@ -287,7 +288,9 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
     private StackmatTimerReader stackmatTimerReader;
     private TimerManager timerManager;
     private boolean inspectionEnabled;
+    private boolean smoothTimingEnabled;
     private TimerManager.Listener timerListener;
+    private java.util.Timer repeater;
     private Date start;
     private State state;
     private long previousTime;
@@ -296,6 +299,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.stackmatTimerReader = new StackmatTimerReader(targetDataLine, timerManager);
         this.timerManager = timerManager;
         this.inspectionEnabled = false;
+        this.smoothTimingEnabled = true;
         this.start = null;
         this.state = State.NOT_READY;
         this.previousTime = -1;
@@ -338,6 +342,19 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         this.stackmatTimerReader.addEventListener(this);
         Thread readerThread = new Thread(this.stackmatTimerReader);
         readerThread.start();
+        
+        this.repeater = new java.util.Timer();
+        this.repeater.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                switch (StackmatTimer.this.state) {
+                    case RUNNING:
+                        if(smoothTimingEnabled) StackmatTimer.this.timerManager.updateSolutionTiming(
+                            new Timing(StackmatTimer.this.start, new Date()));
+                        break;
+                }
+            }
+        }, 0, 5);
     }
 
     @Override
@@ -346,6 +363,8 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
 
         this.stackmatTimerReader.removeEventListener(this);
         this.stackmatTimerReader.stop();
+        
+        this.repeater.cancel();
     }
 
     @Override
@@ -450,4 +469,9 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         }
         this.previousTime = time;
     }
+
+	@Override
+	public void setSmoothTimingEnabled(boolean smoothTimingEnabled) {
+        this.smoothTimingEnabled = smoothTimingEnabled;
+	}
 }

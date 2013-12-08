@@ -184,6 +184,8 @@ public class Main {
         this.timerManager = new TimerManager();
         this.timerManager.setInspectionEnabled(
             this.configurationManager.getConfiguration("INSPECTION-TIME-ENABLED").equals("TRUE"));
+        this.timerManager.setSmoothTimingEnabled(
+                this.configurationManager.getConfiguration("SMOOTH-TIMING-ENABLED").equals("TRUE"));
         this.timerManager.addListener(new TimerManager.Listener() {
             @Override
             public void solutionFinished(Timing timing, String penalty) {
@@ -256,6 +258,12 @@ public class Main {
             @Override
             public void precisionChanged(String timerPrecisionId) {
             	Main.this.configurationManager.setConfiguration("TIMER-PRECISION", timerPrecisionId);
+            }
+            
+            @Override
+            public void smoothTimingSet(boolean smoothTimingEnabled) {
+                Main.this.configurationManager.setConfiguration(
+                    "SMOOTH-TIMING-ENABLED", smoothTimingEnabled ? "TRUE" : "FALSE");
             }
         });
 

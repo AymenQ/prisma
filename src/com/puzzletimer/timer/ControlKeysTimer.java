@@ -194,4 +194,10 @@ public class ControlKeysTimer implements Timer {
         this.frame.removeKeyListener(this.keyListener);
         this.timerManager.removeListener(this.timerListener);
     }
+
+	@Override
+	public void setSmoothTimingEnabled(boolean smoothTimingEnabled) {
+		// TODO Auto-generated method stub
+		
+	}
 }

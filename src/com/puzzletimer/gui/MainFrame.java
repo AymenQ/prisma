@@ -765,6 +765,7 @@ public class MainFrame extends JFrame {
     private JMenu menuCategory;
     private JMenuItem menuItemColorScheme;
     private JCheckBoxMenuItem menuItemInspectionTime;
+    private JCheckBoxMenuItem menuItemSmoothTiming;
     private JMenu stackmatTimerInputDevice;
     private ButtonGroup stackmatTimerInputDeviceGroup;
     private JRadioButtonMenuItem menuItemManualInput;
@@ -1121,6 +1122,16 @@ public class MainFrame extends JFrame {
                     MainFrame.this.menuItemInspectionTime.isSelected());
             }
         });
+        
+        // menuItemSmoothTiming
+        this.menuItemSmoothTiming.setSelected(timerManager.isSmoothTimingEnabled());
+        this.menuItemSmoothTiming.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.timerManager.setSmoothTimingEnabled(
+                    MainFrame.this.menuItemSmoothTiming.isSelected());
+            }
+        });
 
         // menuItemManualInput
         this.menuItemManualInput.addActionListener(new ActionListener() {
@@ -1447,6 +1458,12 @@ public class MainFrame extends JFrame {
         this.menuItemInspectionTime.setMnemonic(KeyEvent.VK_I);
         this.menuItemInspectionTime.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuShortcutKey | KeyEvent.ALT_MASK));
         menuOptions.add(this.menuItemInspectionTime);
+        
+        // menuItemSmoothTiming
+        this.menuItemSmoothTiming = new JCheckBoxMenuItem(_("main.smooth_timing"));
+        this.menuItemSmoothTiming.setMnemonic(KeyEvent.VK_M);
+        this.menuItemSmoothTiming.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuShortcutKey | KeyEvent.ALT_MASK));
+        menuOptions.add(this.menuItemSmoothTiming);
 
         // menuTimerTrigger
         JMenu menuTimerTrigger = new JMenu(_("main.timer_trigger"));

@@ -61,4 +61,10 @@ public class ManualInputTimer implements Timer {
     public void stop() {
         this.textFieldTime.removeKeyListener(this.keyListener);
     }
+
+	@Override
+	public void setSmoothTimingEnabled(boolean smoothTimingEnabled) {
+		// TODO Auto-generated method stub
+		
+	}
 }
