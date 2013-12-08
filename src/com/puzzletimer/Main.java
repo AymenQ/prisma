@@ -122,7 +122,7 @@ public class Main {
         }
 
         // update database if necessary
-        String[] versions = { "0.3", "0.4", "0.5", "0.6", "0.7" };
+        String[] versions = { "0.3", "0.4", "0.5", "0.6"};
 
         for (;;) {
             String currentVersion = "";
