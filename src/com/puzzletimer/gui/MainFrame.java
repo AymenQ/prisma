@@ -1007,18 +1007,7 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String timerTrigger = MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
                 MainFrame.this.stackmatDeveloperFrame.setVisible(true);
-                if (timerTrigger.equals("STACKMAT-TIMER")) {
-                    MainFrame.this.stackmatDeveloperFrame.updateSummary();
-                } else {
-                    TargetDataLine targetDataLine = null;
-                    if (MainFrame.this.mixerInfo != null) {
-                        try {
-                            targetDataLine = AudioSystem.getTargetDataLine(MainFrame.this.audioFormat, MainFrame.this.mixerInfo);
-                            targetDataLine.open(MainFrame.this.audioFormat);
-                        } catch (LineUnavailableException e1) {}
-                    }
-                    MainFrame.this.stackmatDeveloperFrame.updateSummary(targetDataLine);
-                }
+                //MainFrame.this.stackmatDeveloperFrame.updateSummary();
             }
         });
 
@@ -1642,7 +1631,7 @@ public class MainFrame extends JFrame {
         this.sessionSummaryFrame.setIconImage(icon);
 
         // stackmat developer frame
-        this.stackmatDeveloperFrame = new StackmatDeveloperFrame(this.configurationManager);
+        this.stackmatDeveloperFrame = new StackmatDeveloperFrame(this.timerManager);
         this.stackmatDeveloperFrame.setLocationRelativeTo(null);
         this.stackmatDeveloperFrame.setIconImage(icon);
 
