@@ -442,7 +442,7 @@ public class MainFrame extends JFrame {
                 });
                 ToolTipManager.sharedInstance().setInitialDelay(0);
                 ToolTipManager.sharedInstance().setDismissDelay(10000);
-                labelEdit.setToolTipText(solution.getComment());
+                if(!solution.getComment().isEmpty()) labelEdit.setToolTipText(solution.getComment());
                 this.panel.add(labelEdit);
 
                 JLabel labelX = new JLabel();
