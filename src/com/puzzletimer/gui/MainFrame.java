@@ -29,23 +29,7 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.Mixer;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.DataLine.Info;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 
 import net.miginfocom.swing.MigLayout;
@@ -402,65 +386,68 @@ public class MainFrame extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         SolutionEditingDialog.SolutionEditingDialogListener listener =
-                            new SolutionEditingDialog.SolutionEditingDialogListener() {
-                                @Override
-                                public void solutionEdited(Solution solution) {
-                                    solutionManager.updateSolution(solution);
-                                    
-                                    // check for personal records
-                                    StatisticalMeasure[] measures = {
-                                        new Best(1, Integer.MAX_VALUE),
-                                        new BestMean(3, 3),
-                                        new BestMean(100, 100),
-                                        new BestAverage(5, 5),
-                                        new BestAverage(12, 12),
-                                    };
+                                new SolutionEditingDialog.SolutionEditingDialogListener() {
+                                    @Override
+                                    public void solutionEdited(Solution solution) {
+                                        solutionManager.updateSolution(solution);
 
-                                    String[] descriptions = {
-                                        _("main.single"),
-                                        _("main.mean_of_3"),
-                                        _("main.mean_of_100"),
-                                        _("main.average_of_5"),
-                                        _("main.average_of_12"),
-                                    };
+                                        // check for personal records
+                                        StatisticalMeasure[] measures = {
+                                                new Best(1, Integer.MAX_VALUE),
+                                                new BestMean(3, 3),
+                                                new BestMean(100, 100),
+                                                new BestAverage(5, 5),
+                                                new BestAverage(12, 12),
+                                        };
 
-                                    Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
-                                    Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
+                                        String[] descriptions = {
+                                                _("main.single"),
+                                                _("main.mean_of_3"),
+                                                _("main.mean_of_100"),
+                                                _("main.average_of_5"),
+                                                _("main.average_of_12"),
+                                        };
 
-                                    for (int i = 0; i < measures.length; i++) {
-                                        if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
-                                            continue;
-                                        }
+                                        Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
+                                        Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
 
-                                        measures[i].setSolutions(solutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
-                                        long allTimeBest = measures[i].getValue();
+                                        for (int i = 0; i < measures.length; i++) {
+                                            if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
+                                                continue;
+                                            }
 
-                                        measures[i].setSolutions(sessionSolutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
-                                        long sessionBest = measures[i].getValue();
+                                            measures[i].setSolutions(solutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
+                                            long allTimeBest = measures[i].getValue();
 
-                                        if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {
-                                            MainFrame.this.messageManager.enqueueMessage(
-                                                MessageType.INFORMATION,
-                                                String.format(_("main.personal_record_message"),
-                                                    MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
-                                                    SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()),
-                                                    descriptions[i]));
+                                            measures[i].setSolutions(sessionSolutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
+                                            long sessionBest = measures[i].getValue();
+
+                                            if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {
+                                                MainFrame.this.messageManager.enqueueMessage(
+                                                        MessageType.INFORMATION,
+                                                        String.format(_("main.personal_record_message"),
+                                                                MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
+                                                                SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()),
+                                                                descriptions[i]));
+                                            }
                                         }
                                     }
-                                }
-                            };
+                                };
 
                         SolutionEditingDialog solutionEditingDialog =
-                            new SolutionEditingDialog(
-                                MainFrame.this,
-                                true,
-                                solution,
-                                listener,
-                                MainFrame.this.configurationManager);
+                                new SolutionEditingDialog(
+                                        MainFrame.this,
+                                        true,
+                                        solution,
+                                        listener,
+                                        MainFrame.this.configurationManager);
                         solutionEditingDialog.setLocationRelativeTo(null);
                         solutionEditingDialog.setVisible(true);
                     }
                 });
+                ToolTipManager.sharedInstance().setInitialDelay(0);
+                ToolTipManager.sharedInstance().setDismissDelay(10000);
+                labelEdit.setToolTipText(solution.getComment());
                 this.panel.add(labelEdit);
 
                 JLabel labelX = new JLabel();
@@ -474,6 +461,8 @@ public class MainFrame extends JFrame {
                 });
                 this.panel.add(labelX, "wrap");
             }
+
+
 
             setViewportView(this.panel);
         }
@@ -901,6 +890,7 @@ public class MainFrame extends JFrame {
                     MainFrame.this.categoryManager.getCurrentCategory().getCategoryId(),
                     MainFrame.this.scrambleManager.getCurrentScramble(),
                     new Timing(now, now),
+                    "",
                     "");
 
                 SolutionEditingDialogListener listener =

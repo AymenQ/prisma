@@ -8,13 +8,15 @@ public class Solution {
     private final Scramble scramble;
     private final Timing timing;
     private final String penalty;
+    private final String comment;
 
-    public Solution(UUID solutionId, UUID categoryId, Scramble scramble, Timing timing, String penalty) {
+    public Solution(UUID solutionId, UUID categoryId, Scramble scramble, Timing timing, String penalty, String comment) {
         this.solutionId = solutionId;
         this.categoryId = categoryId;
         this.scramble = scramble;
         this.timing = timing;
         this.penalty = penalty;
+        this.comment = comment;
     }
 
     public UUID getSolutionId() {
@@ -39,7 +41,8 @@ public class Solution {
             this.categoryId,
             this.scramble,
             timing,
-            this.penalty);
+            this.penalty,
+            this.comment);
     }
 
     public String getPenalty() {
@@ -52,6 +55,19 @@ public class Solution {
             this.categoryId,
             this.scramble,
             this.timing,
-            penalty);
+            penalty,
+            this.comment);
+    }
+
+    public String getComment () { return this.comment; }
+
+    public Solution setComment(String comment) {
+        return new Solution(
+                this.solutionId,
+                this.categoryId,
+                this.scramble,
+                this.timing,
+                this.penalty,
+                comment);
     }
 }

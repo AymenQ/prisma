@@ -15,10 +15,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.UUID;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import org.h2.tools.RunScript;
 
@@ -196,7 +193,8 @@ public class Main {
                         Main.this.categoryManager.getCurrentCategory().getCategoryId(),
                         Main.this.scrambleManager.getCurrentScramble(),
                         timing,
-                        penalty));
+                        penalty,
+                        ""));
 
                 // check for personal records
                 StatisticalMeasure[] measures = {

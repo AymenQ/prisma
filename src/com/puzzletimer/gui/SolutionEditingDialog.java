@@ -38,6 +38,7 @@ public class SolutionEditingDialog extends JDialog {
     private JTextField textFieldTime;
     private JComboBox comboBoxPenalty;
     private JTextField textFieldScramble;
+    private JTextField textFieldComment;
     private JButton buttonOk;
     private JButton buttonCancel;
 
@@ -73,6 +74,7 @@ public class SolutionEditingDialog extends JDialog {
 
                 // focus
                 SolutionEditingDialog.this.textFieldTime.requestFocusInWindow();
+
             }
         });
 
@@ -85,6 +87,9 @@ public class SolutionEditingDialog extends JDialog {
         // scramble
         this.textFieldScramble.setText(solution.getScramble().getRawSequence());
         this.textFieldScramble.setCaretPosition(0);
+
+        // comment
+        this.textFieldComment.setText(solution.getComment());
 
         // ok button
         this.buttonOk.addActionListener(new ActionListener() {
@@ -103,10 +108,13 @@ public class SolutionEditingDialog extends JDialog {
                 String penalty =
                     (String) SolutionEditingDialog.this.comboBoxPenalty.getSelectedItem();
 
+                String comment = (String) SolutionEditingDialog.this.textFieldComment.getText();
+
                 listener.solutionEdited(
                     solution
                         .setTiming(timing)
-                        .setPenalty(penalty));
+                        .setPenalty(penalty)
+                        .setComment(comment));
 
                 SolutionEditingDialog.this.dispose();
             }
@@ -171,6 +179,14 @@ public class SolutionEditingDialog extends JDialog {
         this.textFieldScramble.setEditable(false);
         this.textFieldScramble.setFocusable(false);
         add(this.textFieldScramble);
+
+        // labelComment
+        add(new JLabel(_("solution_editing.comment")));
+
+        //textFieldComment
+
+        this.textFieldComment = new JTextField();
+        add(this.textFieldComment);
 
         // buttonOk
         this.buttonOk = new JButton(_("solution_editing.ok"));

@@ -127,6 +127,7 @@ public class HistoryFrame extends JFrame {
                                 categoryId,
                                 scramble,
                                 timing,
+                                "",
                                 ""));
 
                         start = new Date(start.getTime() + time);
@@ -776,13 +777,14 @@ public class HistoryFrame extends JFrame {
         tableModel.addColumn(_("history.start"));
         tableModel.addColumn(_("history.time"));
         tableModel.addColumn(_("history.penalty"));
+        tableModel.addColumn(_("history.comment"));
         tableModel.addColumn(_("history.scramble"));
 
         this.table.setModel(tableModel);
 
         this.table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 
-        int[] columnsWidth = { 100, 400, 200, 200, 1000 };
+        int[] columnsWidth = { 100, 400, 200, 200, 300, 1000 };
         for (int i = 0; i < columnsWidth.length; i++) {
             TableColumn indexColumn = this.table.getColumnModel().getColumn(i);
             indexColumn.setPreferredWidth(columnsWidth[i]);
@@ -802,6 +804,7 @@ public class HistoryFrame extends JFrame {
                 sStart,
                 sTime,
                 solutions[i].getPenalty(),
+                solutions[i].getComment(),
                 solutions[i].getScramble().getRawSequence(),
             });
         }

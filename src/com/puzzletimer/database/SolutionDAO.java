@@ -40,7 +40,7 @@ public class SolutionDAO {
 
         try {
             PreparedStatement statement = this.connection.prepareStatement(
-                "SELECT SOLUTION_ID, CATEGORY_ID, SCRAMBLER_ID, SEQUENCE, START, END, PENALTY " +
+                "SELECT SOLUTION_ID, CATEGORY_ID, SCRAMBLER_ID, SEQUENCE, START, END, PENALTY, COMMENT " +
                 "FROM SOLUTION " +
                 "WHERE CATEGORY_ID = ? " +
                 "ORDER BY START DESC");
@@ -57,9 +57,10 @@ public class SolutionDAO {
                 Date start = resultSet.getTimestamp(5);
                 Date end = resultSet.getTimestamp(6);
                 String penalty = resultSet.getString(7);
+                String comment = resultSet.getString(8);
 
                 Scramble scramble = new Scramble(scramblerId, scramblerParser.parse(sequence));
-                Solution solution = new Solution(solutionId, categoryId, scramble, new Timing(start, end), penalty);
+                Solution solution = new Solution(solutionId, categoryId, scramble, new Timing(start, end), penalty, comment);
 
                 solutions.add(solution);
             }
@@ -82,7 +83,7 @@ public class SolutionDAO {
             this.connection.setAutoCommit(false);
 
             PreparedStatement statement = this.connection.prepareStatement(
-                "INSERT INTO SOLUTION VALUES (?, ?, ?, ?, ?, ?, ?)");
+                "INSERT INTO SOLUTION VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
             for (Solution solution : solutions) {
                 statement.setString(1, solution.getSolutionId().toString());
@@ -92,6 +93,7 @@ public class SolutionDAO {
                 statement.setTimestamp(5, new Timestamp(solution.getTiming().getStart().getTime()));
                 statement.setTimestamp(6, new Timestamp(solution.getTiming().getEnd().getTime()));
                 statement.setString(7, solution.getPenalty());
+                statement.setString(8, solution.getComment());
 
                 statement.addBatch();
             }
@@ -114,11 +116,12 @@ public class SolutionDAO {
     public void update(Solution solution) {
         try {
             PreparedStatement statement = this.connection.prepareStatement(
-                "UPDATE SOLUTION SET END = ?, PENALTY = ? WHERE SOLUTION_ID = ?");
+                "UPDATE SOLUTION SET END = ?, PENALTY = ?, COMMENT = ? WHERE SOLUTION_ID = ?");
 
             statement.setTimestamp(1, new Timestamp(solution.getTiming().getEnd().getTime()));
             statement.setString(2, solution.getPenalty());
-            statement.setString(3, solution.getSolutionId().toString());
+            statement.setString(3, solution.getComment());
+            statement.setString(4, solution.getSolutionId().toString());
 
             statement.executeUpdate();
 
