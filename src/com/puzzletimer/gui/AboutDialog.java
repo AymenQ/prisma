@@ -57,12 +57,8 @@ public class AboutDialog extends JDialog {
         labelPrismaPuzzleTimer.setFont(new Font("Arial", Font.BOLD, 16));
         add(labelPrismaPuzzleTimer, "split 3, gapbottom 10, flowy");
 
-        // labelURL
-        JLabel labelURL = new JLabel(_("about.prisma_puzzle_timer_address"));
-        add(labelURL);
-
         // labelWalter
-        JLabel labelWalter = new JLabel(_("about.walters_email"));
-        add(labelWalter);
+        JLabel labelContributors = new JLabel(_("about.contributors"));
+        add(labelContributors);
     }
 }
