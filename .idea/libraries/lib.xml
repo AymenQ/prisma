@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/miglayout-3.7.3.1-swing.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/prisma-graphics.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/h2-1.2.137.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
