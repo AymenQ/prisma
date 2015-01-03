@@ -16,8 +16,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -881,8 +883,8 @@ public class MainFrame extends JFrame {
             Object[] options = {"Update now!", "Cancel"};
             int n = JOptionPane.showOptionDialog(
                     this,
-                    "A new update was found! Do you want to download it?",
-                    "Update found!",
+                    _("update.message") + " " + version,
+                    _("update.title"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.INFORMATION_MESSAGE,
                     null,
@@ -893,8 +895,8 @@ public class MainFrame extends JFrame {
                 UpdaterFrame uf = new UpdaterFrame("https://github.com/Moony22/prisma/releases/download/" + version + "/prisma-" + version + ".jar", version);
                 uf.downloadLatestVersion();
                 try {
-                    Process update = Runtime.getRuntime().exec("java -jar prisma-" + version + ".jar");
-                } catch (IOException e) {
+                    Process update = Runtime.getRuntime().exec("java -jar " + new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
+                } catch (IOException | URISyntaxException e) {
                     e.printStackTrace();
                 }
                 System.exit(0);

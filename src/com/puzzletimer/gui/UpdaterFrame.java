@@ -1,12 +1,13 @@
 package com.puzzletimer.gui;
 
+import com.puzzletimer.state.UpdateManager;
+
+import javax.print.URIException;
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class UpdaterFrame extends JFrame{
@@ -40,7 +41,8 @@ public class UpdaterFrame extends JFrame{
             if (HttpURLConnection.HTTP_OK == hConnection.getResponseCode()) {
                 InputStream in = hConnection.getInputStream();
                 BufferedOutputStream out = new BufferedOutputStream(
-                        new FileOutputStream("prisma-" + version + ".jar"));
+                        new FileOutputStream(new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
+                ));
                 int filesize = hConnection.getContentLength();
                 progress.setMaximum(filesize);
                 byte[] buffer = new byte[4096];
@@ -59,7 +61,7 @@ public class UpdaterFrame extends JFrame{
                 out.close();
                 in.close();
             }
-        }catch(IOException e){
+        }catch(IOException | URISyntaxException e){
             e.printStackTrace();
         }
     }
