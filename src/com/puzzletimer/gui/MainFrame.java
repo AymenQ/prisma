@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
@@ -32,6 +33,7 @@ import javax.sound.sampled.DataLine.Info;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
 
+import com.puzzletimer.state.*;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.Main;
@@ -47,14 +49,6 @@ import com.puzzletimer.puzzles.Puzzle;
 import com.puzzletimer.puzzles.PuzzleProvider;
 import com.puzzletimer.scramblers.Scrambler;
 import com.puzzletimer.scramblers.ScramblerProvider;
-import com.puzzletimer.state.CategoryManager;
-import com.puzzletimer.state.ColorManager;
-import com.puzzletimer.state.ConfigurationManager;
-import com.puzzletimer.state.MessageManager;
-import com.puzzletimer.state.ScrambleManager;
-import com.puzzletimer.state.SessionManager;
-import com.puzzletimer.state.SolutionManager;
-import com.puzzletimer.state.TimerManager;
 import com.puzzletimer.state.MessageManager.MessageType;
 import com.puzzletimer.statistics.Average;
 import com.puzzletimer.statistics.Best;
@@ -443,6 +437,7 @@ public class MainFrame extends JFrame {
                                         MainFrame.this.configurationManager);
                         solutionEditingDialog.setLocationRelativeTo(null);
                         solutionEditingDialog.setVisible(true);
+
                     }
                 });
                 ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -879,6 +874,32 @@ public class MainFrame extends JFrame {
                         currentCategory.getDescription()));
             }
         });
+
+        // Updates
+        if(UpdateManager.checkUpdate()) {
+            String version = UpdateManager.getLatest();
+            Object[] options = {"Update now!", "Cancel"};
+            int n = JOptionPane.showOptionDialog(
+                    this,
+                    "A new update was found! Do you want to download it?",
+                    "Update found!",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    options,
+                    options[0]);
+            if (n == 0)
+            {
+                UpdaterFrame uf = new UpdaterFrame("https://github.com/Moony22/prisma/releases/download/" + version + "/prisma-" + version + ".jar", version);
+                uf.downloadLatestVersion();
+                try {
+                    Process update = Runtime.getRuntime().exec("java -jar prisma-" + version + ".jar");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.exit(0);
+            }
+        }
 
         // menuItemAddSolution
         this.menuItemAddSolution.addActionListener(new ActionListener() {

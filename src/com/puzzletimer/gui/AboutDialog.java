@@ -23,7 +23,7 @@ public class AboutDialog extends JDialog {
     public AboutDialog(JFrame owner, boolean modal) {
         super(owner, modal);
 
-        setTitle(_("about.prisma_puzzle_timer_version"));
+        setTitle(_("about.prisma_puzzle_timer") + " " + _("about.version"));
         setResizable(false);
 
         createComponents();
@@ -53,7 +53,7 @@ public class AboutDialog extends JDialog {
         add(panel3D, "width 125, height 125, spany");
 
         // labelPrismaPuzzleTimer
-        JLabel labelPrismaPuzzleTimer = new JLabel(_("about.prisma_puzzle_timer_version"));
+        JLabel labelPrismaPuzzleTimer = new JLabel(_("about.prisma_puzzle_timer") + " " + _("about.version"));
         labelPrismaPuzzleTimer.setFont(new Font("Arial", Font.BOLD, 16));
         add(labelPrismaPuzzleTimer, "split 3, gapbottom 10, flowy");
 
