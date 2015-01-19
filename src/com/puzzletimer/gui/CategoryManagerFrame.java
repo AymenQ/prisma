@@ -50,11 +50,16 @@ class CategoryEditorDialog extends JDialog {
     private JComboBox comboBoxPuzzle;
     private JComboBox comboBoxScrambler;
     private JComboBox comboBoxTips;
-    private JButton buttonAdd;
+    private JButton buttonTipAdd;
     private JList listTips;
-    private JButton buttonUp;
-    private JButton buttonDown;
-    private JButton buttonRemove;
+    private JButton buttonTipUp;
+    private JButton buttonTipDown;
+    private JButton buttonTipRemove;
+    private JButton buttonSplitsAdd;
+    private JList listSplits;
+    private JButton buttonSplitsUp;
+    private JButton buttonSplitsDown;
+    private JButton buttonSplitsRemove;
     private JButton buttonOk;
     private JButton buttonCancel;
 
@@ -121,7 +126,7 @@ class CategoryEditorDialog extends JDialog {
         });
 
         // set add button behavior
-        this.buttonAdd.addActionListener(new ActionListener() {
+        this.buttonTipAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 Tip selectedTip = (Tip) CategoryEditorDialog.this.comboBoxTips.getSelectedItem();
@@ -137,7 +142,7 @@ class CategoryEditorDialog extends JDialog {
         });
 
         // set up button behavior
-        this.buttonUp.addActionListener(new ActionListener() {
+        this.buttonTipUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JList listTips = CategoryEditorDialog.this.listTips;
@@ -158,7 +163,7 @@ class CategoryEditorDialog extends JDialog {
         });
 
         // set down button behavior
-        this.buttonDown.addActionListener(new ActionListener() {
+        this.buttonTipDown.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 JList listTips = CategoryEditorDialog.this.listTips;
@@ -179,7 +184,7 @@ class CategoryEditorDialog extends JDialog {
         });
 
         // set remove button behavior
-        this.buttonRemove.addActionListener(new ActionListener() {
+        this.buttonTipRemove.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent event) {
                 DefaultListModel model = (DefaultListModel) CategoryEditorDialog.this.listTips.getModel();
@@ -304,8 +309,8 @@ class CategoryEditorDialog extends JDialog {
         add(this.comboBoxTips);
 
         // buttonAdd
-        this.buttonAdd = new JButton(_("category_editor.add"));
-        add(this.buttonAdd, "sizegroup button, wrap");
+        this.buttonTipAdd = new JButton(_("category_editor.add"));
+        add(this.buttonTipAdd, "sizegroup button, wrap");
 
         // listTips
         this.listTips = new JList(new DefaultListModel());
@@ -314,17 +319,17 @@ class CategoryEditorDialog extends JDialog {
         scrollPane.setPreferredSize(new Dimension(0, 0));
         add(scrollPane, "grow, skip");
 
-        // buttonUp
-        this.buttonUp = new JButton(_("category_editor.up"));
-        add(this.buttonUp, "sizegroup button, top, split 3, flowy");
+        // buttonTipUp
+        this.buttonTipUp = new JButton(_("category_editor.up"));
+        add(this.buttonTipUp, "sizegroup button, top, split 3, flowy");
 
-        // buttonDown
-        this.buttonDown = new JButton(_("category_editor.down"));
-        add(this.buttonDown, "sizegroup button");
+        // buttonTipDown
+        this.buttonTipDown = new JButton(_("category_editor.down"));
+        add(this.buttonTipDown, "sizegroup button");
 
-        // buttonRemove
-        this.buttonRemove = new JButton(_("category_editor.remove"));
-        add(this.buttonRemove, "sizegroup button, wrap");
+        // buttonTipRemove
+        this.buttonTipRemove = new JButton(_("category_editor.remove"));
+        add(this.buttonTipRemove, "sizegroup button, wrap");
 
         // buttonOk
         this.buttonOk = new JButton(_("category_editor.ok"));
