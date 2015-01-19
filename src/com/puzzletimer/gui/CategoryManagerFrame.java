@@ -3,26 +3,10 @@ package com.puzzletimer.gui;
 import static com.puzzletimer.Internationalization._;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.UUID;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -55,6 +39,8 @@ class CategoryEditorDialog extends JDialog {
     private JButton buttonTipUp;
     private JButton buttonTipDown;
     private JButton buttonTipRemove;
+    private JCheckBox checkBoxSplits;
+    private JTextField textFieldSplit;
     private JButton buttonSplitsAdd;
     private JList listSplits;
     private JButton buttonSplitsUp;
@@ -75,7 +61,7 @@ class CategoryEditorDialog extends JDialog {
         super(owner, modal);
 
         setTitle(_("category_editor.category_editor"));
-        setMinimumSize(new Dimension(480, 300));
+        setMinimumSize(new Dimension(480, 400));
 
         createComponents();
         pack();
@@ -196,6 +182,94 @@ class CategoryEditorDialog extends JDialog {
             }
         });
 
+        this.checkBoxSplits.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED)
+                {
+                    enableSplits();
+                }
+                else
+                {
+                    disableSplits();
+                }
+            }
+        });
+
+        disableSplits();
+
+
+        this.buttonSplitsAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String splitName = CategoryEditorDialog.this.textFieldSplit.getText();
+                CategoryEditorDialog.this.textFieldSplit.setText("");
+                if (splitName.isEmpty()) {
+                    return;
+                }
+
+                DefaultListModel listModel = (DefaultListModel) CategoryEditorDialog.this.listSplits.getModel();
+                if (!listModel.contains(splitName)) {
+                    listModel.addElement(splitName);
+                }
+            }
+        });
+
+        // set up button behavior
+        this.buttonSplitsUp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JList listSplits = CategoryEditorDialog.this.listSplits;
+
+                DefaultListModel model = (DefaultListModel) listSplits.getModel();
+
+                int selectedIndex = listSplits.getSelectedIndex();
+                if (selectedIndex > 0) {
+                    // swap
+                    Object selectedValue = model.getElementAt(selectedIndex);
+                    model.insertElementAt(selectedValue, selectedIndex - 1);
+                    model.removeElementAt(selectedIndex + 1);
+
+                    // fix selection
+                    listSplits.addSelectionInterval(selectedIndex - 1, selectedIndex - 1);
+                }
+            }
+        });
+
+        // set down button behavior
+        this.buttonSplitsDown.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                JList listSplits = CategoryEditorDialog.this.listSplits;
+
+                DefaultListModel model = (DefaultListModel) listSplits.getModel();
+
+                int selectedIndex = listSplits.getSelectedIndex();
+                if (selectedIndex >= 0 && selectedIndex < model.getSize() - 1) {
+                    // swap
+                    Object selectedValue = model.getElementAt(selectedIndex);
+                    model.insertElementAt(selectedValue, selectedIndex + 2);
+                    model.removeElementAt(selectedIndex);
+
+                    // fix selection
+                    listSplits.addSelectionInterval(selectedIndex + 1, selectedIndex + 1);
+                }
+            }
+        });
+
+        // set remove button behavior
+        this.buttonSplitsRemove.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                DefaultListModel model = (DefaultListModel) CategoryEditorDialog.this.listSplits.getModel();
+
+                int selectedIndex = CategoryEditorDialog.this.listSplits.getSelectedIndex();
+                if (selectedIndex >= 0) {
+                    model.removeElementAt(selectedIndex);
+                }
+            }
+        });
+
         // set puzzle/scrambler combo boxes editable
         this.comboBoxPuzzle.setEnabled(isEditable);
         this.comboBoxScrambler.setEnabled(isEditable);
@@ -277,6 +351,24 @@ class CategoryEditorDialog extends JDialog {
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 
+    private void enableSplits() {
+        buttonSplitsAdd.setEnabled(true);
+        buttonSplitsUp.setEnabled(true);
+        buttonSplitsDown.setEnabled(true);
+        buttonSplitsRemove.setEnabled(true);
+        listSplits.setEnabled(true);
+        textFieldSplit.setEnabled(true);
+    }
+
+    private void disableSplits() {
+        buttonSplitsAdd.setEnabled(false);
+        buttonSplitsUp.setEnabled(false);
+        buttonSplitsDown.setEnabled(false);
+        buttonSplitsRemove.setEnabled(false);
+        listSplits.setEnabled(false);
+        textFieldSplit.setEnabled(false);
+    }
+
     private void createComponents() {
         setLayout(
             new MigLayout(
@@ -330,6 +422,39 @@ class CategoryEditorDialog extends JDialog {
         // buttonTipRemove
         this.buttonTipRemove = new JButton(_("category_editor.remove"));
         add(this.buttonTipRemove, "sizegroup button, wrap");
+
+        add(new JLabel("Enable " + _("category_editor.splits") + ":"));
+
+        this.checkBoxSplits = new JCheckBox();
+        add(this.checkBoxSplits, "span 2, wrap");
+
+        add(new JLabel(_("category_editor.splits") + ":"));
+
+        this.textFieldSplit = new JTextField();
+        add(this.textFieldSplit);
+
+        // buttonAdd
+        this.buttonSplitsAdd = new JButton(_("category_editor.add"));
+        add(this.buttonSplitsAdd, "sizegroup button, wrap");
+
+        // listSplits
+        this.listSplits = new JList(new DefaultListModel());
+        this.listSplits.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane scrollPaneSplits = new JScrollPane(this.listSplits);
+        scrollPaneSplits.setPreferredSize(new Dimension(0, 0));
+        add(scrollPaneSplits, "grow, skip");
+
+        // buttonSplitsUp
+        this.buttonSplitsUp = new JButton(_("category_editor.up"));
+        add(this.buttonSplitsUp, "sizegroup button, top, split 3, flowy");
+
+        // buttonSplitsDown
+        this.buttonSplitsDown = new JButton(_("category_editor.down"));
+        add(this.buttonSplitsDown, "sizegroup button");
+
+        // buttonSplitsRemove
+        this.buttonSplitsRemove = new JButton(_("category_editor.remove"));
+        add(this.buttonSplitsRemove, "sizegroup button, wrap");
 
         // buttonOk
         this.buttonOk = new JButton(_("category_editor.ok"));
