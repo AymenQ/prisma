@@ -27,3 +27,6 @@ crashlytics-build.properties
 
 # Database files
 *.db
+
+# Log files
+*.log
