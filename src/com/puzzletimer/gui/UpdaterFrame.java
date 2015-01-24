@@ -10,90 +10,82 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class UpdaterFrame extends JFrame{
+public class UpdaterFrame {
     String updateUrl;
     JProgressBar progress;
+    JLabel progressLabel;
     String version;
 
-    public UpdaterFrame(String url, String version)
-    {
+    public UpdaterFrame(String url, String version) {
+        JFrame frame = new JFrame();
+        frame.setLayout(new FlowLayout());
         this.version = version;
         updateUrl = url;
-        this.setPreferredSize(new Dimension(300, 80));
-        this.setSize(new Dimension(300, 80));
-        this.setTitle("Updater");
-        progress = new JProgressBar(0,100);
+        frame.setPreferredSize(new Dimension(300, 80));
+        frame.setSize(new Dimension(300, 80));
+        frame.setTitle("Updater");
+        progressLabel = new JLabel("Progress: ");
+        //frame.add(progressLabel);
+        progressLabel.setVisible(true);
+        progress = new JProgressBar(0, 100);
         progress.setValue(0);
         progress.setStringPainted(true);
-        this.add(progress);
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
-        this.requestFocus(true);
+        progress.setVisible(true);
+        frame.add(progress);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        frame.requestFocus();
     }
 
-    void downloadLatestVersion(){
-        URL url;
-        try {
-            url = new URL(updateUrl);
-            HttpURLConnection hConnection = (HttpURLConnection) url
-                    .openConnection();
-            HttpURLConnection.setFollowRedirects(true);
-            if (HttpURLConnection.HTTP_OK == hConnection.getResponseCode()) {
-                InputStream in = hConnection.getInputStream();
-                BufferedOutputStream out = new BufferedOutputStream(
-                        new FileOutputStream(new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
-                ));
-                int filesize = hConnection.getContentLength();
-                progress.setMaximum(filesize);
-                byte[] buffer = new byte[4096];
-                int numRead;
-                long numWritten = 0;
-                while ((numRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, numRead);
-                    numWritten += numRead;
-                    System.out.println((double)numWritten/(double)filesize);
-                    progress.setValue((int) numWritten);
+    public void downloadLatestVersion() {
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url;
+                    url = new URL(updateUrl);
+                    HttpURLConnection hConnection = (HttpURLConnection) url
+                            .openConnection();
+                    HttpURLConnection.setFollowRedirects(true);
+                    if (HttpURLConnection.HTTP_OK == hConnection.getResponseCode()) {
+                        try (InputStream in = hConnection.getInputStream(); BufferedOutputStream out = new BufferedOutputStream(
+                                new FileOutputStream(new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
+                                ));) {
+                            int filesize = hConnection.getContentLength();
+                            progress.setMaximum(filesize);
+                            byte[] buffer = new byte[4096];
+                            int numRead;
+                            long numWritten = 0;
+                            while ((numRead = in.read(buffer)) != -1) {
+                                out.write(buffer, 0, numRead);
+                                numWritten += numRead;
+                                System.out.println((double) numWritten / (double) filesize);
+                                progress.setValue((int) numWritten);
+                            }
+                            if (filesize != numWritten)
+                                System.out.println("Wrote " + numWritten + " bytes, should have been " + filesize);
+                            else
+                                System.out.println("Downloaded successfully.");
+                            out.close();
+                            in.close();
+                            try {
+                                Process update = Runtime.getRuntime().exec("java -jar " + new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
+                            } catch (IOException | URISyntaxException e) {
+                                e.printStackTrace();
+                            }
+                            System.exit(0);
+                        }
+                    }
+
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
                 }
-                if(filesize!=numWritten)
-                    System.out.println("Wrote "+numWritten+" bytes, should have been "+filesize);
-                else
-                    System.out.println("Downloaded successfully.");
-                out.close();
-                in.close();
             }
-        }catch(IOException | URISyntaxException e){
-            e.printStackTrace();
-        }
+        });
+
+        t.start();
     }
-    /*public static void downloadFile(String sourceurl, String dest){
-        URL url;
-        try {
-            url = new URL(sourceurl);
-            HttpURLConnection hConnection = (HttpURLConnection) url
-                    .openConnection();
-            HttpURLConnection.setFollowRedirects(true);
-            if (HttpURLConnection.HTTP_OK == hConnection.getResponseCode()) {
-                InputStream in = hConnection.getInputStream();
-                BufferedOutputStream out = new BufferedOutputStream(
-                        new FileOutputStream(dest));
-                int filesize = hConnection.getContentLength();
-                byte[] buffer = new byte[4096];
-                int numRead;
-                long numWritten = 0;
-                while ((numRead = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, numRead);
-                    numWritten += numRead;
-                    System.out.println((double)numWritten/(double)filesize);
-                }
-                if(filesize!=numWritten)
-                    System.out.println("Wrote "+numWritten+" bytes, should have been "+filesize);
-                else
-                    System.out.println("Downloaded successfully.");
-                out.close();
-                in.close();
-            }
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }*/
+
 }

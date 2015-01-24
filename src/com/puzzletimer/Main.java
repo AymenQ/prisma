@@ -479,6 +479,8 @@ public class Main {
 
                 main.categoryManager.setCurrentCategory(main.categoryManager.getCurrentCategory());
 
+
+                if(!mainFrame.hasUpdate())
                 mainFrame.setVisible(true);
             }
         });

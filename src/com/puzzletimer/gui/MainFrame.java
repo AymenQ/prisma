@@ -785,6 +785,11 @@ public class MainFrame extends JFrame {
     private AudioFormat audioFormat;
     private Mixer.Info mixerInfo;
 
+    boolean update = false;
+
+    public boolean hasUpdate() {
+        return update;
+    }
 
     public MainFrame(
             MessageManager messageManager,
@@ -895,12 +900,7 @@ public class MainFrame extends JFrame {
             {
                 UpdaterFrame uf = new UpdaterFrame("https://github.com/Moony22/prisma/releases/download/" + version + "/prisma-" + version + ".jar", version);
                 uf.downloadLatestVersion();
-                try {
-                    Process update = Runtime.getRuntime().exec("java -jar " + new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
-                System.exit(0);
+                update = true;
             }
         }
 
