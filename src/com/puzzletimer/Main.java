@@ -119,7 +119,7 @@ public class Main {
         }
 
         // update database if necessary
-        String[] versions = { "0.3", "0.4", "0.5", "0.6", "0.9"};
+        String[] versions = { "0.3", "0.4", "0.5", "0.6", "0.9", "0.9.3"};
 
         for (;;) {
             String currentVersion = "";
@@ -181,6 +181,8 @@ public class Main {
         this.timerManager = new TimerManager();
         this.timerManager.setInspectionEnabled(
             this.configurationManager.getConfiguration("INSPECTION-TIME-ENABLED").equals("TRUE"));
+        this.timerManager.setAnyKeyEnabled(
+                this.configurationManager.getConfiguration("ANYKEY-ENABLED").equals("TRUE"));
         this.timerManager.setSmoothTimingEnabled(
                 this.configurationManager.getConfiguration("SMOOTH-TIMING-ENABLED").equals("TRUE"));
         this.timerManager.addListener(new TimerManager.Listener() {
@@ -252,7 +254,13 @@ public class Main {
                 Main.this.configurationManager.setConfiguration(
                     "INSPECTION-TIME-ENABLED", inspectionEnabled ? "TRUE" : "FALSE");
             }
-            
+
+            @Override
+            public void anyKeyEnabledSet(boolean anyKeyEnabled) {
+                Main.this.configurationManager.setConfiguration(
+                        "ANYKEY-ENABLED", anyKeyEnabled ? "TRUE" : "FALSE");
+            }
+
             @Override
             public void precisionChanged(String timerPrecisionId) {
             	Main.this.configurationManager.setConfiguration("TIMER-PRECISION", timerPrecisionId);

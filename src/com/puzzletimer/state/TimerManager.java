@@ -15,6 +15,9 @@ public class TimerManager {
         public void precisionChanged(String timerPrecisionId) { }
         public void smoothTimingSet(boolean smoothTimingEnabled) { }
 
+        // any key
+        public void anyKeyEnabledSet(boolean anyKeyEnabledSet) { }
+
         // hands
         public void leftHandPressed() { }
         public void leftHandReleased() { }
@@ -40,6 +43,7 @@ public class TimerManager {
     private ArrayList<Listener> listeners;
     private Timer currentTimer;
     private boolean inspectionEnabled;
+    private boolean anyKeyEnabled;
     private boolean smoothTimingEnabled;
     private java.util.Timer repeater;
     private Date inspectionStart;
@@ -49,6 +53,7 @@ public class TimerManager {
         this.listeners = new ArrayList<Listener>();
         this.currentTimer = null;
         this.inspectionEnabled = false;
+        this.anyKeyEnabled = false;
         this.smoothTimingEnabled = true;
         this.repeater = null;
         this.inspectionStart = null;
@@ -107,6 +112,18 @@ public class TimerManager {
 
         for (Listener listener : this.listeners) {
             listener.smoothTimingSet(smoothTimingEnabled);
+        }
+    }
+
+    // any key
+
+    public boolean isAnyKeyEnabled() {  return this.anyKeyEnabled; }
+
+    public void setAnyKeyEnabled(boolean anyKeyEnabled)
+    {
+        this.anyKeyEnabled = anyKeyEnabled;
+        for (Listener listener : this.listeners) {
+            listener.anyKeyEnabledSet(anyKeyEnabled);
         }
     }
 

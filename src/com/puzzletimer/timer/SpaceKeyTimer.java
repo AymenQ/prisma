@@ -69,7 +69,8 @@ public class SpaceKeyTimer implements Timer {
         this.keyListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
-                if (keyEvent.getKeyCode() != KeyEvent.VK_SPACE) {
+                System.out.println(timerManager.isAnyKeyEnabled());
+                if (keyEvent.getKeyCode() != KeyEvent.VK_SPACE && !timerManager.isAnyKeyEnabled()) {
                     return;
                 }
 
@@ -95,7 +96,7 @@ public class SpaceKeyTimer implements Timer {
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                if (keyEvent.getKeyCode() != KeyEvent.VK_SPACE) {
+                if (keyEvent.getKeyCode() != KeyEvent.VK_SPACE && !timerManager.isAnyKeyEnabled()) {
                     return;
                 }
 
