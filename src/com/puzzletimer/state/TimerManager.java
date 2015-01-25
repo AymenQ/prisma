@@ -18,6 +18,9 @@ public class TimerManager {
         // any key
         public void anyKeyEnabledSet(boolean anyKeyEnabledSet) { }
 
+        // hide timer
+        public void hideTimerEnabledSet(boolean hideTimerEnabledSet) { }
+
         // hands
         public void leftHandPressed() { }
         public void leftHandReleased() { }
@@ -32,7 +35,7 @@ public class TimerManager {
 
         // solution
         public void solutionStarted() { }
-        public void solutionRunning(Timing timing) { }
+        public void solutionRunning(Timing timing, boolean hidden) { }
         public void solutionFinished(Timing timing, String penalty) { }
         
         // stackmat
@@ -44,6 +47,7 @@ public class TimerManager {
     private Timer currentTimer;
     private boolean inspectionEnabled;
     private boolean anyKeyEnabled;
+    private boolean hideTimerEnabled;
     private boolean smoothTimingEnabled;
     private java.util.Timer repeater;
     private Date inspectionStart;
@@ -54,6 +58,7 @@ public class TimerManager {
         this.currentTimer = null;
         this.inspectionEnabled = false;
         this.anyKeyEnabled = false;
+        this.hideTimerEnabled = false;
         this.smoothTimingEnabled = true;
         this.repeater = null;
         this.inspectionStart = null;
@@ -124,6 +129,19 @@ public class TimerManager {
         this.anyKeyEnabled = anyKeyEnabled;
         for (Listener listener : this.listeners) {
             listener.anyKeyEnabledSet(anyKeyEnabled);
+        }
+    }
+
+    // hide timer
+
+    public boolean isHideTimerEnabled() { return this.hideTimerEnabled; }
+
+    public void setHideTimerEnabled(boolean hideTimerEnabled)
+    {
+        this.hideTimerEnabled = hideTimerEnabled;
+        for (Listener listener : this.listeners)
+        {
+            listener.hideTimerEnabledSet(hideTimerEnabled);
         }
     }
 
@@ -231,7 +249,7 @@ public class TimerManager {
 
     public void updateSolutionTiming(Timing timing) {
         for (Listener listener : this.listeners) {
-            listener.solutionRunning(timing);
+            listener.solutionRunning(timing, isHideTimerEnabled());
         }
     }
 
