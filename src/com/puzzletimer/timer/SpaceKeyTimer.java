@@ -73,6 +73,9 @@ public class SpaceKeyTimer implements Timer {
                     return;
                 }
 
+                if(keyEvent.getKeyCode() != KeyEvent.VK_SPACE && timerManager.isAnyKeyEnabled() && SpaceKeyTimer.this.state != State.RUNNING)
+                    return;
+
                 switch (SpaceKeyTimer.this.state) {
                     case RUNNING:
                         SpaceKeyTimer.this.finish = new Date();
@@ -95,12 +98,13 @@ public class SpaceKeyTimer implements Timer {
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-                if (keyEvent.getKeyCode() != KeyEvent.VK_SPACE && !timerManager.isAnyKeyEnabled()) {
+                if (keyEvent.getKeyCode() != KeyEvent.VK_SPACE && !timerManager.isAnyKeyEnabled() ) {
                     return;
                 }
 
                 switch (SpaceKeyTimer.this.state) {
                     case READY_FOR_INSPECTION:
+                        if(keyEvent.getKeyCode() != KeyEvent.VK_SPACE) break;
                         if (new Date().getTime() - SpaceKeyTimer.this.finish.getTime() < 250) {
                             break;
                         }
