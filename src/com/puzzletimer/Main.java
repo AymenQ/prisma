@@ -119,7 +119,7 @@ public class Main {
         }
 
         // update database if necessary
-        String[] versions = { "0.3", "0.4", "0.5", "0.6", "0.9", "0.9.3"};
+        String[] versions = { "0.3", "0.4", "0.5", "0.6", "0.9", "0.9.3", "0.9.4"};
 
         for (;;) {
             String currentVersion = "";
@@ -183,6 +183,8 @@ public class Main {
             this.configurationManager.getConfiguration("INSPECTION-TIME-ENABLED").equals("TRUE"));
         this.timerManager.setAnyKeyEnabled(
                 this.configurationManager.getConfiguration("ANYKEY-ENABLED").equals("TRUE"));
+        this.timerManager.setHideTimerEnabled(
+                this.configurationManager.getConfiguration("HIDETIMER-ENABLED").equals("TRUE"));
         this.timerManager.setSmoothTimingEnabled(
                 this.configurationManager.getConfiguration("SMOOTH-TIMING-ENABLED").equals("TRUE"));
         this.timerManager.addListener(new TimerManager.Listener() {
@@ -259,6 +261,12 @@ public class Main {
             public void anyKeyEnabledSet(boolean anyKeyEnabled) {
                 Main.this.configurationManager.setConfiguration(
                         "ANYKEY-ENABLED", anyKeyEnabled ? "TRUE" : "FALSE");
+            }
+
+            @Override
+            public void hideTimerEnabledSet(boolean hideTimerEnabled) {
+                Main.this.configurationManager.setConfiguration(
+                        "HIDETIMER-ENABLED", hideTimerEnabled ? "TRUE" : "FALSE");
             }
 
             @Override

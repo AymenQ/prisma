@@ -193,12 +193,13 @@ public class MainFrame extends JFrame {
                 }
 
                 @Override
-                public void solutionRunning(Timing timing) {
+                public void solutionRunning(Timing timing, boolean hidden) {
                     TimerPanel.this.isInspectionRunning = false;
                     TimerPanel.this.time = timing.getElapsedTime();
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
                         SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
+                    if(hidden) TimerPanel.this.timeLabel.setVisible(false);
                 }
 
                 @Override
@@ -208,6 +209,7 @@ public class MainFrame extends JFrame {
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
                         SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
+                    TimerPanel.this.timeLabel.setVisible(true);
                 }
                 
                 @Override
@@ -752,6 +754,7 @@ public class MainFrame extends JFrame {
     private JMenuItem menuItemColorScheme;
     private JCheckBoxMenuItem menuItemInspectionTime;
     private JCheckBoxMenuItem menuItemAnyKey;
+    private JCheckBoxMenuItem menuItemHideTimer;
     private JCheckBoxMenuItem menuItemSmoothTiming;
     private JMenu stackmatTimerInputDevice;
     private ButtonGroup stackmatTimerInputDeviceGroup;
@@ -1147,7 +1150,18 @@ public class MainFrame extends JFrame {
                 );
             }
         });
-        
+
+        // menuItemHideTimer
+        this.menuItemHideTimer.setSelected(timerManager.isHideTimerEnabled());
+        this.menuItemHideTimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.timerManager.setHideTimerEnabled(
+                        MainFrame.this.menuItemHideTimer.isSelected()
+                );
+            }
+        });
+
         // menuItemSmoothTiming
         this.menuItemSmoothTiming.setSelected(timerManager.isSmoothTimingEnabled());
         this.menuItemSmoothTiming.addActionListener(new ActionListener() {
@@ -1490,6 +1504,9 @@ public class MainFrame extends JFrame {
         this.menuItemAnyKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, menuShortcutKey | KeyEvent.ALT_MASK));
         menuOptions.add(this.menuItemAnyKey);
 
+        //menuItemHideTimer
+        this.menuItemHideTimer = new JCheckBoxMenuItem(_("main.hide_timer"));
+        menuOptions.add(this.menuItemHideTimer);
 
         // menuItemSmoothTiming
         this.menuItemSmoothTiming = new JCheckBoxMenuItem(_("main.smooth_timing"));
