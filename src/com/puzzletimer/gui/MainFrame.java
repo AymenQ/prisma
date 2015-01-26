@@ -67,6 +67,8 @@ import com.puzzletimer.timer.SpaceKeyTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.tips.TipProvider;
 import com.puzzletimer.util.SolutionUtils;
+import org.h2.command.dml.Update;
+import org.json.JSONObject;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -888,11 +890,13 @@ public class MainFrame extends JFrame {
 
         // Updates
         if(UpdateManager.checkUpdate()) {
-            String version = UpdateManager.getLatest();
+            JSONObject version = UpdateManager.getLatest();
+            String versionNumber = UpdateManager.getVersionNumber(version);
+            String changelog = UpdateManager.getDescription(version);
             Object[] options = {"Update now!", "Cancel"};
             int n = JOptionPane.showOptionDialog(
                     this,
-                    _("update.message") + " " + version,
+                    _("update.message") + " " + versionNumber + "\n" + changelog,
                     _("update.title"),
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.INFORMATION_MESSAGE,
@@ -901,7 +905,7 @@ public class MainFrame extends JFrame {
                     options[0]);
             if (n == 0)
             {
-                UpdaterFrame uf = new UpdaterFrame("https://github.com/Moony22/prisma/releases/download/" + version + "/prisma-" + version + ".jar", version);
+                UpdaterFrame uf = new UpdaterFrame("https://github.com/Moony22/prisma/releases/download/" + versionNumber + "/prisma-" + versionNumber + ".jar", versionNumber);
                 uf.downloadLatestVersion();
                 update = true;
             }

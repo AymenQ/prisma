@@ -15,32 +15,71 @@ public class UpdateManager {
 
     public static boolean checkUpdate()
     {
-        if(normalisedVersion(getLatest(), ".", 3).compareTo(normalisedVersion(_("about.version"), ".", 3)) > 0)
-            return true;
+        try {
+            if (normalisedVersion(getLatest().getString("tag_name"), ".", 3).compareTo(normalisedVersion(_("about.version"), ".", 3)) > 0)
+                return true;
+            return false;
+        }
+        catch(JSONException e)
+        {
+
+        }
         return false;
     }
 
-    public static String getLatest()
+    public static JSONObject getLatest()
     {
 
         try {
             JSONArray releases = readJsonFromUrl("https://api.github.com/repos/Moony22/prisma/releases");
             String latest = "";
+            JSONObject latestRelease = releases.getJSONObject(0);
             for(int i = 0; i < releases.length(); i++)
             {
                 JSONObject release = releases.getJSONObject(i);
                 String releaseTag = release.getString("tag_name");
-                if(releaseTag.compareTo(latest) > 0)
+                if(releaseTag.compareTo(latest) > 0) {
                     latest = releaseTag;
+                    latestRelease = release;
+                }
             }
-            return latest;
+            return latestRelease;
         }
         catch(Exception e)
         {
 
         }
 
-        return _("about.version");
+        return new JSONObject();
+
+    }
+
+    public static String getVersionNumber(JSONObject release)
+    {
+        try {
+            String body = release.getString("tag_name");
+            return body;
+        }
+        catch (JSONException e)
+        {
+
+        }
+
+        return "";
+    }
+
+    public static String getDescription(JSONObject release)
+    {
+        try {
+            String body = release.getString("body");
+            return body;
+        }
+        catch (JSONException e)
+        {
+
+        }
+
+        return "";
     }
 
 
