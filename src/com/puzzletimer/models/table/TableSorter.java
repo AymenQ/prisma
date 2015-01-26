@@ -2,6 +2,8 @@ package com.puzzletimer.models.table;
 
 import java.util.*;
 
+import static com.puzzletimer.Internationalization._;
+
 public class TableSorter {
     CustomTableModel model;
 
@@ -48,14 +50,21 @@ public class TableSorter {
             return  1;
         } else {
             Class type = model.getColumnClass(column);
-            if (type.getSuperclass() == Number.class) {
+            if(model.getColumnName(column).equals(_("history.comment")) || model.getColumnName(column).equals(_("history.scramble")))
+            {
+                return 0;
+            }
+            else if (type.getSuperclass() == Number.class) {
                 return compare((Number)o1, (Number)o2);
             } else if (type == String.class) {
                 return ((String)o1).compareTo((String)o2);
             } else if (type == Date.class) {
                 return compare((Date)o1, (Date)o2);
             } else if (type == Boolean.class) {
-                return compare((Boolean)o1, (Boolean)o2);
+                return compare((Boolean) o1, (Boolean) o2);
+            } else if (model.getColumnName(column) == _("history.#"))
+            {
+                return compare((Integer) o1, (Integer) o2);
             } else {
                 return ((String)o1).compareTo((String)o2);
             }
