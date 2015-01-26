@@ -15,16 +15,9 @@ public class UpdateManager {
 
     public static boolean checkUpdate()
     {
-        try {
-            if (normalisedVersion(getLatest().getString("tag_name"), ".", 3).compareTo(normalisedVersion(_("about.version"), ".", 3)) > 0)
+            if (normalisedVersion(getVersionNumber(getLatest()), ".", 3).compareTo(normalisedVersion(_("about.version"), ".", 3)) > 0)
                 return true;
             return false;
-        }
-        catch(JSONException e)
-        {
-
-        }
-        return false;
     }
 
     public static JSONObject getLatest()
@@ -32,14 +25,14 @@ public class UpdateManager {
 
         try {
             JSONArray releases = readJsonFromUrl("https://api.github.com/repos/Moony22/prisma/releases");
-            String latest = "";
+            String latestNormalised = "";
             JSONObject latestRelease = releases.getJSONObject(0);
             for(int i = 0; i < releases.length(); i++)
             {
                 JSONObject release = releases.getJSONObject(i);
-                String releaseTag = release.getString("tag_name");
-                if(releaseTag.compareTo(latest) > 0) {
-                    latest = releaseTag;
+                String releaseTag = normalisedVersion(release.getString("tag_name"), ".", 3);
+                if(releaseTag.compareTo(latestNormalised) > 0) {
+                    latestNormalised = releaseTag;
                     latestRelease = release;
                 }
             }
