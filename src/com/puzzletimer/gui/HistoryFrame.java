@@ -28,9 +28,11 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
+import com.puzzletimer.models.table.CustomTableModel;
+import com.puzzletimer.models.table.SortButtonRenderer;
 import net.miginfocom.swing.MigLayout;
 
 import com.puzzletimer.models.Category;
@@ -767,7 +769,7 @@ public class HistoryFrame extends JFrame {
     }
 
     private void updateTable(Solution[] solutions) {
-        DefaultTableModel tableModel = new DefaultTableModel() {
+        CustomTableModel tableModel = new CustomTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -808,5 +810,49 @@ public class HistoryFrame extends JFrame {
                 solutions[i].getScramble().getRawSequence(),
             });
         }
+
+        SortButtonRenderer renderer = new SortButtonRenderer();
+
+        JTableHeader header = table.getTableHeader();
+        header.addMouseListener(new HeaderListener(header, renderer));
+    }
+
+    class HeaderListener extends MouseAdapter {
+        JTableHeader header;
+        SortButtonRenderer renderer;
+
+        HeaderListener(JTableHeader header,SortButtonRenderer renderer) {
+            this.header   = header;
+            this.renderer = renderer;
+        }
+
+        public void mousePressed(MouseEvent e) {
+            int col = header.columnAtPoint(e.getPoint());
+            int sortCol = header.getTable().convertColumnIndexToModel(col);
+            renderer.setPressedColumn(col);
+            renderer.setSelectedColumn(col);
+            header.repaint();
+
+            if (header.getTable().isEditing()) {
+                header.getTable().getCellEditor().stopCellEditing();
+            }
+
+            boolean isAscent;
+            if (SortButtonRenderer.DOWN == renderer.getState(col)) {
+                isAscent = true;
+            } else {
+                isAscent = false;
+            }
+            ((CustomTableModel)header.getTable().getModel())
+                    .sortByColumn(sortCol, isAscent);
+        }
+
+        public void mouseReleased(MouseEvent e) {
+            int col = header.columnAtPoint(e.getPoint());
+            renderer.setPressedColumn(-1);                // clear
+            header.repaint();
+        }
     }
 }
+
+
