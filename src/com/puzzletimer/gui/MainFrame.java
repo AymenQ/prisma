@@ -201,7 +201,12 @@ public class MainFrame extends JFrame {
                     TimerPanel.this.timeLabel.setForeground(Color.BLACK);
                     TimerPanel.this.timeLabel.setText(
                         SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
-                    if(hidden) TimerPanel.this.timeLabel.setVisible(false);
+                    if (hidden) TimerPanel.this.timeLabel.setVisible(false);
+                }
+
+                @Override
+                public void solutionStarted() {
+                    scramblePanel.setVisible(false);
                 }
 
                 @Override
@@ -212,8 +217,9 @@ public class MainFrame extends JFrame {
                     TimerPanel.this.timeLabel.setText(
                         SolutionUtils.formatMinutes(TimerPanel.this.time, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), false));
                     TimerPanel.this.timeLabel.setVisible(true);
+                    scramblePanel.setVisible(true);
                 }
-                
+
                 @Override
                 public void precisionChanged(String timerPrecisionId) {
                 	TimerPanel.this.timeLabel.setTimerPrecision(timerPrecisionId);
@@ -378,7 +384,7 @@ public class MainFrame extends JFrame {
                     }
                 });
                 this.panel.add(labelRetry);
-                
+
                 JLabel labelEdit = new JLabel();
                 labelEdit.setIcon(new ImageIcon(getClass().getResource("/com/puzzletimer/resources/edit.png")));
                 labelEdit.setCursor(new Cursor(Cursor.HAND_CURSOR));
