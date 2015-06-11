@@ -248,7 +248,7 @@ public class Main {
             @Override
             public void timerChanged(Timer timer) {
                 Main.this.configurationManager.setConfiguration(
-                    "TIMER-TRIGGER", timer.getTimerId());
+                        "TIMER-TRIGGER", timer.getTimerId());
             }
 
             @Override
@@ -450,6 +450,14 @@ public class Main {
 
         // session manager
         this.sessionManager = new SessionManager();
+        this.sessionManager.setDailySessionEnabled(Main.this.configurationManager.getConfiguration("DAILYSESSION-ENABLED").equals("TRUE"));
+        this.sessionManager.addListener(new SessionManager.Listener() {
+            @Override
+            public void dailySessionSet(boolean dailySessionEnabled) {
+                Main.this.configurationManager.setConfiguration(
+                        "DAILYSESSION-ENABLED", dailySessionEnabled ? "TRUE" : "FALSE");
+            }
+        });
     }
 
     public static void main(String[] args) {
@@ -480,15 +488,22 @@ public class Main {
                     main.categoryManager,
                     main.scrambleManager,
                     main.solutionManager,
-                    main.sessionManager);
+                    main.sessionManager,
+                    main.solutionDAO);
                 mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setIconImage(icon);
 
                 main.categoryManager.setCurrentCategory(main.categoryManager.getCurrentCategory());
+                if(main.configurationManager.getConfiguration("DAILYSESSION-ENABLED").equals("TRUE")) {
+                    Solution[] sols = main.solutionDAO.getCurrentSession(main.categoryManager.getCurrentCategory());
+                    for (Solution solution : sols) {
+                        main.sessionManager.addSolution(solution);
+                    }
+                }
 
+				if(!mainFrame.hasUpdate())
 
-                if(!mainFrame.hasUpdate())
                 mainFrame.setVisible(true);
             }
         });

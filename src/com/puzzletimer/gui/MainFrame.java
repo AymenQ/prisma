@@ -61,6 +61,7 @@ import com.puzzletimer.statistics.Percentile;
 import com.puzzletimer.statistics.StandardDeviation;
 import com.puzzletimer.statistics.StatisticalMeasure;
 import com.puzzletimer.statistics.Worst;
+import com.puzzletimer.database.SolutionDAO;
 import com.puzzletimer.timer.ControlKeysTimer;
 import com.puzzletimer.timer.ManualInputTimer;
 import com.puzzletimer.timer.SpaceKeyTimer;
@@ -206,7 +207,7 @@ public class MainFrame extends JFrame {
 
                 @Override
                 public void solutionStarted() {
-                    scramblePanel.setVisible(false);
+                    scramblePanel.setVisible(true);
                 }
 
                 @Override
@@ -749,6 +750,7 @@ public class MainFrame extends JFrame {
     private ScrambleManager scrambleManager;
     private SolutionManager solutionManager;
     private SessionManager sessionManager;
+    private SolutionDAO solutionDAO;
 
     private JMenu menuFile;
     private JMenuItem menuItemAddSolution;
@@ -766,6 +768,7 @@ public class MainFrame extends JFrame {
     private JCheckBoxMenuItem menuItemSmoothTiming;
     private JMenu stackmatTimerInputDevice;
     private ButtonGroup stackmatTimerInputDeviceGroup;
+    private JCheckBoxMenuItem menuDailySession;
     private JRadioButtonMenuItem menuItemManualInput;
     private JRadioButtonMenuItem menuItemCtrlKeys;
     private JRadioButtonMenuItem menuItemSpaceKey;
@@ -814,7 +817,8 @@ public class MainFrame extends JFrame {
             CategoryManager categoryManager,
             ScrambleManager scrambleManager,
             SolutionManager solutionManager,
-            SessionManager sessionManager) {
+            SessionManager sessionManager,
+            SolutionDAO solutionDAO) {
         this.messageManager = messageManager;
         this.puzzleProvider = puzzleProvider;
         this.scrambleParserProvider = scrambleParserProvider;
@@ -827,6 +831,7 @@ public class MainFrame extends JFrame {
         this.solutionManager = solutionManager;
         this.sessionManager = sessionManager;
         this.colorManager = colorManager;
+        this.solutionDAO = solutionDAO;
 
         setMinimumSize(new Dimension(800, 600));
 
@@ -1077,22 +1082,22 @@ public class MainFrame extends JFrame {
                 }
 
                 BuiltInCategory[] builtInCategories = {
-                    new BuiltInCategory(categories[0], '2', '2'),
-                    new BuiltInCategory(categories[1], 'R', '3'),
-                    new BuiltInCategory(categories[2], 'O', 'O'),
-                    new BuiltInCategory(categories[3], 'B', 'B'),
-                    new BuiltInCategory(categories[4], 'F', 'F'),
-                    new BuiltInCategory(categories[5], '4', '4'),
-                    new BuiltInCategory(categories[6], 'B', '\0'),
-                    new BuiltInCategory(categories[7], '5', '5'),
-                    new BuiltInCategory(categories[8], 'B', '\0'),
-                    new BuiltInCategory(categories[9], '6', '6'),
-                    new BuiltInCategory(categories[10], '7', '7'),
-                    new BuiltInCategory(categories[11], 'C', 'K'),
-                    new BuiltInCategory(categories[12], 'M', 'M'),
-                    new BuiltInCategory(categories[13], 'P', 'P'),
-                    new BuiltInCategory(categories[14], 'S', '1'),
-                    new BuiltInCategory(categories[15], 'W', 'S')
+                        new BuiltInCategory(categories[0], '2', '2'),
+                        new BuiltInCategory(categories[1], 'R', '3'),
+                        new BuiltInCategory(categories[2], 'O', 'O'),
+                        new BuiltInCategory(categories[3], 'B', 'B'),
+                        new BuiltInCategory(categories[4], 'F', 'F'),
+                        new BuiltInCategory(categories[5], '4', '4'),
+                        new BuiltInCategory(categories[6], 'B', '\0'),
+                        new BuiltInCategory(categories[7], '5', '5'),
+                        new BuiltInCategory(categories[8], 'B', '\0'),
+                        new BuiltInCategory(categories[9], '6', '6'),
+                        new BuiltInCategory(categories[10], '7', '7'),
+                        new BuiltInCategory(categories[11], 'C', 'K'),
+                        new BuiltInCategory(categories[12], 'M', 'M'),
+                        new BuiltInCategory(categories[13], 'P', 'P'),
+                        new BuiltInCategory(categories[14], 'S', '1'),
+                        new BuiltInCategory(categories[15], 'W', 'S')
                 };
 
                 for (final BuiltInCategory builtInCategory : builtInCategories) {
@@ -1146,7 +1151,7 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.timerManager.setInspectionEnabled(
-                    MainFrame.this.menuItemInspectionTime.isSelected());
+                        MainFrame.this.menuItemInspectionTime.isSelected());
             }
         });
 
@@ -1157,6 +1162,17 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 MainFrame.this.timerManager.setAnyKeyEnabled(
                         MainFrame.this.menuItemAnyKey.isSelected()
+                );
+            }
+        });
+
+        // menuDailySession
+        this.menuDailySession.setSelected(sessionManager.isDailySessionEnabled());
+        this.menuDailySession.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainFrame.this.sessionManager.setDailySessionEnabled(
+                        MainFrame.this.menuDailySession.isSelected()
                 );
             }
         });
@@ -1517,6 +1533,10 @@ public class MainFrame extends JFrame {
         //menuItemHideTimer
         this.menuItemHideTimer = new JCheckBoxMenuItem(_("main.hide_timer"));
         menuOptions.add(this.menuItemHideTimer);
+
+        //menuDailySession
+        this.menuDailySession = new JCheckBoxMenuItem(_("main.daily_session"));
+        menuOptions.add(this.menuDailySession);
 
         // menuItemSmoothTiming
         this.menuItemSmoothTiming = new JCheckBoxMenuItem(_("main.smooth_timing"));
