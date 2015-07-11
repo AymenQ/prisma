@@ -1,9 +1,13 @@
  Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 
 *.iml
+.project
+.metadata
+.classpath
 
 ## Directory-based project format:
 .idea/
+.settings/
 
 ## File-based project format:
 *.ipr
@@ -13,6 +17,7 @@
 
 # IntelliJ
 out/
+target/
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
