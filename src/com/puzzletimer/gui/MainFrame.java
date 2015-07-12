@@ -16,10 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -38,7 +35,6 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import com.puzzletimer.state.*;
 import net.miginfocom.swing.MigLayout;
 
-import com.puzzletimer.Main;
 import com.puzzletimer.graphics.Panel3D;
 import com.puzzletimer.gui.SolutionEditingDialog.SolutionEditingDialogListener;
 import com.puzzletimer.models.Category;
@@ -67,7 +63,6 @@ import com.puzzletimer.timer.SpaceKeyTimer;
 import com.puzzletimer.timer.StackmatTimer;
 import com.puzzletimer.tips.TipProvider;
 import com.puzzletimer.util.SolutionUtils;
-import org.h2.command.dml.Update;
 import org.json.JSONObject;
 
 @SuppressWarnings("serial")
@@ -258,7 +253,7 @@ public class MainFrame extends JFrame {
         }
 
         private void updateTimer(boolean manualInput) {
-            if(this.currentManualInput == true && manualInput == false) {
+            if(this.currentManualInput && !manualInput) {
                 remove(this.textFieldTime);
                 setLayout(new MigLayout("fill", "2%[19%]1%[56%]1%[19%]2%"));
                 add(this.leftHand, "grow");
@@ -267,7 +262,7 @@ public class MainFrame extends JFrame {
                 MainFrame.this.requestFocusInWindow();
                 this.updateUI();
                 this.currentManualInput = false;
-            } else if(this.currentManualInput == false && manualInput == true) {
+            } else if(!this.currentManualInput && manualInput) {
                 remove(this.timeLabel);
                 remove(this.leftHand);
                 remove(this.rightHand);
@@ -539,9 +534,7 @@ public class MainFrame extends JFrame {
                             int size = Math.min(solutions.length, measures[i].getMaximumWindowSize());
 
                             Solution[] window = new Solution[size];
-                            for (int j = 0; j < size; j++) {
-                                window[j] = solutions[j];
-                            }
+                            System.arraycopy(solutions, 0, window, 0, size);
 
                             measures[i].setSolutions(window, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                             labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
@@ -560,9 +553,7 @@ public class MainFrame extends JFrame {
                             int size = Math.min(solutions.length, measures[i].getMaximumWindowSize());
 
                             Solution[] window = new Solution[size];
-                            for (int j = 0; j < size; j++) {
-                                window[j] = solutions[j];
-                            }
+                            System.arraycopy(solutions, 0, window, 0, size);
 
                             measures[i].setSolutions(window, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                             labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
@@ -705,14 +696,11 @@ public class MainFrame extends JFrame {
                 }
             });
             
-            this.hide.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if(ScrambleViewerPanel.this.hide.isSelected()) {
-                    	ScrambleViewerPanel.this.panel3D.setVisible(false);
-                    } else {
-                    	ScrambleViewerPanel.this.panel3D.setVisible(true);
-                    }
+            this.hide.addActionListener(e -> {
+                if(ScrambleViewerPanel.this.hide.isSelected()) {
+                    ScrambleViewerPanel.this.panel3D.setVisible(false);
+                } else {
+                    ScrambleViewerPanel.this.panel3D.setVisible(true);
                 }
             });
         }
@@ -918,125 +906,94 @@ public class MainFrame extends JFrame {
         }
 
         // menuItemAddSolution
-        this.menuItemAddSolution.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Date now = new Date();
-                Solution solution = new Solution(
-                    UUID.randomUUID(),
-                    MainFrame.this.categoryManager.getCurrentCategory().getCategoryId(),
-                    MainFrame.this.scrambleManager.getCurrentScramble(),
-                    new Timing(now, now),
-                    "",
-                    "");
+        this.menuItemAddSolution.addActionListener(e -> {
+            Date now = new Date();
+            Solution solution = new Solution(
+                UUID.randomUUID(),
+                MainFrame.this.categoryManager.getCurrentCategory().getCategoryId(),
+                MainFrame.this.scrambleManager.getCurrentScramble(),
+                new Timing(now, now),
+                "",
+                "");
 
-                SolutionEditingDialogListener listener =
-                    new SolutionEditingDialogListener() {
-                        @Override
-                        public void solutionEdited(Solution solution) {
-                            MainFrame.this.solutionManager.addSolution(solution);
+            SolutionEditingDialogListener listener =
+                new SolutionEditingDialogListener() {
+                    @Override
+                    public void solutionEdited(Solution solution) {
+                        MainFrame.this.solutionManager.addSolution(solution);
 
-                            // check for personal records
-                            StatisticalMeasure[] measures = {
-                                new Best(1, Integer.MAX_VALUE),
-                                new BestMean(3, 3),
-                                new BestMean(100, 100),
-                                new BestAverage(5, 5),
-                                new BestAverage(12, 12),
-                            };
+                        // check for personal records
+                        StatisticalMeasure[] measures = {
+                            new Best(1, Integer.MAX_VALUE),
+                            new BestMean(3, 3),
+                            new BestMean(100, 100),
+                            new BestAverage(5, 5),
+                            new BestAverage(12, 12),
+                        };
 
-                            String[] descriptions = {
-                                _("main.single"),
-                                _("main.mean_of_3"),
-                                _("main.mean_of_100"),
-                                _("main.average_of_5"),
-                                _("main.average_of_12"),
-                            };
+                        String[] descriptions = {
+                            _("main.single"),
+                            _("main.mean_of_3"),
+                            _("main.mean_of_100"),
+                            _("main.average_of_5"),
+                            _("main.average_of_12"),
+                        };
 
-                            Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
-                            Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
+                        Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
+                        Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
 
-                            for (int i = 0; i < measures.length; i++) {
-                                if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
-                                    continue;
-                                }
-
-                                measures[i].setSolutions(solutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
-                                long allTimeBest = measures[i].getValue();
-
-                                measures[i].setSolutions(sessionSolutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
-                                long sessionBest = measures[i].getValue();
-
-                                if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {
-                                    MainFrame.this.messageManager.enqueueMessage(
-                                        MessageType.INFORMATION,
-                                        String.format(_("main.personal_record_message"),
-                                            MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
-                                            SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()),
-                                            descriptions[i]));
-                                }
+                        for (int i = 0; i < measures.length; i++) {
+                            if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
+                                continue;
                             }
 
-                            MainFrame.this.scrambleManager.changeScramble();
-                        }
-                    };
+                            measures[i].setSolutions(solutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
+                            long allTimeBest = measures[i].getValue();
 
-                SolutionEditingDialog solutionEditingDialog =
-                    new SolutionEditingDialog(MainFrame.this, true, solution, listener, MainFrame.this.configurationManager);
-                solutionEditingDialog.setTitle(_("main.add_solution_title"));
-                solutionEditingDialog.setLocationRelativeTo(null);
-                solutionEditingDialog.setVisible(true);
-            }
+                            measures[i].setSolutions(sessionSolutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
+                            long sessionBest = measures[i].getValue();
+
+                            if (measures[i].getWindowPosition() == 0 && sessionBest <= allTimeBest) {
+                                MainFrame.this.messageManager.enqueueMessage(
+                                    MessageType.INFORMATION,
+                                    String.format(_("main.personal_record_message"),
+                                        MainFrame.this.categoryManager.getCurrentCategory().getDescription(),
+                                        SolutionUtils.formatMinutes(measures[i].getValue(), MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()),
+                                        descriptions[i]));
+                            }
+                        }
+
+                        MainFrame.this.scrambleManager.changeScramble();
+                    }
+                };
+
+            SolutionEditingDialog solutionEditingDialog =
+                new SolutionEditingDialog(MainFrame.this, true, solution, listener, MainFrame.this.configurationManager);
+            solutionEditingDialog.setTitle(_("main.add_solution_title"));
+            solutionEditingDialog.setLocationRelativeTo(null);
+            solutionEditingDialog.setVisible(true);
         });
 
         // menuItemExit
-        this.menuItemExit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        this.menuItemExit.addActionListener(e -> System.exit(0));
 
         // menuItemTips
-        this.menuItemTips.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.tipsFrame.setVisible(true);
-            }
-        });
+        this.menuItemTips.addActionListener(e -> MainFrame.this.tipsFrame.setVisible(true));
 
         // menuItemScrambleQueue
-        this.menuItemScrambleQueue.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.scrambleQueueFrame.setVisible(true);
-            }
-        });
+        this.menuItemScrambleQueue.addActionListener(e -> MainFrame.this.scrambleQueueFrame.setVisible(true));
 
         // menuItemHistory
-        this.menuItemHistory.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.historyFrame.setVisible(true);
-            }
-        });
+        this.menuItemHistory.addActionListener(e -> MainFrame.this.historyFrame.setVisible(true));
 
         // menuItemSessionSummary
-        this.menuItemSessionSummary.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.sessionSummaryFrame.setVisible(true);
-            }
-        });
+        this.menuItemSessionSummary.addActionListener(e -> MainFrame.this.sessionSummaryFrame.setVisible(true));
 
         // menuItemStackmatDeveloper
-        this.menuItemStackmatDeveloper.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String timerTrigger = MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
-                MainFrame.this.stackmatDeveloperFrame.setVisible(true);
-                //MainFrame.this.stackmatDeveloperFrame.updateSummary();
-            }
+        this.menuItemStackmatDeveloper.addActionListener(e -> {
+            String timerTrigger = MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
+            MainFrame.this.stackmatDeveloperFrame.setVisible(true);
+            //MainFrame.this.stackmatDeveloperFrame.updateSummary();
         });
 
         // menuCategory
@@ -1051,12 +1008,7 @@ public class MainFrame extends JFrame {
                 JMenuItem menuItemCategoryManager = new JMenuItem(_("main.category_manager"));
                 menuItemCategoryManager.setMnemonic(KeyEvent.VK_M);
                 menuItemCategoryManager.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, menuShortcutKey | InputEvent.ALT_MASK));
-                menuItemCategoryManager.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        MainFrame.this.categoryManagerDialog.setVisible(true);
-                    }
-                });
+                menuItemCategoryManager.addActionListener(event -> MainFrame.this.categoryManagerDialog.setVisible(true));
                 MainFrame.this.menuCategory.add(menuItemCategoryManager);
 
                 MainFrame.this.menuCategory.addSeparator();
@@ -1102,12 +1054,7 @@ public class MainFrame extends JFrame {
                         menuItemCategory.setAccelerator(KeyStroke.getKeyStroke(builtInCategory.accelerator, menuShortcutKey));
                     }
                     menuItemCategory.setSelected(builtInCategory.category == currentCategory);
-                    menuItemCategory.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            MainFrame.this.categoryManager.setCurrentCategory(builtInCategory.category);
-                        }
-                    });
+                    menuItemCategory.addActionListener(e -> MainFrame.this.categoryManager.setCurrentCategory(builtInCategory.category));
                     MainFrame.this.menuCategory.add(menuItemCategory);
                     categoryGroup.add(menuItemCategory);
                 }
@@ -1119,12 +1066,7 @@ public class MainFrame extends JFrame {
                     if (category.isUserDefined()) {
                         JRadioButtonMenuItem menuItemCategory = new JRadioButtonMenuItem(category.getDescription());
                         menuItemCategory.setSelected(category == currentCategory);
-                        menuItemCategory.addActionListener(new ActionListener() {
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                MainFrame.this.categoryManager.setCurrentCategory(category);
-                            }
-                        });
+                        menuItemCategory.addActionListener(e -> MainFrame.this.categoryManager.setCurrentCategory(category));
                         MainFrame.this.menuCategory.add(menuItemCategory);
                         categoryGroup.add(menuItemCategory);
                     }
@@ -1133,86 +1075,41 @@ public class MainFrame extends JFrame {
         });
 
         // menuColorScheme
-        this.menuItemColorScheme.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.colorSchemeFrame.setVisible(true);
-            }
-        });
+        this.menuItemColorScheme.addActionListener(e -> MainFrame.this.colorSchemeFrame.setVisible(true));
 
         // menuItemInspectionTime
         this.menuItemInspectionTime.setSelected(timerManager.isInspectionEnabled());
-        this.menuItemInspectionTime.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.timerManager.setInspectionEnabled(
-                    MainFrame.this.menuItemInspectionTime.isSelected());
-            }
-        });
+        this.menuItemInspectionTime.addActionListener(e -> MainFrame.this.timerManager.setInspectionEnabled(
+            MainFrame.this.menuItemInspectionTime.isSelected()));
 
         // menuItemAnyKey
         this.menuItemAnyKey.setSelected(timerManager.isAnyKeyEnabled());
-        this.menuItemAnyKey.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.timerManager.setAnyKeyEnabled(
-                        MainFrame.this.menuItemAnyKey.isSelected()
-                );
-            }
-        });
+        this.menuItemAnyKey.addActionListener(e -> MainFrame.this.timerManager.setAnyKeyEnabled(
+                MainFrame.this.menuItemAnyKey.isSelected()
+        ));
 
         // menuItemHideTimer
         this.menuItemHideTimer.setSelected(timerManager.isHideTimerEnabled());
-        this.menuItemHideTimer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.timerManager.setHideTimerEnabled(
-                        MainFrame.this.menuItemHideTimer.isSelected()
-                );
-            }
-        });
+        this.menuItemHideTimer.addActionListener(e -> MainFrame.this.timerManager.setHideTimerEnabled(
+                MainFrame.this.menuItemHideTimer.isSelected()
+        ));
 
         // menuItemSmoothTiming
         this.menuItemSmoothTiming.setSelected(timerManager.isSmoothTimingEnabled());
-        this.menuItemSmoothTiming.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MainFrame.this.timerManager.setSmoothTimingEnabled(
-                    MainFrame.this.menuItemSmoothTiming.isSelected());
-            }
-        });
+        this.menuItemSmoothTiming.addActionListener(e -> MainFrame.this.timerManager.setSmoothTimingEnabled(
+            MainFrame.this.menuItemSmoothTiming.isSelected()));
 
         // menuItemManualInput
-        this.menuItemManualInput.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setTimerTrigger("MANUAL-INPUT");
-            }
-        });
+        this.menuItemManualInput.addActionListener(e -> setTimerTrigger("MANUAL-INPUT"));
 
         // menuItemCtrlKeys
-        this.menuItemCtrlKeys.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setTimerTrigger("KEYBOARD-TIMER-CONTROL");
-            }
-        });
+        this.menuItemCtrlKeys.addActionListener(e -> setTimerTrigger("KEYBOARD-TIMER-CONTROL"));
 
         // menuItemSpaceKey
-        this.menuItemSpaceKey.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setTimerTrigger("KEYBOARD-TIMER-SPACE");
-            }
-        });
+        this.menuItemSpaceKey.addActionListener(e -> setTimerTrigger("KEYBOARD-TIMER-SPACE"));
 
         // menuItemStackmatTimer
-        this.menuItemStackmatTimer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setTimerTrigger("STACKMAT-TIMER");
-            }
-        });
+        this.menuItemStackmatTimer.addActionListener(e -> setTimerTrigger("STACKMAT-TIMER"));
 
         // menuItemDevice
         for (final Mixer.Info mixerInfo : AudioSystem.getMixerInfo()) {
@@ -1233,18 +1130,15 @@ public class MainFrame extends JFrame {
 
             JRadioButtonMenuItem menuItemDevice = new JRadioButtonMenuItem(mixerInfo.getName());
             menuItemDevice.setSelected(stackmatTimerInputDeviceName.equals(mixerInfo.getName()));
-            menuItemDevice.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    MainFrame.this.mixerInfo = mixerInfo;
-                    MainFrame.this.configurationManager.setConfiguration(
-                        "STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName());
+            menuItemDevice.addActionListener(arg0 -> {
+                MainFrame.this.mixerInfo = mixerInfo;
+                MainFrame.this.configurationManager.setConfiguration(
+                    "STACKMAT-TIMER-INPUT-DEVICE", mixerInfo.getName());
 
-                    String timerTrigger =
-                        MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
-                    if (timerTrigger.equals("STACKMAT-TIMER")) {
-                        setTimerTrigger("STACKMAT-TIMER");
-                    }
+                String timerTrigger =
+                    MainFrame.this.configurationManager.getConfiguration("TIMER-TRIGGER");
+                if (timerTrigger.equals("STACKMAT-TIMER")) {
+                    setTimerTrigger("STACKMAT-TIMER");
                 }
             });
             this.stackmatTimerInputDevice.add(menuItemDevice);
@@ -1258,12 +1152,7 @@ public class MainFrame extends JFrame {
             }
         }
 
-        this.menuItemDefaultLnF.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                changeLookAndFeel(UIManager.getSystemLookAndFeelClassName(), MainFrame.this);
-            }
-        });
+        this.menuItemDefaultLnF.addActionListener(e -> changeLookAndFeel(UIManager.getSystemLookAndFeelClassName(), MainFrame.this));
 
         for (final LookAndFeelInfo lafInfo : UIManager.getInstalledLookAndFeels()) {
             JRadioButtonMenuItem lafMenuItem = new JRadioButtonMenuItem(lafInfo.getName());
@@ -1274,50 +1163,29 @@ public class MainFrame extends JFrame {
                 lafMenuItem.setSelected(true);
             }
 
-            lafMenuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    changeLookAndFeel(lafInfo.getClassName(), MainFrame.this);
-                }
-            });
+            lafMenuItem.addActionListener(e -> changeLookAndFeel(lafInfo.getClassName(), MainFrame.this));
         }
         
         // menuItemCentiseconds
-        this.menuItemCentiseconds.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setTimerPrecision("CENTISECONDS");
-            }
-        });
+        this.menuItemCentiseconds.addActionListener(e -> setTimerPrecision("CENTISECONDS"));
 
         // menuItemMilliseconds
-        this.menuItemMilliseconds.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setTimerPrecision("MILLISECONDS");
-            }
-        });
+        this.menuItemMilliseconds.addActionListener(e -> setTimerPrecision("MILLISECONDS"));
 
         // menuItemFeedback
-        this.menuItemFeedback.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URI("https://github.com/Moony22/prisma/issues/"));
-                } catch (Exception ex) {
-                    MainFrame.this.messageManager.enqueueMessage(MessageType.ERROR, "Failed to open feedback page: "+ex.getLocalizedMessage());
-                }
+        this.menuItemFeedback.addActionListener(e -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://github.com/Moony22/prisma/issues/"));
+            } catch (Exception ex) {
+                MainFrame.this.messageManager.enqueueMessage(MessageType.ERROR, "Failed to open feedback page: "+ex.getLocalizedMessage());
             }
         });
 
         // menuItemAbout
-        this.menuItemAbout.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AboutDialog aboutDialog = new AboutDialog(MainFrame.this, true);
-                aboutDialog.setLocationRelativeTo(null);
-                aboutDialog.setVisible(true);
-            }
+        this.menuItemAbout.addActionListener(e -> {
+            AboutDialog aboutDialog = new AboutDialog(MainFrame.this, true);
+            aboutDialog.setLocationRelativeTo(null);
+            aboutDialog.setVisible(true);
         });
 
         // labelMessage

@@ -15,9 +15,7 @@ public class UpdateManager {
 
     public static boolean checkUpdate()
     {
-            if (normalisedVersion(getVersionNumber(getLatest()), ".", 3).compareTo(normalisedVersion(_("about.version"), ".", 3)) > 0)
-                return true;
-            return false;
+        return normalisedVersion(getVersionNumber(getLatest()), ".", 3).compareTo(normalisedVersion(_("about.version"), ".", 3)) > 0;
     }
 
     public static JSONObject getLatest()
@@ -50,8 +48,7 @@ public class UpdateManager {
     public static String getVersionNumber(JSONObject release)
     {
         try {
-            String body = release.getString("tag_name");
-            return body;
+            return release.getString("tag_name");
         }
         catch (JSONException e)
         {
@@ -64,8 +61,7 @@ public class UpdateManager {
     public static String getDescription(JSONObject release)
     {
         try {
-            String body = release.getString("body");
-            return body;
+            return release.getString("body");
         }
         catch (JSONException e)
         {
@@ -99,8 +95,7 @@ public class UpdateManager {
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            JSONArray json = new JSONArray(jsonText);
-            return json;
+            return new JSONArray(jsonText);
         } finally {
             is.close();
         }

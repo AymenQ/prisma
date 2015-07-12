@@ -40,7 +40,7 @@ class StackmatTimerReader implements Runnable {
         this.listeners = new ArrayList<StackmatTimerReaderListener>();
         this.running = false;
         this.hasSixDigits = false;
-        this.timerManager = timerManager;;
+        this.timerManager = timerManager;
     }
 
     private byte[] readPacket(byte[] samples, int offset, byte bitThreshold, boolean isInverted) {
@@ -139,9 +139,7 @@ class StackmatTimerReader implements Runnable {
 
         while (this.running) {
             // update buffer in a queue fashion
-            for (int i = offset; i < buffer.length; i++) {
-                buffer[i - offset] = buffer[i];
-            }
+            System.arraycopy(buffer, offset, buffer, offset - offset, buffer.length - offset);
             this.targetDataLine.read(buffer, buffer.length - offset, offset);
             //System.out.println(buffer.length);
             //System.out.println(offset);
@@ -283,7 +281,7 @@ public class StackmatTimer implements StackmatTimerReaderListener, Timer {
         RESET,
         READY,
         RUNNING,
-    };
+    }
 
     private StackmatTimerReader stackmatTimerReader;
     private TimerManager timerManager;

@@ -1,8 +1,5 @@
 package com.puzzletimer.gui;
 
-import com.puzzletimer.state.UpdateManager;
-
-import javax.print.URIException;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -40,48 +37,45 @@ public class UpdaterFrame {
 
     public void downloadLatestVersion() {
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL url;
-                    url = new URL(updateUrl);
-                    HttpURLConnection hConnection = (HttpURLConnection) url
-                            .openConnection();
-                    HttpURLConnection.setFollowRedirects(true);
-                    if (HttpURLConnection.HTTP_OK == hConnection.getResponseCode()) {
-                        try (InputStream in = hConnection.getInputStream(); BufferedOutputStream out = new BufferedOutputStream(
-                                new FileOutputStream(new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
-                                ));) {
-                            int filesize = hConnection.getContentLength();
-                            progress.setMaximum(filesize);
-                            byte[] buffer = new byte[4096];
-                            int numRead;
-                            long numWritten = 0;
-                            while ((numRead = in.read(buffer)) != -1) {
-                                out.write(buffer, 0, numRead);
-                                numWritten += numRead;
-                                System.out.println((double) numWritten / (double) filesize);
-                                progress.setValue((int) numWritten);
-                            }
-                            if (filesize != numWritten)
-                                System.out.println("Wrote " + numWritten + " bytes, should have been " + filesize);
-                            else
-                                System.out.println("Downloaded successfully.");
-                            out.close();
-                            in.close();
-                            try {
-                                Process update = Runtime.getRuntime().exec("java -jar " + new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
-                            } catch (IOException | URISyntaxException e) {
-                                e.printStackTrace();
-                            }
-                            System.exit(0);
+        Thread t = new Thread(() -> {
+            try {
+                URL url;
+                url = new URL(updateUrl);
+                HttpURLConnection hConnection = (HttpURLConnection) url
+                        .openConnection();
+                HttpURLConnection.setFollowRedirects(true);
+                if (HttpURLConnection.HTTP_OK == hConnection.getResponseCode()) {
+                    try (InputStream in = hConnection.getInputStream(); BufferedOutputStream out = new BufferedOutputStream(
+                            new FileOutputStream(new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
+                            ))) {
+                        int filesize = hConnection.getContentLength();
+                        progress.setMaximum(filesize);
+                        byte[] buffer = new byte[4096];
+                        int numRead;
+                        long numWritten = 0;
+                        while ((numRead = in.read(buffer)) != -1) {
+                            out.write(buffer, 0, numRead);
+                            numWritten += numRead;
+                            System.out.println((double) numWritten / (double) filesize);
+                            progress.setValue((int) numWritten);
                         }
+                        if (filesize != numWritten)
+                            System.out.println("Wrote " + numWritten + " bytes, should have been " + filesize);
+                        else
+                            System.out.println("Downloaded successfully.");
+                        out.close();
+                        in.close();
+                        try {
+                            Process update = Runtime.getRuntime().exec("java -jar " + new File(UpdaterFrame.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()));
+                        } catch (IOException | URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                        System.exit(0);
                     }
-
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
                 }
+
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
             }
         });
 

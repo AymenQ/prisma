@@ -85,34 +85,21 @@ public class SessionSummaryFrame extends JFrame {
         });
 
         // copy to clipboard
-        this.buttonCopyToClipboard.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                StringSelection contents =
-                    new StringSelection(SessionSummaryFrame.this.textAreaSummary.getText());
-                Clipboard clipboard =
-                    Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(contents, contents);
-            }
+        this.buttonCopyToClipboard.addActionListener(event -> {
+            StringSelection contents =
+                new StringSelection(SessionSummaryFrame.this.textAreaSummary.getText());
+            Clipboard clipboard =
+                Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(contents, contents);
         });
 
         // ok button
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        this.buttonOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                SessionSummaryFrame.this.setVisible(false);
-            }
-        });
+        this.buttonOk.addActionListener(event -> SessionSummaryFrame.this.setVisible(false));
 
         // esc key closes window
         this.getRootPane().registerKeyboardAction(
-            new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    SessionSummaryFrame.this.setVisible(false);
-                }
-            },
+                arg0 -> SessionSummaryFrame.this.setVisible(false),
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
@@ -159,7 +146,7 @@ public class SessionSummaryFrame extends JFrame {
             DateFormat timeFormat =
                 DateFormat.getTimeInstance(DateFormat.MEDIUM);
 
-            summary.append(dateTimeFormat.format(start) + " - " + timeFormat.format(end));
+            summary.append(dateTimeFormat.format(start)).append(" - ").append(timeFormat.format(end));
             summary.append("\n");
 
             summary.append("\n");
@@ -238,7 +225,7 @@ public class SessionSummaryFrame extends JFrame {
                 int windowPosition = statistics[i].getWindowPosition();
 
                 // value
-                summary.append(labels[i] + " " + SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), statistics[i].getRound()));
+                summary.append(labels[i]).append(" ").append(SolutionUtils.format(statistics[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), statistics[i].getRound()));
                 summary.append("\n");
 
                 // index range
