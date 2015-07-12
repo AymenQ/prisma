@@ -62,7 +62,7 @@ public class TableSorter {
                 return compare((Date)o1, (Date)o2);
             } else if (type == Boolean.class) {
                 return compare((Boolean) o1, (Boolean) o2);
-            } else if (model.getColumnName(column) == _("history.#"))
+            } else if (model.getColumnName(column).equals(_("history.#")))
             {
                 return compare((Integer) o1, (Integer) o2);
             } else {

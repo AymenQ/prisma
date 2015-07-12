@@ -12,7 +12,6 @@ import java.util.Date;
 
 import javax.swing.JPanel;
 
-import com.puzzletimer.Main;
 import com.puzzletimer.models.Solution;
 import com.puzzletimer.state.ConfigurationManager;
 import com.puzzletimer.util.SolutionUtils;

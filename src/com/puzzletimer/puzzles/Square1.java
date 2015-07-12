@@ -96,7 +96,7 @@ public class Square1 implements Puzzle {
             if (m.equals("/")) {
                 cube = cube.rotateHalfspace(planeR, Math.PI);
             } else {
-                Matcher matcher = p.matcher(m.toString());
+                Matcher matcher = p.matcher(m);
                 matcher.find();
 
                 int top = Integer.parseInt(matcher.group(1));

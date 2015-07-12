@@ -1,6 +1,7 @@
 package com.puzzletimer.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.puzzletimer.models.Category;
 import com.puzzletimer.models.Scramble;
@@ -22,10 +23,10 @@ public class ScrambleManager {
     private Scramble currentScramble;
 
     public ScrambleManager(ScramblerProvider scramblerProvider, Scrambler scrambler) {
-        this.listeners = new ArrayList<Listener>();
+        this.listeners = new ArrayList<>();
         this.scramblerProvider = scramblerProvider;
         this.currentScrambler = scrambler;
-        this.queue = new ArrayList<Scramble>();
+        this.queue = new ArrayList<>();
         this.currentScramble = this.currentScrambler.getNextScramble();
     }
 
@@ -48,9 +49,7 @@ public class ScrambleManager {
                 this.queue.add(0, scramble);
             }
     	} else {
-	        for (Scramble scramble : scrambles) {
-	            this.queue.add(scramble);
-	        }
+            Collections.addAll(this.queue, scrambles);
     	}
 
         for (Listener listener : this.listeners) {
@@ -66,8 +65,8 @@ public class ScrambleManager {
             scrambles[i] = this.queue.get(indices[i]);
         }
 
-        for (int i = 0; i < scrambles.length; i++) {
-            this.queue.remove(scrambles[i]);
+        for (Scramble scramble : scrambles) {
+            this.queue.remove(scramble);
         }
 
         for (Listener listener : this.listeners) {
@@ -78,10 +77,10 @@ public class ScrambleManager {
     }
 
     public void moveScramblesUp(int[] indices) {
-        for (int i = 0; i < indices.length; i++) {
-            Scramble temp = this.queue.get(indices[i] - 1);
-            this.queue.set(indices[i] - 1, this.queue.get(indices[i]));
-            this.queue.set(indices[i], temp);
+        for (int indice : indices) {
+            Scramble temp = this.queue.get(indice - 1);
+            this.queue.set(indice - 1, this.queue.get(indice));
+            this.queue.set(indice, temp);
         }
 
         notifyListeners();

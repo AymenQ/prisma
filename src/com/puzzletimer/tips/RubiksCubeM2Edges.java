@@ -95,7 +95,7 @@ public class RubiksCubeM2Edges implements Tip {
         // solution
         StringBuilder tip = new StringBuilder();
 
-        tip.append(_("tip.RUBIKS-CUBE-M2-EDGES") + ":\n");
+        tip.append(_("tip.RUBIKS-CUBE-M2-EDGES")).append(":\n");
 
         HashMap<String, String> letteringScheme = new HashMap<String, String>();
         letteringScheme.put("UB", "A");
@@ -155,13 +155,13 @@ public class RubiksCubeM2Edges implements Tip {
 
         for (int i = 0; i < stickerSequence.size(); i++) {
             String sticker = stickerSequence.get(i);
-            tip.append("  (DF " + sticker + ") " + letteringScheme.get(sticker));
+            tip.append("  (DF ").append(sticker).append(") ").append(letteringScheme.get(sticker));
 
             if (i % 2 == 1 && mLayerInverse.containsKey(sticker)) {
                 sticker = mLayerInverse.get(sticker);
             }
 
-            tip.append("  " + solutions.get(sticker) + "\n");
+            tip.append("  ").append(solutions.get(sticker)).append("\n");
         }
 
         return tip.toString().trim();

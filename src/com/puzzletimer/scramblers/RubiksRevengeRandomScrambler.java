@@ -12,11 +12,10 @@ public class RubiksRevengeRandomScrambler extends BigCubeRandomScrambler {
     }
 
     public String[][] getMoves() {
-        String[][] moves = {
+        return new String[][]{
             { "U", "U2", "U'" }, { "Uw", "Uw2", "Uw'" }, { "D", "D2", "D'" },
             { "L", "L2", "L'" }, { "Rw", "Rw2", "Rw'" }, { "R", "R2", "R'" },
             { "F", "F2", "F'" }, { "Fw", "Fw2", "Fw'" }, { "B", "B2", "B'" },
         };
-        return moves;
     }
 }

@@ -5,8 +5,6 @@ import static com.puzzletimer.Internationalization._;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
@@ -19,8 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
@@ -63,16 +59,13 @@ public class ColorSchemeFrame extends JFrame {
             this.comboBoxPuzzle.addItem(puzzle);
         }
 
-        this.comboBoxPuzzle.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Puzzle puzzle =
-                    (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
-                ColorScheme colorScheme =
-                    colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
+        this.comboBoxPuzzle.addActionListener(event -> {
+            Puzzle puzzle =
+                (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
+            ColorScheme colorScheme =
+                colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
 
-                update(puzzle, colorScheme);
-            }
+            update(puzzle, colorScheme);
         });
         this.comboBoxPuzzle.setSelectedItem(defaultPuzzle);
 
@@ -80,62 +73,48 @@ public class ColorSchemeFrame extends JFrame {
         this.buttonEdit.setEnabled(false);
         this.buttonDefault.setEnabled(false);
         this.table.getSelectionModel().addListSelectionListener(
-            new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent event) {
+                event -> {
                     int nSelected = ColorSchemeFrame.this.table.getSelectedRowCount();
                     ColorSchemeFrame.this.buttonEdit.setEnabled(nSelected == 1);
                     ColorSchemeFrame.this.buttonDefault.setEnabled(nSelected > 0);
-                }
-            });
+                });
 
-        this.buttonEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Puzzle puzzle =
-                    (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
-                ColorScheme colorScheme =
-                    colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
-                FaceColor faceColor =
-                    colorScheme.getFaceColors()[ColorSchemeFrame.this.table.getSelectedRow()];
+        this.buttonEdit.addActionListener(event -> {
+            Puzzle puzzle =
+                (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
+            ColorScheme colorScheme =
+                colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
+            FaceColor faceColor =
+                colorScheme.getFaceColors()[ColorSchemeFrame.this.table.getSelectedRow()];
 
-                Color color = JColorChooser.showDialog(
-                    ColorSchemeFrame.this,
-                    String.format(_("color_scheme.face_color"), faceColor.getFaceDescription()),
-                    faceColor.getColor());
-                if (color != null) {
-                    colorManager.setColorScheme(
-                        colorScheme.setFaceColor(
-                            faceColor.setColor(color)));
-                }
+            Color color = JColorChooser.showDialog(
+                ColorSchemeFrame.this,
+                String.format(_("color_scheme.face_color"), faceColor.getFaceDescription()),
+                faceColor.getColor());
+            if (color != null) {
+                colorManager.setColorScheme(
+                    colorScheme.setFaceColor(
+                        faceColor.setColor(color)));
             }
         });
 
-        this.buttonDefault.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Puzzle puzzle =
-                    (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
-                ColorScheme colorScheme =
-                    colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
+        this.buttonDefault.addActionListener(event -> {
+            Puzzle puzzle =
+                (Puzzle) ColorSchemeFrame.this.comboBoxPuzzle.getSelectedItem();
+            ColorScheme colorScheme =
+                colorManager.getColorScheme(puzzle.getPuzzleInfo().getPuzzleId());
 
-                for (int index : ColorSchemeFrame.this.table.getSelectedRows()) {
-                    FaceColor faceColor = colorScheme.getFaceColors()[index];
-                    colorScheme = colorScheme.setFaceColor(faceColor.setColorToDefault());
-                }
-
-                colorManager.setColorScheme(colorScheme);
+            for (int index : ColorSchemeFrame.this.table.getSelectedRows()) {
+                FaceColor faceColor = colorScheme.getFaceColors()[index];
+                colorScheme = colorScheme.setFaceColor(faceColor.setColorToDefault());
             }
+
+            colorManager.setColorScheme(colorScheme);
         });
 
         // ok button
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        this.buttonOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                ColorSchemeFrame.this.setVisible(false);
-            }
-        });
+        this.buttonOk.addActionListener(event -> ColorSchemeFrame.this.setVisible(false));
 
         // update on colors updated events
         colorManager.addListener(new ColorManager.Listener() {
@@ -152,12 +131,7 @@ public class ColorSchemeFrame extends JFrame {
 
         // esc key closes window
         this.getRootPane().registerKeyboardAction(
-            new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    ColorSchemeFrame.this.setVisible(false);
-                }
-            },
+                arg0 -> ColorSchemeFrame.this.setVisible(false),
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
