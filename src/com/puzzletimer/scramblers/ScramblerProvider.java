@@ -24,6 +24,11 @@ public class ScramblerProvider {
                 0,
                 new String[] { "U", "D", "L", "R", "F", "B" });
 
+        // 2x2x2 WCA
+        Scrambler rubiksPocketCubeWca =
+            new RubiksPocketCubeWcaScramber(
+                new ScramblerInfo("2x2x2-CUBE-WCA", "2x2x2-CUBE", _("scrambler.2x2x2-CUBE-WCA")));
+
         // 2x2x2 <U, R, F>
         Scrambler rubiksPocketCubeURF =
             new RubiksPocketCubeRandomScrambler(
@@ -51,6 +56,11 @@ public class ScramblerProvider {
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1 },
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 },
                 new byte[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 });
+
+        // 3x3x3 WCA
+        Scrambler rubiksCubeWca =
+            new RubiksCubeWcaScrambler(
+                new ScramblerInfo("RUBIKS-CUBE-WCA", "RUBIKS-CUBE", _("scrambler.RUBIKS-CUBE-WCA")));
 
         // 3x3x3 <L, U>
         Scrambler rubiksCubeLU =
@@ -201,6 +211,11 @@ public class ScramblerProvider {
                 new ScramblerInfo("4x4x4-CUBE-RANDOM", "4x4x4-CUBE", _("scrambler.4x4x4-CUBE-RANDOM")),
                 40);
 
+        // 4x4x4 WCA
+        Scrambler rubiksRevengeWca =
+            new RubiksRevengeWcaScrambler(
+                new ScramblerInfo("4x4x4-CUBE-WCA", "4x4x4-CUBE", _("scrambler.4x4x4-CUBE-WCA")));
+
         // 5x5x5 importer
         Scrambler professorsCubeImporter =
             new EmptyScrambler(
@@ -211,6 +226,11 @@ public class ScramblerProvider {
             new ProfessorsCubeRandomScrambler(
                 new ScramblerInfo("5x5x5-CUBE-RANDOM", "5x5x5-CUBE", _("scrambler.5x5x5-CUBE-RANDOM")),
                 60);
+
+        // 5x5x5 WCA
+        Scrambler professorsCubeWca =
+            new ProfessorsCubeWcaScrambler(
+                new ScramblerInfo("5x5x5-CUBE-WCA", "5x5x5-CUBE", _("scrambler.5x5x5-CUBE-WCA")));
 
         // 6x6x6 importer
         Scrambler vCube6Importer =
@@ -223,6 +243,11 @@ public class ScramblerProvider {
                 new ScramblerInfo("6x6x6-CUBE-RANDOM", "6x6x6-CUBE", _("scrambler.6x6x6-CUBE-RANDOM")),
                 80);
 
+        // 6x6x6 WCA
+        Scrambler vCube6Wca =
+            new VCube6WcaScrambler(
+                new ScramblerInfo("6x6x6-CUBE-WCA", "6x6x6-CUBE", _("scrambler.6x6x6-CUBE-WCA")));
+
         // 7x7x7 importer
         Scrambler vCube7Importer =
             new EmptyScrambler(
@@ -233,6 +258,11 @@ public class ScramblerProvider {
             new VCube7RandomScrambler(
                 new ScramblerInfo("7x7x7-CUBE-RANDOM", "7x7x7-CUBE", _("scrambler.7x7x7-CUBE-RANDOM")),
                 100);
+
+        // 7x7x7 WCA
+        Scrambler vCube7Wca =
+            new VCube7WcaScrambler(
+                new ScramblerInfo("7x7x7-CUBE-WCA", "7x7x7-CUBE", _("scrambler.7x7x7-CUBE-WCA")));
 
         // 8x8x8 importer
         Scrambler ss8Importer =
@@ -266,6 +296,11 @@ public class ScramblerProvider {
             new RubiksClockRandomScrambler(
                 new ScramblerInfo("RUBIKS-CLOCK-RANDOM", "RUBIKS-CLOCK", _("scrambler.RUBIKS-CLOCK-RANDOM")));
 
+        // rubiks clock WCA
+        Scrambler rubiksClockWca =
+            new RubiksClockWcaScrambler(
+                new ScramblerInfo("RUBIKS-CLOCK-WCA", "RUBIKS-CLOCK", _("scrambler.RUBIKS-CLOCK-WCA")));
+
         // megaminx importer
         Scrambler megaminxImporter =
             new EmptyScrambler(
@@ -275,6 +310,11 @@ public class ScramblerProvider {
         Scrambler megaminxRandom =
             new MegaminxRandomScrambler(
                 new ScramblerInfo("MEGAMINX-RANDOM", "MEGAMINX", _("scrambler.MEGAMINX-RANDOM")));
+
+        // megaminx WCA
+        Scrambler megaminxWca =
+            new MegaminxWcaScrambler(
+                new ScramblerInfo("MEGAMINX-WCA", "MEGAMINX", _("scrambler.MEGAMINX-WCA")));
 
         // pyraminx importer
         Scrambler pyraminxImporter =
@@ -293,6 +333,11 @@ public class ScramblerProvider {
                 new ScramblerInfo("PYRAMINX-SUBOPTIMAL-RANDOM", "PYRAMINX", _("scrambler.PYRAMINX-SUBOPTIMAL-RANDOM")),
                 11);
 
+        // pyraminx WCA
+        Scrambler pyraminxWca =
+                new PyraminxWcaScrambler(
+                        new ScramblerInfo("PYRAMINX-WCA", "PYRAMINX", _("scrambler.PYRAMINX-WCA")));
+
         // pyraminx importer
         Scrambler square1Importer =
             new EmptyScrambler(
@@ -302,6 +347,11 @@ public class ScramblerProvider {
         Scrambler square1Random =
             new Square1RandomScrambler(
                 new ScramblerInfo("SQUARE-1-RANDOM", "SQUARE-1", _("scrambler.SQUARE-1-RANDOM")));
+
+        // square-1 WCA
+        Scrambler square1Wca =
+            new Square1WcaScrambler(
+                new ScramblerInfo("SQUARE-1-WCA", "SQUARE-1", _("scrambler.SQUARE-1-WCA")));
 
         // square-1 cube shape
         Scrambler square1CubeShape =
@@ -317,6 +367,11 @@ public class ScramblerProvider {
         Scrambler skewbRandom =
             new SkewbRandomScrambler(
                 new ScramblerInfo("SKEWB-RANDOM", "SKEWB", _("scrambler.SKEWB-RANDOM")));
+
+        // skewb WCA
+        Scrambler skewbWca =
+                new SkewbWcaScrambler(
+                        new ScramblerInfo("SKEWB-WCA", "SKEWB", _("scrambler.SKEWB-WCA")));
 
         // floppy cube importer
         Scrambler floppyCubeImporter =
@@ -371,10 +426,12 @@ public class ScramblerProvider {
         this.scramblers = new Scrambler[] {
             rubiksPocketCubeImporter,
             rubiksPocketCubeRandom,
+            rubiksPocketCubeWca,
             rubiksPocketCubeURF,
             rubiksPocketCubeSuboptimalURF,
             rubiksCubeImporter,
             rubiksCubeRandom,
+            rubiksCubeWca,
             rubiksCubeLU,
             rubiksCubeRU,
             rubiksCubeCLLTraining,
@@ -394,27 +451,36 @@ public class ScramblerProvider {
             rubiksCubeEasyCross,
             rubiksRevengeImporter,
             rubiksRevengeRandom,
+            rubiksRevengeWca,
             professorsCubeImporter,
             professorsCubeRandom,
+            professorsCubeWca,
             vCube6Importer,
             vCube6Random,
+            vCube6Wca,
             vCube7Importer,
             vCube7Random,
+            vCube7Wca,
             ss8Importer,
             ss8Random,
             ss9Importer,
             ss9Random,
             rubiksClockImporter,
             rubiksClockRandom,
+            rubiksClockWca,
             megaminxImporter,
             megaminxRandom,
+            megaminxWca,
             pyraminxImporter,
             pyraminxRandom,
             pyraminxSuboptimalRandom,
+            pyraminxWca,
             skewbImporter,
             skewbRandom,
+            skewbWca,
             square1Importer,
             square1Random,
+            square1Wca,
             square1CubeShape,
             floppyCubeImporter,
             floppyCubeRandom,

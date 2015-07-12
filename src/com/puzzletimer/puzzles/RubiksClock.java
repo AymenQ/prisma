@@ -1,6 +1,10 @@
 package com.puzzletimer.puzzles;
 
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,79 +28,148 @@ public class RubiksClock implements Puzzle {
     }
 
     private RubiksClockSolver.State stateFromSequence(String[] sequence) {
-        Pattern pattern2 = Pattern.compile("([Ud]{4}) ([ud])=(-?\\d),([ud])=(-?\\d)");
-        Pattern pattern1 = Pattern.compile("([Ud]{4}) ([ud])=(-?\\d)");
-        Pattern pattern0 = Pattern.compile("([Ud]{4})");
-
         RubiksClockSolver.State state = RubiksClockSolver.State.id;
-        for (String move : sequence) {
-            // two wheels
-            Matcher matcher2 = pattern2.matcher(move.toString());
-            if (matcher2.find()) {
-                String pins = matcher2.group(1);
-                boolean[] pinsDown = new boolean[4];
-                for (int i = 0; i < 4; i++) {
-                    pinsDown[i] = pins.charAt(i) != 'U';
-                }
+        Pattern wcaCheckPattern = Pattern.compile("[AUDLR]{1,3}([1-6][+-])?|y2");
 
-                int wheel1 = -1;
-                for (int i = 0; i < 4; i++) {
-                    if (matcher2.group(2).charAt(0) == (pinsDown[i] ? 'd' : 'u')) {
-                        wheel1 = i;
+        boolean isWcaSequence = wcaCheckPattern.matcher(sequence[0]).find();
+
+        if (isWcaSequence) {
+            Pattern pattern = Pattern.compile("([UDLR]{1,2}|ALL)([1-6][+-])?");
+            String flip = "y2";
+
+            for (String move : sequence) {
+                Matcher matcher = pattern.matcher(move);
+                boolean[] pinUp = new boolean[]{true, true, true, true};
+
+                // flip
+                if (move.equals(flip))
+                    state.flipped = !state.flipped;
+
+                else if (matcher.find()) {
+                    String pinString = matcher.group(1);
+                    String rotationWithSign = matcher.group(2);
+                    int rotation = 0;
+                    boolean allPins = pinString.equals("ALL");
+
+                    if (rotationWithSign != null) {
+                        rotation = Integer.parseInt(rotationWithSign.substring(0, rotationWithSign.length() - 1));
+                        if (rotationWithSign.endsWith("-"))
+                            rotation *= -1;
                     }
-                }
 
-                int turns1 = Integer.parseInt(matcher2.group(3));
-                state = state.rotateWheel(pinsDown, wheel1, turns1);
-
-                int wheel2 = -1;
-                for (int i = 0; i < 4; i++) {
-                    if (matcher2.group(4).charAt(0) == (pinsDown[i] ? 'd' : 'u')) {
-                        wheel2 = i;
+                    if (state.flipped) {
+                        rotation *= -1;
+                        if (allPins) {
+                            Arrays.fill(pinUp, false);
+                        } else {
+                            pinString = pinString.replaceAll("L", "A");
+                            pinString = pinString.replaceAll("R", "L");
+                            pinString = pinString.replaceAll("A", "R");
+                        }
                     }
+
+                    if (!allPins)
+                        for (char c : pinString.toCharArray())
+                            switch (c) {
+                                case 'U':
+                                    pinUp[2] = pinUp[3] = false;
+                                    break;
+                                case 'D':
+                                    pinUp[0] = pinUp[1] = false;
+                                    break;
+                                case 'L':
+                                    pinUp[1] = pinUp[3] = false;
+                                    break;
+                                case 'R':
+                                    pinUp[0] = pinUp[2] = false;
+                                    break;
+                            }
+
+                    int wheel = 0;
+                    boolean[] pinDown = new boolean[4];
+                    for (int i = 0; i < 4; i++) {
+                        pinDown[i] = state.flipped ? pinUp[i] : !pinUp[i];
+                        if (state.flipped == pinDown[i]) {
+                            wheel = i;
+                        }
+                    }
+
+                    state = state.rotateWheel(pinDown, wheel, rotation);
                 }
-
-                int turns2 = Integer.parseInt(matcher2.group(5));
-                state = state.rotateWheel(pinsDown, wheel2, turns2);
-
-                continue;
             }
+        } else {
+            Pattern pattern2 = Pattern.compile("([Ud]{4}) ([ud])=(-?\\d),([ud])=(-?\\d)");
+            Pattern pattern1 = Pattern.compile("([Ud]{4}) ([ud])=(-?\\d)");
+            Pattern pattern0 = Pattern.compile("([Ud]{4})");
 
-            // one wheel
-            Matcher matcher1 = pattern1.matcher(move.toString());
-            if (matcher1.find()) {
-                String pins = matcher1.group(1);
-                boolean[] pinsDown = new boolean[4];
-                for (int i = 0; i < 4; i++) {
-                    pinsDown[i] = pins.charAt(i) != 'U';
-                }
-
-                int wheel = -1;
-                for (int i = 0; i < 4; i++) {
-                    if (matcher1.group(2).charAt(0) == (pinsDown[i] ? 'd' : 'u')) {
-                        wheel = i;
+            for (String move : sequence) {
+                // two wheels
+                Matcher matcher2 = pattern2.matcher(move.toString());
+                if (matcher2.find()) {
+                    String pins = matcher2.group(1);
+                    boolean[] pinsDown = new boolean[4];
+                    for (int i = 0; i < 4; i++) {
+                        pinsDown[i] = pins.charAt(i) != 'U';
                     }
+
+                    int wheel1 = -1;
+                    for (int i = 0; i < 4; i++) {
+                        if (matcher2.group(2).charAt(0) == (pinsDown[i] ? 'd' : 'u')) {
+                            wheel1 = i;
+                        }
+                    }
+
+                    int turns1 = Integer.parseInt(matcher2.group(3));
+                    state = state.rotateWheel(pinsDown, wheel1, turns1);
+
+                    int wheel2 = -1;
+                    for (int i = 0; i < 4; i++) {
+                        if (matcher2.group(4).charAt(0) == (pinsDown[i] ? 'd' : 'u')) {
+                            wheel2 = i;
+                        }
+                    }
+
+                    int turns2 = Integer.parseInt(matcher2.group(5));
+                    state = state.rotateWheel(pinsDown, wheel2, turns2);
+
+                    continue;
                 }
 
-                int turns = Integer.parseInt(matcher1.group(3));
-                state = state.rotateWheel(pinsDown, wheel, turns);
+                // one wheel
+                Matcher matcher1 = pattern1.matcher(move.toString());
+                if (matcher1.find()) {
+                    String pins = matcher1.group(1);
+                    boolean[] pinsDown = new boolean[4];
+                    for (int i = 0; i < 4; i++) {
+                        pinsDown[i] = pins.charAt(i) != 'U';
+                    }
 
-                continue;
-            }
+                    int wheel = -1;
+                    for (int i = 0; i < 4; i++) {
+                        if (matcher1.group(2).charAt(0) == (pinsDown[i] ? 'd' : 'u')) {
+                            wheel = i;
+                        }
+                    }
 
-            // no rotation
-            Matcher matcher0 = pattern0.matcher(move.toString());
-            if (matcher0.find()) {
-                String pins = matcher0.group(1);
-                boolean[] pinsDown = new boolean[4];
-                for (int i = 0; i < 4; i++) {
-                    pinsDown[i] = pins.charAt(i) != 'U';
+                    int turns = Integer.parseInt(matcher1.group(3));
+                    state = state.rotateWheel(pinsDown, wheel, turns);
+
+                    continue;
                 }
 
-                state = state.rotateWheel(pinsDown, 0, 0);
+                // no rotation
+                Matcher matcher0 = pattern0.matcher(move.toString());
+                if (matcher0.find()) {
+                    String pins = matcher0.group(1);
+                    boolean[] pinsDown = new boolean[4];
+                    for (int i = 0; i < 4; i++) {
+                        pinsDown[i] = pins.charAt(i) != 'U';
+                    }
+
+                    state = state.rotateWheel(pinsDown, 0, 0);
+                }
             }
         }
-
         return state;
     }
 
@@ -109,7 +182,7 @@ public class RubiksClock implements Puzzle {
         }
 
         Face[] faces = {
-            new Face(vertices, color),
+                new Face(vertices, color),
         };
 
         return new Mesh(faces);
@@ -134,7 +207,7 @@ public class RubiksClock implements Puzzle {
         }
 
         Face[] faces = {
-            new Face(vertices, color),
+                new Face(vertices, color),
         };
 
         return new Mesh(faces);
@@ -145,15 +218,15 @@ public class RubiksClock implements Puzzle {
         RubiksClockSolver.State state = stateFromSequence(sequence);
 
         Mesh handBackground =
-            hand(0.04, 8, 0.001, 3, 0.16, colorScheme.getFaceColor("HAND-BACKGROUND").getColor()).transform(
-                Matrix44.translation(new Vector3(0, 0, -0.025)));
+                hand(0.04, 8, 0.001, 3, 0.16, colorScheme.getFaceColor("HAND-BACKGROUND").getColor()).transform(
+                        Matrix44.translation(new Vector3(0, 0, -0.025)));
 
         Mesh handForeground =
-            hand(0.025, 8, 0.001, 3, 0.11, colorScheme.getFaceColor("HAND-FOREGROUND").getColor()).transform(
-                Matrix44.translation(new Vector3(0, 0, -0.05)));
+                hand(0.025, 8, 0.001, 3, 0.11, colorScheme.getFaceColor("HAND-FOREGROUND").getColor()).transform(
+                        Matrix44.translation(new Vector3(0, 0, -0.05)));
 
         Mesh hands =
-            handBackground.union(handForeground);
+                handBackground.union(handForeground);
 
         // front
         Mesh front = new Mesh(new Face[0]);
@@ -161,11 +234,11 @@ public class RubiksClock implements Puzzle {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 Matrix44 transformation =
-                    Matrix44.translation(new Vector3(0.5 * (j - 1), 0.5 * (1 - i), 0)).mul(
-                    Matrix44.rotationZ(Math.PI / 6 * state.clocks[3 * i + j]));
+                        Matrix44.translation(new Vector3(0.5 * (j - 1), 0.5 * (1 - i), 0)).mul(
+                                Matrix44.rotationZ(Math.PI / 6 * state.clocks[3 * i + j]));
 
                 front = front.union(
-                    circle(0.225, 32, colorScheme.getFaceColor("FRONT").getColor()).union(hands).transform(transformation));
+                        circle(0.225, 32, colorScheme.getFaceColor("FRONT").getColor()).union(hands).transform(transformation));
             }
         }
 
@@ -174,15 +247,15 @@ public class RubiksClock implements Puzzle {
                 boolean pinDown = state.pinsDown[2 * i + j];
 
                 Matrix44 transformation =
-                    Matrix44.translation(
-                        new Vector3(
-                            0.5 * (j - 0.5),
-                            0.5 * (0.5 - i),
-                            pinDown ? 0.0 : -0.1));
+                        Matrix44.translation(
+                                new Vector3(
+                                        0.5 * (j - 0.5),
+                                        0.5 * (0.5 - i),
+                                        pinDown ? 0.0 : -0.1));
 
                 Color pinColor = colorScheme.getFaceColor(pinDown ? "PIN-DOWN" : "PIN-UP").getColor();
                 front = front.union(
-                    circle(0.05, 16, pinColor).transform(transformation));
+                        circle(0.05, 16, pinColor).transform(transformation));
             }
         }
 
@@ -192,11 +265,11 @@ public class RubiksClock implements Puzzle {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 Matrix44 transformation =
-                    Matrix44.translation(new Vector3(0.5 * (j - 1), 0.5 * (1 - i), 0)).mul(
-                    Matrix44.rotationZ(Math.PI / 6 * state.clocks[9 + 3 * i + j]));
+                        Matrix44.translation(new Vector3(0.5 * (j - 1), 0.5 * (1 - i), 0)).mul(
+                                Matrix44.rotationZ(Math.PI / 6 * state.clocks[9 + 3 * i + j]));
 
                 back = back.union(
-                    circle(0.225, 32, colorScheme.getFaceColor("BACK").getColor()).union(hands).transform(transformation));
+                        circle(0.225, 32, colorScheme.getFaceColor("BACK").getColor()).union(hands).transform(transformation));
             }
         }
 
@@ -205,21 +278,26 @@ public class RubiksClock implements Puzzle {
                 boolean pinDown = !state.pinsDown[2 * i + (1 - j)];
 
                 Matrix44 transformation =
-                    Matrix44.translation(
-                        new Vector3(
-                            0.5 * (j - 0.5),
-                            0.5 * (0.5 - i),
-                            pinDown ? 0.0 : -0.1));
+                        Matrix44.translation(
+                                new Vector3(
+                                        0.5 * (j - 0.5),
+                                        0.5 * (0.5 - i),
+                                        pinDown ? 0.0 : -0.1));
 
                 Color pinColor = colorScheme.getFaceColor(pinDown ? "PIN-DOWN" : "PIN-UP").getColor();
                 back = back.union(
-                    circle(0.05, 16, pinColor).transform(transformation));
+                        circle(0.05, 16, pinColor).transform(transformation));
             }
         }
 
-        back = back.transform(Matrix44.rotationY(Math.PI));
-
-        return front.transform(Matrix44.translation(new Vector3(0, 0, -0.1))).union(
-            back.transform(Matrix44.translation(new Vector3(0, 0, 0.1))));
+        if (state.flipped) {
+            front = front.transform(Matrix44.rotationY(Math.PI));
+            return back.transform(Matrix44.translation(new Vector3(0, 0, -0.1))).union(
+                    front.transform(Matrix44.translation(new Vector3(0, 0, 0.1))));
+        } else {
+            back = back.transform(Matrix44.rotationY(Math.PI));
+            return front.transform(Matrix44.translation(new Vector3(0, 0, -0.1))).union(
+                    back.transform(Matrix44.translation(new Vector3(0, 0, 0.1))));
+        }
     }
 }

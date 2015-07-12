@@ -100,7 +100,7 @@ public class Main {
         }
 
         // update database if necessary
-        List<String> versions = Arrays.asList("0.3", "0.4", "0.5", "0.6", "0.9", "0.9.3", "0.10.0");
+        List<String> versions = Arrays.asList("0.3", "0.4", "0.5", "0.6", "0.9", "0.9.3", "0.10.0", "0.11.0");
 
         String currentVersion = "";
         try {

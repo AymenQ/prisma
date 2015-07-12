@@ -60,6 +60,10 @@ public class Skewb implements Puzzle {
             new Vector3( 0.5,    0,  0.5),
             new Vector3(   0,  0.5,  0.5),
             new Vector3(-0.5,  0.5,    0));
+        Plane planeU = new Plane(
+            new Vector3( 0.5,    0,  0.5),
+            new Vector3( 0.5,  0.5,    0),
+            new Vector3(   0,  0.5, -0.5));
 
         mesh = mesh
             .cut(planeL, 0)
@@ -79,6 +83,8 @@ public class Skewb implements Puzzle {
         twists.put("D'", new Twist(planeD, -2 * Math.PI / 3));
         twists.put("B",  new Twist(planeB,  2 * Math.PI / 3));
         twists.put("B'", new Twist(planeB, -2 * Math.PI / 3));
+        twists.put("U",  new Twist(planeU,  2 * Math.PI / 3));
+        twists.put("U'", new Twist(planeU, -2 * Math.PI / 3));
 
         for (String move : sequence) {
             Twist t = twists.get(move);

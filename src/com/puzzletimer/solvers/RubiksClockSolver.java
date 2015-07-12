@@ -6,10 +6,16 @@ public class RubiksClockSolver {
     public static class State {
         public int[] clocks;
         public boolean[] pinsDown;
+        public boolean flipped;
 
         public State(int[] clocks, boolean[] pinsDown) {
+            this(clocks, pinsDown, false);
+        }
+
+        public State(int[] clocks, boolean[] pinsDown, boolean flipped) {
             this.clocks = clocks;
             this.pinsDown = pinsDown;
+            this.flipped = flipped;
         }
 
         public State rotateWheel(boolean[] pinsDown, int wheel, int turns) {
@@ -73,7 +79,7 @@ public class RubiksClockSolver {
                 }
             }
 
-            return new State(newClocks, pinsDown);
+            return new State(newClocks, pinsDown, flipped);
         }
 
         public static int[] wheelsClockFront;

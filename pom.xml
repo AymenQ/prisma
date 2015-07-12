@@ -5,7 +5,7 @@
     <version>0.11.0</version>
 
     <build>
-        <finalName>${artifactId}-${version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <resources>
             <resource>
@@ -38,6 +38,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
                             <classpathPrefix>lib/</classpathPrefix>
@@ -72,13 +73,25 @@
             <artifactId>json</artifactId>
             <version>20141113</version>
         </dependency>
-
+        <dependency>
+            <groupId>net.gnehzr.tnoodle</groupId>
+            <artifactId>scrambles</artifactId>
+            <version>0.10.0</version>
+        </dependency>
     </dependencies>
 
     <repositories>
         <repository>
             <id>prisma-graphics-mvn-repo</id>
             <url>https://raw.github.com/daveallie/prisma-graphics/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>tnoodle-scrambles-mvn-repo</id>
+            <url>https://raw.github.com/daveallie/tnoodle-scrambles/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
