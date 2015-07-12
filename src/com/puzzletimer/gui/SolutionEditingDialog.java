@@ -3,8 +3,6 @@ package com.puzzletimer.gui;
 import static com.puzzletimer.Internationalization._;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -106,7 +104,7 @@ public class SolutionEditingDialog extends JDialog {
             String penalty =
                 (String) SolutionEditingDialog.this.comboBoxPenalty.getSelectedItem();
 
-            String comment = (String) SolutionEditingDialog.this.textFieldComment.getText();
+            String comment = SolutionEditingDialog.this.textFieldComment.getText();
 
             listener.solutionEdited(
                 solution

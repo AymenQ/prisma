@@ -1,5 +1,4 @@
 package com.puzzletimer.scramblers;
-import java.util.Objects;
 import java.util.Random;
 
 import com.puzzletimer.models.Scramble;

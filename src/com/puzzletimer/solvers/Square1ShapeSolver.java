@@ -79,7 +79,7 @@ public class Square1ShapeSolver {
                 state = state.twist();
             } else {
                 Pattern p = Pattern.compile("\\((-?\\d+),(-?\\d+)\\)");
-                Matcher matcher = p.matcher(move.toString());
+                Matcher matcher = p.matcher(move);
                 matcher.find();
 
                 int top = Integer.parseInt(matcher.group(1));
