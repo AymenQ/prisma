@@ -31,4 +31,9 @@ public abstract class WcaScrambler implements Scrambler {
                 getScramblerInfo().getScramblerId(),
                 puzzle.generateWcaScramble(random).split("\\s"));
     }
+
+    @Override
+    public String toString() {
+        return getScramblerInfo().getDescription();
+    }
 }
