@@ -53,8 +53,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.puzzletimer</groupId>
-            <artifactId>graphics</artifactId>
+            <groupId>com.github.daveallie</groupId>
+            <artifactId>prisma-graphics</artifactId>
             <version>1.0.1</version>
         </dependency>
         <dependency>
@@ -77,12 +77,8 @@
 
     <repositories>
         <repository>
-            <id>prisma-graphics-mvn-repo</id>
-            <url>https://raw.github.com/daveallie/prisma-graphics/mvn-repo/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
