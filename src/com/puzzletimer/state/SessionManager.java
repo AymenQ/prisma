@@ -11,10 +11,12 @@ import com.puzzletimer.models.Solution;
 public class SessionManager {
     public static class Listener {
         public void solutionsUpdated(Solution[] solutions) { }
+        public void dailySessionSet(boolean hideTimerEnabledSet) { }
     }
 
     private ArrayList<Listener> listeners;
     private HashMap<UUID, Solution> solutions;
+    private boolean dailySessionEnabled;
 
     public SessionManager() {
         this.listeners = new ArrayList<Listener>();
@@ -83,5 +85,17 @@ public class SessionManager {
 
     public void removeListener(Listener listener) {
         this.listeners.remove(listener);
+    }
+
+    public boolean isDailySessionEnabled() {
+        return dailySessionEnabled;
+    }
+
+    public void setDailySessionEnabled(boolean dailySessionEnabled) {
+        this.dailySessionEnabled = dailySessionEnabled;
+        for (Listener listener : this.listeners)
+        {
+            listener.dailySessionSet(dailySessionEnabled);
+        }
     }
 }
