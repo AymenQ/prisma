@@ -372,6 +372,7 @@ public class MainFrame extends JFrame {
                                                 new BestMean(100, 100),
                                                 new BestAverage(5, 5),
                                                 new BestAverage(12, 12),
+                                                new BestAverage(50, 50),
                                         };
 
                                         String[] descriptions = {
@@ -380,6 +381,7 @@ public class MainFrame extends JFrame {
                                                 _("main.mean_of_100"),
                                                 _("main.average_of_5"),
                                                 _("main.average_of_12"),
+                                                _("main.average_of_50"),
                                         };
 
                                         Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
@@ -455,6 +457,8 @@ public class MainFrame extends JFrame {
         private JLabel labelBestAverageOf5;
         private JLabel labelAverageOf12;
         private JLabel labelBestAverageOf12;
+        private JLabel labelAverageOf50;
+        private JLabel labelBestAverageOf50;
         private String nullTime;
 
         private StatisticsPanel(SessionManager sessionManager) {
@@ -463,33 +467,37 @@ public class MainFrame extends JFrame {
             createComponents();
 
             final JLabel[] labels = {
-                    this.labelMean,
-                    this.labelAverage,
-                    this.labelBestTime,
-                    this.labelMedian,
-                    this.labelWorstTime,
-                    this.labelStandardDeviation,
-                    this.labelMeanOf3,
-                    this.labelBestMeanOf3,
-                    this.labelAverageOf5,
-                    this.labelBestAverageOf5,
-                    this.labelAverageOf12,
-                    this.labelBestAverageOf12,
+                this.labelMean,
+                this.labelAverage,
+                this.labelBestTime,
+                this.labelMedian,
+                this.labelWorstTime,
+                this.labelStandardDeviation,
+                this.labelMeanOf3,
+                this.labelBestMeanOf3,
+                this.labelAverageOf5,
+                this.labelBestAverageOf5,
+                this.labelAverageOf12,
+                this.labelBestAverageOf12,
+                this.labelAverageOf50,
+                this.labelBestAverageOf50,
             };
 
             final StatisticalMeasure[] measures = {
-                    new Mean(1, Integer.MAX_VALUE),
-                    new Average(3, Integer.MAX_VALUE),
-                    new Best(1, Integer.MAX_VALUE),
-                    new Percentile(1, Integer.MAX_VALUE, 0.5),
-                    new Worst(1, Integer.MAX_VALUE),
-                    new StandardDeviation(1, Integer.MAX_VALUE),
-                    new Mean(3, 3),
-                    new BestMean(3, Integer.MAX_VALUE),
-                    new Average(5, 5),
-                    new BestAverage(5, Integer.MAX_VALUE),
-                    new Average(12, 12),
-                    new BestAverage(12, Integer.MAX_VALUE),
+                new Mean(1, Integer.MAX_VALUE),
+                new Average(3, Integer.MAX_VALUE),
+                new Best(1, Integer.MAX_VALUE),
+                new Percentile(1, Integer.MAX_VALUE, 0.5),
+                new Worst(1, Integer.MAX_VALUE),
+                new StandardDeviation(1, Integer.MAX_VALUE),
+                new Mean(3, 3),
+                new BestMean(3, Integer.MAX_VALUE),
+                new Average(5, 5),
+                new BestAverage(5, Integer.MAX_VALUE),
+                new Average(12, 12),
+                new BestAverage(12, Integer.MAX_VALUE),
+                new Average(50, 50),
+                new BestAverage(50, Integer.MAX_VALUE),
             };
 
             timerManager.addListener(new TimerManager.Listener() {
@@ -539,10 +547,10 @@ public class MainFrame extends JFrame {
 
         private void createComponents() {
             setLayout(
-                    new MigLayout(
-                            "center",
-                            "[pref!,right]8[pref!]",
-                            "1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]1"));
+                new MigLayout(
+                    "center",
+                    "[pref!,right]8[pref!]",
+                    "1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]6[pref!]1[pref!]1"));
 
             // labelMean
             JLabel labelMeanDescription = new JLabel(_("statistics.mean"));
@@ -639,6 +647,22 @@ public class MainFrame extends JFrame {
 
             this.labelBestAverageOf12 = new JLabel(this.nullTime);
             add(this.labelBestAverageOf12, "wrap");
+
+            // labelAverageOf50
+            JLabel labelAverageOf50Description = new JLabel(_("statistics.average_of_50"));
+            labelAverageOf50Description.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelAverageOf50Description);
+
+            this.labelAverageOf50 = new JLabel(this.nullTime);
+            add(this.labelAverageOf50, "wrap");
+
+            // labelBestAverageOf50
+            JLabel labelBestAverageOf50Description = new JLabel(_("statistics.best_average_of_50"));
+            labelBestAverageOf50Description.setFont(new Font("Tahoma", Font.BOLD, 11));
+            add(labelBestAverageOf50Description);
+
+            this.labelBestAverageOf50 = new JLabel(this.nullTime);
+            add(this.labelBestAverageOf50, "wrap");
         }
     }
 
@@ -892,34 +916,36 @@ public class MainFrame extends JFrame {
                     "");
 
             SolutionEditingDialogListener listener =
-                    new SolutionEditingDialogListener() {
-                        @Override
-                        public void solutionEdited(Solution solution) {
-                            MainFrame.this.solutionManager.addSolution(solution);
+                new SolutionEditingDialogListener() {
+                    @Override
+                    public void solutionEdited(Solution solution) {
+                        MainFrame.this.solutionManager.addSolution(solution);
 
-                            // check for personal records
-                            StatisticalMeasure[] measures = {
-                                    new Best(1, Integer.MAX_VALUE),
-                                    new BestMean(3, 3),
-                                    new BestMean(100, 100),
-                                    new BestAverage(5, 5),
-                                    new BestAverage(12, 12),
-                            };
+                        // check for personal records
+                        StatisticalMeasure[] measures = {
+                            new Best(1, Integer.MAX_VALUE),
+                            new BestMean(3, 3),
+                            new BestMean(100, 100),
+                            new BestAverage(5, 5),
+                            new BestAverage(12, 12),
+                            new BestAverage(50, 50),
+                        };
 
-                            String[] descriptions = {
-                                    _("main.single"),
-                                    _("main.mean_of_3"),
-                                    _("main.mean_of_100"),
-                                    _("main.average_of_5"),
-                                    _("main.average_of_12"),
-                            };
+                        String[] descriptions = {
+                            _("main.single"),
+                            _("main.mean_of_3"),
+                            _("main.mean_of_100"),
+                            _("main.average_of_5"),
+                            _("main.average_of_12"),
+                            _("main.average_of_50"),
+                        };
 
-                            Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
-                            Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
+                        Solution[] solutions = MainFrame.this.solutionManager.getSolutions();
+                        Solution[] sessionSolutions = MainFrame.this.sessionManager.getSolutions();
 
-                            for (int i = 0; i < measures.length; i++) {
-                                if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
-                                    continue;
+                        for (int i = 0; i < measures.length; i++) {
+                            if (sessionSolutions.length < measures[i].getMinimumWindowSize()) {
+                                continue;
                                 }
 
                                 measures[i].setSolutions(solutions, MainFrame.this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
