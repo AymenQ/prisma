@@ -95,7 +95,7 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
         // solution
         StringBuilder tip = new StringBuilder();
 
-        tip.append(_("tip.RUBIKS-CUBE-CLASSIC-POCHMANN-EDGES") + ":\n");
+        tip.append(_("tip.RUBIKS-CUBE-CLASSIC-POCHMANN-EDGES")).append(":\n");
         tip.append("  [T1]  R U R' U' R' F R2 U' R' U' R U R' F'\n");
         tip.append("  [T2]  x' R2 U' R' U x R' F' U' F R U R' U'\n");
         tip.append("  [J1]  R U R' F' R U R' U' R' F R2 U' R' U'\n");
@@ -153,7 +153,7 @@ public class RubiksCubeClassicPochmannEdges implements Tip {
         solutions.put("LD", "L2 [T2] L2");
 
         for (String sticker : stickerSequence) {
-            tip.append("  (UR " + sticker + ") " + letteringScheme.get(sticker) + "  " + solutions.get(sticker) + "\n");
+            tip.append("  (UR ").append(sticker).append(") ").append(letteringScheme.get(sticker)).append("  ").append(solutions.get(sticker)).append("\n");
         }
 
         return tip.toString().trim();

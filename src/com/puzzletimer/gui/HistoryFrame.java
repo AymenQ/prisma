@@ -4,8 +4,6 @@ import static com.puzzletimer.Internationalization._;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,8 +24,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
@@ -89,77 +85,64 @@ public class HistoryFrame extends JFrame {
             pack();
 
             // ok button
-            this.buttonOk.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    String contents =
-                        SolutionImporterDialog.this.textAreaContents.getText();
+            this.buttonOk.addActionListener(event -> {
+                String contents =
+                    SolutionImporterDialog.this.textAreaContents.getText();
 
-                    Date start = new Date();
-                    ArrayList<Solution> solutions = new ArrayList<Solution>();
-                    for (String line : contents.split("\n")) {
-                        line = line.trim();
+                Date start = new Date();
+                ArrayList<Solution> solutions = new ArrayList<Solution>();
+                for (String line : contents.split("\n")) {
+                    line = line.trim();
 
-                        // ignore blank lines and comments
-                        if (line.length() == 0 || line.startsWith("#")) {
-                            continue;
-                        }
-
-                        // separate time from scramble
-                        String[] parts = line.split("\\s+", 2);
-
-                        // time
-                        long time = SolutionUtils.parseTime(parts[0]);
-                        Timing timing =
-                            new Timing(
-                                start,
-                                new Date(start.getTime() + time));
-
-                        // scramble
-                        Scramble scramble = new Scramble(scramblerId, new String[0]);
-                        if (parts.length > 1) {
-                            scramble = new Scramble(
-                                scramblerId,
-                                scrambleParser.parse(parts[1]));
-                        }
-
-                        solutions.add(
-                            new Solution(
-                                UUID.randomUUID(),
-                                categoryId,
-                                scramble,
-                                timing,
-                                "",
-                                ""));
-
-                        start = new Date(start.getTime() + time);
+                    // ignore blank lines and comments
+                    if (line.length() == 0 || line.startsWith("#")) {
+                        continue;
                     }
 
-                    Solution[] solutionsArray = new Solution[solutions.size()];
-                    solutions.toArray(solutionsArray);
+                    // separate time from scramble
+                    String[] parts = line.split("\\s+", 2);
 
-                    listener.solutionsImported(solutionsArray);
+                    // time
+                    long time = SolutionUtils.parseTime(parts[0]);
+                    Timing timing =
+                        new Timing(
+                            start,
+                            new Date(start.getTime() + time));
 
-                    SolutionImporterDialog.this.dispose();
+                    // scramble
+                    Scramble scramble = new Scramble(scramblerId, new String[0]);
+                    if (parts.length > 1) {
+                        scramble = new Scramble(
+                            scramblerId,
+                            scrambleParser.parse(parts[1]));
+                    }
+
+                    solutions.add(
+                        new Solution(
+                            UUID.randomUUID(),
+                            categoryId,
+                            scramble,
+                            timing,
+                            "",
+                            ""));
+
+                    start = new Date(start.getTime() + time);
                 }
+
+                Solution[] solutionsArray = new Solution[solutions.size()];
+                solutions.toArray(solutionsArray);
+
+                listener.solutionsImported(solutionsArray);
+
+                SolutionImporterDialog.this.dispose();
             });
 
             // cancel button
-            this.buttonCancel.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    SolutionImporterDialog.this.dispose();
-                }
-            });
+            this.buttonCancel.addActionListener(event -> SolutionImporterDialog.this.dispose());
 
             // esc key closes window
             this.getRootPane().registerKeyboardAction(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        SolutionImporterDialog.this.dispose();
-                    }
-                },
+                    arg0 -> SolutionImporterDialog.this.dispose(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_IN_FOCUSED_WINDOW);
         }
@@ -213,6 +196,8 @@ public class HistoryFrame extends JFrame {
     private JLabel labelWorst;
     private JLabel labelAverageOf12;
     private JLabel labelBestAverageOf12;
+    private JLabel labelAverageOf50;
+    private JLabel labelBestAverageOf50;
     private JTable table;
     private JButton buttonAddSolutions;
     private JButton buttonEdit;
@@ -292,9 +277,7 @@ public class HistoryFrame extends JFrame {
 
         // table selection
         this.table.getSelectionModel().addListSelectionListener(
-            new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent event) {
+                event -> {
                     Solution[] solutions = solutionManager.getSolutions();
                     Solution[] selectedSolutions;
 
@@ -321,145 +304,119 @@ public class HistoryFrame extends JFrame {
                         HistoryFrame.this.table.getSelectedRowCount() == 1);
                     HistoryFrame.this.buttonRemove.setEnabled(
                         HistoryFrame.this.table.getSelectedRowCount() > 0);
-                }
-            });
+                });
 
         // add solutions button
-        this.buttonAddSolutions.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SolutionImporterDialog.SolutionImporterListener listener =
-                    new SolutionImporterDialog.SolutionImporterListener() {
-                        @Override
-                        public void solutionsImported(Solution[] solutions) {
-                            solutionManager.addSolutions(solutions);
-                        }
-                    };
+        this.buttonAddSolutions.addActionListener(e -> {
+            SolutionImporterDialog.SolutionImporterListener listener =
+                new SolutionImporterDialog.SolutionImporterListener() {
+                    @Override
+                    public void solutionsImported(Solution[] solutions) {
+                        solutionManager.addSolutions(solutions);
+                    }
+                };
 
-                Category currentCategory = categoryManager.getCurrentCategory();
-                Scrambler currentScrambler = scramblerProvider.get(currentCategory.getScramblerId());
-                String puzzleId = currentScrambler.getScramblerInfo().getPuzzleId();
-                ScrambleParser scrambleParser = scrambleParserProvider.get(puzzleId);
+            Category currentCategory = categoryManager.getCurrentCategory();
+            Scrambler currentScrambler = scramblerProvider.get(currentCategory.getScramblerId());
+            String puzzleId = currentScrambler.getScramblerInfo().getPuzzleId();
+            ScrambleParser scrambleParser = scrambleParserProvider.get(puzzleId);
 
-                SolutionImporterDialog solutionEditingDialog =
-                    new SolutionImporterDialog(
-                        HistoryFrame.this,
-                        true,
-                        currentCategory.getCategoryId(),
-                        currentCategory.getScramblerId(),
-                        scrambleParser,
-                        listener);
-                solutionEditingDialog.setLocationRelativeTo(null);
-                solutionEditingDialog.setVisible(true);
-            }
+            SolutionImporterDialog solutionEditingDialog =
+                new SolutionImporterDialog(
+                    HistoryFrame.this,
+                    true,
+                    currentCategory.getCategoryId(),
+                    currentCategory.getScramblerId(),
+                    scrambleParser,
+                    listener);
+            solutionEditingDialog.setLocationRelativeTo(null);
+            solutionEditingDialog.setVisible(true);
         });
 
         // edit button
-        this.buttonEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Solution[] solutions = solutionManager.getSolutions();
-                Solution solution = solutions[HistoryFrame.this.table.getSelectedRow()];
+        this.buttonEdit.addActionListener(e -> {
+            Solution[] solutions = solutionManager.getSolutions();
+            Solution solution = solutions[HistoryFrame.this.table.getSelectedRow()];
 
-                SolutionEditingDialog.SolutionEditingDialogListener listener =
-                    new SolutionEditingDialog.SolutionEditingDialogListener() {
-                        @Override
-                        public void solutionEdited(Solution solution) {
-                            solutionManager.updateSolution(solution);
-                        }
-                    };
+            SolutionEditingDialog.SolutionEditingDialogListener listener =
+                new SolutionEditingDialog.SolutionEditingDialogListener() {
+                    @Override
+                    public void solutionEdited(Solution solution) {
+                        solutionManager.updateSolution(solution);
+                    }
+                };
 
-                SolutionEditingDialog solutionEditingDialog =
-                    new SolutionEditingDialog(
-                        HistoryFrame.this,
-                        true,
-                        solution,
-                        listener,
-                        HistoryFrame.this.configurationManager);
-                solutionEditingDialog.setLocationRelativeTo(null);
-                solutionEditingDialog.setVisible(true);
-            }
+            SolutionEditingDialog solutionEditingDialog =
+                new SolutionEditingDialog(
+                    HistoryFrame.this,
+                    true,
+                    solution,
+                    listener,
+                    HistoryFrame.this.configurationManager);
+            solutionEditingDialog.setLocationRelativeTo(null);
+            solutionEditingDialog.setVisible(true);
         });
 
         // remove button
-        this.buttonRemove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (HistoryFrame.this.table.getSelectedRows().length > 5) {
-                    int result = JOptionPane.showConfirmDialog(
-                        HistoryFrame.this,
-                        _("history.solution_removal_confirmation_message"),
-                        _("history.remove_solutions"),
-                        JOptionPane.YES_NO_CANCEL_OPTION);
-                    if (result != JOptionPane.YES_OPTION) {
-                        return;
-                    }
+        this.buttonRemove.addActionListener(e -> {
+            if (HistoryFrame.this.table.getSelectedRows().length > 5) {
+                int result = JOptionPane.showConfirmDialog(
+                    HistoryFrame.this,
+                    _("history.solution_removal_confirmation_message"),
+                    _("history.remove_solutions"),
+                    JOptionPane.YES_NO_CANCEL_OPTION);
+                if (result != JOptionPane.YES_OPTION) {
+                    return;
                 }
-
-                Solution[] solutions = solutionManager.getSolutions();
-
-                int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
-                for (int i = 0; i < selectedRows.length; i++) {
-                    solutionManager.removeSolution(solutions[selectedRows[i]]);
-                }
-
-                // request focus
-                HistoryFrame.this.buttonRemove.requestFocusInWindow();
             }
+
+            Solution[] solutions = solutionManager.getSolutions();
+
+            int[] selectedRows = HistoryFrame.this.table.getSelectedRows();
+            for (int i = 0; i < selectedRows.length; i++) {
+                solutionManager.removeSolution(solutions[selectedRows[i]]);
+            }
+
+            // request focus
+            HistoryFrame.this.buttonRemove.requestFocusInWindow();
         });
 
         // select session button
-        this.buttonSelectSession.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (HistoryFrame.this.table.getRowCount() > 0) {
-                    HistoryFrame.this.table.removeRowSelectionInterval(
-                        0,
-                        HistoryFrame.this.table.getRowCount() - 1);
-                }
+        this.buttonSelectSession.addActionListener(e -> {
+            if (HistoryFrame.this.table.getRowCount() > 0) {
+                HistoryFrame.this.table.removeRowSelectionInterval(
+                    0,
+                    HistoryFrame.this.table.getRowCount() - 1);
+            }
 
-                Solution[] solutions = solutionManager.getSolutions();
-                Solution[] sessionSolutions = sessionManager.getSolutions();
+            Solution[] solutions = solutionManager.getSolutions();
+            Solution[] sessionSolutions = sessionManager.getSolutions();
 
-                for (int i = 0, j = 0; i < solutions.length && j < sessionSolutions.length; i++) {
-                    if (solutions[i].getSolutionId().equals(sessionSolutions[j].getSolutionId())) {
-                        HistoryFrame.this.table.addRowSelectionInterval(i, i);
-                        HistoryFrame.this.table.scrollRectToVisible(HistoryFrame.this.table.getCellRect(i, 0, true));
-                        j++;
-                    }
+            for (int i = 0, j = 0; i < solutions.length && j < sessionSolutions.length; i++) {
+                if (solutions[i].getSolutionId().equals(sessionSolutions[j].getSolutionId())) {
+                    HistoryFrame.this.table.addRowSelectionInterval(i, i);
+                    HistoryFrame.this.table.scrollRectToVisible(HistoryFrame.this.table.getCellRect(i, 0, true));
+                    j++;
                 }
             }
         });
 
         // select none button
-        this.buttonSelectNone.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (HistoryFrame.this.table.getRowCount() > 0) {
-                    HistoryFrame.this.table.removeRowSelectionInterval(
-                        0,
-                        HistoryFrame.this.table.getRowCount() - 1);
-                }
+        this.buttonSelectNone.addActionListener(e -> {
+            if (HistoryFrame.this.table.getRowCount() > 0) {
+                HistoryFrame.this.table.removeRowSelectionInterval(
+                    0,
+                    HistoryFrame.this.table.getRowCount() - 1);
             }
         });
 
         // close button
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        this.buttonOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                HistoryFrame.this.setVisible(false);
-            }
-        });
+        this.buttonOk.addActionListener(arg0 -> HistoryFrame.this.setVisible(false));
 
         // esc key closes window
         this.getRootPane().registerKeyboardAction(
-            new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    HistoryFrame.this.setVisible(false);
-                }
-            },
+                arg0 -> HistoryFrame.this.setVisible(false),
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
@@ -493,7 +450,7 @@ public class HistoryFrame extends JFrame {
             new MigLayout(
                 "fill, insets 0 n 0 n",
                 "[][pref!]32[][pref!]32[][pref!]32[][pref!]",
-                "[pref!]1[pref!]1[pref!]1[pref!]1[pref!]"));
+                "[pref!]1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]"));
         add(panelStatistics, "growx, span, wrap");
 
         // labelNumberOfSolutions
@@ -594,7 +551,17 @@ public class HistoryFrame extends JFrame {
         // labelBestAverageOf12
         panelStatistics.add(new JLabel(_("history.best_average_of_12")), "");
         this.labelBestAverageOf12 = new JLabel(this.nullTime);
-        panelStatistics.add(this.labelBestAverageOf12, "right");
+        panelStatistics.add(this.labelBestAverageOf12, "right, wrap");
+
+        // labelAverageOf50
+        panelStatistics.add(new JLabel(_("history.average_of_50")), "skip 4");
+        this.labelAverageOf50 = new JLabel(this.nullTime);
+        panelStatistics.add(this.labelAverageOf50, "right");
+
+        // labelBestAverageOf50
+        panelStatistics.add(new JLabel(_("history.best_average_of_50")), "");
+        this.labelBestAverageOf50 = new JLabel(this.nullTime);
+        panelStatistics.add(this.labelBestAverageOf50, "right");
 
         // labelSolutions
         JLabel labelTimes = new JLabel(_("history.solutions"));
@@ -663,6 +630,8 @@ public class HistoryFrame extends JFrame {
             this.labelWorst,
             this.labelAverageOf12,
             this.labelBestAverageOf12,
+            this.labelAverageOf50,
+            this.labelBestAverageOf50,
         };
 
         StatisticalMeasure[] measures = {
@@ -689,6 +658,8 @@ public class HistoryFrame extends JFrame {
             new Worst(1, Integer.MAX_VALUE),
             new Average(12, 12),
             new BestAverage(12, Integer.MAX_VALUE),
+            new Average(50, 50),
+            new BestAverage(50, Integer.MAX_VALUE),
         };
 
         boolean[] clickable = {
@@ -715,6 +686,8 @@ public class HistoryFrame extends JFrame {
             true,
             true,
             true,
+            true,
+            true,
         };
 
         for (int i = 0; i < labels.length; i++) {
@@ -722,9 +695,7 @@ public class HistoryFrame extends JFrame {
                 int size = Math.min(solutions.length, measures[i].getMaximumWindowSize());
 
                 Solution[] window = new Solution[size];
-                for (int j = 0; j < size; j++) {
-                    window[j] = solutions[j];
-                }
+                System.arraycopy(solutions, 0, window, 0, size);
 
                 measures[i].setSolutions(window, this.configurationManager.getConfiguration("TIMER-PRECISION").equals("CENTISECONDS"));
                 labels[i].setText(SolutionUtils.formatMinutes(measures[i].getValue(), this.configurationManager.getConfiguration("TIMER-PRECISION"), measures[i].getRound()));
@@ -838,11 +809,7 @@ public class HistoryFrame extends JFrame {
             }
 
             boolean isAscent;
-            if (SortButtonRenderer.DOWN == renderer.getState(col)) {
-                isAscent = true;
-            } else {
-                isAscent = false;
-            }
+            isAscent = SortButtonRenderer.DOWN == renderer.getState(col);
             ((CustomTableModel)header.getTable().getModel())
                     .sortByColumn(sortCol, isAscent);
         }

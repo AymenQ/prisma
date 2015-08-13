@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -111,6 +113,49 @@ public class SolutionDAO {
                 throw new DatabaseException(e);
             }
         }
+    }
+
+    public Solution[] getCurrentSession(Category category) {
+        Scrambler scrambler = this.scramblerProvider.get(category.getScramblerId());
+        ScrambleParser scramblerParser = this.scrambleParserProvider.get(scrambler.getScramblerInfo().getPuzzleId());
+
+        ArrayList<Solution> solutions = new ArrayList<Solution>();
+        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
+        try {
+            PreparedStatement statement = this.connection.prepareStatement(
+                    "SELECT SOLUTION_ID, CATEGORY_ID, SCRAMBLER_ID, SEQUENCE, START, END, PENALTY " +
+                    "FROM SOLUTION " +
+                    "WHERE START >= ? " +
+                    "AND CATEGORY_ID = ?" +
+                    "ORDER BY START DESC");
+
+            statement.setString(1,dateFormat.format(new Date()));
+            statement.setString(2, category.getCategoryId().toString());
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                UUID solutionId = UUID.fromString(resultSet.getString(1));
+                UUID categoryId = UUID.fromString(resultSet.getString(2));
+                String scramblerId = resultSet.getString(3);
+                String sequence = resultSet.getString(4);
+                Date start = resultSet.getTimestamp(5);
+                Date end = resultSet.getTimestamp(6);
+                String penalty = resultSet.getString(7);
+
+                Scramble scramble = new Scramble(scramblerId, scramblerParser.parse(sequence));
+                Solution solution = new Solution(solutionId, categoryId, scramble, new Timing(start, end), penalty, "");
+
+                solutions.add(solution);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        Solution[] solutionArray = new Solution[solutions.size()];
+        solutions.toArray(solutionArray);
+
+        return solutionArray;
     }
 
     public void update(Solution solution) {

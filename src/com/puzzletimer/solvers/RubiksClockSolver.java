@@ -14,9 +14,7 @@ public class RubiksClockSolver {
 
         public State rotateWheel(boolean[] pinsDown, int wheel, int turns) {
             int[] newClocks = new int[18];
-            for (int i = 0; i < newClocks.length; i++) {
-                newClocks[i] = this.clocks[i];
-            }
+            System.arraycopy(this.clocks, 0, newClocks, 0, newClocks.length);
 
             // front
             boolean[] affectedClocks = new boolean[18];
@@ -195,9 +193,7 @@ public class RubiksClockSolver {
         }
 
         String[] sequence = new String[generator.length + 1];
-        for (int i = 0; i < generator.length; i++) {
-            sequence[i] = generator[i];
-        }
+        System.arraycopy(generator, 0, sequence, 0, generator.length);
         sequence[sequence.length - 1] = pins;
 
         return sequence;

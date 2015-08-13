@@ -2,7 +2,6 @@ package com.puzzletimer.state;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -12,10 +11,12 @@ import com.puzzletimer.models.Solution;
 public class SessionManager {
     public static class Listener {
         public void solutionsUpdated(Solution[] solutions) { }
+        public void dailySessionSet(boolean hideTimerEnabledSet) { }
     }
 
     private ArrayList<Listener> listeners;
     private HashMap<UUID, Solution> solutions;
+    private boolean dailySessionEnabled;
 
     public SessionManager() {
         this.listeners = new ArrayList<Listener>();
@@ -26,13 +27,10 @@ public class SessionManager {
         ArrayList<Solution> solutions =
             new ArrayList<Solution>(this.solutions.values());
 
-        Collections.sort(solutions,new Comparator<Solution>() {
-            @Override
-            public int compare(Solution solution1, Solution solution2) {
-                Date start1 = solution1.getTiming().getStart();
-                Date start2 = solution2.getTiming().getStart();
-                return start2.compareTo(start1);
-            }
+        Collections.sort(solutions, (solution1, solution2) -> {
+            Date start1 = solution1.getTiming().getStart();
+            Date start2 = solution2.getTiming().getStart();
+            return start2.compareTo(start1);
         });
 
         Solution[] solutionsArray = new Solution[solutions.size()];
@@ -67,13 +65,10 @@ public class SessionManager {
         ArrayList<Solution> solutions =
             new ArrayList<Solution>(this.solutions.values());
 
-        Collections.sort(solutions,new Comparator<Solution>() {
-            @Override
-            public int compare(Solution solution1, Solution solution2) {
-                Date start1 = solution1.getTiming().getStart();
-                Date start2 = solution2.getTiming().getStart();
-                return start2.compareTo(start1);
-            }
+        Collections.sort(solutions, (solution1, solution2) -> {
+            Date start1 = solution1.getTiming().getStart();
+            Date start2 = solution2.getTiming().getStart();
+            return start2.compareTo(start1);
         });
 
         Solution[] solutionsArray = new Solution[solutions.size()];
@@ -90,5 +85,17 @@ public class SessionManager {
 
     public void removeListener(Listener listener) {
         this.listeners.remove(listener);
+    }
+
+    public boolean isDailySessionEnabled() {
+        return dailySessionEnabled;
+    }
+
+    public void setDailySessionEnabled(boolean dailySessionEnabled) {
+        this.dailySessionEnabled = dailySessionEnabled;
+        for (Listener listener : this.listeners)
+        {
+            listener.dailySessionSet(dailySessionEnabled);
+        }
     }
 }

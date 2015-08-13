@@ -3,8 +3,6 @@ package com.puzzletimer.gui;
 import static com.puzzletimer.Internationalization._;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.UUID;
 
@@ -23,8 +21,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import net.miginfocom.swing.MigLayout;
@@ -89,110 +85,95 @@ class CategoryEditorDialog extends JDialog {
         }
 
         // fill combo boxes on puzzle selection
-        this.comboBoxPuzzle.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                PuzzleInfo selectedPuzzle = (PuzzleInfo) CategoryEditorDialog.this.comboBoxPuzzle.getSelectedItem();
+        this.comboBoxPuzzle.addActionListener(event -> {
+            PuzzleInfo selectedPuzzle = (PuzzleInfo) CategoryEditorDialog.this.comboBoxPuzzle.getSelectedItem();
 
-                // scramblers
-                CategoryEditorDialog.this.comboBoxScrambler.removeAllItems();
-                for (Scrambler scrambler : scramblers) {
-                    ScramblerInfo scramblerInfo = scrambler.getScramblerInfo();
-                    if (scramblerInfo.getPuzzleId().equals(selectedPuzzle.getPuzzleId())) {
-                        CategoryEditorDialog.this.comboBoxScrambler.addItem(scramblerInfo);
-                    }
+            // scramblers
+            CategoryEditorDialog.this.comboBoxScrambler.removeAllItems();
+            for (Scrambler scrambler : scramblers) {
+                ScramblerInfo scramblerInfo = scrambler.getScramblerInfo();
+                if (scramblerInfo.getPuzzleId().equals(selectedPuzzle.getPuzzleId())) {
+                    CategoryEditorDialog.this.comboBoxScrambler.addItem(scramblerInfo);
                 }
+            }
 
-                // tips
-                CategoryEditorDialog.this.comboBoxTips.removeAllItems();
+            // tips
+            CategoryEditorDialog.this.comboBoxTips.removeAllItems();
+            for (Tip tip : tips) {
+                if (tip.getPuzzleId().equals(selectedPuzzle.getPuzzleId())) {
+                    CategoryEditorDialog.this.comboBoxTips.addItem(tip);
+                }
+            }
+
+            // selected tips
+            DefaultListModel listModel = (DefaultListModel) CategoryEditorDialog.this.listTips.getModel();
+            listModel.removeAllElements();
+            for (String categoryTipId : category.getTipIds()) {
                 for (Tip tip : tips) {
-                    if (tip.getPuzzleId().equals(selectedPuzzle.getPuzzleId())) {
-                        CategoryEditorDialog.this.comboBoxTips.addItem(tip);
-                    }
-                }
-
-                // selected tips
-                DefaultListModel listModel = (DefaultListModel) CategoryEditorDialog.this.listTips.getModel();
-                listModel.removeAllElements();
-                for (String categoryTipId : category.getTipIds()) {
-                    for (Tip tip : tips) {
-                        if (categoryTipId.equals(tip.getTipId())) {
-                            listModel.addElement(tip);
-                            break;
-                        }
+                    if (categoryTipId.equals(tip.getTipId())) {
+                        listModel.addElement(tip);
+                        break;
                     }
                 }
             }
         });
 
         // set add button behavior
-        this.buttonTipAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Tip selectedTip = (Tip) CategoryEditorDialog.this.comboBoxTips.getSelectedItem();
-                if (selectedTip == null) {
-                    return;
-                }
+        this.buttonTipAdd.addActionListener(event -> {
+            Tip selectedTip = (Tip) CategoryEditorDialog.this.comboBoxTips.getSelectedItem();
+            if (selectedTip == null) {
+                return;
+            }
 
-                DefaultListModel listModel = (DefaultListModel) CategoryEditorDialog.this.listTips.getModel();
-                if (!listModel.contains(selectedTip)) {
-                    listModel.addElement(selectedTip);
-                }
+            DefaultListModel listModel = (DefaultListModel) CategoryEditorDialog.this.listTips.getModel();
+            if (!listModel.contains(selectedTip)) {
+                listModel.addElement(selectedTip);
             }
         });
 
         // set up button behavior
-        this.buttonTipUp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JList listTips = CategoryEditorDialog.this.listTips;
+        this.buttonTipUp.addActionListener(event -> {
+            JList listTips1 = CategoryEditorDialog.this.listTips;
 
-                DefaultListModel model = (DefaultListModel) listTips.getModel();
+            DefaultListModel model = (DefaultListModel) listTips1.getModel();
 
-                int selectedIndex = listTips.getSelectedIndex();
-                if (selectedIndex > 0) {
-                    // swap
-                    Object selectedValue = model.getElementAt(selectedIndex);
-                    model.insertElementAt(selectedValue, selectedIndex - 1);
-                    model.removeElementAt(selectedIndex + 1);
+            int selectedIndex = listTips1.getSelectedIndex();
+            if (selectedIndex > 0) {
+                // swap
+                Object selectedValue = model.getElementAt(selectedIndex);
+                model.insertElementAt(selectedValue, selectedIndex - 1);
+                model.removeElementAt(selectedIndex + 1);
 
-                    // fix selection
-                    listTips.addSelectionInterval(selectedIndex - 1, selectedIndex - 1);
-                }
+                // fix selection
+                listTips1.addSelectionInterval(selectedIndex - 1, selectedIndex - 1);
             }
         });
 
         // set down button behavior
-        this.buttonTipDown.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JList listTips = CategoryEditorDialog.this.listTips;
+        this.buttonTipDown.addActionListener(event -> {
+            JList listTips1 = CategoryEditorDialog.this.listTips;
 
-                DefaultListModel model = (DefaultListModel) listTips.getModel();
+            DefaultListModel model = (DefaultListModel) listTips1.getModel();
 
-                int selectedIndex = listTips.getSelectedIndex();
-                if (selectedIndex >= 0 && selectedIndex < model.getSize() - 1) {
-                    // swap
-                    Object selectedValue = model.getElementAt(selectedIndex);
-                    model.insertElementAt(selectedValue, selectedIndex + 2);
-                    model.removeElementAt(selectedIndex);
+            int selectedIndex = listTips1.getSelectedIndex();
+            if (selectedIndex >= 0 && selectedIndex < model.getSize() - 1) {
+                // swap
+                Object selectedValue = model.getElementAt(selectedIndex);
+                model.insertElementAt(selectedValue, selectedIndex + 2);
+                model.removeElementAt(selectedIndex);
 
-                    // fix selection
-                    listTips.addSelectionInterval(selectedIndex + 1, selectedIndex + 1);
-                }
+                // fix selection
+                listTips1.addSelectionInterval(selectedIndex + 1, selectedIndex + 1);
             }
         });
 
         // set remove button behavior
-        this.buttonTipRemove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                DefaultListModel model = (DefaultListModel) CategoryEditorDialog.this.listTips.getModel();
+        this.buttonTipRemove.addActionListener(event -> {
+            DefaultListModel model = (DefaultListModel) CategoryEditorDialog.this.listTips.getModel();
 
-                int selectedIndex = CategoryEditorDialog.this.listTips.getSelectedIndex();
-                if (selectedIndex >= 0) {
-                    model.removeElementAt(selectedIndex);
-                }
+            int selectedIndex = CategoryEditorDialog.this.listTips.getSelectedIndex();
+            if (selectedIndex >= 0) {
+                model.removeElementAt(selectedIndex);
             }
         });
 
@@ -201,42 +182,34 @@ class CategoryEditorDialog extends JDialog {
         this.comboBoxScrambler.setEnabled(isEditable);
 
         // set ok button behavior
-        this.buttonOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                // scrambler
-                String scramblerId =
-                    ((ScramblerInfo) CategoryEditorDialog.this.comboBoxScrambler.getSelectedItem()).getScramblerId();
+        this.buttonOk.addActionListener(event -> {
+            // scrambler
+            String scramblerId =
+                ((ScramblerInfo) CategoryEditorDialog.this.comboBoxScrambler.getSelectedItem()).getScramblerId();
 
-                // description
-                String description =
-                    CategoryEditorDialog.this.textFieldDescription.getText();
+            // description
+            String description =
+                CategoryEditorDialog.this.textFieldDescription.getText();
 
-                // tip ids
-                ListModel listModel = CategoryEditorDialog.this.listTips.getModel();
+            // tip ids
+            ListModel listModel = CategoryEditorDialog.this.listTips.getModel();
 
-                String[] tipIds = new String[listModel.getSize()];
-                for (int i = 0; i < tipIds.length; i++) {
-                    tipIds[i] = ((Tip) listModel.getElementAt(i)).getTipId();
-                }
-
-                listener.categoryEdited(
-                    category
-                        .setScramblerId(scramblerId)
-                        .setDescription(description)
-                        .setTipIds(tipIds));
-
-                dispose();
+            String[] tipIds = new String[listModel.getSize()];
+            for (int i = 0; i < tipIds.length; i++) {
+                tipIds[i] = ((Tip) listModel.getElementAt(i)).getTipId();
             }
+
+            listener.categoryEdited(
+                category
+                    .setScramblerId(scramblerId)
+                    .setDescription(description)
+                    .setTipIds(tipIds));
+
+            dispose();
         });
 
         // set cancel button behavior
-        this.buttonCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                dispose();
-            }
-        });
+        this.buttonCancel.addActionListener(event -> dispose());
 
         // select puzzle
         ScramblerInfo categoryScramblerInfo = null;
@@ -267,12 +240,7 @@ class CategoryEditorDialog extends JDialog {
 
         // esc key closes window
         this.getRootPane().registerKeyboardAction(
-            new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    CategoryEditorDialog.this.setVisible(false);
-                }
-            },
+                arg0 -> CategoryEditorDialog.this.setVisible(false),
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
@@ -393,9 +361,7 @@ public class CategoryManagerFrame extends JFrame {
 
         // set table selection behavior
         CategoryManagerFrame.this.table.getSelectionModel().addListSelectionListener(
-            new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent event) {
+                event -> {
                     int selectedIndex = CategoryManagerFrame.this.table.getSelectedRow();
 
                     if (selectedIndex < 0) {
@@ -410,104 +376,74 @@ public class CategoryManagerFrame extends JFrame {
                         CategoryManagerFrame.this.buttonRemove.setEnabled(
                             category != currentCategory && category.isUserDefined());
                     }
-                }
-            });
+                });
 
         // set add button behavior
-        this.buttonAdd.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Category category = new Category(
-                    UUID.randomUUID(),
-                    "RUBIKS-CUBE-RANDOM",
-                    _("category_manager.new_category"),
-                    true,
-                    new String[0]);
+        this.buttonAdd.addActionListener(event -> {
+            Category category = new Category(
+                UUID.randomUUID(),
+                "RUBIKS-CUBE-RANDOM",
+                _("category_manager.new_category"),
+                true,
+                new String[0]);
 
-                CategoryEditorListener listener = new CategoryEditorListener() {
-                    @Override
-                    public void categoryEdited(Category category) {
-                        categoryManager.addCategory(category);
-                    }
-                };
+            CategoryEditorListener listener = category1 -> categoryManager.addCategory(category1);
 
-                CategoryEditorDialog dialog = new CategoryEditorDialog(
-                    CategoryManagerFrame.this,
-                    true,
-                    puzzleProvider.getAll(),
-                    scramblerProvider.getAll(),
-                    tipProvider.getAll(),
-                    category,
-                    true,
-                    listener);
-                dialog.setLocationRelativeTo(null);
-                dialog.setVisible(true);
-            }
+            CategoryEditorDialog dialog = new CategoryEditorDialog(
+                CategoryManagerFrame.this,
+                true,
+                puzzleProvider.getAll(),
+                scramblerProvider.getAll(),
+                tipProvider.getAll(),
+                category,
+                true,
+                listener);
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
         });
 
         // set edit button behavior
-        this.buttonEdit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                int selectedIndex = CategoryManagerFrame.this.table.getSelectedRow();
-                Category category = categoryManager.getCategories()[selectedIndex];
+        this.buttonEdit.addActionListener(event -> {
+            int selectedIndex = CategoryManagerFrame.this.table.getSelectedRow();
+            Category category = categoryManager.getCategories()[selectedIndex];
 
-                CategoryEditorListener listener = new CategoryEditorListener() {
-                    @Override
-                    public void categoryEdited(Category category) {
-                        categoryManager.updateCategory(category);
-                    }
-                };
+            CategoryEditorListener listener = category1 -> categoryManager.updateCategory(category1);
 
-                CategoryEditorDialog dialog = new CategoryEditorDialog(
-                    CategoryManagerFrame.this,
-                    true,
-                    puzzleProvider.getAll(),
-                    scramblerProvider.getAll(),
-                    tipProvider.getAll(),
-                    category,
-                    false,
-                    listener);
-                dialog.setLocationRelativeTo(null);
-                dialog.setVisible(true);
-            }
+            CategoryEditorDialog dialog = new CategoryEditorDialog(
+                CategoryManagerFrame.this,
+                true,
+                puzzleProvider.getAll(),
+                scramblerProvider.getAll(),
+                tipProvider.getAll(),
+                category,
+                false,
+                listener);
+            dialog.setLocationRelativeTo(null);
+            dialog.setVisible(true);
         });
 
         // set remove button behavior
-        this.buttonRemove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                int result = JOptionPane.showConfirmDialog(
-                    CategoryManagerFrame.this,
-                    _("category_manager.category_removal_confirmation_message"),
-                    _("category_manager.remove_category"),
-                    JOptionPane.YES_NO_CANCEL_OPTION);
-                if (result != JOptionPane.YES_OPTION) {
-                    return;
-                }
-
-                int selectedIndex = CategoryManagerFrame.this.table.getSelectedRow();
-                Category category = categoryManager.getCategories()[selectedIndex];
-                categoryManager.removeCategory(category);
+        this.buttonRemove.addActionListener(event -> {
+            int result = JOptionPane.showConfirmDialog(
+                CategoryManagerFrame.this,
+                _("category_manager.category_removal_confirmation_message"),
+                _("category_manager.remove_category"),
+                JOptionPane.YES_NO_CANCEL_OPTION);
+            if (result != JOptionPane.YES_OPTION) {
+                return;
             }
+
+            int selectedIndex = CategoryManagerFrame.this.table.getSelectedRow();
+            Category category = categoryManager.getCategories()[selectedIndex];
+            categoryManager.removeCategory(category);
         });
 
         // set ok button behavior
-        this.buttonOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                setVisible(false);
-            }
-        });
+        this.buttonOk.addActionListener(event -> setVisible(false));
 
         // esc key closes window
         this.getRootPane().registerKeyboardAction(
-            new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    CategoryManagerFrame.this.setVisible(false);
-                }
-            },
+                arg0 -> CategoryManagerFrame.this.setVisible(false),
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }

@@ -14,7 +14,7 @@ public class MessageManager {
     public enum MessageType {
         INFORMATION,
         ERROR,
-    };
+    }
 
     private ArrayList<String> messageQueue;
     private ArrayList<MessageType> messageTypeQueue;

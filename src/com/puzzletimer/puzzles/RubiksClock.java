@@ -31,7 +31,7 @@ public class RubiksClock implements Puzzle {
         RubiksClockSolver.State state = RubiksClockSolver.State.id;
         for (String move : sequence) {
             // two wheels
-            Matcher matcher2 = pattern2.matcher(move.toString());
+            Matcher matcher2 = pattern2.matcher(move);
             if (matcher2.find()) {
                 String pins = matcher2.group(1);
                 boolean[] pinsDown = new boolean[4];
@@ -63,7 +63,7 @@ public class RubiksClock implements Puzzle {
             }
 
             // one wheel
-            Matcher matcher1 = pattern1.matcher(move.toString());
+            Matcher matcher1 = pattern1.matcher(move);
             if (matcher1.find()) {
                 String pins = matcher1.group(1);
                 boolean[] pinsDown = new boolean[4];
@@ -85,7 +85,7 @@ public class RubiksClock implements Puzzle {
             }
 
             // no rotation
-            Matcher matcher0 = pattern0.matcher(move.toString());
+            Matcher matcher0 = pattern0.matcher(move);
             if (matcher0.find()) {
                 String pins = matcher0.group(1);
                 boolean[] pinsDown = new boolean[4];

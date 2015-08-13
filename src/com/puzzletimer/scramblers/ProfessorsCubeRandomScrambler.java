@@ -12,7 +12,7 @@ public class ProfessorsCubeRandomScrambler extends BigCubeRandomScrambler {
     }
 
     public String[][] getMoves() {
-        String[][] moves = {
+        return new String[][]{
             { "U", "U2", "U'" }, { "Uw", "Uw2", "Uw'" },
             { "Dw", "Dw2", "Dw'" }, { "D", "D2", "D'" },
             { "L", "L2", "L'" }, { "Lw", "Lw2", "Lw'" },
@@ -20,7 +20,6 @@ public class ProfessorsCubeRandomScrambler extends BigCubeRandomScrambler {
             { "F", "F2", "F'" }, { "Fw", "Fw2", "Fw'" },
             { "Bw", "Bw2", "Bw'" }, { "B", "B2", "B'" },
         };
-        return moves;
     }
 }
 

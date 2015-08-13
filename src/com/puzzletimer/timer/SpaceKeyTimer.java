@@ -17,7 +17,7 @@ public class SpaceKeyTimer implements Timer {
         READY,
         RUNNING,
         FINISHED,
-    };
+    }
 
     private JFrame frame;
     private TimerManager timerManager;

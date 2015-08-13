@@ -1,6 +1,7 @@
 package com.puzzletimer.solvers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -349,9 +350,7 @@ public class RubiksTowerSolver {
                 }
 
                 String[] solution2 = solve2(state2);
-                for (String move : solution2) {
-                    sequence.add(move);
-                }
+                Collections.addAll(sequence, solution2);
 
                 String[] sequenceArray = new String[sequence.size()];
                 sequence.toArray(sequenceArray);

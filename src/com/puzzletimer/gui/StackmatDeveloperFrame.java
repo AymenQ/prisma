@@ -2,7 +2,6 @@ package com.puzzletimer.gui;
 
 import static com.puzzletimer.Internationalization._;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -20,7 +19,6 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 
 import com.puzzletimer.state.TimerManager;
-import com.puzzletimer.util.SolutionUtils;
 
 import net.miginfocom.swing.MigLayout;
 

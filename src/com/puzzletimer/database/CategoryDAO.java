@@ -82,7 +82,7 @@ public class CategoryDAO {
 
             categoryStatement.setInt(1, 0);
             categoryStatement.setString(2, category.getCategoryId().toString());
-            categoryStatement.setString(3, category.getScramblerId().toString());
+            categoryStatement.setString(3, category.getScramblerId());
             categoryStatement.setString(4, category.getDescription());
             categoryStatement.setBoolean(5, category.isUserDefined());
 
@@ -133,7 +133,7 @@ public class CategoryDAO {
                 "UPDATE CATEGORY SET SCRAMBLER_ID = ?, DESCRIPTION = ?, USER_DEFINED = ? " +
                 "WHERE CATEGORY_ID = ?");
 
-            categoryStatement.setString(1, category.getScramblerId().toString());
+            categoryStatement.setString(1, category.getScramblerId());
             categoryStatement.setString(2, category.getDescription());
             categoryStatement.setBoolean(3, category.isUserDefined());
             categoryStatement.setString(4, category.getCategoryId().toString());
