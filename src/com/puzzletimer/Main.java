@@ -188,6 +188,7 @@ public class Main {
                         new BestMean(100, 100),
                         new BestAverage(5, 5),
                         new BestAverage(12, 12),
+                        new BestAverage(50, 50),
                 };
 
                 String[] descriptions = {
@@ -196,6 +197,7 @@ public class Main {
                         _("main.mean_of_100"),
                         _("main.average_of_5"),
                         _("main.average_of_12"),
+                        _("main.average_of_50"),
                 };
 
                 Solution[] solutions = Main.this.solutionManager.getSolutions();

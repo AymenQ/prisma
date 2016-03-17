@@ -196,6 +196,8 @@ public class HistoryFrame extends JFrame {
     private JLabel labelWorst;
     private JLabel labelAverageOf12;
     private JLabel labelBestAverageOf12;
+    private JLabel labelAverageOf50;
+    private JLabel labelBestAverageOf50;
     private JTable table;
     private JButton buttonAddSolutions;
     private JButton buttonEdit;
@@ -448,7 +450,7 @@ public class HistoryFrame extends JFrame {
             new MigLayout(
                 "fill, insets 0 n 0 n",
                 "[][pref!]32[][pref!]32[][pref!]32[][pref!]",
-                "[pref!]1[pref!]1[pref!]1[pref!]1[pref!]"));
+                "[pref!]1[pref!]1[pref!]1[pref!]1[pref!]1[pref!]"));
         add(panelStatistics, "growx, span, wrap");
 
         // labelNumberOfSolutions
@@ -549,7 +551,17 @@ public class HistoryFrame extends JFrame {
         // labelBestAverageOf12
         panelStatistics.add(new JLabel(_("history.best_average_of_12")), "");
         this.labelBestAverageOf12 = new JLabel(this.nullTime);
-        panelStatistics.add(this.labelBestAverageOf12, "right");
+        panelStatistics.add(this.labelBestAverageOf12, "right, wrap");
+
+        // labelAverageOf50
+        panelStatistics.add(new JLabel(_("history.average_of_50")), "skip 4");
+        this.labelAverageOf50 = new JLabel(this.nullTime);
+        panelStatistics.add(this.labelAverageOf50, "right");
+
+        // labelBestAverageOf50
+        panelStatistics.add(new JLabel(_("history.best_average_of_50")), "");
+        this.labelBestAverageOf50 = new JLabel(this.nullTime);
+        panelStatistics.add(this.labelBestAverageOf50, "right");
 
         // labelSolutions
         JLabel labelTimes = new JLabel(_("history.solutions"));
@@ -618,6 +630,8 @@ public class HistoryFrame extends JFrame {
             this.labelWorst,
             this.labelAverageOf12,
             this.labelBestAverageOf12,
+            this.labelAverageOf50,
+            this.labelBestAverageOf50,
         };
 
         StatisticalMeasure[] measures = {
@@ -644,6 +658,8 @@ public class HistoryFrame extends JFrame {
             new Worst(1, Integer.MAX_VALUE),
             new Average(12, 12),
             new BestAverage(12, Integer.MAX_VALUE),
+            new Average(50, 50),
+            new BestAverage(50, Integer.MAX_VALUE),
         };
 
         boolean[] clickable = {
@@ -667,6 +683,8 @@ public class HistoryFrame extends JFrame {
             true,
 
             false,
+            true,
+            true,
             true,
             true,
             true,

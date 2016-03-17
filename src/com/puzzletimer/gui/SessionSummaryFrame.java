@@ -208,11 +208,13 @@ public class SessionSummaryFrame extends JFrame {
         String[] labels = {
             _("session_summary.best_average_of_5"),
             _("session_summary.best_average_of_12"),
+            _("session_summary.best_average_of_50"),
         };
 
         StatisticalMeasure[] statistics = {
             new BestAverage(5, Integer.MAX_VALUE),
             new BestAverage(12, Integer.MAX_VALUE),
+            new BestAverage(50, Integer.MAX_VALUE),
         };
 
         for (int i = 0; i < statistics.length; i++) {
