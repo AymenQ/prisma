@@ -286,9 +286,7 @@ public class RubiksCubeSolver {
                 State result = state.multiply(moves2[j]);
 
                 byte[] eEdges = new byte[4];
-                for (int k = 0; k < eEdges.length; k++) {
-                    eEdges[k] = result.edgesPermutation[k];
-                }
+                System.arraycopy(result.edgesPermutation, 0, eEdges, 0, eEdges.length);
 
                 eEdgesPermutationMove[i][j] = IndexMapping.permutationToIndex(eEdges);
             }
@@ -532,9 +530,7 @@ public class RubiksCubeSolver {
 
         // e edges permutation index
         byte[] eEdges = new byte[4];
-        for (int i = 0; i < eEdges.length; i++) {
-            eEdges[i] = state.edgesPermutation[i];
-        }
+        System.arraycopy(state.edgesPermutation, 0, eEdges, 0, eEdges.length);
         int eEdgesPermutation = IndexMapping.permutationToIndex(eEdges);
 
         for (int depth = 0; depth < Math.min(MAX_PHASE_2_SOLUTION_LENGTH, maxDepth); depth++) {

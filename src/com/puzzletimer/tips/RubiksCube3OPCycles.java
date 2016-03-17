@@ -27,7 +27,7 @@ public class RubiksCube3OPCycles implements Tip {
     public String getTip(Scramble scramble) {
         StringBuilder tip = new StringBuilder();
 
-        tip.append(_("tip.RUBIKS-CUBE-3OP-CYCLES") + ":\n  ");
+        tip.append(_("tip.RUBIKS-CUBE-3OP-CYCLES")).append(":\n  ");
 
         RubiksCubeSolver.State cubeState =
             RubiksCubeSolver.State.id.applySequence(scramble.getSequence());
@@ -44,9 +44,9 @@ public class RubiksCube3OPCycles implements Tip {
                 "DBL", "DBR", "DFR", "DFL",
             };
 
-            tip.append("(" + cornerNames[cycle.get(0)]);
+            tip.append("(").append(cornerNames[cycle.get(0)]);
             for (int i = 1; i < cycle.size(); i++) {
-                tip.append(" " + cornerNames[cycle.get(i)]);
+                tip.append(" ").append(cornerNames[cycle.get(i)]);
             }
             tip.append(")");
         }
@@ -66,9 +66,9 @@ public class RubiksCube3OPCycles implements Tip {
                 "DB", "DR", "DF", "DL",
             };
 
-            tip.append("(" + edgeNames[cycle.get(0)]);
+            tip.append("(").append(edgeNames[cycle.get(0)]);
             for (int i = 1; i < cycle.size(); i++) {
-                tip.append(" " + edgeNames[cycle.get(i)]);
+                tip.append(" ").append(edgeNames[cycle.get(i)]);
             }
             tip.append(")");
         }
@@ -86,7 +86,7 @@ public class RubiksCube3OPCycles implements Tip {
 
         ArrayList<ArrayList<Byte>> cycles = new ArrayList<ArrayList<Byte>>();
         for (int i = 0; i < permutation.length; i++) {
-            if (visited[order[i]] == true) {
+            if (visited[order[i]]) {
                 continue;
             }
 

@@ -91,7 +91,7 @@ public class RubiksCubeClassicPochmannCorners implements Tip {
         // solution
         StringBuilder tip = new StringBuilder();
 
-        tip.append(_("tip.RUBIKS-CUBE-CLASSIC-POCHMANN-CORNERS") + ":\n");
+        tip.append(_("tip.RUBIKS-CUBE-CLASSIC-POCHMANN-CORNERS")).append(":\n");
         tip.append("  [Y]  R U' R' U' R U R' F' R U R' U' R' F R\n");
         tip.append("\n");
 
@@ -145,7 +145,7 @@ public class RubiksCubeClassicPochmannCorners implements Tip {
         solutions.put("FDL", "F2 R' [Y] R F2");
 
         for (String sticker : stickerSequence) {
-            tip.append("  (LBU " + sticker + ") " + letteringScheme.get(sticker) + "  " + solutions.get(sticker) + "\n");
+            tip.append("  (LBU ").append(sticker).append(") ").append(letteringScheme.get(sticker)).append("  ").append(solutions.get(sticker)).append("\n");
         }
 
         return tip.toString().trim();

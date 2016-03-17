@@ -31,7 +31,7 @@ public class MegaminxRandomScrambler implements Scrambler {
                     this.random.nextInt(2) == 0 ? "D++" : "D--";
             }
 
-            sequence[11 * i + 10] = sequence[11 * i + 9] == "D++" ? "U" : "U'";
+            sequence[11 * i + 10] = sequence[11 * i + 9].equals("D++") ? "U" : "U'";
         }
 
         return new Scramble(

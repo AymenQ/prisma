@@ -18,7 +18,7 @@ public class ControlKeysTimer implements Timer {
         READY,
         RUNNING,
         FINISHED,
-    };
+    }
 
     private JFrame frame;
     private TimerManager timerManager;

@@ -3,8 +3,6 @@ package com.puzzletimer.gui;
 import static com.puzzletimer.Internationalization._;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -92,51 +90,38 @@ public class SolutionEditingDialog extends JDialog {
         this.textFieldComment.setText(solution.getComment());
 
         // ok button
-        this.buttonOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                // timing
-                long time =
-                    SolutionUtils.parseTime(
-                        SolutionEditingDialog.this.textFieldTime.getText());
-                Timing timing =
-                    new Timing(
-                        solution.getTiming().getStart(),
-                        new Date(solution.getTiming().getStart().getTime() + time));
+        this.buttonOk.addActionListener(event -> {
+            // timing
+            long time =
+                SolutionUtils.parseTime(
+                    SolutionEditingDialog.this.textFieldTime.getText());
+            Timing timing =
+                new Timing(
+                    solution.getTiming().getStart(),
+                    new Date(solution.getTiming().getStart().getTime() + time));
 
-                // penalty
-                String penalty =
-                    (String) SolutionEditingDialog.this.comboBoxPenalty.getSelectedItem();
+            // penalty
+            String penalty =
+                (String) SolutionEditingDialog.this.comboBoxPenalty.getSelectedItem();
 
-                String comment = (String) SolutionEditingDialog.this.textFieldComment.getText();
+            String comment = SolutionEditingDialog.this.textFieldComment.getText();
 
-                listener.solutionEdited(
-                    solution
-                        .setTiming(timing)
-                        .setPenalty(penalty)
-                        .setComment(comment));
+            listener.solutionEdited(
+                solution
+                    .setTiming(timing)
+                    .setPenalty(penalty)
+                    .setComment(comment));
 
-                SolutionEditingDialog.this.dispose();
-            }
+            SolutionEditingDialog.this.dispose();
         });
         this.getRootPane().setDefaultButton(this.buttonOk);
 
         // cancel button
-        this.buttonCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                SolutionEditingDialog.this.dispose();
-            }
-        });
+        this.buttonCancel.addActionListener(event -> SolutionEditingDialog.this.dispose());
 
         // esc key closes window
         this.getRootPane().registerKeyboardAction(
-            new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    SolutionEditingDialog.this.dispose();
-                }
-            },
+                arg0 -> SolutionEditingDialog.this.dispose(),
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }

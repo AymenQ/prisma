@@ -3,8 +3,6 @@ package com.puzzletimer.gui;
 import static com.puzzletimer.Internationalization._;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,8 +24,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
@@ -105,181 +101,147 @@ public class ScrambleQueueFrame extends JFrame {
 
         // enable/disable buttons
         this.table.getSelectionModel().addListSelectionListener(
-            new ListSelectionListener() {
-                @Override
-                public void valueChanged(ListSelectionEvent event) {
-                    updateButtons(ScrambleQueueFrame.this.table);
-                }
-            });
+                event -> updateButtons(ScrambleQueueFrame.this.table));
 
         // up button
-        this.buttonUp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JTable table = ScrambleQueueFrame.this.table;
-                int[] selectedRows = table.getSelectedRows();
+        this.buttonUp.addActionListener(event -> {
+            JTable table1 = ScrambleQueueFrame.this.table;
+            int[] selectedRows = table1.getSelectedRows();
 
-                // move scrambles
-                scrambleManager.moveScramblesUp(selectedRows);
+            // move scrambles
+            scrambleManager.moveScramblesUp(selectedRows);
 
-                // fix selection
-                table.removeRowSelectionInterval(0, selectedRows.length - 1);
-                for (int selectedRow : selectedRows) {
-                    table.addRowSelectionInterval(selectedRow - 1, selectedRow - 1);
-                }
-
-                // request focus
-                ScrambleQueueFrame.this.buttonUp.requestFocusInWindow();
+            // fix selection
+            table1.removeRowSelectionInterval(0, selectedRows.length - 1);
+            for (int selectedRow : selectedRows) {
+                table1.addRowSelectionInterval(selectedRow - 1, selectedRow - 1);
             }
+
+            // request focus
+            ScrambleQueueFrame.this.buttonUp.requestFocusInWindow();
         });
 
         // down button
-        this.buttonDown.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JTable table = ScrambleQueueFrame.this.table;
-                int[] selectedRows = table.getSelectedRows();
+        this.buttonDown.addActionListener(event -> {
+            JTable table1 = ScrambleQueueFrame.this.table;
+            int[] selectedRows = table1.getSelectedRows();
 
-                // move scrambles
-                scrambleManager.moveScramblesDown(selectedRows);
+            // move scrambles
+            scrambleManager.moveScramblesDown(selectedRows);
 
-                // fix selection
-                table.removeRowSelectionInterval(0, selectedRows.length - 1);
-                for (int selectedRow : selectedRows) {
-                    table.addRowSelectionInterval(selectedRow + 1, selectedRow + 1);
-                }
-
-                // request focus
-                ScrambleQueueFrame.this.buttonDown.requestFocusInWindow();
+            // fix selection
+            table1.removeRowSelectionInterval(0, selectedRows.length - 1);
+            for (int selectedRow : selectedRows) {
+                table1.addRowSelectionInterval(selectedRow + 1, selectedRow + 1);
             }
+
+            // request focus
+            ScrambleQueueFrame.this.buttonDown.requestFocusInWindow();
         });
 
         // remove button
-        this.buttonRemove.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                // remove scrambles
-                scrambleManager.removeScrambles(
-                    ScrambleQueueFrame.this.table.getSelectedRows());
+        this.buttonRemove.addActionListener(event -> {
+            // remove scrambles
+            scrambleManager.removeScrambles(
+                ScrambleQueueFrame.this.table.getSelectedRows());
 
-                // request focus
-                ScrambleQueueFrame.this.buttonRemove.requestFocusInWindow();
-            }
+            // request focus
+            ScrambleQueueFrame.this.buttonRemove.requestFocusInWindow();
         });
 
         // import from file
-        this.buttonImportFromFile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setFileFilter(new FileNameExtensionFilter(_("scramble_queue.scramble_file_description"), "txt"));
-                int action = fileChooser.showOpenDialog(ScrambleQueueFrame.this);
-                if (action != JFileChooser.APPROVE_OPTION) {
-                    return;
-                }
-
-                Category category = categoryManager.getCurrentCategory();
-                Scrambler scrambler = scramblerProvider.get(category.getScramblerId());
-                String puzzleId = scrambler.getScramblerInfo().getPuzzleId();
-                ScrambleParser scrambleParser = scrambleParserProvider.get(puzzleId);
-
-                Scramble[] scrambles;
-                try {
-                    scrambles = loadScramblesFromFile(
-                        fileChooser.getSelectedFile(),
-                        puzzleId + "-IMPORTER",
-                        scrambleParser);
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(
-                        ScrambleQueueFrame.this,
-                        String.format(
-                            _("scramble_queue.file_opening_error"),
-                            fileChooser.getSelectedFile().getAbsolutePath()),
-                        _("scramble_queue.error"),
-                        JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-
-                scrambleManager.addScrambles(scrambles, false);
+        this.buttonImportFromFile.addActionListener(event -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter(_("scramble_queue.scramble_file_description"), "txt"));
+            int action = fileChooser.showOpenDialog(ScrambleQueueFrame.this);
+            if (action != JFileChooser.APPROVE_OPTION) {
+                return;
             }
+
+            Category category = categoryManager.getCurrentCategory();
+            Scrambler scrambler = scramblerProvider.get(category.getScramblerId());
+            String puzzleId = scrambler.getScramblerInfo().getPuzzleId();
+            ScrambleParser scrambleParser = scrambleParserProvider.get(puzzleId);
+
+            Scramble[] scrambles;
+            try {
+                scrambles = loadScramblesFromFile(
+                    fileChooser.getSelectedFile(),
+                    puzzleId + "-IMPORTER",
+                    scrambleParser);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(
+                    ScrambleQueueFrame.this,
+                    String.format(
+                        _("scramble_queue.file_opening_error"),
+                        fileChooser.getSelectedFile().getAbsolutePath()),
+                    _("scramble_queue.error"),
+                    JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            scrambleManager.addScrambles(scrambles, false);
         });
 
         // export to file
-        this.buttonExport.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setSelectedFile(new File(_("scramble_queue.default_file_name")));
-                fileChooser.setFileFilter(new FileNameExtensionFilter(_("scramble_queue.scramble_file_description"), "txt"));
-                int action = fileChooser.showSaveDialog(ScrambleQueueFrame.this);
-                if (action != JFileChooser.APPROVE_OPTION) {
-                    return;
-                }
+        this.buttonExport.addActionListener(event -> {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setSelectedFile(new File(_("scramble_queue.default_file_name")));
+            fileChooser.setFileFilter(new FileNameExtensionFilter(_("scramble_queue.scramble_file_description"), "txt"));
+            int action = fileChooser.showSaveDialog(ScrambleQueueFrame.this);
+            if (action != JFileChooser.APPROVE_OPTION) {
+                return;
+            }
 
-                Scramble[] scrambles = scrambleManager.getQueue();
-                Scramble[] selectedScrambles;
+            Scramble[] scrambles = scrambleManager.getQueue();
+            Scramble[] selectedScrambles;
 
-                int[] selectedRows = ScrambleQueueFrame.this.table.getSelectedRows();
-                if (selectedRows.length <= 0) {
-                    selectedScrambles = scrambles;
-                } else {
-                    selectedScrambles = new Scramble[selectedRows.length];
-                    for (int i = 0; i < selectedScrambles.length; i++) {
-                        selectedScrambles[i] = scrambles[selectedRows[i]];
-                    }
+            int[] selectedRows = ScrambleQueueFrame.this.table.getSelectedRows();
+            if (selectedRows.length <= 0) {
+                selectedScrambles = scrambles;
+            } else {
+                selectedScrambles = new Scramble[selectedRows.length];
+                for (int i = 0; i < selectedScrambles.length; i++) {
+                    selectedScrambles[i] = scrambles[selectedRows[i]];
                 }
+            }
 
-                try {
-                    saveScramblesToFile(
-                        selectedScrambles,
-                        fileChooser.getSelectedFile());
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(
-                        ScrambleQueueFrame.this,
-                        String.format(
-                            _("scramble_queue.file_opening_error"),
-                            fileChooser.getSelectedFile().getAbsolutePath()),
-                        _("scramble_queue.error"),
-                        JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+            try {
+                saveScramblesToFile(
+                    selectedScrambles,
+                    fileChooser.getSelectedFile());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(
+                    ScrambleQueueFrame.this,
+                    String.format(
+                        _("scramble_queue.file_opening_error"),
+                        fileChooser.getSelectedFile().getAbsolutePath()),
+                    _("scramble_queue.error"),
+                    JOptionPane.ERROR_MESSAGE);
             }
         });
 
         // import from scrambler
-        this.buttonImportFromScrambler.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                Scrambler scrambler =
-                    (Scrambler) ScrambleQueueFrame.this.comboBoxScrambler.getSelectedItem();
+        this.buttonImportFromScrambler.addActionListener(event -> {
+            Scrambler scrambler =
+                (Scrambler) ScrambleQueueFrame.this.comboBoxScrambler.getSelectedItem();
 
-                Scramble[] scrambles = new Scramble[
-                    (Integer) ScrambleQueueFrame.this.spinnerNumberOfScrambles.getValue()];
-                for (int i = 0; i < scrambles.length; i++) {
-                    scrambles[i] = scrambler.getNextScramble();
-                }
-
-                scrambleManager.addScrambles(scrambles, false);
+            Scramble[] scrambles = new Scramble[
+                (Integer) ScrambleQueueFrame.this.spinnerNumberOfScrambles.getValue()];
+            for (int i = 0; i < scrambles.length; i++) {
+                scrambles[i] = scrambler.getNextScramble();
             }
+
+            scrambleManager.addScrambles(scrambles, false);
         });
 
         // ok button
         this.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        this.buttonOk.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                ScrambleQueueFrame.this.setVisible(false);
-            }
-        });
+        this.buttonOk.addActionListener(event -> ScrambleQueueFrame.this.setVisible(false));
 
         // esc key closes window
         this.getRootPane().registerKeyboardAction(
-            new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent arg0) {
-                    ScrambleQueueFrame.this.setVisible(false);
-                }
-            },
+                arg0 -> ScrambleQueueFrame.this.setVisible(false),
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
