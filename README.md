@@ -1,4 +1,7 @@
 # Prisma
+
+#### Currently not in active development, feel free to fork or submit a pull request
+
 An updated version of the well-known Prisma puzzle timer.
 
 Main features:
@@ -27,7 +30,7 @@ Main features:
 
 
 ##Contributors
-[Moony22](https://github.com/Moony22) (Current Maintainer)
+[Moony22](https://github.com/Moony22)
 
 Methuselah96
 
