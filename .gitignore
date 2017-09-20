@@ -18,6 +18,7 @@
 # IntelliJ
 out/
 target/
+*/META-INF/*
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
