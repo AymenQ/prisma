@@ -32,14 +32,16 @@ Main features:
 ![Colors Window](https://raw.githubusercontent.com/spectre013/prisma/master/imgs/colors.png)
 
 
-##Contributors
-[Moony22](https://github.com/Moony22)
+## Contributors
+* [Moony22](https://github.com/Moony22)
 
-Methuselah96
+* [daveallie](https://github.com/daveallie)
 
-Walter Souza (Original Maintainer)
+* Methuselah96
 
-##License
+* Walter Souza (Original Maintainer)
+
+## License
 
 Copyright (c) 2010 Walter Souza
 
