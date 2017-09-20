@@ -4,6 +4,9 @@
 
 An updated version of the well-known Prisma puzzle timer.
 
+How to install:
+Download the latest jar from the releases tab, then move it to wherever you want to keep it (I recommend making a prisma folder somewhere), then run the jar file. The db files are stored in the same folder as the jar, sorry for not making that clear but I'll try simplify the install in the future.
+
 Main features:
 
 - Support for 2x2x2-7x7x7, Rubik's clock, Megaminx, Pyraminx, Square-1, Skewb, Floppy cube (1x3x3), Tower cube (2x2x3), Rubik's tower (2x2x4) and Rubik's domino (2x3x3)
